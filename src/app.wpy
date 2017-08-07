@@ -54,7 +54,8 @@ export default class extends wepy.app {
   }
   config = {
     pages: [
-      'pages/home/home'
+      'pages/home/home',
+      'pages/shop/contact'
     ],
     window: {
       backgroundTextStyle: 'dark',

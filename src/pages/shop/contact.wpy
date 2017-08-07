@@ -1,0 +1,83 @@
+<template>
+  <view class="container">
+    <view class="header  column-center">
+      <text class="title">小程序，商家营销利器</text>
+      <text class="describe">帮助商家提前布局微信生态，抢占第一波红利</text>
+      <view class="contact column-center" @tap="call">电话咨询</view>
+      <image class="preview" mode="aspectFit" src="http://img.leshare.shop/leshare/xc.png"></image>
+    </view>
+    <view class="content">
+      <image class="solution" mode="widthFix" src="http://img.leshare.shop/leshare/solution.png"></image>
+    </view>
+    <Copyright />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import Copyright from '../../components/common/copyright';
+  import Tips from '../../utils/Tips';
+
+  export default class ContactIndex extends wepy.page {
+    def = {}
+    data = {...this.def};
+    onShareAppMessage () {
+      const title = '乐享商家助手';
+      const url = '/pages/home/index';
+      return Tips.share(title, url, title);
+    }
+    methods = {
+      call() {
+        wepy.makePhoneCall({
+          phoneNumber: '059187519835'
+        });
+      }
+    }
+    events = {};
+    components = {
+      Copyright: Copyright
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '联系我们',
+      navigationBarBackgroundColor: '#11ca6f'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .header {
+    background-color: #11ca6f;
+    .title{
+      font-size: $text-xxl;
+      font-weight: bold;
+      margin-top: 50px;
+    }
+    .describe{
+      margin-top: 20px;
+    }
+    .contact{
+      width: 160rpx;
+      height: 60rpx;
+      background-color: #FFF;
+      color: #11ca6f;
+      margin-top: 20px;
+    }
+    .preview{
+      width: 700rpx;
+      margin-top: 20px;
+    }
+    text {
+      color: #FFF;
+    }
+  }
+
+  .content{
+    .solution{
+      width: 100%;
+    }
+  }
+
+</style>
