@@ -1,28 +1,215 @@
 <template>
-  123
-</template>
+  <view class="container" wx:if="{{init}}">
 
-<style lang="scss">
-  @import "../../styles/variable";
-</style>
+    <!--店铺信息区域-->
+    <view class="header-box column-center">
+      <image class="avatar" src="{{shop.avatar}}" />
+      <text class="name">{{shop.name}}</text>
+      <view class="address">
+        <text class="weak">地址:{{shop.address}}</text> <image class="icon" src="/images/icons/more-gray.png"></image>
+      </view>
+      <text class="time weak lg">营业时间：{{status.timeText}}</text>
+    </view>
+
+    <!--操作向导区域-->
+    <view class="nav-box column-cernter">
+      <view class="row-between">
+        <view class="shop-btn column-center">
+          <image class="icon-xl" src="/images/home/food.png"></image>
+          <text class="weak">点外卖</text>
+        </view>
+
+        <view class="shop-btn column-center">
+          <image class="icon-xl" src="/images/home/phone.png"></image>
+          <text class="weak">电话联系</text>
+        </view>
+
+        <view class="shop-btn column-center">
+          <image class="icon-xl" src="/images/home/nav.png"></image>
+          <text class="weak">一键导航</text>
+        </view>
+      </view>
+
+      <view class="nav-gap"></view>
+
+      <view class="row-between">
+        <view class="shop-btn column-center">
+          <image class="icon-xl" src="/images/home/share.png"></image>
+          <text class="weak">分享好友</text>
+        </view>
+
+        <view class="shop-btn column-center">
+          <image class="icon-xl" src="/images/home/coupon.png"></image>
+          <text class="weak">领优惠券</text>
+        </view>
+
+        <view class="shop-btn column-center">
+          <image class="icon-xl" src="/images/home/my.png"></image>
+          <text class="weak">我的记录</text>
+        </view>
+      </view>
+    </view>
+
+    <!--门店照片区域-->
+    <view class="photo-box sub-box">
+      <text class="sub-title">门店照片</text>
+      <view class="content row-between">
+        <image mode="aspectFill" class="shop-photo" src="{{item.url}}/medium" wx:for="{{shop.images}}"></image>
+      </view>
+    </view>
+
+    <!--热门商品区域-->
+    <view class="recommend-box sub-box">
+      <text class="sub-title">招牌推荐</text>
+      <view class="content column">
+        <view class="goods-box row" wx:for="{{goods}}">
+          <image class="goods-image" src="{{item.imageUrl}}"/>
+          <view class="main column">
+            <text class="title">{{item.name}}</text>
+            <text class="price">￥{{item.priceLable}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <Copyright />
+  </view>
+
+
+</template>
 
 <script>
   import wepy from 'wepy';
   import auth from '../../api/auth';
+  import shop from '../../api/shop';
+  import goods from '../../api/goods';
   import base from '../../mixins/base';
+  import Copyright from '../../components/common/copyright';
   // import Tips from '../../utils/Tips';
 
   export default class OrderIndex extends wepy.page {
-    def = {};
+    def = {
+      init: false,
+      shop: {},
+      status: {},
+      goods: []
+    };
     data = {...this.def};
     async onLoad () {
       await auth.login();
+      this.shop = await shop.info();
+      this.status = await shop.getStatus();
+      const {list} = await goods.page(true).next();
+      if (list.length > 5) {
+        this.goods = list.slice(0, 5);
+      } else {
+        this.goods = list;
+      }
+
+      this.loaded();
     };
     events = {};
-    components = {};
+    components = {
+      Copyright: Copyright
+    };
     mixins = [base];
     config = {
       navigationBarTitleText: '首页'
     };
   }
 </script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .container{
+    background-color: #FFF;
+    padding-left: 60rpx;
+    padding-right:60rpx;
+
+    .header-box{
+      border-bottom: $border;
+      .avatar{
+        margin-top: 130rpx;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+      }
+      .name{
+        margin-top: 90rpx;
+        font-size: 42rpx;
+        font-weight: bold;
+      }
+      .address{
+        margin-top: 40rpx;
+      }
+      .time{
+        margin-top: 40rpx;
+        margin-bottom: 40rpx;
+      }
+    }
+
+    .nav-box{
+      padding:50rpx 30rpx;
+      border-bottom: $border;
+
+      .nav-gap{
+        height: 50rpx;
+      }
+
+      .shop-btn{
+        text{margin-top: 10rpx;}
+      }
+    }
+
+    .sub-box{
+      padding-top: 40rpx;
+      padding-bottom: 40rpx;
+      .sub-title{
+        font-size: $text-xl;
+        font-weight: bold;
+      }
+    }
+
+    .photo-box{
+      border-bottom: $border;
+      .content{
+        flex-wrap: wrap;
+        margin-top: 40rpx;
+        .shop-photo{
+          height: 200rpx;
+          width: 200rpx;
+        }
+      }
+    }
+
+    .recommend-box{
+      .content{
+        margin-top: 30rpx;
+      }
+      .goods-box{
+        .goods-image{
+          height: 150rpx;
+          width: 150rpx;
+        }
+        .main{
+          height: 180rpx;
+          margin-left: 30rpx;
+          border-bottom: $border;
+          flex: 1;
+          justify-content: center;
+
+          .title{
+            font-size: $text-xl;
+          }
+
+          .price{
+            font-size: $text-xl;
+            color: $color-major;
+            margin-top: 10rpx;
+          }
+        }
+      }
+    }
+
+
+  }
+</style>

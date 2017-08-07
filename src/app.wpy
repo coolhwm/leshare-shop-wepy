@@ -34,7 +34,7 @@ export default class extends wepy.app {
    * 构造权限头部
    */
   createAuthHeader () {
-    const loginCode = wepy.$instance.globalData.loginCode;
+    const loginCode = wepy.$instance.globalData.auth.login_code;
     const header = {};
     if (loginCode) {
       header['login_code'] = loginCode;
