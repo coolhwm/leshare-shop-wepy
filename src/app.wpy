@@ -34,7 +34,7 @@ export default class extends wepy.app {
    * 构造权限头部
    */
   createAuthHeader () {
-    const loginCode = wepy.$instance.globalData.auth.login_code;
+    const loginCode = wepy.$instance.globalData.loginCode;
     const header = {};
     if (loginCode) {
       header['login_code'] = loginCode;
@@ -43,6 +43,7 @@ export default class extends wepy.app {
   }
   async onLaunch() {
     await this.syncStoreConfig('login_code');
+    await this.syncStoreConfig('third_session');
   }
   async syncStoreConfig(key) {
     const result = await wepy.getStorage({key: key});
@@ -63,7 +64,9 @@ export default class extends wepy.app {
   };
 
   globalData = {
-    userInfo: null
+    auth: {},
+    shopCode: 'eemTgbKrhqiYKMFowcBCQ1Zr7G13bWUT',
+    baseUrl: 'https://api.leshare.shop/v1/customer'
   }
 }
 </script>
