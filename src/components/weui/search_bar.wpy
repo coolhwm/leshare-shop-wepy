@@ -1,0 +1,82 @@
+<template>
+  <view class="weui-search-bar">
+    <view class="weui-search-bar__form">
+      <view class="weui-search-bar__box">
+        <icon class="weui-icon-search_in-box" type="search" size="14"></icon>
+        <input type="text" class="weui-search-bar__input" placeholder="搜索" value="{{inputVal}}" focus="{{inputShowed}}" @input="inputTyping" />
+        <view class="weui-icon-clear" wx:if="{{inputVal.length > 0}}" @tap="clearInput">
+          <icon type="clear" size="14"></icon>
+        </view>
+      </view>
+      <label class="weui-search-bar__label" hidden="{{inputShowed}}" @tap="showInput">
+        <icon class="weui-icon-search" type="search" size="14"></icon>
+        <view class="weui-search-bar__text">搜索</view>
+      </label>
+    </view>
+    <view class="weui-search-bar__cancel-btn" hidden="{{!inputShowed}}" @tap="hideInput">{{hideText}}</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class SearchBar extends wepy.component {
+    props = {
+      back: {},
+      inputVal: {
+        twoWay: true
+      }
+    };
+    data = {
+      isBack: false,
+      hideText: '取消',
+      inputShowed: false
+    };
+    onLoad() {
+      if (this.isBack) {
+        this.inputShowed = true;
+        this.hideText = '返回';
+      }
+    }
+    computed = {
+      isBack() {
+        return this.back == 'true';
+      }
+    }
+    methods = {
+      showInput: function () {
+        this.inputShowed = true;
+      },
+      hideInput: function () {
+        if (this.isBack) {
+          this.$emit('back');
+        } else {
+          this.inputVal = '';
+          this.inputShowed = false;
+          this.$emit('search-update', null);
+        }
+      },
+      clearInput: function () {
+        this.inputVal = '';
+        this.$emit('search-update', null);
+      },
+      inputTyping: function (e) {
+        const input = e.detail.value;
+        this.inputVal = input;
+        this.$emit('search-update', input);
+      }
+    };
+    events = {}
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .weui-search-bar{
+    position: fixed;
+    width: 100%;
+    z-index: 100;
+    top: 0;
+  }
+
+
+</style>

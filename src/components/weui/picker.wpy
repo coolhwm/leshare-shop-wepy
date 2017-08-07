@@ -1,0 +1,55 @@
+<template>
+  <view class="weui-cell weui-cell_select">
+    <view class="weui-cell__hd weui-cell__hd_in-select-after">
+      <view class="weui-label">{{title}}</view>
+    </view>
+    <view class="weui-cell__bd">
+      <picker @change="input" id="{{fieldName}}" value="{{seletedKey}}" range="{{range}}" range-key="{{rangeKey}}">
+        <view class="weui-select weui-select_in-select-after">{{seletedKey}}</view>
+      </picker>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Picker extends wepy.component {
+    props = {
+      input: {
+        twoWay: true
+      },
+      range: {},
+      rangeValue: {
+        default: 'value'
+      },
+      rangeKey: {
+        default: 'key'
+      },
+      fieldName: {},
+      title: {}
+    };
+    data = {
+      seletedIndex: 0,
+      seletedValue: ''
+    };
+    computed = {
+      seletedKey() {
+        const value = this.input[this.fieldName];
+        const seletedItem = this.range.find(item => item[this.rangeValue] == value);
+        return seletedItem ? seletedItem[this.rangeKey] : '请选择';
+      }
+    };
+    methods = {
+      input(e) {
+        const seletdItem = this.range[e.detail.value];
+        this.input[this.fieldName] = seletdItem[this.rangeValue];
+        this.$emit('input', seletdItem);
+      }
+    };
+    events = {};
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

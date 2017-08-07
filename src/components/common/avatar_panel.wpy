@@ -1,0 +1,36 @@
+<template>
+  <view class="info-box column-center">
+    <image class="avatar" src="{{info.avatar}}" />
+    <text class="name">{{info.name}}</text>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class AvatarPanel extends wepy.component {
+    props = {
+      info: {}
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .info-box{
+    align-items: center;
+    height: 300rpx;
+    background-color: $color-primary;
+
+    .avatar{
+      height:160rpx;
+      width: 160rpx;
+      border-radius: 50%;
+    }
+
+    .name{
+      color: white;
+      font-size: $text-xxl;
+      margin-top: 20rpx;
+    }
+  }
+</style>

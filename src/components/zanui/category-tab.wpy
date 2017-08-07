@@ -1,0 +1,102 @@
+<template>
+  <!--TAB 页-->
+  <view class="category-tab-box">
+    <!--有赞TAB-->
+    <ZanTab :tab="tab" handler="onTabChange" @change.user="tabChange"/>
+
+    <!--类型筛选-->
+    <view class="category-box column" @tap="show">
+      <view class="vr row-center">
+        <image class="icon" src="/images/icons/category.png"/>
+        <text class="category-text ml10 muted inline">{{categoriesTitle}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!--下拉选择器-->
+  <SliderSelector :display.sync="display"
+                  :list.sync="categories"
+                  :title="categoriesTitle"
+                  displatyDefault="true"
+                  @change.user="categoriesChange"/>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import ZanTab from './tab';
+  import SliderSelector from '../common/slider_selector';
+  export default class CategoryTab extends wepy.component {
+    props = {
+      tab: {twoWay: true},
+      categories: [],
+      categoriesTitle: {
+        default: '选择分类'
+      }
+    };
+    data = {
+      display: 'false'
+    };
+    methods = {
+      show() {
+        this.display = 'true'
+      },
+      categoriesChange(info) {
+        this.tab.categoryId = info.selectedId;
+        this.categoriesTitle = info.selectedId == '' ? this.props.categoriesTitle.default : info.selectedName;
+        this.change();
+      },
+      tabChange() {
+        this.change();
+      }
+    };
+    components = {
+      ZanTab: ZanTab,
+      SliderSelector: SliderSelector
+    };
+    change() {
+      this.$emit('change', {
+        selectedId: this.tab.selectedId,
+        categoryId: this.tab.categoryId
+      });
+    }
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .category-tab-box{
+    $tab-width: 560rpx;
+    $category-width: 750rpx - $tab-width;
+
+    .zan-tab{
+      width: $tab-width;
+      .zan-tab__bd{
+        width: $tab-width;
+      }
+    }
+
+    .category-box{
+      background-color: white;
+      height: 40px;
+      position: fixed;
+      right: 0;
+      top:0;
+      z-index: 2;
+      border-bottom: 1rpx solid #e5e5e5;
+      width: $category-width;
+
+      .vr{
+        height: 30px;
+        width: 100%;
+        border-left: $border;
+      }
+
+      .category-text{
+        max-width: 130rpx;
+      }
+    }
+  }
+</style>

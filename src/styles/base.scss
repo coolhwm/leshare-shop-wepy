@@ -1,0 +1,159 @@
+@import "variable";
+
+page{
+  height: 100%;
+  background-color: $color-bg-body;
+}
+
+//******外边距原子样式******/
+.mr10{margin-right: 10rpx}
+.mr20{margin-right: 20rpx}
+.ml10{margin-left: 10rpx}
+.ml20{margin-left: 20rpx}
+.mt10{margin-top: 10rpx}
+.mt20{margin-top: 20rpx}
+.mb10{margin-bottom: 10rpx}
+.mb20{margin-bottom: 20rpx}
+
+
+//******通用样式******/
+text, view {
+  font-family: MicroSoft Yahei;
+  font-size: $text-nm;
+  color: $color-normal;
+}
+
+.form {
+  text,view{
+    font-family: 宋体;
+    font-size: $text-form;
+  }
+}
+
+button[type="primary"]{
+  background-color: $color-primary;
+}
+.button-hover[type="primary"]{
+  background-color: $color-primary-darken;
+}
+
+text.white{color:#FFF}
+text.muted,input.muted,view.muted{color: $color-muted}
+text.weak{color: $color-weak}
+text.primary{color: $color-primary}
+text.major{color: $color-major}
+text.danger{color: $color-danger}
+
+text.xl{font-size: $text-xl}
+text.xxl{font-size: $text-xxl}
+text.lg{font-size: $text-lg}
+text.sm{font-size: $text-sm}
+text.xs{font-size: $text-xs}
+
+text.inline{
+  text-overflow: ellipsis;
+  word-break:keep-all;
+  white-space:nowrap;
+  overflow:hidden;
+}
+
+view.bg-white{background-color: white}
+
+//******布局样式******/
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.row-center{
+  @extend .row;
+  justify-content: center;
+}
+.row-between {
+  @extend .row;
+  justify-content: space-between;
+}
+.row-around {
+  @extend .row;
+  justify-content: space-around;
+}
+.row-end {
+  @extend .row;
+  justify-content: flex-end;
+}
+.column {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.column-center{
+  @extend .column;
+  align-items: center;
+}
+.column-around{
+  @extend .column;
+  align-items: center;
+  justify-content: space-around;
+}
+.column-between{
+  @extend .column;
+  align-items: center;
+  justify-content: space-between;
+}
+.container{
+  @extend  .column;
+}
+.fixed-bottom{
+  position: fixed;
+  bottom: 0;
+}
+
+
+//******图片样式******/
+@mixin icon-image($size){
+  height: $size;
+  width: $size;
+  vertical-align: middle;
+}
+.icon {
+  @include icon-image(20px);
+}
+.icon-lg {
+  @include icon-image(30px);
+}
+.icon-xl {
+  @include icon-image(50px);
+}
+.icon-xxl{
+  @include icon-image(60px);
+}
+.icon-round {
+  border-radius: 50%;
+}
+
+//******间隔******/
+.hr{
+  width: 100%;
+  height: 6rpx;
+}
+.h-gap{
+  width: 100%;
+  height: 10px;
+}
+
+.tab-border{
+  position: fixed;
+  height: 1px;
+  width: 100%;
+  background-color: #E6E8EB;
+  bottom: 0;
+}
+
+//******常用******/
+.panel {
+  background: #fff;
+  border-top: $border;
+  border-bottom: $border;
+  margin-top: 10rpx;
+  overflow: hidden;
+}

@@ -1,0 +1,76 @@
+/*有赞样式文件*/
+@import "variable";
+.zan-btn {
+  color: #333;
+  background-color: #fff;
+  margin-bottom: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 6px;
+  border: 1px solid #e5e5e5;
+  font-size: 16px;
+  line-height: 45px;
+  height: 45px;
+  box-sizing: border-box;
+  text-decoration: none;
+  text-align: center;
+  vertical-align: middle;
+}
+.zan-btn::after {
+  display: none;
+}
+
+.zan-btn--primary {
+  color: $color-primary;
+  background-color: #fff;
+  border-color: $color-primary;
+}
+
+.zan-btn--warn {
+  color: #fff;
+  background-color: $color-warn;
+  border-color: $color-warn;
+}
+
+.zan-btn--danger {
+  color: $color-danger;
+  background-color: #fff;
+  border-color: $color-danger;
+}
+
+.zan-btn--small {
+  display: inline-block;
+  height: 30px;
+  line-height: 29px;
+  font-size: 13px;
+  margin-left: 0px;
+  margin-right: 5px;
+  margin-bottom: 0;
+}
+.zan-btn--mini {
+  display: inline-block;
+  line-height: 21px;
+  height: 22px;
+  font-size: 10px;
+  margin-right: 5px;
+  margin-left: 0px;
+  margin-bottom: 0;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.zan-btn--large {
+  border-radius: 0;
+  margin-bottom: 0;
+  border: none;
+  line-height: 50px;
+  height: 50px;
+}
+
+.zan-btn.zan-btn--disabled {
+  /* 防止样式被 button[disabled] 的规则覆盖，所以使用了important */
+  color: #999 ! important;
+  background: #f8f8f8 ! important;
+  border-color: #e5e5e5 ! important;
+  cursor: not-allowed ! important;
+  opacity: 1 ! important;
+}

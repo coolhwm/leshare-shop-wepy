@@ -1,0 +1,29 @@
+//******字体颜色变量******/
+$color-major: #FF6200;
+$color-primary: #1296DB;
+$color-primary-darken: darken($color-primary, 5%);
+$color-muted: #A3A3A3;
+$color-weak: #626E7A;
+$color-normal: #262626;
+$color-danger: #e33;
+$color-warn: #f85;
+
+//******字体大小变量******/
+$text-xxl: 34rpx;
+$text-xl: 32rpx;
+$text-nm: 28rpx;
+$text-lg: 30rpx;
+$text-sm: 26rpx;
+$text-xs: 24rpx;
+$text-form: 17px;
+
+
+//******边框样式******/
+$color-border: #EDEDED;
+$border: 1px solid $color-border;
+$border-dot: 1px dotted #EFF0F2;
+
+//******背景样式******/
+$color-bg-body: #F5F5F5;
+$color-bg-item: #FAFAFA;
+

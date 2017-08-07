@@ -1,0 +1,23 @@
+<template>
+  <view class="weui-footer {{buttom == 'true' ? 'weui-footer_fixed-bottom' : 'mt20'}} ">
+    <view class="weui-footer__links">
+      <navigator url="/pages/shop/contact" class="weui-footer__link">乐享启创提供技术支持</navigator>
+    </view>
+    <view class="weui-footer__text">Copyright © 2017 leshare.shop</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Copyright extends wepy.component {
+    props ={
+      buttom: {
+        default: 'false'
+      }
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

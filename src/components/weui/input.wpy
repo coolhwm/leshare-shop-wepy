@@ -1,0 +1,53 @@
+<template>
+  <view class="weui-cell weui-cell_input">
+    <view class="weui-cell__hd" >
+      <view class="weui-label">{{title}}</view>
+    </view>
+    <view class="weui-cell__bd">
+      <input class="weui-input" id="{{fieldName}}" @input="input" value="{{input[fieldName]}}" placeholder="{{placeholder}}"/>
+    </view>
+    <view class="weui-cell__ft">
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class InputText extends wepy.component {
+    props = {
+      input: {
+        twoWay: true
+      },
+      title: {},
+      type: {
+        default: 'text'
+      },
+      fieldName: {},
+      placeholder: {}
+    };
+    onLoad() {
+      if (this.placeholder == null && this.title != null) {
+        this.placeholder = `请输入${this.title}`;
+      }
+      if (this.fieldName == null) {
+        const name = this.$name;
+        const index = name.indexOf('_');
+        if (index != -1) {
+          this.fieldName = name.substring(index + 1, name.length);
+        }
+      }
+    }
+    methods = {
+      input(e) {
+        const value = e.detail.value;
+        this.input[this.fieldName] = value;
+        this.$emit('input', value);
+      }
+    };
+    events = {};
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

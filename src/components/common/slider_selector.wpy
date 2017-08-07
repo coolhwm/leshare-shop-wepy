@@ -1,0 +1,80 @@
+<template>
+  <!-- 分类 -->
+  <SliderPanel :display.sync="display" btn='false' :minHeight.sync="minHeight">
+    <view slot="title">{{title}}</view>
+    <view slot="content" class="weui-cells-form">
+      <radio-group @change="change" @tap="tap">
+
+        <label class="weui-cell weui-check__label" wx:if="{{displatyDefault == 'true' }}">
+          <radio class="weui-check" value="{{''}}" checked="{{selectedId == null || selectedId == ''}}"/>
+          <view class="weui-cell__bd">全部</view>
+          <view class="weui-cell__ft weui-cell__ft_in-radio" wx:if="{{selectedId == null || selectedId == ''}}">
+            <icon class="weui-icon-radio" type="success_no_circle" size="16"></icon>
+          </view>
+        </label>
+
+        <label class="weui-cell weui-check__label" wx:for="{{list}}" wx:key="value">
+          <radio class="weui-check" value="{{item.id}}" checked="{{selectedId == item.id}}"/>
+          <view class="weui-cell__bd">{{item.name}}</view>
+          <view class="weui-cell__ft weui-cell__ft_in-radio" wx:if="{{selectedId == item.id}}">
+            <icon class="weui-icon-radio" type="success_no_circle" size="16"></icon>
+          </view>
+        </label>
+      </radio-group>
+
+      <!-- 可扩展功能区域 -->
+      <slot name="extend"></slot>
+    </view>
+  </SliderPanel>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import SliderPanel from './slider_panel';
+  export default class SliderSelector extends wepy.component {
+    props = {
+      display: {
+        default: 'true',
+        twoWay: true
+      },
+      minHeight: {
+        default: '300rpx'
+      },
+      title: {
+        type: String,
+        default: '请选择'
+      },
+      displatyDefault: {
+        type: String,
+        default: 'false'
+      },
+      list: {}
+    };
+    data = {
+      selectedId: '',
+      selectedName: ''
+    };
+    methods = {
+      change(e) {
+        const selectedId = e.detail.value;
+        const selectedName = selectedId == '' ? '全部' : this.list.find(item => item.id == selectedId).name;
+        this.selectedId = selectedId;
+        this.selectedName = selectedName;
+        this.$emit('change', {selectedId, selectedName})
+      },
+      tap() {
+        this.display = 'false';
+      }
+    };
+    components = {
+      SliderPanel: SliderPanel
+    }
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

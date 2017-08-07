@@ -1,0 +1,69 @@
+<style lang="scss">
+  @import "./styles/base";
+  @import "./styles/zent";
+  @import "./styles/weui-extend";
+</style>
+
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+
+export default class extends wepy.app {
+  constructor () {
+    super();
+    // 注册中间件
+    this.use('requestfix');
+    this.use('promisify');
+    this.intercept('request', {
+      config (p) {
+        p.header = this.createAuthHeader();
+        return p;
+      }
+    });
+    this.intercept('uploadFile', {
+      config (p) {
+        p.header = this.createAuthHeader();
+        return p;
+      },
+      success (p) {
+        return p.data;
+      }
+    });
+  }
+  /**
+   * 构造权限头部
+   */
+  createAuthHeader () {
+    const loginCode = wepy.$instance.globalData.auth.login_code;
+    const header = {};
+    if (loginCode) {
+      header['login_code'] = loginCode;
+    }
+    return header;
+  }
+  async onLaunch() {
+    await this.syncStoreConfig('login_code');
+  }
+  async syncStoreConfig(key) {
+    const result = await wepy.getStorage({key: key});
+    const value = result.data;
+    if (value !== '') {
+      wepy.$instance.globalData.auth[key] = value;
+    }
+  }
+  config = {
+    pages: [
+      'pages/home/home'
+    ],
+    window: {
+      backgroundTextStyle: 'dark',
+      backgroundColor: '#F5F5F5',
+      navigationBarBackgroundColor: '#1296db'
+    }
+  };
+
+  globalData = {
+    userInfo: null
+  }
+}
+</script>

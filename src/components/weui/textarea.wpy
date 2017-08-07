@@ -1,0 +1,41 @@
+<template>
+  <view class="weui-cell">
+    <view class="weui-cell__bd">
+      <textarea class="weui-textarea" id="{{fieldName}}" value="{{input[fieldName]}}" placeholder="{{placeholder}}" style="height: 4.3em" maxlength="{{maxlength}}" @input="input" />
+      <view class="weui-textarea-counter">{{lenght[fieldName] ? lenght[fieldName] : 0}}/{{maxlength}}</view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Textarea extends wepy.component {
+    data = {
+      lenght: {}
+    }
+    props = {
+      input: {
+        twoWay: true
+      },
+      fieldName: {},
+      placeholder: {
+        default: '请输入'
+      },
+      maxlength: {
+        default: 50
+      }
+    }
+    methods = {
+      input(e) {
+        const fieldName = e.currentTarget.id;
+        const fieldValue = e.detail.value;
+        this.lenght[fieldName] = fieldValue.length;
+        this.input[fieldName] = fieldValue;
+      }
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

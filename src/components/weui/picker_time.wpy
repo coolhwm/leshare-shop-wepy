@@ -1,0 +1,45 @@
+<template>
+  <view class="weui-cell weui-cell_input">
+    <view class="weui-cell__hd">
+      <view class="weui-label">{{title}}</view>
+    </view>
+    <view class="weui-cell__bd">
+      <picker mode="time" value="{{input[fieldName]}}"  @change="input">
+        <view class="weui-input">{{input[fieldName]}}</view>
+      </picker>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class PickerTime extends wepy.component {
+    props = {
+      input: {
+        twoWay: true
+      },
+      fieldName: {},
+      title: {}
+    };
+    data = {};
+    methods = {
+      input(e) {
+        this.input[this.fieldName] = e.detail.value;
+      }
+    };
+    events = {};
+    onLoad(e) {
+      if (this.fieldName == null) {
+        const name = this.$name;
+        const index = name.indexOf('_');
+        if (index != -1) {
+          this.fieldName = name.substring(index + 1, name.length);
+        }
+      }
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

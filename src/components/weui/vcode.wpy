@@ -1,0 +1,54 @@
+<template>
+  <view class="weui-vcode-btn {{isWaiting ? 'muted' : ''}}" @tap="onCodeTap">{{btnText}}</view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class VCode extends wepy.component {
+    props = {
+      tap: {}
+    }
+    data = {
+      display: false,
+      message: '',
+      waitSecond: {},
+      timeoutId: null
+    };
+    computed = {
+      isWaiting() {
+        return this.waitSecond > 0;
+      },
+      btnText() {
+        return this.isWaiting > 0 ? `请等待${this.waitSecond}秒` : '获取验证码';
+      }
+    };
+    methods = {
+      cd(second) {
+        if (this.isWaiting) {
+          return;
+        }
+        this.waitSecond = second;
+        this.interval = setInterval(() => {
+          this.waitSecond--;
+          if (this.waitSecond === 0) {
+            clearInterval(this.interval);
+          }
+          this.$apply();
+        }, 1000);
+      },
+      /**
+       * 传递点击事件
+       */
+      onCodeTap() {
+        if (this.isWaiting) {
+          return;
+        }
+        this.$emit('tap');
+      }
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>
