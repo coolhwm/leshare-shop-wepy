@@ -1,0 +1,25 @@
+<template>
+</template>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  // import Tips from '../../utils/Tips';
+
+  export default class ShopIndex extends wepy.page {
+    def = {}
+    data = {...this.def};
+    onLoad (options) {
+    };
+    events = {};
+    components = {};
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '点外卖'
+    };
+  }
+</script>

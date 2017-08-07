@@ -33,6 +33,16 @@ text, view {
 button[type="primary"]{
   background-color: $color-primary;
 }
+button.pain-btn[open-type="share"]{
+  background-color: transparent;
+  line-height: normal;
+  padding: 0;
+  margin: 0;
+}
+button.pain-btn[open-type="share"]::after {
+  border:none;
+}
+
 .button-hover[type="primary"]{
   background-color: $color-primary-darken;
 }
