@@ -1,25 +1,124 @@
 <template>
-</template>
+  <view class="container column" wx:if="{{init}}">
 
-<style lang="scss">
-  @import "../../styles/variable";
-</style>
+    <!-- 店铺信息区域 -->
+    <ShopHeader :shop.sync="shop" />
+
+    <!--功能区域-->
+    <ShopNav />
+
+    <view class="main-box row">
+      <!--分类侧边栏-->
+      <SideTab :tab.sync="categories" />
+
+      <!--右侧滚动-->
+      <scroll-view scroll-y class="goods-box">
+        <!--卡券区域-->
+        <scroll-view scroll-x	 class="coupon-box row">
+          <repeat for="{{coupons}}" key="index" index="index" item="item">
+            <CouponItem :coupon.sync="item" />
+          </repeat>
+        </scroll-view>
+
+        <!--分类名称-->
+        <view class="goods-title row">
+          <text class="weak">推荐</text>
+        </view>
+
+        <!--商品列表-->
+        <view class="goods-list">
+          <repeat for="{{goods}}" key="index" index="index" item="item">
+            <GoodsItem :goods.sync="item" />
+          </repeat>
+        </view>
+
+      </scroll-view>
+    </view>
+
+  </view>
+</template>
 
 <script>
   import wepy from 'wepy';
+  import shop from '../../api/shop';
+  import goods from '../../api/goods';
+  import coupon from '../../api/coupon';
   import base from '../../mixins/base';
+  import SideTab from '../../components/common/side_tab';
+  import ShopHeader from '../../components/shop/header';
+  import ShopNav from '../../components/shop/nav';
+  import CouponItem from '../../components/coupons/simple_item';
+  import GoodsItem from '../../components/goods/simple_item';
   // import Tips from '../../utils/Tips';
 
   export default class ShopIndex extends wepy.page {
-    def = {}
+    def = {
+      init: true,
+      shop: {
+        notices: []
+      },
+      notices: [],
+      categories: {},
+      coupons: [],
+      goods: []
+    }
     data = {...this.def};
-    onLoad (options) {
+    async onLoad () {
+      this.shop = await shop.info();
+      this.shop.notices = await shop.notices();
+      this.categories = await goods.categories();
+      const {pickList} = await coupon.shelf();
+      this.coupons = pickList;
+      const {list} = await goods.page(true).next();
+      this.goods = list;
+      this.loaded();
     };
     events = {};
-    components = {};
+    components = {
+      ShopHeader: ShopHeader,
+      SideTab: SideTab,
+      CouponItem: CouponItem,
+      GoodsItem: GoodsItem,
+      ShopNav: ShopNav
+    };
     mixins = [base];
     config = {
       navigationBarTitleText: '点外卖'
     };
   }
 </script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .main-box{
+    width: 100%;
+    position: absolute;
+    top: 145px;
+    bottom: 0;
+
+    .goods-box{
+      flex: 1;
+      height: 100%;
+      .goods-title{
+        height: 30px;
+        padding-left: 20rpx;
+        align-items: center;
+        border-bottom: $border;
+      }
+      .goods-list{
+        background-color: #FFF;
+        padding-left: 10px;
+      }
+    }
+    .coupon-box{
+      padding: 10px 0 10px 20rpx;
+      height: 60px;
+      width: 550rpx;
+      border-bottom: $border;
+      white-space: nowrap;
+    }
+  }
+
+
+</style>

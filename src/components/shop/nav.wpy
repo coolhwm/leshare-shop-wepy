@@ -1,0 +1,48 @@
+<template>
+  <view class="nav-box row-between">
+    <view class="header row">
+      <view class="label">外卖</view>
+      <text>点外卖</text>
+    </view>
+    <view class="footer row">
+      <text class="muted">我的</text>
+      <image class="icon" src="/images/icons/more-gray.png" />
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class ShopNav extends wepy.component {
+    props = {
+      order: {}
+    };
+    data = {};
+    methods = {};
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .nav-box {
+    height: 27px;
+    position: relative;
+    background-color: #FFFFFF;
+    padding:8px 13px;
+    border-top: $border;
+    border-bottom: $border;
+
+    .label{
+      background-color: $color-primary;
+      border-radius: 5px;
+      color: #FFF;
+      font-size: $text-xs;
+      padding: 3px 8px;
+      margin-right: 10px;
+    }
+  }
+
+</style>

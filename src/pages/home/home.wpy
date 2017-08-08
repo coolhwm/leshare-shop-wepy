@@ -14,10 +14,10 @@
     <!--操作向导区域-->
     <view class="nav-box column-cernter">
       <view class="row-between">
-        <view class="shop-btn column-center">
+        <navigator class="shop-btn column-center" url="/pages/shop/index">
           <image class="icon-xl" src="/images/home/food.png"></image>
           <text class="weak">点外卖</text>
-        </view>
+        </navigator>
 
         <view class="shop-btn column-center" @tap="phone">
           <image class="icon-xl" src="/images/home/phone.png"></image>

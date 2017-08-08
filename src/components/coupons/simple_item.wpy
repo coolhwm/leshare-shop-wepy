@@ -1,0 +1,52 @@
+<template>
+  <view class="coupon-item">
+    <view class="coupon-main column">
+      <view>
+        <text class="xs">￥</text> <text class="xxl">{{coupon.price}}</text>
+      </view>
+      <text class="xs">满{{coupon.limitPrice}}元使用</text>
+    </view>
+    <image class="coupon-hr"  src="/images/icons/coupon-hr.png"/>
+    <view class="coupon-pick column-center">
+      <text>领取</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class CouponItem extends wepy.component {
+    props = {
+      coupon: {}
+    };
+    data = {};
+    methods = {};
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .coupon-item{
+    border-radius: 5px;
+    margin-right: 5px;
+    display: inline-flex;
+    height: 60px;
+    background-color: $color-primary;
+    text { color: #FFF}
+    .coupon-main{
+      min-width: 120px;
+      padding-left: 10px;
+    }
+    .coupon-pick{
+      width: 50px;
+    }
+    .coupon-hr{
+      height: 60px;
+      width: 6px;
+    }
+  }
+</style>

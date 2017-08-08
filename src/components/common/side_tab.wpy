@@ -1,0 +1,65 @@
+<template>
+  <scroll-view class="side-tab">
+    <block wx:for="{{tab.list}}" wx:key="id">
+      <view class="tab-item {{item.id == tab.selectedId ? 'tab-item-seleted' : ''}}" @tap="switchTab({{item.id}})" >
+        <text>{{item.title}}</text>
+      </view>
+    </block>
+  </scroll-view>
+</template>
+
+
+<script>
+  import wepy from 'wepy'
+  export default class SideTab extends wepy.component {
+    props = {
+      tab: {
+        twoWay: true
+      }
+    };
+    data = {};
+    methods = {
+      switchTab(selectedId) {
+        this.tab.selectedId = selectedId;
+        this.$emit('change', selectedId);
+      }
+    };
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .side-tab{
+    border-right: $border;
+    width: 180rpx;
+    min-width: 180rpx;
+    height: 100%;
+
+    .tab-item {
+      height: 55px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background-color: #F8F8F8;
+      border-left: 4px solid #F8F8F8;
+      border-bottom: $border;
+      padding-left: 10px;
+      text{ color: $color-weak}
+    }
+
+    .tab-item-seleted{
+      border-left: 4px solid $color-primary;
+      background-color: #FFF;
+
+      text{
+        color: $color-normal;
+        font-weight: bold;
+      }
+    }
+  }
+
+</style>

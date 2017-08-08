@@ -20,4 +20,13 @@ export default class shop extends base {
     data.timeText = `周一至周日 ${data.beginTime}至${data.endTime}`;
     return data;
   }
+
+  /**
+   * 获取店铺公告（第一个）
+   */
+  static async notices() {
+    const url = `${this.baseUrl}/notices`;
+    const data = await this.get(url);
+    return data == null || data.length < 1 ? [{ content: '暂无公告' }] : data;
+  }
 }

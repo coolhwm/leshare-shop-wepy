@@ -1,0 +1,44 @@
+<template>
+  <view class="goods-item row">
+    <image class="icon-xxl" src="{{goods.imageUrl}}"></image>
+    <view class="goods-main column">
+      <view>
+        <text class="goods-name">{{goods.name}}</text>
+      </view>
+      <view class="mt20">
+        <text class="goods-price">￥{{goods.priceLable}}</text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class GoodsItem extends wepy.component {
+    props = {
+      goods: {}
+    };
+    data = {};
+    methods = {};
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .goods-item{
+    padding: 10px 10px 10px 0;
+    border-bottom: $border;
+    .goods-main{
+      margin-left: 10px;
+      justify-content: flex-start;
+      height: 60px;
+      .goods-price{
+        color: $color-major;
+        font-size: $text-lg;
+      }
+    }
+  }
+</style>

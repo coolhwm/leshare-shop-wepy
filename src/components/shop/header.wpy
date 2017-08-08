@@ -1,0 +1,53 @@
+<template>
+  <!-- 店铺信息区域 -->
+  <view class="shop-box row">
+    <image class="shop-avatar" src="{{shop.avatar}}/medium" wx:if="{{shop.avatar}}" />
+    <view class="shop-content column">
+      <view class="column">
+        <text class="xl">{{shop.name}}</text>
+        <text class="xxs">￥10起送 | 配送费￥5</text>
+      </view>
+      <text class="mt20 xs">公告：{{shop.notices[0].content}}</text>
+    </view>
+    <image class="icon" src="/images/icons/more-white.png" />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class ShopHeader extends wepy.component {
+    props = {
+      shop: {}
+    };
+    data = {};
+    methods = {};
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  // 店铺信息
+  .shop-box{
+    position: relative;
+    padding: 15px;
+    text{color: #FFF}
+    background-color: $color-primary;
+
+    .shop-avatar{
+      height: 70px;
+      width: 70px;
+      border-radius: 3px;
+    }
+
+    .shop-content{
+      flex: 1;
+      height: 70px;
+      justify-content: flex-start;
+      margin-left: 15px;
+    }
+  }
+</style>
