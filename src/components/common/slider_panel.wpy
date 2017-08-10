@@ -3,9 +3,9 @@
   <view class="slider-panel-cover" wx:if="{{display == 'true'}}" @tap="close"></view>
 
   <!--滑动面板-->
-  <view class="slider-panel-box {{display == 'true' ? 'slider-panel-show' : '' }} " style="min-height: {{minHeight}}">
+  <view class="slider-panel-box {{display == 'true' ? 'slider-panel-show' : '' }} " style="min-height: {{minHeight}}; bottom: {{paddingButtom}}">
     <!--面板标题-->
-    <view class="header-box">
+    <view class="header-box" wx:if="{{header == 'true'}}">
       <!--标题槽位-->
       <view class="title-box">
         <slot name="title"></slot>
@@ -21,6 +21,7 @@
     <scroll-view scroll-y="true" class="content-box" style="background-color:{{backgroundColor}};">
       <slot  name="content"></slot>
     </scroll-view>
+
 
     <!-- 按钮区域 -->
     <view class="btn-box row-center" wx:if="{{btn == 'true'}}">
@@ -44,8 +45,14 @@
       minHeight: {
         default: 0
       },
+      header: {
+        default: 'true'
+      },
       btn: {
         default: 'false'
+      },
+      paddingButtom: {
+        default: '0'
       }
     };
     data = {
@@ -57,6 +64,7 @@
     };
     events = {};
     onLoad() {
+
     }
   }
 </script>
@@ -70,16 +78,16 @@
     top: 0;
     background-color: black;
     -webkit-filter:opacity(.6);
-    z-index: 100000;
+    z-index: 10000;
   }
 
   .slider-panel-box{
     position: fixed;
     display: flex;
     flex-direction: column;
-    bottom: 0;
+    /*bottom:50px;*/
     width: 100%;
-    z-index: 100000;
+    z-index: 10000;
     background-color:#F8F8F8;
     transform: translateY(150%);
     transition: all 0.4s ease;

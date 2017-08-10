@@ -7,14 +7,15 @@
     <!--功能区域-->
     <ShopNav />
 
+    <!--主内容区域-->
     <view class="main-box row">
       <!--分类侧边栏-->
-      <SideTab :tab.sync="categories" />
+      <SideTab :tab.sync="categories" @change.user="switchTab" />
 
       <!--右侧滚动-->
-      <scroll-view scroll-y class="goods-box">
+      <scroll-view scroll-y class="goods-box" bindscrolltolower="onReachBottom">
         <!--卡券区域-->
-        <scroll-view scroll-x	 class="coupon-box row">
+        <scroll-view scroll-x	 class="coupon-box row" wx:if="{{categories.selectedId==-1}}">
           <repeat for="{{coupons}}" key="index" index="index" item="item">
             <CouponItem :coupon.sync="item" />
           </repeat>
@@ -22,18 +23,22 @@
 
         <!--分类名称-->
         <view class="goods-title row">
-          <text class="weak">推荐</text>
+          <text class="weak">{{selectedCategoryName}}</text>
         </view>
 
         <!--商品列表-->
         <view class="goods-list">
-          <repeat for="{{goods}}" key="index" index="index" item="item">
-            <GoodsItem :goods.sync="item" />
+          <repeat for="{{page.list}}" key="index" index="index" item="item">
+            <GoodsItem :goods.sync="item" @plus.user="plus" @minus.user="minus" />
           </repeat>
         </view>
 
+        <Loadmore :page.sync="page"/>
       </scroll-view>
     </view>
+
+    <!-- 购物车 -->
+    <ShopCart :carts.sync="carts" @plus.user="plus" @minus.user="minus" />
 
   </view>
 </template>
@@ -43,45 +48,151 @@
   import shop from '../../api/shop';
   import goods from '../../api/goods';
   import coupon from '../../api/coupon';
+  import cart from '../../api/cart';
   import base from '../../mixins/base';
+  import pagination from '../../mixins/pagination.wpy';
   import SideTab from '../../components/common/side_tab';
   import ShopHeader from '../../components/shop/header';
   import ShopNav from '../../components/shop/nav';
   import CouponItem from '../../components/coupons/simple_item';
   import GoodsItem from '../../components/goods/simple_item';
+  import Loadmore from '../../components/weui/loadmore';
+  import ShopCart from '../../components/shop/cart';
   // import Tips from '../../utils/Tips';
 
   export default class ShopIndex extends wepy.page {
     def = {
-      init: true,
+      init: false,
+      page: {
+        list: [
+        ]
+      },
       shop: {
         notices: []
       },
       notices: [],
       categories: {},
       coupons: [],
-      goods: []
+      carts: []
     }
     data = {...this.def};
     async onLoad () {
+      // 加载店铺信息
       this.shop = await shop.info();
       this.shop.notices = await shop.notices();
+      // 加载优惠券
+      const {pickList} = await coupon.shelf()
+      // 加载商品分类
       this.categories = await goods.categories();
-      const {pickList} = await coupon.shelf();
       this.coupons = pickList;
-      const {list} = await goods.page(true).next();
-      this.goods = list;
+      // 加载商品
+      this.page = goods.page(true);
+      await this.next();
+      // 加载购物车
+      this.carts = await cart.list();
+
+      // 计算目前商品的数量
+      this.setGoodsNum();
       this.loaded();
     };
-    events = {};
+    // 分页加载完毕
+    onPageLoad() {
+      this.setGoodsNum();
+    }
+    // 分页参数
+    params() {
+      return {category_id: this.categories.selectedId};
+    }
+    // 设置商品列表的数量
+    setGoodsNum() {
+      this.page.list.forEach(goods => {
+        const cart = this.carts.find(cart => cart.goodsId == goods.id);
+        goods.num = cart ? cart.goodsNum : 0;
+      });
+    }
+    methods = {
+      switchTab() {
+        const selectedId = this.categories.selectedId;
+        this.page = goods.page(selectedId == -1);
+        this.reload();
+      },
+      // 增加购物车元素
+      async plus({goodsId, goodsSku}) {
+        // 商品里列表
+        const goods = this.findGoods(goodsId);
+        if (goods) {
+          if (goods.goodsSkuInfo && goodsSku == null) {
+            this.skuSelector(goodsId);
+            return;
+          }
+          goods.num += 1;
+        }
+        // 购物车
+        const target = this.findCart(goodsId, goodsSku);
+        if (target) {
+          target.goodsNum += 1;
+          await cart.update(target.cartId, target.goodsNum);
+        } else {
+          this.carts.push({
+            goodsId: goods.id,
+            goodsSku: goodsSku,
+            goodsPrice: goods.sellPrice,
+            goodsName: goods.name,
+            goodsNum: 1
+          });
+          cart.add(goodsId, 1, goodsSku);
+        }
+        this.loaded();
+      },
+      // 减少购物车元素
+      async minus({goodsId, goodsSku}) {
+        const goods = this.findGoods(goodsId);
+        if (goods) {
+          goods.num -= 1;
+        }
+        // 购物车+
+        const target = this.findCart(goodsId, goodsSku);
+        if (target.goodsNum == 1) {
+          this.removeCart(target.cartId);
+          cart.remove(target.cartId);
+        } else {
+          target.goodsNum -= 1;
+          await cart.update(target.cartId, target.goodsNum);
+        }
+        this.loaded();
+      }
+    }
+    skuSelector(goodsId) {
+      console.info('select sku: ' + goodsId);
+    }
+    findGoods(goodsId) {
+      return this.page.list.find(item => item.id == goodsId);
+    }
+    findCart(goodsId, goodsSku) {
+      return this.carts.find(item => item.goodsId == goodsId && (goodsSku == null || item.goodsSku == goodsSku));
+    }
+    removeCart(cartId) {
+      const index = this.carts.findIndex(item => item.cartId == cartId);
+      this.carts.splice(index, 1);
+    }
+    computed = {
+      selectedCategoryName() {
+        if (this.init) {
+          const selectedId = this.categories.selectedId;
+          return this.categories.list.find(item => item.id == selectedId).title;
+        }
+      }
+    }
     components = {
       ShopHeader: ShopHeader,
       SideTab: SideTab,
       CouponItem: CouponItem,
       GoodsItem: GoodsItem,
-      ShopNav: ShopNav
+      ShopNav: ShopNav,
+      Loadmore: Loadmore,
+      ShopCart: ShopCart
     };
-    mixins = [base];
+    mixins = [base, pagination];
     config = {
       navigationBarTitleText: '点外卖'
     };
@@ -95,7 +206,7 @@
     width: 100%;
     position: absolute;
     top: 145px;
-    bottom: 0;
+    bottom: 55px;
 
     .goods-box{
       flex: 1;
@@ -119,6 +230,5 @@
       white-space: nowrap;
     }
   }
-
 
 </style>

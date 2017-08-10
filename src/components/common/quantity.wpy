@@ -1,0 +1,48 @@
+<template>
+  <view class="quantity row">
+    <block wx:if="{{quantity && quantity.num != 0}}">
+      <image class="minus" src="/images/icons/minus.png" @tap="minus" />
+      <view class="number">
+        <text>{{quantity.num}}</text>
+      </view>
+    </block>
+
+    <image class="plus" src="/images/icons/plus.png" @tap="plus" />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Quantity extends wepy.component {
+    props = {
+      quantity: {}
+    };
+    methods = {
+      plus() {
+        this.quantity.num += 1;
+      },
+      minus() {
+        this.quantity.num -= 1;
+      }
+    };
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .quantity{
+    image{
+      height: 45rpx;
+      width: 45rpx;
+    }
+    .number{
+      font-size: $text-sm;
+      min-width: 30px;
+      text-align: center;
+    }
+  }
+</style>

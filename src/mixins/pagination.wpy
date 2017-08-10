@@ -31,6 +31,9 @@
         await this.page.next(param);
         this.isPageReachBottom = this.page.reachBottom;
         this.isPageEmpty = this.page.list.length == 0;
+        if (this.onPageLoad) {
+          this.onPageLoad();
+        }
       } finally {
         this.isPageLoading = false;
         this.init = true;

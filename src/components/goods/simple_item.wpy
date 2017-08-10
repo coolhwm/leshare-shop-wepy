@@ -2,24 +2,53 @@
   <view class="goods-item row">
     <image class="icon-xxl" src="{{goods.imageUrl}}"></image>
     <view class="goods-main column">
-      <view>
-        <text class="goods-name">{{goods.name}}</text>
+      <view class="row">
+        <text class="goods-name inline">{{goods.name}}</text>
+        <view class="goods-sku-badge" wx:if="{{goods.goodsSkuInfo}}">多规格</view>
       </view>
-      <view class="mt20">
+      <view class="mt20 row-between">
         <text class="goods-price">￥{{goods.priceLable}}</text>
+
+        <!--数量选择器-->
+        <view class="quantity row">
+          <block wx:if="{{goods.num != 0}}">
+            <image class="minus" src="/images/icons/minus.png" @tap="minus" />
+            <view class="number">
+              <text>{{goods.num}}</text>
+            </view>
+          </block>
+
+          <image class="plus" src="/images/icons/plus.png" @tap="plus" />
+        </view>
       </view>
     </view>
   </view>
 </template>
 
 <script>
-  import wepy from 'wepy'
+  import wepy from 'wepy';
   export default class GoodsItem extends wepy.component {
     props = {
-      goods: {}
+      goods: {
+      }
     };
-    data = {};
-    methods = {};
+    components = {
+    }
+    methods = {
+      plus() {
+        this.updateNum('plus');
+      },
+      minus() {
+        this.updateNum('minus');
+      }
+    };
+    updateNum(event) {
+      const param = {
+        goodsId: this.goods.id,
+        sku: this.goods.sku
+      }
+      this.$emit(event, param);
+    }
     events = {};
     onLoad() {
     }
@@ -29,16 +58,41 @@
 <style lang="scss">
   @import "../../styles/variable";
   .goods-item{
-    padding: 10px 10px 10px 0;
+    padding: 10px 15px 10px 0;
     border-bottom: $border;
     .goods-main{
       margin-left: 10px;
+      flex: 1;
       justify-content: flex-start;
       height: 60px;
       .goods-price{
         color: $color-major;
         font-size: $text-lg;
       }
+      .goods-name{
+        max-width: 300rpx;
+      }
+      .goods-sku-badge{
+        background-color: $color-primary;
+        color: #FFF;
+        border-radius: 5px;
+        padding: 2px 5px;
+        font-size: $text-xxs;
+        width: 70rpx;
+      }
     }
   }
+
+  .quantity{
+    image{
+      height: 45rpx;
+      width: 45rpx;
+    }
+    .number{
+      font-size: $text-sm;
+      min-width: 30px;
+      text-align: center;
+    }
+  }
+
 </style>

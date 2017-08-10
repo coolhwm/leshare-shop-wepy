@@ -184,9 +184,17 @@ export default class goods extends base {
     }
 
     // 处理图片
-    this._processGoodsPreview(item)
-    this._processGoodsPriceRange(item)
-    this._processGoodsPriceLabel(item)
+    this._processGoodsPreview(item);
+    this._processGoodsPriceRange(item);
+    this._processGoodsPriceLabel(item);
+    this._processGoodsQuantity(item);
+  }
+
+  /**
+   * 处理数量（已购买）
+   */
+  static _processGoodsQuantity(item) {
+    item.num = 0;
   }
 
   /**
