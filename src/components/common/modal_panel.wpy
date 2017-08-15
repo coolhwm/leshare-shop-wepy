@@ -1,0 +1,22 @@
+<template>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import CoverPanel from './cover_panel';
+  export default class ModalPanel extends wepy.component {
+    props = {
+      sku: {}
+    };
+    data = {};
+    methods = {};
+    components = {
+      CoverPanel: CoverPanel
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

@@ -3,6 +3,7 @@
     <block wx:for="{{tab.list}}" wx:key="id">
       <view class="tab-item {{item.id == tab.selectedId ? 'tab-item-seleted' : ''}}" @tap="switchTab({{item.id}})" >
         <text>{{item.title}}</text>
+        <view class="weui-badge tab-num" wx:if="{{item.count > 0}}">{{item.count}}</view>
       </view>
     </block>
   </scroll-view>
@@ -40,6 +41,7 @@
     height: 100%;
 
     .tab-item {
+      position: relative;
       height: 55px;
       display: flex;
       flex-direction: column;
@@ -49,12 +51,16 @@
       border-bottom: $border;
       padding-left: 10px;
       text{ color: $color-weak}
+      .tab-num{
+        position: absolute;
+        right: 5px;
+        top: 5px;
+      }
     }
 
     .tab-item-seleted{
       border-left: 4px solid $color-primary;
       background-color: #FFF;
-
       text{
         color: $color-normal;
         font-weight: bold;

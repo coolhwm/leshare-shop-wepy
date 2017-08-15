@@ -40,6 +40,9 @@
     <!-- 购物车 -->
     <ShopCart :carts.sync="carts" @plus.user="plus" @minus.user="minus" />
 
+    <!--SKU选择器-->
+    <SkuSelector :display.sync="skuDisplay" :goods.sync="skuGoods" @select.user="selectSku" />
+
   </view>
 </template>
 
@@ -56,9 +59,9 @@
   import ShopNav from '../../components/shop/nav';
   import CouponItem from '../../components/coupons/simple_item';
   import GoodsItem from '../../components/goods/simple_item';
+  import SkuSelector from '../../components/goods/sku_selector';
   import Loadmore from '../../components/weui/loadmore';
   import ShopCart from '../../components/shop/cart';
-  // import Tips from '../../utils/Tips';
 
   export default class ShopIndex extends wepy.page {
     def = {
@@ -73,7 +76,9 @@
       notices: [],
       categories: {},
       coupons: [],
-      carts: []
+      carts: [],
+      skuDisplay: 'false',
+      skuGoods: {}
     }
     data = {...this.def};
     async onLoad () {
@@ -85,23 +90,32 @@
       // 加载商品分类
       this.categories = await goods.categories();
       this.coupons = pickList;
+      // 加载购物车
+      this.carts = await cart.list();
       // 加载商品
       this.page = goods.page(true);
       await this.next();
-      // 加载购物车
-      this.carts = await cart.list();
-
-      // 计算目前商品的数量
-      this.setGoodsNum();
       this.loaded();
     };
     // 分页加载完毕
     onPageLoad() {
       this.setGoodsNum();
+      this.setCategoryNum();
     }
     // 分页参数
     params() {
       return {category_id: this.categories.selectedId};
+    }
+    // 设置商品分类的数量
+    setCategoryNum() {
+      this.categories.list.forEach(item => {
+        item.count = 0;
+        this.carts.forEach(cart => {
+          if (item.id == cart.shopCategory.id) {
+            item.count += cart.goodsNum;
+          }
+        });
+      });
     }
     // 设置商品列表的数量
     setGoodsNum() {
@@ -116,13 +130,19 @@
         this.page = goods.page(selectedId == -1);
         this.reload();
       },
-      // 增加购物车元素
+      async selectSku(sku) {
+        const plus = this.methods.plus.bind(this);
+        plus(sku);
+      },
+      /**
+       * 增加商品
+       */
       async plus({goodsId, goodsSku}) {
         // 商品里列表
         const goods = this.findGoods(goodsId);
         if (goods) {
           if (goods.goodsSkuInfo && goodsSku == null) {
-            this.skuSelector(goodsId);
+            await this.skuSelector(goodsId);
             return;
           }
           goods.num += 1;
@@ -133,18 +153,16 @@
           target.goodsNum += 1;
           await cart.update(target.cartId, target.goodsNum);
         } else {
-          this.carts.push({
-            goodsId: goods.id,
-            goodsSku: goodsSku,
-            goodsPrice: goods.sellPrice,
-            goodsName: goods.name,
-            goodsNum: 1
-          });
-          cart.add(goodsId, 1, goodsSku);
+          const data = await cart.add(goodsId, 1, goodsSku);
+          data.shopCategory = { id: goods.innerCid };
+          this.carts.push(data);
         }
+        this.setCategoryNum();
         this.loaded();
       },
-      // 减少购物车元素
+      /**
+       * 减少商品
+       */
       async minus({goodsId, goodsSku}) {
         const goods = this.findGoods(goodsId);
         if (goods) {
@@ -159,11 +177,14 @@
           target.goodsNum -= 1;
           await cart.update(target.cartId, target.goodsNum);
         }
+        this.setCategoryNum();
         this.loaded();
       }
     }
-    skuSelector(goodsId) {
-      console.info('select sku: ' + goodsId);
+    async skuSelector(goodsId) {
+      this.skuGoods = await goods.getInfo(goodsId);
+      this.skuDisplay = 'true';
+      this.loaded();
     }
     findGoods(goodsId) {
       return this.page.list.find(item => item.id == goodsId);
@@ -190,7 +211,8 @@
       GoodsItem: GoodsItem,
       ShopNav: ShopNav,
       Loadmore: Loadmore,
-      ShopCart: ShopCart
+      ShopCart: ShopCart,
+      SkuSelector: SkuSelector
     };
     mixins = [base, pagination];
     config = {

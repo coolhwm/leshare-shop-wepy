@@ -1,0 +1,131 @@
+<template>
+  <CoverPanel :display.sync="display" zIndex="1000000"/>
+  <!--弹出窗口-->
+  <view class="wrap column-center" wx:if="{{display == 'true'}}">
+    <view class="modal-panel column">
+      <!--标题区域-->
+      <view class="sku-title column-center">
+        <text class="xxl">{{goods.name}}</text>
+        <image class="close icon" src="/images/icons/close.png" @tap="close" />
+      </view>
+
+      <!--规格区域-->
+      <view class="sku-list-box column">
+        <text class="weak sm">规格:</text>
+        <view class="sku-item-box row">
+          <block  wx:for-item="skuValue"  wx:for="{{sku}}">
+            <view class="sku-item label {{selected == skuValue ? 'primary' : ''}}" @tap="select({{skuValue}})">
+              {{skuValue}}
+            </view>
+          </block>
+        </view>
+      </view>
+
+      <!--操作区域-->
+      <view class="sku-btn-box row-between">
+        <text class="major xxl">{{price ? '￥' + price : '请选择'}}</text>
+        <button class="weui-btn mini-btn" type="primary" size="mini" @tap="confirm">选好了</button>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import CoverPanel from '../common/cover_panel';
+  import Sku from '../../utils/Sku';
+  import Tips from '../../utils/Tips';
+  let skuData;
+  export default class SkuSelector extends wepy.component {
+    props = {
+      goods: {},
+      display: {
+        twoWay: true
+      }
+    };
+    data = {
+      selected: null,
+      price: null
+    };
+    methods = {
+      close() {
+        this.display = 'false';
+      },
+      select(skuValue) {
+        skuData.select('规格', skuValue);
+        this.selected = skuValue;
+        this.price = skuData.detail.price.toFixed(2);
+        this.$apply();
+      },
+      confirm() {
+        if (this.selected == null) {
+          Tips.alert('请选择');
+          return;
+        }
+        this.$emit('select', {
+          goodsId: this.goods.id,
+          goodsSku: this.selected
+        });
+        this.display = 'false';
+      }
+    };
+    components = {
+      CoverPanel: CoverPanel
+    };
+    computed = {
+      sku() {
+        if (this.goods.id) {
+          skuData = new Sku(this.goods);
+          return skuData.labels[0].value;
+        }
+      }
+    }
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .wrap{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top:0;
+    left:0;
+    z-index: 1000001;
+    .modal-panel{
+      position: absolute;
+      min-height: 50px;
+      border-radius: 3px;
+      width: 650rpx;
+      background-color: #fFF;
+      z-index: 1000002;
+    }
+  }
+
+  .sku-title{
+    height: 120rpx;
+
+    .close{
+      position: absolute;
+      top: 20rpx;
+      right: 20rpx;
+    }
+  }
+  .sku-list-box{
+    padding-left: 30rpx;
+    padding-right: 30rpx;
+    .sku-item-box{
+      padding-top: 20rpx;
+      padding-bottom: 20rpx;
+    }
+  }
+  .sku-btn-box{
+    padding: 30rpx;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    background-color: $color-bg-item;
+  }
+</style>

@@ -3,10 +3,11 @@
   <view class="cart-box row" @tap="cart">
     <view class="icon-box column-center">
       <image class="icon-lg" src="/images/icons/cart.png" />
+      <view class="weui-badge cart-num">{{totalCount}}</view>
     </view>
 
     <view class="info-box column">
-      <text class="price">￥18</text>
+      <text class="price">￥{{totalPrice}}</text>
       <text class="muted xs">另需配送费￥3</text>
     </view>
 
@@ -33,7 +34,7 @@
             <!--商品名称-->
             <view class="column">
               <text class="lg">{{item.goodsName}}</text>
-              <text class="xs muted">{{item.skuText}}</text>
+              <text class="xs muted" wx:if="{{item.goodsSku}}">{{item.goodsSku}}</text>
             </view>
 
             <!--右侧-->
@@ -42,7 +43,7 @@
               <!--数量选择器-->
 
               <view class="quantity row">
-                <block wx:if="{{item.goodsNum != 0}}">
+                <block wx:if="{{item.goodsNum > 0}}">
                   <image class="minus" src="/images/icons/minus.png" @tap="minus({{item}})" />
                   <view class="number">
                     <text>{{item.goodsNum}}</text>
@@ -82,9 +83,25 @@
     updateNum(event, cart) {
       const param = {
         goodsId: cart.goodsId,
-        sku: cart.goodsSku
+        goodsSku: cart.goodsSku
       }
       this.$emit(event, param);
+    }
+    computed = {
+      totalPrice() {
+        let sum = 0;
+        this.carts.forEach(item => {
+          sum += item.goodsPrice * item.goodsNum
+        });
+        return sum.toFixed(2);
+      },
+      totalCount() {
+        let count = 0;
+        this.carts.forEach(item => {
+          count += item.goodsNum
+        });
+        return count;
+      }
     }
     components = {
       SilderPanel: SilderPanel
@@ -108,8 +125,15 @@
     bottom: 0;
 
     .icon-box{
+      position: relative;
       width: 120rpx;
       height: 100%;
+
+      .cart-num{
+        position: absolute;
+        right: 8px;
+        top: 6px;
+      }
     }
 
     .info-box{
@@ -119,6 +143,7 @@
         color: $color-major;
         font-weight: bold;
       }
+
     }
 
     .cart-btn{

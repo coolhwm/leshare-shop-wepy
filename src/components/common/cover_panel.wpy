@@ -1,0 +1,32 @@
+<template>
+  <!--遮罩层-->
+  <view class="cover-panel" wx:if="{{display == 'true'}}" @tap="tap" style="{{zIndex ? 'z-index:'+ zIndex : '' }}"></view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class CoverPanel extends wepy.component {
+    props = {
+      display: {},
+      zIndex: {}
+    };
+    methods = {
+      tap() {
+        this.$emit('tap');
+      }
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .cover-panel{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    background-color: black;
+    -webkit-filter:opacity(.6);
+    z-index: 10000;
+  }
+</style>

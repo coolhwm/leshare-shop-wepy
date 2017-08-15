@@ -39,6 +39,12 @@ button.pain-btn[open-type="share"]{
   padding: 0;
   margin: 0;
 }
+button{
+  margin:0;
+}
+.weui-btn.mini-btn{
+  margin-top: 0;
+}
 button.pain-btn[open-type="share"]::after {
   border:none;
 }
@@ -167,4 +173,38 @@ view.bg-white{background-color: white}
   border-bottom: $border;
   margin-top: 10rpx;
   overflow: hidden;
+}
+.label {
+  display: inline-block;
+  font-size: 12px;
+  height: 28px;
+  line-height: 28px;
+  color: #333;
+  border: 1rpx solid #999;
+  padding: 0 10px;
+  border-radius: 2px;
+  margin-right: 10px;
+  box-sizing: border-box;
+  vertical-align: middle;
+  text-align: center;
+  &.primary {
+    color: #fff;
+    background: $color-primary;
+    border: 1rpx solid $color-primary;
+  }
+  &.disabled {
+    color: #cacaca;
+    background: #eee;
+    border: 1rpx solid #e5e5e5;
+  }
+  &.small {
+    font-size: 11px;
+    height: 20px;
+    line-height: 18px;
+    padding: 0 3px;
+  }
+  &.pain.zan-label--primary {
+    color: $color-primary;
+    background: #fff;
+  }
 }

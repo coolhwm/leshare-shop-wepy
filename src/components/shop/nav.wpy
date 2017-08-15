@@ -1,7 +1,7 @@
 <template>
   <view class="nav-box row-between">
     <view class="header row">
-      <view class="label">外卖</view>
+      <view class="label primary small">外卖</view>
       <text>点外卖</text>
     </view>
     <view class="footer row">
@@ -34,15 +34,6 @@
     padding:8px 13px;
     border-top: $border;
     border-bottom: $border;
-
-    .label{
-      background-color: $color-primary;
-      border-radius: 5px;
-      color: #FFF;
-      font-size: $text-xs;
-      padding: 3px 8px;
-      margin-right: 10px;
-    }
   }
 
 </style>

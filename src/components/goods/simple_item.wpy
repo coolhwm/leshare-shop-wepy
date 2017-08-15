@@ -1,6 +1,6 @@
 <template>
   <view class="goods-item row">
-    <image class="icon-xxl" src="{{goods.imageUrl}}"></image>
+    <image class="icon-xxl" src="{{goods.imageUrl}}" @tap="preview({{goods}})"></image>
     <view class="goods-main column">
       <view class="row">
         <text class="goods-name inline">{{goods.name}}</text>
@@ -40,6 +40,12 @@
       },
       minus() {
         this.updateNum('minus');
+      },
+      preview(goods) {
+        const urls = goods.images.map(item => item.url);
+        wepy.previewImage({
+          urls: urls
+        });
       }
     };
     updateNum(event) {
