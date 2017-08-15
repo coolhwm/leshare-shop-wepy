@@ -43,6 +43,14 @@ export default class cart extends base {
   }
 
   /**
+   * 清空购物车
+   */
+  static clear () {
+    const url = `${this.baseUrl}/carts`
+    return this.delete(url)
+  }
+
+  /**
    * 删除购物车中的商品
    */
   static remove (cartId) {

@@ -12,13 +12,13 @@
         <!--数量选择器-->
         <view class="quantity row">
           <block wx:if="{{goods.num != 0}}">
-            <image class="minus" src="/images/icons/minus.png" @tap="minus" />
+            <image class="minus" src="/images/icons/minus.png" @tap="minus({{goods}})" />
             <view class="number">
               <text>{{goods.num}}</text>
             </view>
           </block>
 
-          <image class="plus" src="/images/icons/plus.png" @tap="plus" />
+          <image class="plus" src="/images/icons/plus.png" @tap="plus({{goods}})" />
         </view>
       </view>
     </view>
@@ -35,11 +35,11 @@
     components = {
     }
     methods = {
-      plus() {
-        this.updateNum('plus');
+      plus(goods) {
+        this.updateNum('plus', goods);
       },
-      minus() {
-        this.updateNum('minus');
+      minus(goods) {
+        this.updateNum('minus', goods);
       },
       preview(goods) {
         const urls = goods.images.map(item => item.url);
@@ -48,10 +48,10 @@
         });
       }
     };
-    updateNum(event) {
+    updateNum(event, goods) {
       const param = {
-        goodsId: this.goods.id,
-        sku: this.goods.sku
+        goodsId: goods.id,
+        sku: goods.sku
       }
       this.$emit(event, param);
     }

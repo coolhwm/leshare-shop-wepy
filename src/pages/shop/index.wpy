@@ -38,7 +38,7 @@
     </view>
 
     <!-- 购物车 -->
-    <ShopCart :carts.sync="carts" @plus.user="plus" @minus.user="minus" />
+    <ShopCart :carts.sync="carts" @plus.user="plus" @minus.user="minus" @clear.user="clear"/>
 
     <!--SKU选择器-->
     <SkuSelector :display.sync="skuDisplay" :goods.sync="skuGoods" @select.user="selectSku" />
@@ -62,6 +62,7 @@
   import SkuSelector from '../../components/goods/sku_selector';
   import Loadmore from '../../components/weui/loadmore';
   import ShopCart from '../../components/shop/cart';
+  import Tips from '../../utils/Tips';
 
   export default class ShopIndex extends wepy.page {
     def = {
@@ -140,6 +141,7 @@
       async plus({goodsId, goodsSku}) {
         // 商品里列表
         const goods = this.findGoods(goodsId);
+        console.info(goodsId, goods);
         if (goods) {
           if (goods.goodsSkuInfo && goodsSku == null) {
             await this.skuSelector(goodsId);
@@ -165,6 +167,9 @@
        */
       async minus({goodsId, goodsSku}) {
         const goods = this.findGoods(goodsId);
+        if (goods.num < 1) {
+          return;
+        }
         if (goods) {
           goods.num -= 1;
         }
@@ -178,6 +183,21 @@
           await cart.update(target.cartId, target.goodsNum);
         }
         this.setCategoryNum();
+        this.loaded();
+      },
+      /**
+       * 清空商品
+       */
+      async clear() {
+        if (this.carts.length < 1) {
+          Tips.alert('购物车为空');
+          return;
+        }
+        await Tips.confirm('确认清空购物车？');
+        await cart.clear();
+        this.carts = [];
+        this.setCategoryNum();
+        this.setGoodsNum();
         this.loaded();
       }
     }

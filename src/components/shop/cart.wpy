@@ -23,13 +23,13 @@
       <view class="cart-header row-between">
         <text>购物车</text>
         <view>
-          <text class="muted">清空</text>
+          <text class="muted" @tap="clear">清空</text>
         </view>
       </view>
 
       <!--购物车列表-->
       <view class="cart-list">
-        <block wx:for="{{carts}}">
+        <block wx:for="{{carts}}" wx:key="index">
           <view class="cart-item row-between">
             <!--商品名称-->
             <view class="column">
@@ -78,6 +78,9 @@
       },
       cart() {
         this.isCartDisplay = 'true';
+      },
+      clear() {
+        this.$emit('clear');
       }
     };
     updateNum(event, cart) {

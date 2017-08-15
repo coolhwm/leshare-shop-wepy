@@ -1,6 +1,6 @@
 <template>
   <!-- 店铺信息区域 -->
-  <view class="shop-box row">
+  <view class="shop-box row" @tap="home">
     <image class="shop-avatar" src="{{shop.avatar}}/medium" wx:if="{{shop.avatar}}" />
     <view class="shop-content column">
       <view class="column">
@@ -20,7 +20,11 @@
       shop: {}
     };
     data = {};
-    methods = {};
+    methods = {
+      home() {
+        this.$root.$redirect('../home/home');
+      }
+    };
     events = {};
     onLoad() {
     }
