@@ -38,7 +38,7 @@
     </view>
 
     <!-- 购物车 -->
-    <ShopCart :carts.sync="carts" @plus.user="plus" @minus.user="minus" @clear.user="clear"/>
+    <ShopCart :carts.sync="carts" @plus.user="plus" @minus.user="minus" @clear.user="clear" @buy.user="buy"/>
 
     <!--SKU选择器-->
     <SkuSelector :display.sync="skuDisplay" :goods.sync="skuGoods" @select.user="selectSku" />
@@ -52,6 +52,7 @@
   import goods from '../../api/goods';
   import coupon from '../../api/coupon';
   import cart from '../../api/cart';
+  import order from '../../api/order';
   import base from '../../mixins/base';
   import pagination from '../../mixins/pagination.wpy';
   import SideTab from '../../components/common/side_tab';
@@ -199,6 +200,16 @@
         this.setCategoryNum();
         this.setGoodsNum();
         this.loaded();
+      },
+      /**
+       * 确认购买
+       */
+      buy () {
+        const trade = order.createCartTrade(this.carts);
+        const param = {
+          trade: JSON.stringify(trade)
+        };
+        this.$navigate('../order/trade', param);
       }
     }
     async skuSelector(goodsId) {

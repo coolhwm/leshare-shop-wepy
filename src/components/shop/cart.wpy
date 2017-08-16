@@ -11,7 +11,7 @@
       <text class="muted xs">另需配送费￥3</text>
     </view>
 
-    <view class="cart-btn column-center">
+    <view class="cart-btn column-center" @tap="buy">
       <text>去结算</text>
     </view>
   </view>
@@ -81,6 +81,9 @@
       },
       clear() {
         this.$emit('clear');
+      },
+      buy() {
+        this.$emit('buy');
       }
     };
     updateNum(event, cart) {

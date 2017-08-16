@@ -1,0 +1,85 @@
+<template>
+  <Tips/>
+  <view class="container" wx:if="{{init}}">
+
+  </view>
+</template>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>
+
+<script>
+  import wepy from 'wepy'
+  import base from '../../mixins/base'
+  import input from '../../mixins/input'
+  import address from '../../api/address';
+  import coupon from '../../api/coupon';
+  import order from '../../api/order';
+  // import Tips from '../../utils/Tips';
+  // import Event from '../../utils/Event';
+  import FormTips from '../../components/weui/tips'
+  import ActionBar from '../../components/common/action_bar'
+
+  export default class OrderTrade extends wepy.page {
+    def = {
+      init: false,
+      trade: {},
+      address: {},
+      delilveries: [],
+      coupons: []
+    }
+    data = {...this.def}
+
+    async onLoad ({trade}) {
+      // this.trade = JSON.parse(trade);
+      this.trade = {
+        'dealPrice': '43.00',
+        'finalPrice': '43.00',
+        'paymentType': '1',
+        'paymentText': '在线支付',
+        'orderGoodsInfos': [
+          {
+            'goodsId': 3,
+            'goodsName': '招牌培根蔬萃双层鸡肉堡（辣）',
+            'imageUrl': 'http://ostb6zm4z.bkt.clouddn.com/FsTeNwC6NEpEnk9UShDMhaEI3aB7/small',
+            'goodsPrice': '13.00',
+            'count': 1,
+            'skuText': '辣',
+            'goodsSku': '辣'
+          },
+          {
+            'goodsId': 16,
+            'goodsName': '招牌鸡肉酱饭',
+            'imageUrl': 'http://img.leshare.shop/Fg724pYGcXhIpJXhPkdqBw1DhEef/small',
+            'goodsPrice': '15.00',
+            'count': 1,
+            'goodsSku': null
+          },
+          {
+            'goodsId': 11,
+            'goodsName': '什么鬼招牌鸡排',
+            'imageUrl': 'http://img.leshare.shop/FtAqU26NliIbOjh9DHWA9bhFzqNJ/small',
+            'goodsPrice': '15.00',
+            'count': 1,
+            'goodsSku': null
+          }
+        ]
+      }
+      this.address = await address.getDefault();
+      this.delilveries = await order.queryPostPrice(this.address, this.trade.orderGoodsInfos);
+      this.coupons = await coupon.available(this.trade.orderGoodsInfos);
+      this.loaded();
+    };
+
+    events = {}
+    components = {
+      Tips: FormTips,
+      ActionBar: ActionBar
+    }
+    mixins = [base, input]
+    config = {
+      navigationBarTitleText: '订单详情'
+    }
+  }
+</script>
