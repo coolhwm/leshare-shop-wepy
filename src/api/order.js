@@ -186,7 +186,14 @@ export default class order extends base {
       address: address,
       goodsList: goodsList
     }
-    return this.post(url, param)
+    return this.post(url, param).then(data => {
+      if (data.delilveryList && data.delilveryList.length > 0) {
+        data.delilveryList.forEach(item => {
+          item.fee = item.fee.toFixed(2);
+        });
+      }
+      return data;
+    });
   }
 
   /** ********************* 生成方法 ***********************/

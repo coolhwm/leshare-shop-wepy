@@ -44,19 +44,24 @@ export default class extends wepy.app {
   async onLaunch() {
     await this.syncStoreConfig('login_code');
     await this.syncStoreConfig('third_session');
+    await this.syncStoreConfig('user');
   }
   async syncStoreConfig(key) {
-    const result = await wepy.getStorage({key: key});
-    const value = result.data;
-    if (value !== '') {
-      wepy.$instance.globalData.auth[key] = value;
+    try {
+      const result = await wepy.getStorage({key: key});
+      const value = result.data;
+      if (value !== '') {
+        wepy.$instance.globalData.auth[key] = value;
+      }
+    } catch (e) {
+      console.warn(`${key} sync fail `);
     }
   }
   config = {
     pages: [
+      'pages/home/home',
       'pages/order/trade',
       'pages/shop/index',
-      'pages/home/home',
       'pages/shop/contact'
     ],
     window: {

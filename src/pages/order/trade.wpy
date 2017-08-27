@@ -1,13 +1,73 @@
 <template>
   <Tips/>
   <view class="container" wx:if="{{init}}">
+    <AddressSelector :address.sync="address" />
+
+    <view class="mt20"></view>
+    <view class="weui-cells-form">
+      <ActionSheet title="支付方式" describe="在线支付"/>
+    </view>
+
+    <!--订单信息区域-->
+    <view class="order-box mt20">
+      <!--头部信息-->
+      <view class="order-header row">
+        <image class="icon mr20" src="{{shop.avatar}}"></image><text>{{shop.name}}</text>
+      </view>
+
+      <!--主区域-->
+      <view class="order-body">
+        <!--商品-->
+        <view class="goods-box column">
+          <block wx:for="{{trade.orderGoodsInfos}}" wx:key="index" wx:for-item="goods">
+            <view class="goods-item row-between">
+              <view class="goods-name">
+                <text>{{goods.goodsName}}</text>
+              </view>
+              <view class="goods-price">
+                <text class="muted mr20">x {{goods.count}}</text>
+                <text class="ml20">￥{{goods.goodsPrice}}</text>
+              </view>
+            </view>
+          </block>
+        </view>
+
+        <!--配送费-->
+        <view class="order-row row-between">
+          <text>配送费</text>
+          <text>￥{{selectedDelivery.fee}}</text>
+        </view>
+
+        <!--红包-->
+        <view class="order-row row-between">
+          <text>红包</text>
+          <view>
+            <text class="muted">选择红包</text>
+            <image class="icon ml10" src="/images/icons/more-gray.png"></image>
+          </view>
+        </view>
+      </view>
+
+      <!--底部汇总-->
+      <view class="order-footer row-end">
+        <text class="muted">订单￥{{trade.dealPrice}}</text>
+        <text class="muted">优惠￥0</text>
+        <text class="major">待支付￥{{trade.finalPrice}}</text>
+      </view>
+    </view>
+
+    <view class="tarde-action-bar row-end">
+      <view>
+        <text>待支付 </text>
+        <text class="major mr20">￥{{trade.finalPrice}}</text>
+      </view>
+      <view class="trade-confirm-button {{selectedDelivery ? '' : 'trade-confirm-disable'}}" @tap="confirm">
+        <text>立即下单</text>
+      </view>
+    </view>
 
   </view>
 </template>
-
-<style lang="scss">
-  @import "../../styles/variable";
-</style>
 
 <script>
   import wepy from 'wepy'
@@ -16,17 +76,22 @@
   import address from '../../api/address';
   import coupon from '../../api/coupon';
   import order from '../../api/order';
+  import shop from '../../api/shop'
   // import Tips from '../../utils/Tips';
   // import Event from '../../utils/Event';
-  import FormTips from '../../components/weui/tips'
-  import ActionBar from '../../components/common/action_bar'
+  import FormTips from '../../components/weui/tips';
+  import ActionBar from '../../components/common/action_bar';
+  import AddressSelector from '../../components/common/address_selector';
+  import ActionSheet from '../../components/weui/action_sheet';
 
   export default class OrderTrade extends wepy.page {
     def = {
       init: false,
+      shop: {},
       trade: {},
       address: {},
       delilveries: [],
+      selectedDelivery: {},
       coupons: []
     }
     data = {...this.def}
@@ -68,14 +133,18 @@
       }
       this.address = await address.getDefault();
       this.delilveries = await order.queryPostPrice(this.address, this.trade.orderGoodsInfos);
+      this.selectedDelivery = this.delilveries.delilveryList[0];
       this.coupons = await coupon.available(this.trade.orderGoodsInfos);
+      this.shop = await shop.info();
       this.loaded();
     };
 
     events = {}
     components = {
       Tips: FormTips,
-      ActionBar: ActionBar
+      ActionBar: ActionBar,
+      ActionSheet: ActionSheet,
+      AddressSelector: AddressSelector
     }
     mixins = [base, input]
     config = {
@@ -83,3 +152,78 @@
     }
   }
 </script>
+
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .order-box{
+    background-color: #FFF;
+    border-top: $border;
+    border-bottom: $border;
+
+    .order-header{
+      font-size: $text-lg;
+      padding:20rpx;
+      border-bottom: $border;
+    }
+
+    .order-body{
+      padding-left: 20rpx;
+
+      .order-row{
+        padding:20rpx 20rpx 20rpx 0;
+        border-bottom: $border;
+      }
+    }
+
+    .order-footer{
+      padding:20rpx;
+      text{
+        margin-left: 20rpx;
+      }
+    }
+  }
+
+  .goods-box{
+    padding: 10rpx 20rpx 10rpx 0;
+    border-bottom: $border;
+    .goods-item{
+      height: 70rpx;
+    }
+  }
+
+  /*购买栏*/
+  .tarde-action-bar{
+    position: fixed;
+    z-index: 10000;
+    bottom: 0;
+    height: 100rpx;
+    width: 100%;
+    background-color: #FFF;
+    border-top: $border;
+
+    text{
+      font-size: $text-xxl;
+    }
+
+    .trade-confirm-button{
+      height: 100%;
+      width: 240rpx;
+      line-height: 100rpx;
+      text-align: center;
+      background-color: $color-primary;
+      color: #FFF;
+      text{
+        color: #FFF;
+      }
+    }
+
+    .trade-confirm-disable{
+      background-color: #B0B0B0;
+    }
+
+  }
+
+
+</style>
