@@ -4,7 +4,7 @@
       <view class="label primary small">{{badegText}}</view>
       <text>{{title}}</text>
     </view>
-    <view class="footer row" wx:if="{{navText}}">
+    <view class="footer row" wx:if="{{navText}}" @tap="nav({{navUrl}})">
       <text class="muted">{{navText}}</text>
       <image class="icon" src="/images/icons/more-gray.png" />
     </view>
@@ -17,10 +17,15 @@
     props = {
       badegText: {},
       navText: {},
-      title: {}
+      navUrl: {},
+      title: {},
     };
     data = {};
-    methods = {};
+    methods = {
+      nav(url) {
+        this.$root.$redirect(url);
+      }
+    };
     events = {};
     onLoad() {
     }
