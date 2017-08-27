@@ -1,0 +1,128 @@
+<template>
+  <view class="order-item-container column">
+    <!--基本信息-->
+    <view class="order-header-container colunm">
+
+      <view class="row-between">
+        <view class="user-info-container">
+          <image class="icon" src="/images/icons/idcard.png"/>
+          <text class="sm ml10">{{order.customer.nickName ? order.customer.nickName : '微信用户'}}</text>
+        </view>
+        <text class="sm primary">{{order.statusText}}</text>
+      </view>
+
+      <view class="order-info-container row-between">
+        <text>{{order.orderTime}}</text>
+        <text>{{order.uuid}}</text>
+      </view>
+    </view>
+
+    <view class="order-goods-list-container" @tap="detail({{order.orderId}})">
+      <repeat for="{{order.orderGoodsInfos}}" key="goodsId" index="index" item="item">
+        <OrderGoods :goods="item"></OrderGoods>
+        <view class="hr" />
+      </repeat>
+    </view>
+
+
+    <!--汇总信息-->
+    <view class="order-footer-container row-end">
+      <text class="mr20">共{{order.orderGoodsInfos.length}}件商品</text>
+      <text>合计:</text>
+      <text class="major xl mr20">￥{{order.finalPrice}}</text>
+      <text>(含运费￥{{order.postFee}})</text>
+    </view>
+
+    <!--操作栏/可以抽取为组件-->
+    <view class="order-action-bar row-end" wx:if="{{action != 0}}">
+      <view class="zan-btn zan-btn--small" @tap="note({{order.orderId}}, {{order.sellerNote}})">订单备注</view>
+      <view class="zan-btn zan-btn--small" @tap="reprice({{order.orderId}})"  wx:if="{{order.status == 1}}">订单改价</view>
+      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="close({{order.orderId}})" wx:if="{{order.status == 1}}">订单关闭</view>
+      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="send({{order.orderId}})" wx:if="{{order.status == 2}}">订单发货</view>
+      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="trace({{order.orderId}})" wx:if="{{order.status == 3 && order.deliveryType == 'EXPRESS'}}">物流查询</view>
+      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="refund({{order.orderId}})" wx:if="{{order.status == 5}}">订单退款</view>
+    </view>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import OrderGoods from './goods';
+  export default class OrderItem extends wepy.component {
+    props = {
+      order: {
+        orderGoodsInfos: []
+      },
+      action: {
+        default: true
+      }
+    };
+    methods = {
+      trace(orderId) {
+        this.$root.$navigate('trace', {orderId});
+      },
+      send(orderId) {
+        this.$root.$navigate('send', {orderId});
+      },
+      note(orderId, sellerNote) {
+        this.$root.$navigate('remark', {orderId, sellerNote});
+      },
+      close(orderId) {
+        this.$root.$navigate('close', {orderId});
+      },
+      reprice(orderId) {
+        this.$root.$navigate('reprice', {orderId});
+      },
+      detail(orderId) {
+        this.$emit('tap', orderId);
+        // this.$root.$navigate('detail', {orderId});
+      },
+      refund(orderId) {
+        this.$root.$navigate('refund', {orderId});
+      }
+    };
+
+    components = {
+      OrderGoods: OrderGoods
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .order-item-container {
+    border-top: $border;
+    border-bottom: $border;
+    background-color: #FFF;
+    margin-bottom: 10rpx;
+  }
+
+  /*顶栏*/
+  .order-header-container {
+    padding: 10rpx 25rpx 10rpx 20rpx;
+  }
+
+  /*底栏*/
+  .order-footer-container {
+    padding-left: 25rpx;
+    padding-right: 20rpx;
+    height: 70rpx;
+  }
+
+  /*顶栏订单信息*/
+  .order-info-container{
+    text{
+      font-size: $text-xs;
+      color:$color-muted;
+    }
+  }
+
+  /* 操作栏 */
+  .order-action-bar {
+    border-top: $border;
+    height: 90rpx;
+    padding-right: 10rpx;
+  }
+</style>

@@ -1,0 +1,54 @@
+<template>
+  <view class="order-goods-container row-between">
+    <!--商品图片-->
+    <image class="order-goods-image" mode="aspectFill" src="{{goods.imageUrl}}"/>
+
+    <!--商品说明-->
+    <view class="order-goods-title-container column">
+      <text>{{goods.goodsName}}</text>
+      <text class="muted">{{goods.skuText}}</text>
+    </view>
+
+    <!--商品购买信息-->
+    <view class="order-goods-buy-container column">
+      <text>￥{{goods.goodsPrice}}</text>
+      <text class="muted">x{{goods.count}}</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class OrderGoods extends wepy.component {
+    props = {
+      goods: {}
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .order-goods-container{
+    background-color: $color-bg-item;
+    padding: 10rpx 20rpx 15rpx 25rpx;
+  }
+
+  /*商品图图片*/
+  .order-goods-image{
+    width: 150rpx;
+    height: 150rpx;
+  }
+
+  /*购买信息*/
+  .order-goods-buy-container{
+    text-align: right;
+  }
+
+  /*标题*/
+  .order-goods-title-container{
+    flex:1;
+    height: 100%;
+    padding-left: 28rpx;
+  }
+</style>
