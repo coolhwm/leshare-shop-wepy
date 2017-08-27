@@ -10,7 +10,7 @@
     <view class="mt10">
       <!--列表展现-->
       <repeat for="{{page.list}}" key="index" index="index" item="item">
-        <OrderItem :order.sync="item" @tap.user="detail"></OrderItem>
+          <OrderItem :order.sync="item" @tap.user="detail"></OrderItem>
       </repeat>
     </view>
 

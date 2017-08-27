@@ -19,9 +19,14 @@
 
     <view class="order-goods-list-container" @tap="detail({{order.orderId}})">
       <repeat for="{{order.orderGoodsInfos}}" key="goodsId" index="index" item="item">
-        <OrderGoods :goods="item"></OrderGoods>
-        <view class="hr" />
+        <view class="{{index > 0 && isFold ? 'order-goods-fold' : ''}}">
+          <OrderGoods :goods="item"></OrderGoods>
+          <view class="hr" />
+        </view>
       </repeat>
+      <view wx:if="{{order.orderGoodsInfos.length > 1}}" class="goods-fold-btn row-center">
+        <text class="muted">查看全部{{order.orderGoodsInfos.length}}件商品</text>
+      </view>
     </view>
 
 
@@ -58,6 +63,9 @@
         default: true
       }
     };
+    data = {
+      isFold: true
+    }
     methods = {
       trace(orderId) {
         this.$root.$navigate('trace', {orderId});
@@ -82,7 +90,6 @@
         this.$root.$navigate('refund', {orderId});
       }
     };
-
     components = {
       OrderGoods: OrderGoods
     };
@@ -124,5 +131,15 @@
     border-top: $border;
     height: 90rpx;
     padding-right: 10rpx;
+  }
+
+  .order-goods-fold{
+    display: none;
+  }
+
+  .goods-fold-btn{
+    background-color: $color-bg-item;
+    padding-top: 10rpx;
+    padding-bottom: 10rpx;
   }
 </style>
