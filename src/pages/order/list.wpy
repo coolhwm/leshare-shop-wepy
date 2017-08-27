@@ -1,0 +1,76 @@
+<template>
+  <view class="container" wx:if="{{init}}">
+
+    <!-- 店铺信息区域 -->
+    <ShopHeader :shop.sync="shop" />
+
+    <!--功能区域-->
+    <ShopNav badegText="我的" title="我的记录"  navText="点外卖"/>
+
+
+    <!--列表展现-->
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+
+    </repeat>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+  </view>
+
+  <!--占位符-->
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关公告信息"/>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import shop from '../../api/shop';
+  import pagination from '../../mixins/pagination.wpy';
+  import Placeholder from '../../components/common/placeholder';
+  import ShopHeader from '../../components/shop/header';
+  import ShopNav from '../../components/shop/nav';
+  import Event from '../../utils/Event';
+  import Loadmore from '../../components/weui/loadmore';
+
+  export default class OrderList extends wepy.page {
+    def = {
+      init: true,
+      page: {
+        list: [
+        ]
+      },
+      shop: {
+        notices: []
+      }
+    }
+    data = {...this.def};
+    async onLoad (options) {
+      // 加载店铺信息
+      this.shop = await shop.info();
+      this.shop.notices = await shop.notices();
+      // this.page = notice.page();
+      await this.next();
+      Event.listen(Event.NOTICE_LIST_UPDATE, this.update.bind(this), this);
+    };
+    params() {
+      return {status: this.tab.selectedId};
+    }
+    methods = {
+      switchTab() {
+        this.reload();
+      }
+    }
+    events = {};
+    components = {
+      Placeholder: Placeholder,
+      Loadmore: Loadmore,
+      ShopHeader: ShopHeader,
+      ShopNav: ShopNav
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '订单列表',
+      enablePullDownRefresh: true
+    };
+  }
+</script>

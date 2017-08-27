@@ -18,7 +18,7 @@
       <!--主区域-->
       <view class="order-body">
         <!--商品-->
-        <view class="goods-box column">
+        .<view class="goods-box column">
           <block wx:for="{{trade.orderGoodsInfos}}" wx:key="index" wx:for-item="goods">
             <view class="goods-item row-between">
               <view class="goods-name">
@@ -56,15 +56,8 @@
       </view>
     </view>
 
-    <view class="tarde-action-bar row-end">
-      <view>
-        <text>待支付 </text>
-        <text class="major mr20">￥{{trade.finalPrice}}</text>
-      </view>
-      <view class="trade-confirm-button {{selectedDelivery ? '' : 'trade-confirm-disable'}}" @tap="confirm">
-        <text>立即下单</text>
-      </view>
-    </view>
+    <!--操作底栏-->
+    <OrderConfirmBar :trade.sync="trade" @confirm.user="confirm"/>
 
   </view>
 </template>
@@ -82,6 +75,7 @@
   import FormTips from '../../components/weui/tips';
   import ActionBar from '../../components/common/action_bar';
   import AddressSelector from '../../components/common/address_selector';
+  import OrderConfirmBar from '../../components/order/confirm_bar';
   import ActionSheet from '../../components/weui/action_sheet';
   import Tips from '../../utils/Tips';
 
@@ -158,7 +152,8 @@
       Tips: FormTips,
       ActionBar: ActionBar,
       ActionSheet: ActionSheet,
-      AddressSelector: AddressSelector
+      AddressSelector: AddressSelector,
+      OrderConfirmBar: OrderConfirmBar
     }
     mixins = [base, input]
     config = {
@@ -206,38 +201,5 @@
       height: 70rpx;
     }
   }
-
-  /*购买栏*/
-  .tarde-action-bar{
-    position: fixed;
-    z-index: 10000;
-    bottom: 0;
-    height: 100rpx;
-    width: 100%;
-    background-color: #FFF;
-    border-top: $border;
-
-    text{
-      font-size: $text-xxl;
-    }
-
-    .trade-confirm-button{
-      height: 100%;
-      width: 240rpx;
-      line-height: 100rpx;
-      text-align: center;
-      background-color: $color-primary;
-      color: #FFF;
-      text{
-        color: #FFF;
-      }
-    }
-
-    .trade-confirm-disable{
-      background-color: #B0B0B0;
-    }
-
-  }
-
 
 </style>

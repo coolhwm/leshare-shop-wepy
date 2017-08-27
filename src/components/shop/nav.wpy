@@ -1,11 +1,11 @@
 <template>
   <view class="nav-box row-between">
     <view class="header row">
-      <view class="label primary small">外卖</view>
-      <text>点外卖</text>
+      <view class="label primary small">{{badegText}}</view>
+      <text>{{title}}</text>
     </view>
-    <view class="footer row">
-      <text class="muted">我的</text>
+    <view class="footer row" wx:if="{{navText}}">
+      <text class="muted">{{navText}}</text>
       <image class="icon" src="/images/icons/more-gray.png" />
     </view>
   </view>
@@ -15,7 +15,9 @@
   import wepy from 'wepy'
   export default class ShopNav extends wepy.component {
     props = {
-      order: {}
+      badegText: {},
+      navText: {},
+      title: {}
     };
     data = {};
     methods = {};
