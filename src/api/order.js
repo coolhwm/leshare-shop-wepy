@@ -1,5 +1,6 @@
 import base from './base'
 import Page from '../utils/Page'
+import wepy from 'wepy'
 
 /**
  * 订单服务类
@@ -74,7 +75,7 @@ export default class order extends base {
    * 拉起微信支付
    */
   static wxpayOrder (payment) {
-    return this.wxpay({
+    return wepy.requestPayment({
       'timeStamp': payment.timeStamp,
       'nonceStr': payment.nonceStr,
       'package': payment.package,

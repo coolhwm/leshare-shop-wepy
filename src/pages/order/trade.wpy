@@ -83,6 +83,7 @@
   import ActionBar from '../../components/common/action_bar';
   import AddressSelector from '../../components/common/address_selector';
   import ActionSheet from '../../components/weui/action_sheet';
+  import Tips from '../../utils/Tips';
 
   export default class OrderTrade extends wepy.page {
     def = {
@@ -139,7 +140,20 @@
       this.loaded();
     };
 
-    events = {}
+    methods = {
+      // 下单
+      async confirm() {
+        // TODO 下单前订单状态检查
+        // 创建订单
+        const trade = await order.createOrder(this.trade, this.address);
+        // 预支付
+        const payment = await order.prepayOrder(trade.orderId);
+        Tips.loaded();
+        // 微信支付
+        order.wxpayOrder(payment);
+        // TODO 支付成功后跳转处理
+      }
+    }
     components = {
       Tips: FormTips,
       ActionBar: ActionBar,
