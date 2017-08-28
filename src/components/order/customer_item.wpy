@@ -19,13 +19,14 @@
 
     <view class="order-goods-list-container" @tap="detail({{order.orderId}})">
       <repeat for="{{order.orderGoodsInfos}}" key="goodsId" index="index" item="item">
-        <view class="{{index > 0 && isFold ? 'order-goods-fold' : ''}}">
+        <view class="{{index == 0 || expand[order.orderId] ? '' : 'order-goods-fold'}}">
           <OrderGoods :goods="item"></OrderGoods>
           <view class="hr" />
         </view>
       </repeat>
-      <view wx:if="{{order.orderGoodsInfos.length > 1}}" class="goods-fold-btn row-center">
-        <text class="muted">查看全部{{order.orderGoodsInfos.length}}件商品</text>
+      <view wx:if="{{order.orderGoodsInfos.length > 1}}" class="goods-fold-btn row-center" @tap="expand({{order.orderId}})">
+        <text class="muted" wx:if="{{!expand[order.orderId]}}">查看全部 {{order.orderGoodsInfos.length}} 件商品</text>
+        <text class="muted" wx:else>收起商品</text>
       </view>
     </view>
 
@@ -64,9 +65,12 @@
       }
     };
     data = {
-      isFold: true
+      expand: {}
     }
     methods = {
+      expand(orderId) {
+        this.expand[orderId] = !this.expand[orderId];
+      },
       trace(orderId) {
         this.$root.$navigate('trace', {orderId});
       },
@@ -139,7 +143,7 @@
 
   .goods-fold-btn{
     background-color: $color-bg-item;
-    padding-top: 10rpx;
-    padding-bottom: 10rpx;
+    padding-top: 5rpx;
+    padding-bottom: 5rpx;
   }
 </style>
