@@ -29,7 +29,7 @@
         </block>
 
       </view>
-      <view class="weui-cell weui-cell_access">
+      <view class="weui-cell weui-cell_access" @tap="coupon">
         <view class="weui-cell__bd">优惠券
           <view class="label small primary pain" wx:if="{{coupons.length > 0}}">{{selectedCoupon ? '已选择' : coupons.length + '张可用'}}</view>
         </view>
@@ -154,6 +154,15 @@
     };
 
     methods = {
+      /**
+       * 选择优惠券
+       */
+      coupon () {
+        const param = {
+          coupons: JSON.stringify(this.coupons)
+        };
+        this.$navigate('../coupon/use', param);
+      },
       /**
        * 选择付款方式
        */

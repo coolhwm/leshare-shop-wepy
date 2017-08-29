@@ -1,0 +1,46 @@
+<template>
+  <view class="container" wx:if="{{init}}">
+
+    <!--列表展现-->
+    <repeat for="{{coupons}}" key="index" index="index" item="item">
+      <CouponItem :coupon.sync="item" />
+    </repeat>
+
+  </view>
+
+  <!--占位符-->
+  <Placeholder :show.sync="isPageEmpty" message="您还没有可用优惠券"/>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import pagination from '../../mixins/pagination.wpy';
+  import Placeholder from '../../components/common/placeholder';
+  import CouponItem from '../../components/coupons/item';
+
+  export default class NoticeIndex extends wepy.page {
+    def = {
+      init: false,
+      coupons: []
+    }
+    data = {...this.def};
+    async onLoad ({coupons}) {
+      this.coupons = JSON.parse(coupons);
+      this.loaded();
+    };
+
+    methods = {
+    }
+    events = {};
+    components = {
+      Placeholder: Placeholder,
+      CouponItem: CouponItem
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '选择优惠券',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
