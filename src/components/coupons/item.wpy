@@ -1,5 +1,5 @@
 <template>
-  <view class="coupon-item-container {{coupon.status == 'NEVER_USED' ? '' : 'coupon-item-disable'}}"  @tap="select({{coupon.id}})" @longtap="delete({{coupon.id}})">
+  <view class="coupon-item-container {{coupon.status == 'NEVER_USED' ? '' : 'coupon-item-disable'}}"  @tap="select({{coupon}})" @longtap="delete({{coupon}})">
     <!--左侧区域-->
     <view class="coupon-main-container">
       <view class="coupon-value-container">
@@ -45,7 +45,12 @@
       coupon: {}
     };
     data = {};
-    methods = {};
+    methods = {
+      select(coupon) {
+        this.$emit('select', coupon);
+        wepy.navigateBack();
+      }
+    };
     events = {};
     onLoad() {
     }

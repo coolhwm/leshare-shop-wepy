@@ -19,12 +19,12 @@
     <!--商品区域-->
     <view class="order-goods-list-container" @tap="detail({{order.orderId}})">
       <repeat for="{{order.orderGoodsInfos}}" key="goodsId" index="index" item="item">
-        <view class="{{index == 0 || expand[order.orderId] ? '' : 'order-goods-fold'}}">
+        <view class="{{!order.orderId || index == 0 || expand[order.orderId] ? '' : 'order-goods-fold'}}">
           <OrderGoods :goods="item"></OrderGoods>
           <view class="hr" />
         </view>
       </repeat>
-      <view wx:if="{{order.orderGoodsInfos.length > 1}}" class="goods-fold-btn row-center" @tap.stop="expand({{order.orderId}})">
+      <view wx:if="{{order.orderId && order.orderGoodsInfos.length > 1}}" class="goods-fold-btn row-center" @tap.stop="expand({{order.orderId}})">
         <text class="muted" wx:if="{{!expand[order.orderId]}}">查看全部 {{order.orderGoodsInfos.length}} 件商品</text>
         <text class="muted" wx:else>收起商品</text>
       </view>

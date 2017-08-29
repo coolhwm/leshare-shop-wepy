@@ -75,8 +75,6 @@
   import coupon from '../../api/coupon';
   import order from '../../api/order';
   import shop from '../../api/shop'
-  // import Tips from '../../utils/Tips';
-  // import Event from '../../utils/Event';
   import FormTips from '../../components/weui/tips';
   import ActionBar from '../../components/common/action_bar';
   import AddressSelector from '../../components/common/address_selector';
@@ -84,6 +82,7 @@
   import ActionSheet from '../../components/weui/action_sheet';
   import OrderItem from '../../components/order/customer_item';
   import Tips from '../../utils/Tips';
+  import Event from '../../utils/Event';
 
   export default class OrderTrade extends wepy.page {
     def = {
@@ -151,6 +150,7 @@
       // 店铺信息
       this.shop = await shop.info();
       this.loaded();
+      Event.listen(Event.TRADE_COUPON_UPDATE, this.updateCoupon.bind(this), this);
     };
 
     methods = {
@@ -200,6 +200,27 @@
         }
         this.$redirect('list');
       }
+    }
+    /**
+     * 回调更新优惠券
+     */
+    updateCoupon(coupon) {
+      this.selectedCoupon = coupon;
+      this.trade.couponUsedId = coupon.id;
+      this.trade.couponPrice = coupon.price.toFixed(2);
+      this.updateTradePrice();
+    }
+
+    /**
+     * 更新订单价格
+     */
+    updateTradePrice() {
+      const trade = this.trade;
+      trade.finalPrice = 0;
+      trade.finalPrice += trade.dealPrice ? parseFloat(trade.dealPrice) : 0;
+      trade.finalPrice += trade.postFee ? parseFloat(trade.postFee) : 0;
+      trade.finalPrice -= trade.couponPrice ? parseFloat(trade.couponPrice) : 0;
+      trade.finalPrice = trade.finalPrice.toFixed(2);
     }
     computed = {
       delilveryText() {
