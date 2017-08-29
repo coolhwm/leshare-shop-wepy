@@ -1,0 +1,199 @@
+<template>
+  <view class="container" wx:if="{{init}}">
+    <!--状态栏-->
+    <view class="order-status-bar row">
+      <image class="icon-lg" src="/images/icons/status-{{order.status}}.png" wx:if="{{order.status}}" />
+      <view class="status-box column">
+        <text class="xxl">{{order.statusText}}</text>
+        <!-- 订单文本描述/需要抽取到Service中 -->
+        <text class="muted mt10">{{order.statusDesc}}</text>
+      </view>
+    </view>
+
+    <!--物流栏-->
+    <block wx:if="{{order.isExpress}}">
+      <view class="order-trace-bar row" @tap="trace({{order.orderId}})">
+        <image class="icon" src="/images/icons/car.png" />
+        <view class="info-box column">
+          <text class="inline">{{express.text}}</text>
+          <text class="muted sm mt10" wx:if="{{express.timestape}}">{{express.timestape}}</text>
+        </view>
+        <image class="icon" wx:if="{{express.timestape}}" src="/images/icons/more-gray.png" />
+      </view>
+    </block>
+    <!--地址展现-->
+    <Address :address.sync="address" />
+
+    <!--订单项目-->
+    <OrderItem :order.sync="order" action="0"></OrderItem>
+
+    <!--订单详情-->
+    <view class="weui-cells weui-cells_after-title weui-cells-merge-top">
+      <view class="weui-cell">
+        <view class="weui-cell__bd">支付方式</view>
+        <view class="weui-cell__ft">{{order.paymentText}}</view>
+      </view>
+      <view class="weui-cell">
+        <view class="weui-cell__bd">配送方式</view>
+        <view class="weui-cell__ft">{{order.deliveryText}}</view>
+      </view>
+      <view class="weui-cell">
+        <view class="weui-cell__bd">买家留言</view>
+        <view class="weui-cell__ft">{{order.message ? order.message : '无'}}</view>
+      </view>
+    </view>
+
+    <!--信息汇总-->
+    <view class="panel summary-box mb20">
+      <view class="price-box row-between">
+        <text>商品金额</text>
+        <text class="major">￥{{order.dealPrice}}</text>
+      </view>
+      <view class="price-box row-between">
+        <text>运费</text>
+        <text class="major">+￥{{order.postFee}}</text>
+      </view>
+      <view class="price-box row-between" wx:if="{{order.couponPrice}}">
+        <text>优惠券</text>
+        <text class="major">-￥{{order.couponPrice}}</text>
+      </view>
+      <view class="final-box" wx:if="{{order.status != 1}}">
+        <text class="lg">实付款：</text>
+        <text class="lg major">￥{{order.finalPrice}}</text>
+      </view>
+    </view>
+
+    <!--操作栏-->
+    <view class="order-action-bar row-end">
+      <view class="zan-btn zan-btn--small" @tap="note({{order.orderId}}, {{order.sellerNote}})">订单备注</view>
+      <view class="zan-btn zan-btn--small" @tap="reprice({{order.orderId}})"  wx:if="{{order.status == 1}}">订单改价</view>
+      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="close({{order.orderId}})" wx:if="{{order.status == 1}}">订单关闭</view>
+      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="send({{order.orderId}})" wx:if="{{order.status == 2}}">订单发货</view>
+      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="trace({{order.orderId}})" wx:if="{{order.status == 3}}">物流查询</view>
+      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="refund({{order.orderId}})" wx:if="{{order.status == 5}}">订单退款</view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from '../../mixins/base';
+  import order from '../../api/order';
+  import Address from '../../components/common/address';
+  import OrderItem from '../../components/order/customer_item';
+  export default class OrderDetail extends wepy.page {
+    def = {
+      order: {
+        orderGoodsInfos: []
+      },
+      express: {},
+      address: {},
+      init: false
+    };
+    data = {...this.def};
+    async onLoad ({orderId}) {
+      // 订单信息
+      this.order = await order.getInfo(orderId);
+      // 收货地址
+      this.address = {
+        name: this.order.receiveName,
+        fullAddress: this.order.address,
+        phone: this.order.receivePhone
+      };
+      this.loaded();
+    };
+    methods = {
+      trace(orderId) {
+        this.$root.$navigate('trace', {orderId});
+      },
+      send(orderId) {
+        this.$root.$navigate('send', {orderId});
+      },
+      note(orderId, sellerNote) {
+        this.$root.$navigate('remark', {orderId, sellerNote});
+      },
+      close(orderId) {
+        this.$root.$navigate('close', {orderId});
+      },
+      reprice(orderId) {
+        this.$root.$navigate('reprice', {orderId});
+      },
+      refund(orderId) {
+        this.$root.$navigate('refund', {orderId});
+      }
+    };
+    components = {
+      Address: Address,
+      OrderItem: OrderItem
+    };
+
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '订单详情'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .container{
+    padding-bottom: 110rpx;
+  }
+
+  //状态栏
+  .order-status-bar{
+    background-color: #FFF;
+    height: 70rpx;
+    padding: 40rpx 30rpx;
+    border-bottom: $border;
+
+    .status-box{
+      margin-left: 30rpx;
+    }
+  }
+
+  //物流状态预览栏
+  .order-trace-bar{
+    padding: 25rpx;
+    background-color: #FFF;
+    border-bottom: $border;
+
+    .info-box{
+      width: 600rpx;
+      margin-left: 20rpx;
+    }
+  }
+
+  //汇总栏
+  .summary-box{
+    padding: 10px 15px;
+
+    .final-box{
+      float: right;
+      width: 100%;
+      padding-top: 10rpx;
+      border-top: $border;
+      text-align: right;
+    }
+
+    .price-box{
+      padding:5rpx 0;
+    }
+  }
+
+  //商品栏
+  .order-item-container{
+    margin-bottom: 0;
+  }
+
+  // 操作栏
+  .order-action-bar {
+    position: fixed;
+    background-color: white;
+    width: 750rpx;
+    bottom: 0;
+    border-top: $border;
+    height: 90rpx;
+    padding-right: 10rpx;
+  }
+</style>

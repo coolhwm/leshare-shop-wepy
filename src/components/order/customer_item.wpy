@@ -93,7 +93,11 @@
         // 跳转到首页，重新加载
         this.$root.$redirect('../shop/index');
       },
+      /**
+       * 订单详情
+       */
       detail(orderId) {
+        this.$root.$navigate(`detail?orderId=${orderId}`);
       },
       /**
        * 关闭订单
