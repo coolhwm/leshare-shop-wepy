@@ -1,8 +1,7 @@
 <template>
   <view class="order-item-container column">
-    <!--基本信息-->
+    <!--顶栏/基本信息-->
     <view class="order-header-container colunm">
-
       <view class="row-between">
         <view class="user-info-container">
           <image class="icon" src="/images/icons/idcard.png"/>
@@ -17,6 +16,7 @@
       </view>
     </view>
 
+    <!--商品区域-->
     <view class="order-goods-list-container" @tap="detail({{order.orderId}})">
       <repeat for="{{order.orderGoodsInfos}}" key="goodsId" index="index" item="item">
         <view class="{{index == 0 || expand[order.orderId] ? '' : 'order-goods-fold'}}">
@@ -39,9 +39,9 @@
       <text>(含运费￥{{order.postFee}})</text>
     </view>
 
-    <!--操作栏/可以抽取为组件-->
+    <!--操作栏-->
     <view class="order-action-bar row-end" wx:if="{{action != 0}}">
-      <view class="zan-btn zan-btn--small" @tap="again({{order.orderId}})">再来一单</view>
+      <view class="zan-btn zan-btn--small" @tap="again({{order}})">再来一单</view>
       <view class="zan-btn zan-btn--small" @tap="close({{order.orderId}})"  wx:if="{{order.status == 1}}">取消订单</view>
       <view class="zan-btn zan-btn--small zan-btn--primary" @tap="pay({{order.orderId}})" wx:if="{{order.status == 1}}">立即支付</view>
       <view class="zan-btn zan-btn--small zan-btn--primary" @tap="receive({{order.orderId}})" wx:if="{{order.status == 3}}">完成订单</view>
@@ -54,6 +54,10 @@
 
 <script>
   import wepy from 'wepy';
+  import cart from '../../api/cart';
+  import order from '../../api/order';
+  import Tips from '../../utils/Tips';
+  import Event from '../../utils/Event';
   import OrderGoods from './goods';
   export default class OrderItem extends wepy.component {
     props = {
@@ -68,18 +72,69 @@
       expand: {}
     }
     methods = {
+      /**
+       * 商品展开收缩
+       */
       expand(orderId) {
         this.expand[orderId] = !this.expand[orderId];
       },
-      again(orderId) {
-      },
-      close(orderId) {
-      },
-      pay(orderId) {
+      /**
+       * 再来一单
+       */
+      async again(order) {
+        // 清空购物车
+        await cart.clear();
+        // 商品加入购物车
+        const list = order.orderGoodsInfos;
+        console.info(list);
+        for (const goods of list) {
+          await cart.add(goods.goodsId, goods.count, goods.goodsSku);
+        }
+        // 跳转到首页，重新加载
+        this.$root.$redirect('../shop/index');
       },
       detail(orderId) {
       },
-      receive(orderId) {
+      /**
+       * 关闭订单
+       */
+      async close(orderId) {
+        await Tips.confirm('确定关闭该订单？');
+        try {
+          await order.closeOrder(orderId);
+          await Tips.success('关闭成功');
+        } catch (e) {
+          console.warn(e);
+          await Tips.success('关闭失败');
+        }
+        Event.emit(Event.ORDER_LIST_UPDATE);
+      },
+      /**
+       * 订单支付
+       */
+      async pay(orderId) {
+        try {
+          const payment = await order.prepayOrder(orderId);
+          await order.wxpayOrder(payment);
+          await Tips.success('支付成功');
+        } catch (e) {
+          console.warn(e);
+          await Tips.success('支付取消');
+        }
+      },
+      /**
+       * 订单支付
+       */
+      async receive(orderId) {
+        await Tips.confirm('是否已收到外卖？');
+        try {
+          await order.confirmOrder(orderId);
+          await Tips.success('订单已完成');
+        } catch (e) {
+          console.warn(e);
+          await Tips.success('操作失败');
+        }
+        Event.emit(Event.ORDER_LIST_UPDATE);
       }
     };
     components = {

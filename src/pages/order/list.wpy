@@ -33,6 +33,7 @@
   import ShopNav from '../../components/shop/nav';
   import Loadmore from '../../components/weui/loadmore';
   import OrderItem from '../../components/order/customer_item';
+  import Event from '../../utils/Event';
 
   export default class OrderList extends wepy.page {
     def = {
@@ -53,6 +54,8 @@
       this.shop.notices = await shop.notices();
       this.page = order.page();
       await this.next();
+      // 监听更新事件
+      Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
     };
     methods = {
 

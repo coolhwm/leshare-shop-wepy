@@ -39,7 +39,7 @@
 
             <!--右侧-->
             <view class="row">
-              <text>￥{{item.goodsPrice}}</text>
+              <text>￥{{item.goodsPrice * item.goodsNum}}</text>
               <!--数量选择器-->
 
               <view class="quantity row">

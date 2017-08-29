@@ -18,15 +18,15 @@
       <!--主区域-->
       <view class="order-body">
         <!--商品-->
-        .<view class="goods-box column">
+        <view class="goods-box column">
           <block wx:for="{{trade.orderGoodsInfos}}" wx:key="index" wx:for-item="goods">
             <view class="goods-item row-between">
               <view class="goods-name">
                 <text>{{goods.goodsName}}</text>
               </view>
-              <view class="goods-price">
+              <view class="goods-price row-between">
                 <text class="muted mr20">x {{goods.count}}</text>
-                <text class="ml20">￥{{goods.goodsPrice}}</text>
+                <text class="ml20">￥{{goods.goodsPrice * goods.count}}</text>
               </view>
             </view>
           </block>
@@ -113,12 +113,17 @@
         // TODO 下单前订单状态检查
         // 创建订单
         const trade = await order.createOrder(this.trade, this.address);
-        // 预支付
+        // 发起预支付
         const payment = await order.prepayOrder(trade.orderId);
         Tips.loaded();
         // 微信支付
-        order.wxpayOrder(payment);
-        // TODO 支付成功后跳转处理
+        try {
+          await order.wxpayOrder(payment);
+          await Tips.success('支付成功');
+        } catch (e) {
+          await Tips.success('支付取消');
+        }
+        this.$redirect('list');
       }
     }
     components = {
@@ -172,6 +177,10 @@
     border-bottom: $border;
     .goods-item{
       height: 70rpx;
+
+      .goods-price{
+        min-width: 85px;
+      }
     }
   }
 
