@@ -24,7 +24,7 @@
           <view class="hr" />
         </view>
       </repeat>
-      <view wx:if="{{order.orderGoodsInfos.length > 1}}" class="goods-fold-btn row-center" @tap="expand({{order.orderId}})">
+      <view wx:if="{{order.orderGoodsInfos.length > 1}}" class="goods-fold-btn row-center" @tap.stop="expand({{order.orderId}})">
         <text class="muted" wx:if="{{!expand[order.orderId]}}">查看全部 {{order.orderGoodsInfos.length}} 件商品</text>
         <text class="muted" wx:else>收起商品</text>
       </view>
@@ -41,12 +41,12 @@
 
     <!--操作栏/可以抽取为组件-->
     <view class="order-action-bar row-end" wx:if="{{action != 0}}">
-      <view class="zan-btn zan-btn--small" @tap="note({{order.orderId}}, {{order.sellerNote}})">订单备注</view>
-      <view class="zan-btn zan-btn--small" @tap="reprice({{order.orderId}})"  wx:if="{{order.status == 1}}">订单改价</view>
-      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="close({{order.orderId}})" wx:if="{{order.status == 1}}">订单关闭</view>
-      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="send({{order.orderId}})" wx:if="{{order.status == 2}}">订单发货</view>
-      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="trace({{order.orderId}})" wx:if="{{order.status == 3 && order.deliveryType == 'EXPRESS'}}">物流查询</view>
-      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="refund({{order.orderId}})" wx:if="{{order.status == 5}}">订单退款</view>
+      <view class="zan-btn zan-btn--small" @tap="again({{order.orderId}})">再来一单</view>
+      <view class="zan-btn zan-btn--small" @tap="close({{order.orderId}})"  wx:if="{{order.status == 1}}">取消订单</view>
+      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="pay({{order.orderId}})" wx:if="{{order.status == 1}}">立即支付</view>
+      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="receive({{order.orderId}})" wx:if="{{order.status == 3}}">完成订单</view>
+
+      <!--TODO 评价/退款-->
     </view>
 
   </view>
@@ -71,27 +71,15 @@
       expand(orderId) {
         this.expand[orderId] = !this.expand[orderId];
       },
-      trace(orderId) {
-        this.$root.$navigate('trace', {orderId});
-      },
-      send(orderId) {
-        this.$root.$navigate('send', {orderId});
-      },
-      note(orderId, sellerNote) {
-        this.$root.$navigate('remark', {orderId, sellerNote});
+      again(orderId) {
       },
       close(orderId) {
-        this.$root.$navigate('close', {orderId});
       },
-      reprice(orderId) {
-        this.$root.$navigate('reprice', {orderId});
+      pay(orderId) {
       },
       detail(orderId) {
-        this.$emit('tap', orderId);
-        // this.$root.$navigate('detail', {orderId});
       },
-      refund(orderId) {
-        this.$root.$navigate('refund', {orderId});
+      receive(orderId) {
       }
     };
     components = {
