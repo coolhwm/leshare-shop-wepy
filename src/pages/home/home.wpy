@@ -43,10 +43,10 @@
           <text class="weak">领优惠券</text>
         </view>
 
-        <view class="shop-btn column-center">
+        <navigator class="shop-btn column-center" url="/pages/order/list">
           <image class="icon-xl" src="/images/home/my.png"></image>
           <text class="weak">我的记录</text>
-        </view>
+        </navigator>
       </view>
     </view>
 

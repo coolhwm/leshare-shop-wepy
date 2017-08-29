@@ -4,55 +4,60 @@
     <AddressSelector :address.sync="address" />
 
     <view class="mt20"></view>
-    <view class="weui-cells-form">
-      <ActionSheet title="支付方式" describe="在线支付"/>
+    <!--<view class="weui-cells-form">-->
+      <!--<ActionSheet title="支付方式" describe="在线支付"/>-->
+    <!--</view>-->
+
+    <!--订单项目-->
+    <OrderItem :order.sync="trade" action="0"></OrderItem>
+
+    <!--订单详情-->
+    <view class="weui-cells weui-cells_after-title weui-cells-merge-top">
+      <view class="weui-cell weui-cell_access" @tap="paymentType">
+        <view class="weui-cell__bd">支付方式</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">{{trade.paymentText}}</view>
+      </view>
+      <view class="weui-cell weui-cell_access">
+        <view class="weui-cell__bd">配送方式</view>
+
+        <block wx:if="{{selectedDelivery}}">
+          <text class="weui-cell__ft {{delilveryCount > 1 ? 'weui-cell__ft_in-access' : ''}}" wx:if="{{address}}">{{delilveryText}} </text>
+          <text class="weui-cell__ft" wx:else>请选择收货地址</text>
+        </block>
+        <block wx:else>
+          <text class="weui-cell__ft">起送金额￥{{limitPrice}}</text>
+        </block>
+
+      </view>
+      <view class="weui-cell weui-cell_access">
+        <view class="weui-cell__bd">优惠券
+          <view class="label small primary pain" wx:if="{{coupons.length > 0}}">{{selectedCoupon ? '已选择' : coupons.length + '张可用'}}</view>
+        </view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">{{coupons.length>0 ? ( selectedCoupon ? '-￥' + selectedCoupon.price : '未使用') : '无可用'}}</view>
+      </view>
+      <view class="weui-cell">
+        <view class="weui-cell__bd">买家留言</view>
+        <view class="weui-cell__ft">{{trade.message ? trade.message : '无'}}</view>
+      </view>
     </view>
 
-    <!--订单信息区域-->
-    <view class="order-box mt20">
-      <!--头部信息-->
-      <view class="order-header row">
-        <image class="icon mr20" src="{{shop.avatar}}"></image><text>{{shop.name}}</text>
+    <!--信息汇总-->
+    <view class="panel summary-box mb20">
+      <view class="price-box row-between">
+        <text>商品金额</text>
+        <text class="major">￥{{trade.dealPrice}}</text>
       </view>
-
-      <!--主区域-->
-      <view class="order-body">
-        <!--商品-->
-        <view class="goods-box column">
-          <block wx:for="{{trade.orderGoodsInfos}}" wx:key="index" wx:for-item="goods">
-            <view class="goods-item row-between">
-              <view class="goods-name">
-                <text>{{goods.goodsName}}</text>
-              </view>
-              <view class="goods-price row-between">
-                <text class="muted mr20">x {{goods.count}}</text>
-                <text class="ml20">￥{{goods.goodsPrice * goods.count}}</text>
-              </view>
-            </view>
-          </block>
-        </view>
-
-        <!--配送费-->
-        <view class="order-row row-between">
-          <text>配送费</text>
-          <text>￥{{selectedDelivery.fee}}</text>
-        </view>
-
-        <!--红包-->
-        <view class="order-row row-between">
-          <text>红包</text>
-          <view>
-            <text class="muted">选择红包</text>
-            <image class="icon ml10" src="/images/icons/more-gray.png"></image>
-          </view>
-        </view>
+      <view class="price-box row-between">
+        <text>运费</text>
+        <text class="major">+￥{{trade.postFee}}</text>
       </view>
-
-      <!--底部汇总-->
-      <view class="order-footer row-end">
-        <text class="muted">订单￥{{trade.dealPrice}}</text>
-        <text class="muted">优惠￥0</text>
-        <text class="major">待支付￥{{trade.finalPrice}}</text>
+      <view class="price-box row-between" wx:if="{{trade.couponPrice}}">
+        <text>优惠券</text>
+        <text class="major">-￥{{trade.couponPrice}}</text>
+      </view>
+      <view class="final-box" wx:if="{{trade.status != 1}}">
+        <text class="lg">实付款：</text>
+        <text class="lg major">￥{{trade.finalPrice}}</text>
       </view>
     </view>
 
@@ -77,29 +82,70 @@
   import AddressSelector from '../../components/common/address_selector';
   import OrderConfirmBar from '../../components/order/confirm_bar';
   import ActionSheet from '../../components/weui/action_sheet';
+  import OrderItem from '../../components/order/customer_item';
   import Tips from '../../utils/Tips';
 
   export default class OrderTrade extends wepy.page {
     def = {
       init: false,
       shop: {},
-      trade: {},
+      trade: {
+        orderGoodsInfos: []
+      },
       address: {},
       delilveries: [],
-      selectedDelivery: {},
-      coupons: []
+      selectedDelivery: null,
+      coupons: [],
+      selectedCoupon: null
     }
     data = {...this.def}
 
     async onLoad ({trade}) {
       // 订单数据
-      this.trade = JSON.parse(trade);
+      // this.trade = JSON.parse(trade);
+      this.trade = {
+        'dealPrice': '43.00',
+        'finalPrice': '43.00',
+        'paymentType': '1',
+        'paymentText': '在线支付',
+        'orderGoodsInfos': [
+          {
+            'goodsId': 3,
+            'goodsName': '招牌培根蔬萃双层鸡肉堡（辣）',
+            'imageUrl': 'http://ostb6zm4z.bkt.clouddn.com/FsTeNwC6NEpEnk9UShDMhaEI3aB7/small',
+            'goodsPrice': '13.00',
+            'count': 1,
+            'skuText': '辣',
+            'goodsSku': '辣'
+          },
+          {
+            'goodsId': 16,
+            'goodsName': '招牌鸡肉酱饭',
+            'imageUrl': 'http://img.leshare.shop/Fg724pYGcXhIpJXhPkdqBw1DhEef/small',
+            'goodsPrice': '15.00',
+            'count': 1,
+            'goodsSku': null
+          },
+          {
+            'goodsId': 11,
+            'goodsName': '什么鬼招牌鸡排',
+            'imageUrl': 'http://img.leshare.shop/FtAqU26NliIbOjh9DHWA9bhFzqNJ/small',
+            'goodsPrice': '15.00',
+            'count': 1,
+            'goodsSku': null
+          }
+        ]
+      }
       // 默认地址
       this.address = await address.getDefault();
       // 配送方式
       this.delilveries = await order.queryPostPrice(this.address, this.trade.orderGoodsInfos);
       // 默认配送方式
-      this.selectedDelivery = this.delilveries.delilveryList[0];
+      if (this.delilveries.delilveryList.length > 0) {
+        this.selectedDelivery = this.delilveries.delilveryList[0];
+        this.trade.deliveryType = this.selectedDelivery.type;
+        this.trade.postFee = Number(this.selectedDelivery.fee).toFixed(2);
+      }
       // 可用卡券
       this.coupons = await coupon.available(this.trade.orderGoodsInfos);
       // 店铺信息
@@ -108,7 +154,25 @@
     };
 
     methods = {
-      // 下单
+      /**
+       * 选择付款方式
+       */
+      async paymentType () {
+        const trade = this.trade;
+        await Tips.actionWithFunc(['在线支付', '线下支付'],
+          () => {
+            trade.paymentText = '在线支付'
+            trade.paymentType = 1
+          },
+          () => {
+            trade.paymentText = '线下支付'
+            trade.paymentType = 0
+          });
+        this.$apply();
+      },
+      /**
+       * 确定下单
+       */
       async confirm() {
         // TODO 下单前订单状态检查
         // 数据准备
@@ -128,12 +192,28 @@
         this.$redirect('list');
       }
     }
+    computed = {
+      delilveryText() {
+        if (this.selectedDelivery) {
+          const fee = this.selectedDelivery.fee > 0 ? `￥${this.selectedDelivery.fee}` : '免配送费';
+          return `${this.selectedDelivery.name} ${fee}`;
+        }
+      },
+      delilveryCount() {
+        if (this.delilveries.delilveryList) {
+          return this.delilveries.delilveryList.length;
+        } else {
+          return 0;
+        }
+      }
+    }
     components = {
       Tips: FormTips,
       ActionBar: ActionBar,
       ActionSheet: ActionSheet,
       AddressSelector: AddressSelector,
-      OrderConfirmBar: OrderConfirmBar
+      OrderConfirmBar: OrderConfirmBar,
+      OrderItem: OrderItem
     }
     mixins = [base, input]
     config = {
@@ -146,43 +226,20 @@
 <style lang="scss">
   @import "../../styles/variable";
 
-  .order-box{
-    background-color: #FFF;
-    border-top: $border;
-    border-bottom: $border;
+  //汇总栏
+  .summary-box{
+    padding: 10px 15px;
 
-    .order-header{
-      font-size: $text-lg;
-      padding:20rpx;
-      border-bottom: $border;
+    .final-box{
+      float: right;
+      width: 100%;
+      padding-top: 10rpx;
+      border-top: $border;
+      text-align: right;
     }
 
-    .order-body{
-      padding-left: 20rpx;
-
-      .order-row{
-        padding:20rpx 20rpx 20rpx 0;
-        border-bottom: $border;
-      }
-    }
-
-    .order-footer{
-      padding:20rpx;
-      text{
-        margin-left: 20rpx;
-      }
-    }
-  }
-
-  .goods-box{
-    padding: 10rpx 20rpx 10rpx 0;
-    border-bottom: $border;
-    .goods-item{
-      height: 70rpx;
-
-      .goods-price{
-        min-width: 85px;
-      }
+    .price-box{
+      padding:5rpx 0;
     }
   }
 

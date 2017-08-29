@@ -158,15 +158,18 @@ export default class Tips {
   }
 
   static actionWithFunc (items, ...functions) {
-    wx.showActionSheet({
-      itemList: items,
-      success: function (res) {
-        const index = res.tapIndex
-        if (index >= 0 && index < functions.length) {
-          functions[index]()
+    return new Promise(resolve => {
+      wx.showActionSheet({
+        itemList: items,
+        success: function (res) {
+          const index = res.tapIndex
+          if (index >= 0 && index < functions.length) {
+            functions[index]()
+          }
+          resolve();
         }
-      }
-    })
+      });
+    });
   }
 
   static share (title, url, desc) {

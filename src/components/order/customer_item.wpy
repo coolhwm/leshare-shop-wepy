@@ -4,8 +4,8 @@
     <view class="order-header-container colunm">
       <view class="row-between">
         <view class="user-info-container">
-          <image class="icon" src="/images/icons/idcard.png"/>
-          <text class="sm ml10">{{order.customer.nickName ? order.customer.nickName : '微信用户'}}</text>
+          <image class="icon" src="/images/icons/shop-gray.png"/>
+          <text class="sm ml10">{{shopName}}</text>
         </view>
         <text class="sm primary">{{order.statusText}}</text>
       </view>
@@ -61,6 +61,7 @@
   import OrderGoods from './goods';
   export default class OrderItem extends wepy.component {
     props = {
+
       order: {
         orderGoodsInfos: []
       },
@@ -69,13 +70,18 @@
       }
     };
     data = {
-      expand: {}
+      expand: {},
+      shopName: {}
+    }
+    onLoad () {
+      this.shopName = wepy.$instance.globalData.shopName;
     }
     methods = {
       /**
        * 商品展开收缩
        */
       expand(orderId) {
+        orderId = orderId == null ? 0 : orderId;
         this.expand[orderId] = !this.expand[orderId];
       },
       /**
