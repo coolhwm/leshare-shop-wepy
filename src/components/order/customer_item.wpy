@@ -119,15 +119,17 @@
       async pay(orderId) {
         try {
           const payment = await order.prepayOrder(orderId);
+          Tips.loaded();
           await order.wxpayOrder(payment);
           await Tips.success('支付成功');
         } catch (e) {
           console.warn(e);
           await Tips.success('支付取消');
         }
+        Event.emit(Event.ORDER_LIST_UPDATE);
       },
       /**
-       * 订单支付
+       * 订单收货
        */
       async receive(orderId) {
         await Tips.confirm('是否已收到外卖？');

@@ -111,6 +111,8 @@
       // 下单
       async confirm() {
         // TODO 下单前订单状态检查
+        // 数据准备
+        this.trade.deliveryType = 'CITY';
         // 创建订单
         const trade = await order.createOrder(this.trade, this.address);
         // 发起预支付

@@ -64,14 +64,15 @@
     </view>
 
     <!--操作栏-->
-    <view class="order-action-bar row-end">
-      <view class="zan-btn zan-btn--small" @tap="note({{order.orderId}}, {{order.sellerNote}})">订单备注</view>
-      <view class="zan-btn zan-btn--small" @tap="reprice({{order.orderId}})"  wx:if="{{order.status == 1}}">订单改价</view>
-      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="close({{order.orderId}})" wx:if="{{order.status == 1}}">订单关闭</view>
-      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="send({{order.orderId}})" wx:if="{{order.status == 2}}">订单发货</view>
-      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="trace({{order.orderId}})" wx:if="{{order.status == 3}}">物流查询</view>
-      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="refund({{order.orderId}})" wx:if="{{order.status == 5}}">订单退款</view>
+    <view class="order-action-bar row-end" wx:if="{{action != 0}}">
+      <view class="zan-btn zan-btn--small" @tap="again({{order}})">再来一单</view>
+      <view class="zan-btn zan-btn--small" @tap="close({{order.orderId}})"  wx:if="{{order.status == 1}}">取消订单</view>
+      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="pay({{order.orderId}})" wx:if="{{order.status == 1}}">立即支付</view>
+      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="receive({{order.orderId}})" wx:if="{{order.status == 3}}">完成订单</view>
+
+      <!--TODO 评价/退款-->
     </view>
+
   </view>
 </template>
 
@@ -79,6 +80,9 @@
   import wepy from 'wepy'
   import base from '../../mixins/base';
   import order from '../../api/order';
+  import cart from '../../api/cart';
+  import Tips from '../../utils/Tips';
+  import Event from '../../utils/Event';
   import Address from '../../components/common/address';
   import OrderItem from '../../components/order/customer_item';
   export default class OrderDetail extends wepy.page {
@@ -103,23 +107,65 @@
       this.loaded();
     };
     methods = {
-      trace(orderId) {
-        this.$root.$navigate('trace', {orderId});
+      /**
+       * 再来一单
+       */
+      async again(order) {
+        // 清空购物车
+        await cart.clear();
+        // 商品加入购物车
+        const list = order.orderGoodsInfos;
+        for (const goods of list) {
+          await cart.add(goods.goodsId, goods.count, goods.goodsSku);
+        }
+        // 跳转到首页，重新加载
+        this.$root.$redirect('../shop/index');
       },
-      send(orderId) {
-        this.$root.$navigate('send', {orderId});
+      /**
+       * 关闭订单
+       */
+      async close(orderId) {
+        await Tips.confirm('确定关闭该订单？');
+        try {
+          await order.closeOrder(orderId);
+          await Tips.success('关闭成功');
+          wepy.navigateBack();
+        } catch (e) {
+          console.warn(e);
+          await Tips.success('关闭失败');
+        }
+        Event.emit(Event.ORDER_LIST_UPDATE);
       },
-      note(orderId, sellerNote) {
-        this.$root.$navigate('remark', {orderId, sellerNote});
+      /**
+       * 订单支付
+       */
+      async pay(orderId) {
+        try {
+          const payment = await order.prepayOrder(orderId);
+          Tips.loaded();
+          await order.wxpayOrder(payment);
+          await Tips.success('支付成功');
+          wepy.navigateBack();
+        } catch (e) {
+          console.warn(e);
+          await Tips.success('支付取消');
+        }
+        Event.emit(Event.ORDER_LIST_UPDATE);
       },
-      close(orderId) {
-        this.$root.$navigate('close', {orderId});
-      },
-      reprice(orderId) {
-        this.$root.$navigate('reprice', {orderId});
-      },
-      refund(orderId) {
-        this.$root.$navigate('refund', {orderId});
+      /**
+       * 订单收货
+       */
+      async receive(orderId) {
+        await Tips.confirm('是否已收到外卖？');
+        try {
+          await order.confirmOrder(orderId);
+          await Tips.success('订单已完成');
+          wepy.navigateBack();
+        } catch (e) {
+          console.warn(e);
+          await Tips.success('操作失败');
+        }
+        Event.emit(Event.ORDER_LIST_UPDATE);
       }
     };
     components = {
