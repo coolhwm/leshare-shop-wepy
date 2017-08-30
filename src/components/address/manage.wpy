@@ -1,0 +1,131 @@
+<template>
+  <view class="address-item-container">
+    <!-- 地址内容 -->
+    <view class="address-info-container"  @tap="select({{address.id}})">
+      <view class="address-name-phone-container">
+        <text class="address-info-name">{{address.name}}</text>
+        <text class="address-info-phone">{{address.phone}}</text>
+      </view>
+      <view class="address-detail-container">
+        <text class="address-info-detail">{{address.fullAddress}}</text>
+      </view>
+    </view>
+    <view class="address-mgr-container">
+      <view class="address-default-container">
+        <view @tap="setDefault({{address.id}})" >
+          <icon class="weui-icon-checkbox_success" type="success" size="18" wx:if="{{address.isDefault == 1}}"></icon>
+          <icon class="weui-icon-checkbox_circle" type="circle" size="18" wx:else></icon>
+          <text>设为默认</text>
+        </view>
+      </view>
+      <view class="address-opt-container">
+        <view class="address-opt-action"  @tap="edit({{address.id}})">
+          <image src="/images/icons/edit.png"/><text>编辑</text>
+        </view>
+        <view class="address-opt-action"  @tap="delete({{address.id}})">
+          <image src="/images/icons/delete.png"/><text>删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Address extends wepy.component {
+    props = {
+      address: {}
+    };
+    methods = {
+      select(id) {
+      },
+      setDefault(id) {
+      },
+      edit(id) {
+      },
+      delete(id) {
+      }
+    };
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  /*父窗口*/
+  .address-item-container{
+    display: flex;
+    flex-direction: column;
+    background-color: #FFF;
+  }
+
+  /*管理按钮容器*/
+  .address-mgr-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25rpx;
+    border-top: 1px solid #EAEAEA;
+  }
+
+  /*操作容器*/
+  .address-opt-container, .address-default-container, .address-opt-action, .address-mgr-container>view{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    vertical-align: middle;
+  }
+  /*操作图片*/
+  .address-opt-container image{
+    height: 40rpx;
+    width: 40rpx;
+    margin-left: 25rpx;
+  }
+  /*操作文本*/
+  .address-mgr-container text{
+    color: #0A0A0D;
+    font-size: 28rpx;
+    margin-left: 13rpx;
+  }
+
+
+  /*信息容器*/
+  .address-info-container{
+    display: flex;
+    flex-direction: column;
+    padding: 30rpx 25rpx;
+  }
+  /*容器*/
+  .address-name-phone-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  /*姓名*/
+  .address-info-name{
+    color: #232326;
+    font-size: 34rpx;
+    font-weight: bold;
+  }
+  /*电话*/
+  .address-info-phone{
+    font-size: 28rpx;
+    color: #232326;
+  }
+
+  /*
+  * 地址详情
+  */
+  .address-info-detail{
+    color: #0A0A0D;
+    font-size: 28rpx;
+  }
+  /*地址容器*/
+  .address-detail-container{
+    margin-top: 10rpx;
+  }
+</style>
