@@ -1,0 +1,146 @@
+<template>
+  <SearchBar placeholder="请输入地址" @input.user="input" />
+
+  <view class="title-box">
+    <text>当前地址</text>
+  </view>
+
+  <!--当前定位地址-->
+  <view class="address-list-box">
+    <view class="address-item row-between">
+      <text class="primary" @tap="confirm({{currentLocation}})">{{currentAddress}}</text>
+      <text class="primary" @tap="reLocate">重新定位</text>
+    </view>
+  </view>
+
+  <block wx:if="{{isSearch ? searchLocations : nearbyLocations}}">
+
+    <!--标题栏-->
+    <view class="title-box">
+      <text>{{isSearch ? '搜索地址' : '附近地址'}}</text>
+    </view>
+
+    <view class="address-list-box">
+      <block wx:for="{{isSearch ? searchLocations : nearbyLocations}}" wx:key="index">
+
+        <!--分隔符-->
+        <view class="address-hr" wx:if="{{index > 0}}"></view>
+
+        <!--地址项目-->
+        <view class="address-item column" @tap="confirm({{item}})">
+          <text>{{item.display}}</text>
+          <text class="muted sm" wx:if="{{isSearch}}">{{item.address}}</text>
+        </view>
+      </block>
+    </view>
+  </block>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import address from '../../api/address';
+  import SearchBar from '../../components/weui/search_bar';
+  import Event from '../../utils/Event';
+  // import Tips from '../../utils/Tips';
+
+  export default class AddressSearch extends wepy.page {
+    def = {
+      currentAddress: '正在定位中...',
+      latitude: null,
+      longitude: null,
+      currentLocation: null,
+      nearbyLocations: null,
+      searchLocations: null,
+      isSearch: false
+    }
+    data = {...this.def};
+    async onLoad () {
+      await this.locate();
+    };
+    async locate() {
+      // 当前位置
+      const {latitude, longitude} = await wepy.getLocation({type: 'gcj02'});
+      this.latitude = latitude;
+      this.longitude = longitude;
+      console.info(this.latitude, longitude);
+      // 逆向解析
+      const reverse = await address.reverse(latitude, longitude);
+      this.currentLocation = reverse.current;
+      this.currentAddress = reverse.current.display;
+      this.nearbyLocations = reverse.nearby;
+      this.$apply();
+    }
+    methods = {
+      /**
+       * 确认选择
+       */
+      confirm(location) {
+        Event.emit(Event.ADDRESS_DETAIL_UPDATE, location);
+        wepy.navigateBack();
+      },
+      /**
+       * 重新定位
+       */
+      async reLocate() {
+        this.currentAddress = '正在定位中...';
+        this.latitude = null;
+        this.longitude = null;
+        this.currentLocation = null;
+        this.nearbyLocations = null;
+        this.isSearch = false;
+        await this.locate();
+        this.$apply();
+      },
+      /**
+       * 搜索输入响应
+       */
+      async input (value) {
+        if (value == null || value == '') {
+          this.isSearch = false;
+          this.searchLocations = null;
+          return;
+        }
+        this.isSearch = true;
+        this.searchLocations = await address.search(value);
+        this.$apply();
+      }
+    }
+    events = {};
+    components = {
+      SearchBar: SearchBar
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '地址选择'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .title-box {
+    display: flex;
+    align-items: center;
+    height: 70rpx;
+    padding-left: 30rpx;
+    text{ color: $color-weak}
+  }
+
+  .address-list-box{
+    padding-left: 30rpx;
+    background-color: white;
+    .address-item{
+      padding-right: 30rpx;
+      padding-left: 10rpx;
+      padding-top: 20rpx;
+      padding-bottom: 20rpx;
+    }
+
+    .address-hr {
+      width: 100%;
+      border-top: $border;
+    }
+  }
+</style>

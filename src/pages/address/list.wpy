@@ -24,7 +24,7 @@
   import pagination from '../../mixins/pagination.wpy';
   import Placeholder from '../../components/common/placeholder';
   import ActionBar from '../../components/common/action_bar';
-  // import Event from '../../utils/Event';
+  import Event from '../../utils/Event';
   import Loadmore from '../../components/weui/loadmore';
   import Address from '../../components/address/manage';
 
@@ -40,7 +40,7 @@
     async onLoad (options) {
       this.page = address.page();
       await this.next();
-      // Event.listen(Event.NOTICE_LIST_UPDATE, this.update.bind(this), this);
+      Event.listen(Event.ADDRESS_LIST_UPDATE, this.update.bind(this), this);
     };
     methods = {
       add() {

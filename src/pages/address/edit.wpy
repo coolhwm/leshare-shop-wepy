@@ -10,20 +10,20 @@
             <view class="weui-label">联系人</view>
           </view>
           <view class="weui-cell__bd">
-            <input class="weui-input" placeholder="收货人姓名"/>
+            <input class="weui-input" id="name" placeholder="收货人姓名" maxlength="5" @input="input"/>
           </view>
         </view>
 
         <!--性别-->
-        <view class="weui-cell weui-cells_after-title">
-          <view class="weui-cell__hd">
-            <view class="weui-label"> </view>
-          </view>
-          <view class="weui-cell__bd weui-cell__ft_in-radio">
-            <icon class="weui-icon-checkbox_circle" type="circle" size="18"></icon> 先生
-            <icon class="weui-icon-checkbox_circle" type="circle" size="18"></icon> 女士
-          </view>
-        </view>
+        <!--<view class="weui-cell weui-cells_after-title">-->
+          <!--<view class="weui-cell__hd">-->
+            <!--<view class="weui-label"> </view>-->
+          <!--</view>-->
+          <!--<view class="weui-cell__bd weui-cell__ft_in-radio">-->
+            <!--<icon class="weui-icon-checkbox_circle" type="circle" size="18"></icon> 先生-->
+            <!--<icon class="weui-icon-checkbox_circle" type="circle" size="18"></icon> 女士-->
+          <!--</view>-->
+        <!--</view>-->
 
         <!--联系电话-->
         <view class="weui-cell weui-cell_input">
@@ -31,17 +31,18 @@
             <view class="weui-label">联系电话</view>
           </view>
           <view class="weui-cell__bd">
-            <input class="weui-input" placeholder="收货人电话"/>
+            <input class="weui-input" id="phone" placeholder="收货人电话" maxlength="11" @input="input"/>
           </view>
         </view>
 
         <!--送餐地址-->
-        <view class="weui-cell weui-cells_after-title">
+        <view class="weui-cell weui-cells_after-title" @tap="detailSelect">
           <view class="weui-cell__hd">
             <view class="weui-label">送餐地址</view>
           </view>
           <view class="weui-cell__bd">
-            <text class="muted">小区/写字楼/学校等</text>
+            <text class="muted" wx:if="{{!location}}">小区/写字楼/学校等（请选择）</text>
+            <text class="muted" wx:else>{{location.detail}}</text>
           </view>
         </view>
 
@@ -51,14 +52,14 @@
             <view class="weui-label">详细地址</view>
           </view>
           <view class="weui-cell__bd">
-            <input class="weui-input" placeholder="如楼栋、门牌号等"/>
+            <input class="weui-input" id="detail" placeholder="如楼栋、门牌号等" @input="input"/>
           </view>
         </view>
 
       </view>
 
      <!--操作栏-->
-     <ActionBar @tap.user="add" okText="确定" cancelText="返回" />
+     <ActionBar @tap.user="confirm" okText="确定" cancelText="返回" />
    </view>
 </template>
 
@@ -70,21 +71,79 @@
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import input from '../../mixins/input';
-  // import address from '../../api/address';
-  // import Tips from '../../utils/Tips';
-  // import Event from '../../utils/Event';
+  import Event from '../../utils/Event';
   import FormTips from '../../components/weui/tips';
   import ActionBar from '../../components/common/action_bar';
+  import address from '../../api/address';
+  import Tips from '../../utils/Tips';
 
   export default class AddressEdit extends wepy.page {
     def = {
-      init: false
+      init: false,
+      location: null
     }
     data = {...this.def};
     async onLoad (options) {
+      Event.listen(Event.ADDRESS_DETAIL_UPDATE, this.detailUpdate.bind(this), this);
       this.loaded();
     };
-    events = {};
+    detailUpdate(location) {
+      this.input.loaction = true;
+      this.location = location;
+    }
+    methods = {
+      detailSelect() {
+        this.$navigate('search');
+      },
+      async confirm() {
+        if (!this.validate()) {
+          return;
+        }
+        const param = this.input;
+        param.city = this.location.city;
+        param.province = this.location.province;
+        param.country = this.location.country;
+        param.town = this.location.town;
+        param.detail = this.location.detail + param.detail;
+        param.sex = 0;
+        param.latitude = this.location.latitude;
+        param.longitude = this.location.longitude;
+        await address.save(param);
+        await Tips.success('创建成功');
+        Event.emit(Event.ADDRESS_LIST_UPDATE);
+        wepy.navigateBack();
+      }
+    };
+    validate() {
+      const rules = [
+        {
+          value: this.input.name,
+          method: 'required',
+          message: '请输入联系人'
+        },
+        {
+          value: this.input.phone,
+          method: 'required',
+          message: '请输入联系电话'
+        },
+        {
+          value: this.input.phone,
+          method: 'tel',
+          message: '请输入合法手机号码'
+        },
+        {
+          value: this.input.loaction,
+          method: 'required',
+          message: '请选择送餐地址'
+        },
+        {
+          value: this.input.detail,
+          method: 'required',
+          message: '请输入详细地址'
+        }
+      ];
+      return this.check(rules);
+    }
     components = {
       Tips: FormTips,
       ActionBar: ActionBar
