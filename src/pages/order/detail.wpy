@@ -83,7 +83,7 @@
   import cart from '../../api/cart';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
-  import Address from '../../components/common/address';
+  import Address from '../../components/address/display';
   import OrderItem from '../../components/order/customer_item';
   export default class OrderDetail extends wepy.page {
     def = {

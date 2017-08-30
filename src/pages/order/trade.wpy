@@ -77,7 +77,7 @@
   import shop from '../../api/shop'
   import FormTips from '../../components/weui/tips';
   import ActionBar from '../../components/common/action_bar';
-  import AddressSelector from '../../components/common/address_selector';
+  import AddressSelector from '../../components/address/selector';
   import OrderConfirmBar from '../../components/order/confirm_bar';
   import ActionSheet from '../../components/weui/action_sheet';
   import OrderItem from '../../components/order/customer_item';

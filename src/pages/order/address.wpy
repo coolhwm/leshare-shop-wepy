@@ -1,0 +1,63 @@
+<template>
+  <view class="container" wx:if="{{init}}">
+
+    <!--列表展现-->
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+
+    </repeat>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+
+    <!--操作栏-->
+    <ActionBar @tap.user="add" okText="新增地址" cancelText="返回" />
+  </view>
+
+  <!--占位符-->
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关公告信息"/>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import address from '../../api/address';
+  import pagination from '../../mixins/pagination.wpy';
+  import Placeholder from '../../components/common/placeholder';
+  import ZanTab from '../../components/zanui/tab';
+  import ActionBar from '../../components/common/action_bar';
+  // import Event from '../../utils/Event';
+  import Loadmore from '../../components/weui/loadmore';
+
+  export default class AddressList extends wepy.page {
+    def = {
+      init: true,
+      page: {
+        list: [
+        ]
+      }
+    }
+    data = {...this.def};
+    async onLoad (options) {
+      this.page = address.page();
+      await this.next();
+      // Event.listen(Event.NOTICE_LIST_UPDATE, this.update.bind(this), this);
+    };
+    methods = {
+    }
+    events = {};
+    components = {
+      Placeholder: Placeholder,
+      ActionBar: ActionBar,
+      Loadmore: Loadmore
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '选择地址',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

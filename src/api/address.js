@@ -87,7 +87,7 @@ export default class address extends base {
   /**
    * 处理地址数据
    */
-  _processAddress (data) {
+  static _processAddress (data) {
     return data.data
   }
 }
