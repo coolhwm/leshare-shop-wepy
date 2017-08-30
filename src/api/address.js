@@ -1,10 +1,38 @@
-import base from './base'
-import Page from '../utils/Page'
+import base from './base';
+import Page from '../utils/Page';
+const QQMap = require('../utils/QQMap.js');
 
 /**
  * 购物车服务类
  */
 export default class address extends base {
+  /**
+   * QQ地图API
+   */
+  static map = new QQMap({
+    key: 'TRZBZ-TSJ3U-ROQVP-4EMUK-EQA52-V5FWT'
+  });
+
+  /**
+   * 地址逆解析
+   */
+  static reverse(latitude, longitude) {
+    this.map.reverseGeocoder({
+      location: {
+        latitude: 39.984060,
+        longitude: 116.307520
+      },
+      success: function(res) {
+        console.log(res);
+      },
+      fail: function(res) {
+        console.log(res);
+      },
+      complete: function(res) {
+        console.log(res);
+      }
+    });
+  }
 
   /**
    * 返回分页对象

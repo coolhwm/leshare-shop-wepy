@@ -43,6 +43,9 @@
       // Event.listen(Event.NOTICE_LIST_UPDATE, this.update.bind(this), this);
     };
     methods = {
+      add() {
+        this.$navigate('edit?mode=create');
+      }
     }
     events = {};
     components = {
