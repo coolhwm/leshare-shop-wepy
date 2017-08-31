@@ -2,7 +2,7 @@
   <view class="goods-item row">
     <image class="icon-xxl" src="{{goods.imageUrl}}" @tap="preview({{goods}})"></image>
     <view class="goods-main column">
-      <view class="row">
+      <view class="row-between">
         <text class="goods-name inline">{{goods.name}}</text>
         <view class="goods-sku-badge" wx:if="{{goods.goodsSkuInfo}}">多规格</view>
       </view>
@@ -76,7 +76,7 @@
         font-size: $text-lg;
       }
       .goods-name{
-        max-width: 300rpx;
+        max-width: 280rpx;
       }
       .goods-sku-badge{
         background-color: $color-primary;

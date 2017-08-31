@@ -145,7 +145,7 @@ export default class address extends base {
    */
   static getDefault () {
     const url = `${this.baseUrl}/addresses/default`
-    return this.get(url).then(data => data != '' ? data : this.getFirstAddress())
+    return this.get(url).then(data => data != '' ? this._processAddress(data) : this.getFirstAddress());
   }
 
   /**
@@ -153,7 +153,7 @@ export default class address extends base {
    */
   static getFirstAddress () {
     const url = `${this.baseUrl}/addresses`
-    return this.get(url).then(data => data.length > 0 ? data[0] : Promise.reject('NO_ADDRESS'))
+    return this.get(url).then(data => data.length > 0 ? this._processAddress(data[0]) : Promise.reject('NO_ADDRESS'))
   }
 
   /**
@@ -190,6 +190,10 @@ export default class address extends base {
    * 处理地址数据
    */
   static _processAddress (data) {
-    return data.data
+    if (data) {
+      const {fullAddress, province, city, country} = data;
+      data.simpleAddress = fullAddress.replace(province, '').replace(city, '').replace(country, '');
+    }
+    return data;
   }
 }

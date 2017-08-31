@@ -3,7 +3,7 @@
 
     <!--列表展现-->
     <repeat for="{{page.list}}" key="index" index="index" item="item">
-      <Address :address.sync="item" />
+      <Address :address.sync="item" @select.user="select"/>
     </repeat>
 
     <!-- 加载提示 -->
@@ -11,10 +11,10 @@
 
     <!--操作栏-->
     <ActionBar @tap.user="add" okText="新增地址" cancelText="返回" />
-  </view>
 
-  <!--占位符-->
-  <Placeholder :show.sync="isPageEmpty" message="您还没有收货地址"/>
+    <!--占位符-->
+    <Placeholder :show.sync="isPageEmpty" message="您还没有收货地址"/>
+  </view>
 </template>
 
 <script>
@@ -30,14 +30,14 @@
 
   export default class AddressList extends wepy.page {
     def = {
-      init: true,
+      init: false,
       page: {
         list: [
         ]
       }
     }
     data = {...this.def};
-    async onLoad (options) {
+    async onLoad () {
       this.page = address.page();
       await this.next();
       Event.listen(Event.ADDRESS_LIST_UPDATE, this.update.bind(this), this);
@@ -45,6 +45,10 @@
     methods = {
       add() {
         this.$navigate('edit?mode=create');
+      },
+      select(address) {
+        Event.emit(Event.TRADE_ADDRESS_UPDATE, address);
+        wepy.navigateBack();
       }
     }
     events = {};

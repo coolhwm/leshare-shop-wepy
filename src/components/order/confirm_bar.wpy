@@ -4,8 +4,8 @@
       <text>待支付 </text>
       <text class="major mr20">￥{{trade.finalPrice}}</text>
     </view>
-    <view class="trade-confirm-button" @tap="confirm">
-      <text>立即下单</text>
+    <view class="trade-confirm-button {{confirmStatus? '' : 'trade-confirm-disable' }}" @tap="confirm">
+      <text>{{confirmText}}</text>
     </view>
   </view>
   <view class="tarde-action-bar-placeholder">
@@ -13,17 +13,45 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
+  import wepy from 'wepy';
+  import Tips from '../../utils/Tips';
   export default class OrderConifrmBar extends wepy.component {
     props = {
-      trade: {}
+      trade: {},
+      address: {},
+      delilveries: {},
+      selectedDelivery: {}
     };
-    data = {};
+    data = {
+      confirmStatus: false
+    };
     methods = {
       confirm() {
-        this.$emit('confirm');
+        if (!this.confirmStatus) {
+          Tips.alert(this.confirmText);
+        } else {
+          this.$emit('confirm');
+        }
       }
     };
+    computed = {
+      confirmText () {
+        this.confirmStatus = false;
+        if (!this.address) {
+          return '请选择地址';
+        } else if (!this.delilveries || this.delilveries.length < 1) {
+          return '暂不支持配送';
+        } else if (!this.selectedDelivery) {
+          return '选择配送方式';
+        } else {
+          this.confirmStatus = true;
+          this.$apply();
+          return '立即下单';
+        }
+        // TODO 超出配送范围
+        // TODO 未达到起送价格
+      }
+    }
     events = {};
     onLoad() {
     }

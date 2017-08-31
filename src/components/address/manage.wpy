@@ -1,13 +1,13 @@
 <template>
   <view class="address-item-container">
     <!-- 地址内容 -->
-    <view class="address-info-container"  @tap="select({{address.id}})">
+    <view class="address-info-container"  @tap="select({{address}})">
       <view class="address-name-phone-container">
         <text class="address-info-name">{{address.name}}</text>
         <text class="address-info-phone">{{address.phone}}</text>
       </view>
       <view class="address-detail-container">
-        <text class="address-info-detail">{{address.fullAddress}}</text>
+        <text class="address-info-detail">{{address.simpleAddress}}</text>
       </view>
     </view>
     <view class="address-mgr-container">
@@ -40,7 +40,8 @@
       address: {}
     };
     methods = {
-      select(id) {
+      select(address) {
+        this.$emit('select', address);
       },
       edit(id) {
         const param = {

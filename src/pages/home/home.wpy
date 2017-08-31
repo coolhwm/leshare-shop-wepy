@@ -14,11 +14,10 @@
     <!--操作向导区域-->
     <view class="nav-box column-cernter">
       <view class="row-between">
-        <navigator class="shop-btn column-center" url="/pages/shop/index">
+        <navigator class="shop-btn column-center" url="/pages/shop/index"  open-type="redirect">
           <image class="icon-xl" src="/images/home/food.png"></image>
           <text class="weak">点外卖</text>
         </navigator>
-
         <view class="shop-btn column-center" @tap="phone">
           <image class="icon-xl" src="/images/home/phone.png"></image>
           <text class="weak">电话联系</text>
@@ -43,7 +42,7 @@
           <text class="weak">领优惠券</text>
         </view>
 
-        <navigator class="shop-btn column-center" url="/pages/order/list">
+        <navigator class="shop-btn column-center" url="/pages/order/list" open-type="redirect">
           <image class="icon-xl" src="/images/home/my.png"></image>
           <text class="weak">我的记录</text>
         </navigator>

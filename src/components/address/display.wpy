@@ -11,7 +11,7 @@
         <text>{{address.phone}}</text>
       </view>
       <view class="mt10">
-        <text>地址：{{address.fullAddress}} </text>
+        <text>地址：{{address.simpleAddress}} </text>
       </view>
     </view>
   </view>

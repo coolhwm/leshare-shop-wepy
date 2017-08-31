@@ -21,7 +21,7 @@
       </view>
 
       <view class="mt10">
-        <text>{{address.fullAddress}}</text>
+        <text>{{address.simpleAddress}}</text>
       </view>
     </view>
 
@@ -32,13 +32,17 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
+  import wepy from 'wepy';
   export default class AddressSelector extends wepy.component {
     props = {
       address: {}
     };
     data = {};
-    methods = {};
+    methods = {
+      select() {
+        this.$emit('select');
+      }
+    };
     events = {};
     onLoad() {
     }

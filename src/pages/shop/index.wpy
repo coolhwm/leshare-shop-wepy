@@ -281,7 +281,6 @@
     .coupon-box{
       padding: 10px 0 10px 20rpx;
       height: 60px;
-      width: 550rpx;
       border-bottom: $border;
       white-space: nowrap;
     }
