@@ -5,7 +5,8 @@
     <ShopHeader :shop.sync="shop" />
 
     <!--功能区域-->
-    <ShopNav badegText="我的" title="我的记录"  navText="点外卖" navUrl="../shop/index"/>
+    <HomeNav badegText="我的" title="我的记录"  navText="点外卖" navType="navigateBack"/>
+    <CouponNav title="优惠券"  :navText.sync="couponsNum" navUrl="../coupon/list" last="true" navType="navigate"/>
 
     <view class="mt10">
       <!--列表展现-->
@@ -27,6 +28,7 @@
   import base from '../../mixins/base';
   import shop from '../../api/shop';
   import order from '../../api/order';
+  import coupons from '../../api/coupon';
   import pagination from '../../mixins/pagination.wpy';
   import Placeholder from '../../components/common/placeholder';
   import ShopHeader from '../../components/shop/header';
@@ -45,7 +47,8 @@
       },
       shop: {
         notices: []
-      }
+      },
+      couponsNum: '0张'
     }
     data = {...this.def};
     async onLoad () {
@@ -53,6 +56,8 @@
       this.shop = await shop.info();
       this.shop.notices = await shop.notices();
       this.page = order.page();
+      const ownCoupons = await coupons.own();
+      this.couponsNum = ownCoupons.length + '张';
       await this.next();
       // 监听更新事件
       Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
@@ -65,7 +70,8 @@
       Placeholder: Placeholder,
       Loadmore: Loadmore,
       ShopHeader: ShopHeader,
-      ShopNav: ShopNav,
+      HomeNav: ShopNav,
+      CouponNav: ShopNav,
       OrderItem: OrderItem
     };
     mixins = [base, pagination];

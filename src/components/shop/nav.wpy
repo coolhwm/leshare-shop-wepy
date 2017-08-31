@@ -1,13 +1,13 @@
 <template>
-  <view class="nav-box row-between">
+  <view class="nav-box row-between {{last == 'true' ? 'nav-box-last' : ''}}">
     <view class="header row">
-      <view class="label primary small">{{badegText}}</view>
+      <view class="label primary small" wx:if="{{badegText}}">{{badegText}}</view>
       <text>{{title}}</text>
     </view>
-    <view class="footer row" wx:if="{{navText}}" @tap="nav({{navUrl}})">
+    <navigator class="footer row" wx:if="{{navText}}" url="{{navUrl}}" open-type="{{navType}}">
       <text class="muted">{{navText}}</text>
       <image class="icon" src="/images/icons/more-gray.png" />
-    </view>
+    </navigator>
   </view>
 </template>
 
@@ -18,14 +18,13 @@
       badegText: {},
       navText: {},
       navUrl: {},
+      navType: {
+        default: 'redirect'
+      },
       title: {},
+      last: 'false'
     };
     data = {};
-    methods = {
-      nav(url) {
-        this.$root.$redirect(url);
-      }
-    };
     events = {};
     onLoad() {
     }
@@ -40,6 +39,8 @@
     background-color: #FFFFFF;
     padding:8px 13px;
     border-top: $border;
+  }
+  .nav-box-last{
     border-bottom: $border;
   }
 

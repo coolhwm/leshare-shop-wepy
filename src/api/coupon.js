@@ -63,7 +63,7 @@ export default class CouponService extends base {
   /**
    * 查找目前已领取的优惠券
    */
-  static own (status) {
+  static own (status = 'NEVER_USED') {
     const url = `${this.baseUrl}/coupons/list?status=${status}`
     return this.get(url)
   }

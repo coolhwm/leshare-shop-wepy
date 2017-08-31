@@ -5,7 +5,7 @@
     <ShopHeader :shop.sync="shop" />
 
     <!--功能区域-->
-    <ShopNav badegText="外卖" title="点外卖"  navText="我的" navUrl="../order/list"/>
+    <ShopNav badegText="外卖" title="点外卖"  navText="我的" navUrl="../order/list" navType="navigate"/>
 
     <!--主内容区域-->
     <view class="main-box row">

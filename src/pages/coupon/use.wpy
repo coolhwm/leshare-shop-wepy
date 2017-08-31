@@ -20,7 +20,7 @@
   import CouponItem from '../../components/coupons/item';
   import Event from '../../utils/Event';
 
-  export default class NoticeIndex extends wepy.page {
+  export default class CouponUse extends wepy.page {
     def = {
       init: false,
       coupons: []

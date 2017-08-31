@@ -13,7 +13,7 @@
     <view class="coupon-info-container">
       <view>
         <view class="coupon-title-container">
-          <view class="label primary small">现金</view>
+          <view class="label primary small {{coupon.status == 'NEVER_USED' ? '' : 'disabled'}}">现金</view>
           <text class="coupon-title-text">{{coupon.name}}</text>
         </view>
         <text class="coupon-time-text">{{coupon.beginTime}}-{{coupon.dueTime}}</text>

@@ -1,0 +1,82 @@
+<template>
+  <view class="container" wx:if="{{init}}">
+    <!--TAB 页-->
+    <ZanTab :tab.sync="tab" @change.user="switchTab" />
+
+    <!--列表展现-->
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <CouponItem :coupon.sync="item" />
+    </repeat>
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+
+    <!--占位符-->
+    <Placeholder :show.sync="isPageEmpty" message="您还没有相关优惠券"/>
+  </view>
+
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import coupon from '../../api/coupon';
+  import pagination from '../../mixins/pagination.wpy';
+  import Placeholder from '../../components/common/placeholder';
+  import ZanTab from '../../components/zanui/tab';
+  import CouponItem from '../../components/coupons/item';
+  import Loadmore from '../../components/weui/loadmore';
+
+  export default class CouponList extends wepy.page {
+    def = {
+      init: true,
+      page: {
+        list: [
+        ]
+      },
+      tab: {
+        list: [{
+          id: 'NEVER_USED',
+          title: '未使用'
+        }, {
+          id: 'USED',
+          title: '已使用'
+        }, {
+          id: 'EXPIRED',
+          title: '已过期'
+        }],
+        selectedId: 'NEVER_USED',
+        scroll: false
+      }
+    }
+    data = {...this.def};
+    async onLoad () {
+      this.page = coupon.page();
+      await this.next();
+    };
+    params() {
+      return {status: this.tab.selectedId};
+    }
+    methods = {
+      switchTab() {
+        this.reload();
+      }
+    }
+    events = {};
+    components = {
+      Placeholder: Placeholder,
+      ZanTab: ZanTab,
+      Loadmore: Loadmore,
+      CouponItem: CouponItem
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '我的优惠券',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>
