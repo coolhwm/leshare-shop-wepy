@@ -122,6 +122,17 @@ export default class address extends base {
   }
 
   /**
+   * 获取地址对象
+   */
+  static info (addrId) {
+    const url = `${this.baseUrl}/addresses/${addrId}`
+    return this.get(url, address).then(data => {
+      data.location = data.fullAddress.replace(data.detail, '');
+      return data;
+    });
+  }
+
+  /**
    * 设置默认
    */
   static setDefault (id) {

@@ -10,7 +10,7 @@
             <view class="weui-label">联系人</view>
           </view>
           <view class="weui-cell__bd">
-            <input class="weui-input" id="name" placeholder="收货人姓名" maxlength="5" @input="input"/>
+            <input class="weui-input" id="name" placeholder="收货人姓名" maxlength="5" @input="input" value="{{input.name}}"/>
           </view>
         </view>
 
@@ -31,12 +31,12 @@
             <view class="weui-label">联系电话</view>
           </view>
           <view class="weui-cell__bd">
-            <input class="weui-input" id="phone" placeholder="收货人电话" maxlength="11" @input="input"/>
+            <input class="weui-input" id="phone" placeholder="收货人电话" maxlength="11" @input="input" value="{{input.phone}}"/>
           </view>
         </view>
 
         <!--送餐地址-->
-        <view class="weui-cell weui-cells_after-title" @tap="detailSelect">
+        <view class="weui-cell weui-cells_after-title" @tap="location">
           <view class="weui-cell__hd">
             <view class="weui-label">送餐地址</view>
           </view>
@@ -52,7 +52,7 @@
             <view class="weui-label">详细地址</view>
           </view>
           <view class="weui-cell__bd">
-            <input class="weui-input" id="detail" placeholder="如楼栋、门牌号等" @input="input"/>
+            <input class="weui-input" id="detail" placeholder="如楼栋、门牌号等" @input="input" value="{{input.detail}}"/>
           </view>
         </view>
 
@@ -80,40 +80,72 @@
   export default class AddressEdit extends wepy.page {
     def = {
       init: false,
-      location: null
+      location: null,
+      mode: 'create'
     }
     data = {...this.def};
-    async onLoad (options) {
-      Event.listen(Event.ADDRESS_DETAIL_UPDATE, this.detailUpdate.bind(this), this);
+    async onLoad ({mode, id}) {
+      if (mode == 'edit') {
+        this.input = await address.info(id);
+        this.mode = mode;
+        this.location = {
+          detail: this.input.location
+        }
+      }
+      Event.listen(Event.ADDRESS_DETAIL_UPDATE, this.locationUpdated.bind(this), this);
       this.loaded();
     };
-    detailUpdate(location) {
-      this.input.loaction = true;
+    locationUpdated(location) {
+      this.input.location = true;
       this.location = location;
     }
     methods = {
-      detailSelect() {
+      /**
+       * 选择地址
+       */
+      location() {
         this.$navigate('search');
       },
+      /**
+       * 确认更新
+       */
       async confirm() {
         if (!this.validate()) {
           return;
         }
-        const param = this.input;
-        param.city = this.location.city;
-        param.province = this.location.province;
-        param.country = this.location.country;
-        param.town = this.location.town;
-        param.detail = this.location.detail + param.detail;
-        param.sex = 0;
-        param.latitude = this.location.latitude;
-        param.longitude = this.location.longitude;
-        await address.save(param);
-        await Tips.success('创建成功');
+        if (this.mode == 'edit') {
+          let param = this.input;
+          // 地址被重新选择了
+          if (this.location.latitude) {
+            param = this.copyLocationParam(this.input);
+          } else {
+            param.fullAddress = param.location + param.detail;
+          }
+          await address.update(this.input.id, param);
+        } else {
+          const param = this.copyLocationParam(this.input);
+          await address.save(param);
+        }
+        await Tips.success('保存成功');
         Event.emit(Event.ADDRESS_LIST_UPDATE);
         wepy.navigateBack();
       }
     };
+
+    /**
+     * 拷贝地址信息
+     */
+    copyLocationParam(param) {
+      param.city = this.location.city;
+      param.province = this.location.province;
+      param.country = this.location.country;
+      param.town = this.location.town;
+      param.fullAddress = this.location.detail + param.detail;
+      param.sex = 0;
+      param.latitude = this.location.latitude;
+      param.longitude = this.location.longitude;
+      return param;
+    }
     validate() {
       const rules = [
         {
@@ -132,7 +164,7 @@
           message: '请输入合法手机号码'
         },
         {
-          value: this.input.loaction,
+          value: this.input.location,
           method: 'required',
           message: '请选择送餐地址'
         },

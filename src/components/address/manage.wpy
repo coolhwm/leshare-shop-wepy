@@ -7,7 +7,7 @@
         <text class="address-info-phone">{{address.phone}}</text>
       </view>
       <view class="address-detail-container">
-        <text class="address-info-detail">{{address.detail}}</text>
+        <text class="address-info-detail">{{address.fullAddress}}</text>
       </view>
     </view>
     <view class="address-mgr-container">
