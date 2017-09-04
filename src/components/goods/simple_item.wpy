@@ -84,7 +84,7 @@
         border-radius: 5px;
         padding: 2px 5px;
         font-size: $text-xxs;
-        width: 70rpx;
+        width: 72rpx;
       }
     }
   }

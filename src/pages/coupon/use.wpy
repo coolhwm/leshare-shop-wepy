@@ -34,6 +34,7 @@
     methods = {
       select (coupon) {
         Event.emit(Event.TRADE_COUPON_UPDATE, coupon);
+        wepy.navigateBack();
       }
     }
     events = {};

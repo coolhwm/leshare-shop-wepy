@@ -1,0 +1,52 @@
+<template>
+  <view class="container" wx:if="{{init}}">
+
+    <!--列表展现-->
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+
+    </repeat>
+
+    <!--占位符-->
+    <Placeholder :show.sync="isPageEmpty" message="目前没有可以领取的优惠券"/>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import coupon from '../../api/coupon';
+  import base from '../../mixins/base';
+  import Placeholder from '../../components/common/placeholder';
+
+  export default class CouponPick extends wepy.page {
+    def = {
+      init: true,
+      coupons: []
+    }
+    data = {...this.def};
+    async onLoad () {
+      const shelf = await coupon.shelf();
+      console.info(shelf);
+    };
+    params() {
+      return {status: this.tab.selectedId};
+    }
+    methods = {
+      switchTab() {
+        this.reload();
+      }
+    }
+    events = {};
+    components = {
+      Placeholder: Placeholder
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '领取优惠券',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

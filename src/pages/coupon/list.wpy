@@ -5,7 +5,7 @@
 
     <!--列表展现-->
     <repeat for="{{page.list}}" key="index" index="index" item="item">
-      <CouponItem :coupon.sync="item" />
+      <CouponItem :coupon.sync="item" @delete.user="delete"/>
     </repeat>
     <!-- 加载提示 -->
     <Loadmore :page.sync="page"/>
@@ -26,6 +26,7 @@
   import ZanTab from '../../components/zanui/tab';
   import CouponItem from '../../components/coupons/item';
   import Loadmore from '../../components/weui/loadmore';
+  import Tips from '../../utils/Tips';
 
   export default class CouponList extends wepy.page {
     def = {
@@ -58,6 +59,12 @@
       return {status: this.tab.selectedId};
     }
     methods = {
+      async delete({id}) {
+        await Tips.confirm('确认删除该优惠券?');
+        await coupon.remove(id);
+        await Tips.success('操作成功');
+        this.reload();
+      },
       switchTab() {
         this.reload();
       }
