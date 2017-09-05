@@ -37,10 +37,10 @@
           <text class="weak">分享好友</text>
         </button>
 
-        <view class="shop-btn column-center">
+        <navigator class="shop-btn column-center"  url="/pages/coupon/pick" open-type="redirect">
           <image class="icon-xl" src="/images/home/coupon.png"></image>
           <text class="weak">领优惠券</text>
-        </view>
+        </navigator>
 
         <navigator class="shop-btn column-center" url="/pages/order/list" open-type="redirect">
           <image class="icon-xl" src="/images/home/my.png"></image>

@@ -1,13 +1,19 @@
 <template>
   <view class="container" wx:if="{{init}}">
+    <!-- 店铺信息区域 -->
+    <ShopHeader :shop.sync="shop" />
+
+    <!--功能区域-->
+    <HomeNav badegText="优惠" title="领取优惠券"  navText="首页" navType="navigateBack"/>
+    <CouponNav title="我的优惠券"  :navText.sync="couponsNum" navUrl="../coupon/list" last="true" navType="navigate"/>
 
     <!--列表展现-->
-    <repeat for="{{page.list}}" key="index" index="index" item="item">
-
+    <repeat for="{{coupons}}" key="index" index="index" item="item">
+      <CouponItem :coupon.sync="item" @pick.user="pick" />
     </repeat>
 
     <!--占位符-->
-    <Placeholder :show.sync="isPageEmpty" message="目前没有可以领取的优惠券"/>
+    <Placeholder :show.sync="isEmpty" message="目前没有可以领取的优惠券" top="500rpx"/>
   </view>
 </template>
 
@@ -15,29 +21,58 @@
   import wepy from 'wepy';
   import coupon from '../../api/coupon';
   import base from '../../mixins/base';
+  import ShopHeader from '../../components/shop/header';
+  import shop from '../../api/shop';
+  import ShopNav from '../../components/shop/nav';
   import Placeholder from '../../components/common/placeholder';
+  import CouponItem from '../../components/coupons/pick_item';
+  import Tips from '../../utils/Tips';
+  import Event from '../../utils/Event';
 
   export default class CouponPick extends wepy.page {
     def = {
-      init: true,
-      coupons: []
+      init: false,
+      coupons: [],
+      shop: {
+        notices: []
+      },
+      couponsNum: '0张',
+      isEmpty: true
     }
     data = {...this.def};
     async onLoad () {
-      const shelf = await coupon.shelf();
-      console.info(shelf);
+      // 加载店铺信息
+      this.shop = await shop.info();
+      this.shop.notices = await shop.notices();
+      // 优惠券信息
+      await this.loadCoupons();
+      Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupons.bind(this), this);
     };
-    params() {
-      return {status: this.tab.selectedId};
+    async loadCoupons () {
+      const shelf = await coupon.shelf();
+      this.coupons = shelf.pickList;
+      this.couponsNum = shelf.ownList.length + '张';
+      this.isEmpty = shelf.pickList.length < 1;
+      this.loaded();
+    }
+    async onPullDownRefresh () {
+      await this.loadCoupons();
+      wepy.stopPullDownRefresh();
     }
     methods = {
-      switchTab() {
-        this.reload();
+      async pick(couponId) {
+        await coupon.pick(couponId);
+        await Tips.success('领取成功');
+        await this.loadCoupons();
+        this.$apply();
       }
     }
-    events = {};
     components = {
-      Placeholder: Placeholder
+      Placeholder: Placeholder,
+      CouponItem: CouponItem,
+      HomeNav: ShopNav,
+      CouponNav: ShopNav,
+      ShopHeader: ShopHeader
     };
     mixins = [base];
     config = {

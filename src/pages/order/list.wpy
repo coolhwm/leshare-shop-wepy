@@ -5,7 +5,7 @@
     <ShopHeader :shop.sync="shop" />
 
     <!--功能区域-->
-    <HomeNav badegText="我的" title="我的记录"  navText="点外卖" navType="navigateBack"/>
+    <HomeNav badegText="我的" title="我的订单"  navText="点外卖" navType="navigateBack"/>
     <CouponNav title="优惠券"  :navText.sync="couponsNum" navUrl="../coupon/list" last="true" navType="navigate"/>
 
     <view class="mt10">

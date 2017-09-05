@@ -27,6 +27,7 @@
   import CouponItem from '../../components/coupons/item';
   import Loadmore from '../../components/weui/loadmore';
   import Tips from '../../utils/Tips';
+  import Event from '../../utils/Event';
 
   export default class CouponList extends wepy.page {
     def = {
@@ -63,6 +64,7 @@
         await Tips.confirm('确认删除该优惠券?');
         await coupon.remove(id);
         await Tips.success('操作成功');
+        Event.emit(Event.COUPON_LIST_UPDATE);
         this.reload();
       },
       switchTab() {
