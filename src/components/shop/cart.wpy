@@ -11,7 +11,7 @@
       <text class="muted xs">共计{{totalCount}}件商品</text>
     </view>
 
-    <view class="cart-btn column-center" @tap="buy">
+    <view class="cart-btn column-center {{totalCount < 1 ? 'cart-btn-disable' : ''}}" @tap.stop="buy">
       <text>去结算</text>
     </view>
   </view>
@@ -62,6 +62,7 @@
 <script>
   import wepy from 'wepy';
   import SilderPanel from '../../components/common/slider_panel';
+  import Tips from '../../utils/Tips';
   export default class ShopCart extends wepy.component {
     props = {
       carts: {}
@@ -83,7 +84,11 @@
         this.$emit('clear');
       },
       buy() {
-        this.$emit('buy');
+        if (this.totalCount < 1) {
+          Tips.alert('请选择商品');
+        } else {
+          this.$emit('buy');
+        }
       }
     };
     updateNum(event, cart) {
@@ -160,6 +165,9 @@
         color: #FFFFFF;
         font-size: $text-xxl
       }
+    }
+    .cart-btn-disable{
+      background-color: #B0B0B0;
     }
   }
 
