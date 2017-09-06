@@ -14,8 +14,8 @@
 
       <!--右侧滚动-->
       <scroll-view scroll-y class="goods-box" bindscrolltolower="onReachBottom">
-        <!--卡券区域-->
-        <scroll-view scroll-x	 class="coupon-box row" wx:if="{{categories.selectedId==-1 && coupons.length > 0}}">
+        <!--卡券区域（只在推荐的时候展现）-->
+        <scroll-view scroll-x	 class="coupon-box" wx:if="{{categories.selectedId==-1 && coupons.length > 0}}">
           <repeat for="{{coupons}}" key="index" index="index" item="item">
             <CouponItem :coupon.sync="item" @pick.user="pickCoupon" />
           </repeat>
@@ -292,6 +292,7 @@
     .coupon-box{
       padding: 10px 0 10px 20rpx;
       height: 60px;
+      width: 545rpx;
       border-bottom: $border;
       white-space: nowrap;
     }

@@ -77,7 +77,7 @@
 
     .trade-confirm-button{
       height: 100%;
-      width: 240rpx;
+      width: 270rpx;
       line-height: 100rpx;
       text-align: center;
       background-color: $color-primary;

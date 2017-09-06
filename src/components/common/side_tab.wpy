@@ -47,9 +47,9 @@
       flex-direction: column;
       justify-content: center;
       background-color: #F8F8F8;
-      border-left: 4px solid #F8F8F8;
+      border-left: 8rpx solid #F8F8F8;
       border-bottom: $border;
-      padding-left: 10px;
+      padding-left: 20rpx;
       text{ color: $color-weak}
       .tab-num{
         position: absolute;
