@@ -48,6 +48,9 @@ button{
 button.pain-btn[open-type="share"]::after {
   border:none;
 }
+button[plain]{
+  border:none;
+}
 
 .button-hover[type="primary"]{
   background-color: $color-primary-darken;

@@ -1,5 +1,5 @@
 <template>
-  <scroll-view class="side-tab">
+  <scroll-view class="side-tab" scroll-y>
     <block wx:for="{{tab.list}}" wx:key="id">
       <view class="tab-item {{item.id == tab.selectedId ? 'tab-item-seleted' : ''}}" @tap="switchTab({{item.id}})" >
         <text>{{item.title}}</text>
@@ -42,7 +42,7 @@
 
     .tab-item {
       position: relative;
-      height: 55px;
+      height: 110rpx;
       display: flex;
       flex-direction: column;
       justify-content: center;

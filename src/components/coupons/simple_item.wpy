@@ -7,7 +7,7 @@
       <text class="xs">满{{coupon.limitPrice}}元使用</text>
     </view>
     <image class="coupon-hr"  src="/images/icons/coupon-hr.png"/>
-    <view class="coupon-pick column-center">
+    <view class="coupon-pick column-center" @tap="pick({{coupon}})">
       <text>领取</text>
     </view>
   </view>
@@ -20,7 +20,11 @@
       coupon: {}
     };
     data = {};
-    methods = {};
+    methods = {
+      pick(coupon) {
+        this.$emit('pick', coupon);
+      }
+    };
     events = {};
     onLoad() {
     }

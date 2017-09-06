@@ -4,9 +4,9 @@
       <text>待支付 </text>
       <text class="major mr20">￥{{trade.finalPrice}}</text>
     </view>
-    <view class="trade-confirm-button {{confirmStatus? '' : 'trade-confirm-disable' }}" @tap="confirm">
-      <text>{{confirmText}}</text>
-    </view>
+    <form class="trade-confirm-button {{confirmStatus? '' : 'trade-confirm-disable' }} row-center" report-submit @submit="confirm" >
+      <button plain form-type="submit" >{{confirmText}}</button>
+    </form>
   </view>
   <view class="tarde-action-bar-placeholder">
   </view>
@@ -26,7 +26,8 @@
       confirmStatus: false
     };
     methods = {
-      confirm() {
+      confirm(e) {
+        console.info('form_id:', e);
         if (!this.confirmStatus) {
           Tips.alert(this.confirmText);
         } else {
@@ -81,7 +82,7 @@
       text-align: center;
       background-color: $color-primary;
       color: #FFF;
-      text{
+      button{
         color: #FFF;
       }
     }

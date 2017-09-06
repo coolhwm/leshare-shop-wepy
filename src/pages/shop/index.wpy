@@ -17,7 +17,7 @@
         <!--卡券区域-->
         <scroll-view scroll-x	 class="coupon-box row" wx:if="{{categories.selectedId==-1 && coupons.length > 0}}">
           <repeat for="{{coupons}}" key="index" index="index" item="item">
-            <CouponItem :coupon.sync="item" />
+            <CouponItem :coupon.sync="item" @pick.user="pickCoupon" />
           </repeat>
         </scroll-view>
 
@@ -92,9 +92,9 @@
       this.shop.notices = await shop.notices();
       // 加载优惠券
       const {pickList} = await coupon.shelf()
+      this.coupons = pickList;
       // 加载商品分类
       this.categories = await goods.categories();
-      this.coupons = pickList;
       // 加载购物车
       this.carts = await cart.list();
       // 加载商品
@@ -138,6 +138,17 @@
       async selectSku(sku) {
         const plus = this.methods.plus.bind(this);
         plus(sku);
+      },
+      /**
+       * 领取优惠券
+       */
+      async pickCoupon({id}) {
+        await coupon.pick(id);
+        await Tips.success('领取成功');
+        // 加载优惠券
+        const {pickList} = await coupon.shelf()
+        this.coupons = pickList;
+        this.$apply();
       },
       /**
        * 增加商品
