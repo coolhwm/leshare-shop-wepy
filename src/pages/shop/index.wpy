@@ -65,6 +65,7 @@
   import Loadmore from '../../components/weui/loadmore';
   import ShopCart from '../../components/shop/cart';
   import Tips from '../../utils/Tips';
+  import Event from '../../utils/Event';
 
   export default class ShopIndex extends wepy.page {
     def = {
@@ -100,6 +101,7 @@
       // 加载商品
       this.page = goods.page(true);
       await this.next();
+      Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupons.bind(this), this);
       this.loaded();
     };
     // 分页加载完毕
@@ -128,6 +130,12 @@
         const cart = this.carts.find(cart => cart.goodsId == goods.id);
         goods.num = cart ? cart.goodsNum : 0;
       });
+    }
+    // 更新卡券
+    async loadCoupons() {
+      const {pickList} = await coupon.shelf()
+      this.coupons = pickList;
+      this.$apply();
     }
     methods = {
       switchTab() {
