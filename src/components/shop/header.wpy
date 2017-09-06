@@ -5,7 +5,7 @@
     <view class="shop-content column">
       <view class="column">
         <text class="xl">{{shop.name}}</text>
-        <text class="xxs">￥10起送 | 配送费￥5</text>
+        <text class="xxs inline">{{shop.address}}</text>
       </view>
       <text class="mt20 xs">公告：{{shop.notices[0].content}}</text>
     </view>

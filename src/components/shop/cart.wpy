@@ -8,7 +8,7 @@
 
     <view class="info-box column">
       <text class="price">￥{{totalPrice}}</text>
-      <text class="muted xs">另需配送费￥3</text>
+      <text class="muted xs">共计{{totalCount}}件商品</text>
     </view>
 
     <view class="cart-btn column-center" @tap="buy">

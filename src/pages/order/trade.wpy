@@ -179,10 +179,13 @@
       /**
        * 确定下单
        */
-      async confirm() {
+      async confirm(formId) {
         // TODO 下单前订单状态检查
+        Tips.loading()
         // 数据准备
         this.trade.deliveryType = 'CITY';
+        // 表单ID
+        this.trade.formId = formId;
         // 创建订单
         const trade = await order.createOrder(this.trade, this.address);
         // 发起预支付

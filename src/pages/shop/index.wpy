@@ -54,6 +54,7 @@
   import coupon from '../../api/coupon';
   import cart from '../../api/cart';
   import order from '../../api/order';
+  import delivery from '../../api/delivery';
   import base from '../../mixins/base';
   import pagination from '../../mixins/pagination.wpy';
   import SideTab from '../../components/common/side_tab';
@@ -102,6 +103,9 @@
       this.page = goods.page(true);
       await this.next();
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupons.bind(this), this);
+
+      const limit = await delivery.limitPrice();
+      console.info(limit);
       this.loaded();
     };
     // 分页加载完毕

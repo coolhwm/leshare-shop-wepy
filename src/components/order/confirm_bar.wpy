@@ -26,12 +26,12 @@
       confirmStatus: false
     };
     methods = {
-      confirm(e) {
-        console.info('form_id:', e);
+      confirm({detail}) {
+        console.info('form_id:', detail.formId);
         if (!this.confirmStatus) {
           Tips.alert(this.confirmText);
         } else {
-          this.$emit('confirm');
+          this.$emit('confirm', detail.formId);
         }
       }
     };
