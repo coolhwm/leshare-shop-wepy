@@ -1,7 +1,7 @@
 <template>
   <CoverPanel :display.sync="display" zIndex="1000000"/>
   <!--弹出窗口-->
-  <view class="wrap column-center" wx:if="{{display == 'true'}}">
+  <view class="wrap" wx:if="{{display == 'true'}}">
     <view class="modal-panel column">
       <!--标题区域-->
       <view class="sku-title column-center">
@@ -89,17 +89,18 @@
 <style lang="scss">
   @import "../../styles/variable";
   .wrap{
-    position: absolute;
-    width: 100%;
+    position: fixed;
+    width: 750rpx;
     height: 100%;
     top:0;
-    left:0;
     z-index: 1000001;
     .modal-panel{
-      position: absolute;
+      position: fixed;
       min-height: 50px;
       border-radius: 3px;
       width: 650rpx;
+      top: 30%;
+      left: 50rpx;
       background-color: #fFF;
       z-index: 1000002;
     }

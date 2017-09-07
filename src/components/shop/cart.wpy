@@ -78,7 +78,11 @@
         this.updateNum('minus', cart);
       },
       cart() {
-        this.isCartDisplay = 'true';
+        if (this.totalCount < 1) {
+          Tips.alert('请选择商品');
+        } else {
+          this.isCartDisplay = 'true';
+        }
       },
       clear() {
         this.$emit('clear');
