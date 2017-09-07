@@ -2,8 +2,14 @@
   <view class="container" wx:if="{{init}}">
 
     <!--列表展现-->
-    <repeat for="{{page.list}}" key="index" index="index" item="item">
+    <repeat for="{{available}}" key="index" index="index" item="item">
       <Address :address.sync="item" @select.user="select"/>
+    </repeat>
+    <view class="disable-title-box">
+      <text class="muted">以下地址不满足配送条件：</text>
+    </view>
+    <repeat for="{{disable}}" key="index" index="index" item="item">
+      <Address :address.sync="item" @select.user="select" disabled="1"/>
     </repeat>
 
     <!-- 加载提示 -->
@@ -21,7 +27,6 @@
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import address from '../../api/address';
-  import pagination from '../../mixins/pagination.wpy';
   import Placeholder from '../../components/common/placeholder';
   import ActionBar from '../../components/common/action_bar';
   import Event from '../../utils/Event';
@@ -31,17 +36,22 @@
   export default class AddressList extends wepy.page {
     def = {
       init: false,
-      page: {
-        list: [
-        ]
-      }
+      goodsList: [],
+      available: [],
+      disable: []
     }
     data = {...this.def};
-    async onLoad () {
-      this.page = address.page();
-      await this.next();
-      Event.listen(Event.ADDRESS_LIST_UPDATE, this.update.bind(this), this);
+    async onLoad ({goodsList}) {
+      this.goodsList = JSON.parse(goodsList);
+      await this.load();
+      Event.listen(Event.ADDRESS_LIST_UPDATE, this.load.bind(this), this);
     };
+    async load() {
+      const {available, disable} = await address.available(this.goodsList);
+      this.available = available;
+      this.disable = disable;
+      this.loaded();
+    }
     methods = {
       add() {
         this.$navigate('edit?mode=create');
@@ -58,7 +68,7 @@
       Loadmore: Loadmore,
       Address: Address
     };
-    mixins = [base, pagination];
+    mixins = [base];
     config = {
       navigationBarTitleText: '选择地址',
       enablePullDownRefresh: true
@@ -68,4 +78,10 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+
+  .disable-title-box{
+    padding-left: 20rpx;
+    padding-top: 20rpx;
+    padding-bottom: 10rpx;
+  }
 </style>

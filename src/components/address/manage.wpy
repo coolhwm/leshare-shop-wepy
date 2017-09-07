@@ -1,7 +1,7 @@
 <template>
-  <view class="address-item-container">
+  <view class="address-item-container {{disabled == '1' ? 'address-item-disabled' : ''}}">
     <!-- 地址内容 -->
-    <view class="address-info-container"  @tap="select({{address}})">
+    <view class="address-info-container"  @tap="select({{disabled != '1' ? address : ''}})">
       <view class="address-name-phone-container">
         <text class="address-info-name">{{address.name}}</text>
         <text class="address-info-phone">{{address.phone}}</text>
@@ -12,7 +12,7 @@
     </view>
     <view class="address-mgr-container">
       <view class="address-default-container">
-        <view @tap="setDefault({{address.id}})" >
+        <view @tap="setDefault({{address.id}})" wx:if="{{disabled != '1'}}">
           <icon class="weui-icon-checkbox_success" type="success" size="18" wx:if="{{address.isDefault == 1}}"></icon>
           <icon class="weui-icon-checkbox_circle" type="circle" size="18" wx:else></icon>
           <text>设为默认</text>
@@ -37,11 +37,18 @@
   import Tips from '../../utils/Tips';
   export default class Address extends wepy.component {
     props = {
-      address: {}
+      address: {},
+      disabled: {
+        default: null
+      }
     };
     methods = {
       select(address) {
-        this.$emit('select', address);
+        if (address != '') {
+          this.$emit('select', address);
+        } else {
+          Tips.alert('不满足配送条件');
+        }
       },
       edit(id) {
         const param = {
@@ -142,5 +149,11 @@
   /*地址容器*/
   .address-detail-container{
     margin-top: 10rpx;
+  }
+
+  .address-item-disabled{
+    text{
+      color: $color-muted;
+    }
   }
 </style>

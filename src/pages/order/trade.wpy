@@ -1,7 +1,7 @@
 <template>
   <Tips/>
   <view class="container" wx:if="{{init}}">
-    <AddressSelector :address.sync="address" @select.user="address" />
+    <AddressSelector :address.sync="selectedAddress" @select.user="address" />
 
     <view class="mt20"></view>
     <!--<view class="weui-cells-form">-->
@@ -17,7 +17,7 @@
         <view class="weui-cell__bd">支付方式</view>
         <view class="weui-cell__ft weui-cell__ft_in-access">{{trade.paymentText}}</view>
       </view>
-      <view class="weui-cell weui-cell_access">
+      <view class="weui-cell weui-cell_access" @tap="delivery">
         <view class="weui-cell__bd">配送方式</view>
         <text class="weui-cell__ft {{delilveryCount > 1 ? 'weui-cell__ft_in-access' : ''}}">{{delilveryText}} </text>
       </view>
@@ -25,12 +25,12 @@
         <view class="weui-cell__bd">优惠券
           <view class="label small primary pain" wx:if="{{coupons.length > 0}}">{{couponLabel}}</view>
         </view>
-        <view class="weui-cell__ft weui-cell__ft_in-access">{{couponText}}</view>
+        <view class="weui-cell__ft {{coupons.length > 0 ? 'weui-cell__ft_in-access' : ''}}">{{couponText}}</view>
       </view>
-      <view class="weui-cell">
-        <view class="weui-cell__bd">买家留言</view>
-        <view class="weui-cell__ft">{{trade.message ? trade.message : '无'}}</view>
-      </view>
+      <!--<view class="weui-cell">-->
+        <!--<view class="weui-cell__bd">买家留言</view>-->
+        <!--<view class="weui-cell__ft">{{trade.message ? trade.message : '无'}}</view>-->
+      <!--</view>-->
     </view>
 
     <!--信息汇总-->
@@ -55,7 +55,7 @@
 
     <!--操作底栏-->
     <OrderConfirmBar :trade.sync="trade" @confirm.user="confirm"
-      :address.sync="address"
+      :address.sync="selectedAddress"
       :delilveries.sync="delilveries"
       :selectedDelivery.sync="selectedDelivery" />
 
@@ -86,7 +86,7 @@
       trade: {
         orderGoodsInfos: []
       },
-      address: null,
+      selectedAddress: null,
       delilveries: [],
       selectedDelivery: null,
       coupons: [],
@@ -131,7 +131,7 @@
         ]
       }
       // 默认地址
-      this.address = await address.getDefault();
+      this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
       // 处理配送方式
       await this.updateDelivery();
       // 可用卡券
@@ -146,15 +146,33 @@
 
     methods = {
       /**
+       * 选择配送方式
+       */
+      async delivery() {
+        if (this.delilveries.length <= 1) {
+          return;
+        }
+        const actions = this.delilveries.map(item => `${item.name} ￥${item.fee}`);
+        const {index} = await Tips.action(...actions);
+        this.selectedDelivery = this.delilveries[index];
+        this.updateTradePrice();
+        this.$apply();
+      },
+      /**
        * 选择地址
        */
       address () {
-        this.$navigate('../address/list');
+        this.$navigate('../address/list', {
+          goodsList: JSON.stringify(this.trade.orderGoodsInfos)
+        });
       },
       /**
        * 选择优惠券
        */
       coupon () {
+        if (this.coupons.length < 1) {
+          return;
+        }
         const param = {
           coupons: JSON.stringify(this.coupons)
         };
@@ -187,7 +205,7 @@
         // 表单ID
         this.trade.formId = formId;
         // 创建订单
-        const trade = await order.createOrder(this.trade, this.address);
+        const trade = await order.createOrder(this.trade, this.selectedAddress);
         // 发起预支付
         const payment = await order.prepayOrder(trade.orderId);
         Tips.loaded();
@@ -206,17 +224,19 @@
      */
     async updateDelivery() {
       // 需要先选择地址
-      if (!this.address) {
+      if (!this.selectedAddress) {
         this.trade.postFee = 0;
         return;
       }
       // 配送方式
-      this.delilveries = await order.queryPostPrice(this.address, this.trade.orderGoodsInfos);
+      this.delilveries = this.selectedAddress.deliveryInfoDetail;
       // 默认配送方式
-      if (this.delilveries.delilveryList.length > 0) {
-        this.selectedDelivery = this.delilveries.delilveryList[0];
+      if (this.delilveries.length > 0) {
+        this.selectedDelivery = this.delilveries[0];
         this.trade.deliveryType = this.selectedDelivery.type;
         this.trade.postFee = Number(this.selectedDelivery.fee).toFixed(2);
+      } else {
+        this.selectedDelivery = null;
       }
     }
     /**
@@ -233,7 +253,7 @@
      * 回调更新地址
      */
     async updateAddress(address) {
-      this.address = address;
+      this.selectedAddress = address;
       await this.updateDelivery();
       this.updateTradePrice();
       this.$apply();
@@ -255,13 +275,15 @@
         if (this.selectedDelivery) {
           const fee = this.selectedDelivery.fee > 0 ? `￥${this.selectedDelivery.fee}` : '免配送费';
           return `${this.selectedDelivery.name} ${fee}`;
+        } else if (this.delilveries.length < 1) {
+          return '暂不支持配送';
         } else {
           return '请先选择收货地址';
         }
       },
       delilveryCount() {
-        if (this.delilveries.delilveryList) {
-          return this.delilveries.delilveryList.length;
+        if (this.delilveries) {
+          return this.delilveries.length;
         } else {
           return 0;
         }

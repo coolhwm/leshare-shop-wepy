@@ -59,12 +59,12 @@ export default class extends wepy.app {
   }
   config = {
     pages: [
+      'pages/order/trade',
       'pages/shop/index',
       'pages/home/home',
       'pages/coupon/pick',
       'pages/coupon/list',
       'pages/order/list',
-      'pages/order/trade',
       'pages/address/list',
       'pages/address/edit',
       'pages/address/search',

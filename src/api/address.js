@@ -106,6 +106,40 @@ export default class address extends base {
   }
 
   /**
+   * 返回可用地址
+   */
+  static available (goodsList) {
+    const url = `${this.baseUrl}/addresses/available`
+    return this.post(url, goodsList).then(data => {
+      return data.map(this._processAddress.bind(this));
+    }).then(data => {
+      const available = [];
+      const disable = [];
+      data.forEach(item => {
+        if (item.available) {
+          available.push(item);
+        } else {
+          disable.push(item);
+        }
+      })
+      return {available, disable};
+    });
+  }
+
+  /**
+   * 返回默认的可用地址
+   */
+  static async defaultAvailable (goodsList) {
+    const {available} = await this.available(goodsList);
+    const address = available.find(item => item.isDefault == 1);
+    if (address) {
+      return address;
+    } else {
+      return available[0];
+    }
+  }
+
+  /**
    * 新增地址
    */
   static save (address) {
