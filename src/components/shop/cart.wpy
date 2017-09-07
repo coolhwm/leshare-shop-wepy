@@ -12,7 +12,8 @@
     </view>
 
     <view class="cart-btn column-center {{totalCount < 1 ? 'cart-btn-disable' : ''}}" @tap.stop="buy">
-      <text>去结算</text>
+      <text wx:if="{{totalCount < 1}}">请选择</text>
+      <text wx:else>去结算</text>
     </view>
   </view>
 
