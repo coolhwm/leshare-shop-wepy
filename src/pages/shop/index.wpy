@@ -193,15 +193,22 @@
        * 减少商品
        */
       async minus({goodsId, goodsSku}) {
+        // 商品对象
         const goods = this.findGoods(goodsId);
         if (goods.num < 1) {
           return;
         }
+        // 若果购物车有多个对象，但是goodsSku 为空，那么则无法操作
+        const count = this.countCart(goodsId);
+        if (count > 1 && goodsSku == null) {
+          Tips.alert('请在购物车操作');
+          return;
+        }
+        // 购物车对象
+        const target = this.findCart(goodsId, goodsSku);
         if (goods) {
           goods.num -= 1;
         }
-        // 购物车+
-        const target = this.findCart(goodsId, goodsSku);
         if (target.goodsNum == 1) {
           this.removeCart(target.cartId);
           cart.remove(target.cartId);
@@ -248,6 +255,15 @@
     }
     findCart(goodsId, goodsSku) {
       return this.carts.find(item => item.goodsId == goodsId && (goodsSku == null || item.goodsSku == goodsSku));
+    }
+    countCart(goodsId) {
+      let count = 0;
+      this.carts.forEach(item => {
+        if (item.goodsId == goodsId) {
+          count += 1;
+        }
+      });
+      return count;
     }
     removeCart(cartId) {
       const index = this.carts.findIndex(item => item.cartId == cartId);

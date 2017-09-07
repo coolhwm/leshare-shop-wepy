@@ -4,7 +4,6 @@
     <view class="goods-main column">
       <view class="row-between">
         <text class="goods-name inline">{{goods.name}}</text>
-        <view class="goods-sku-badge" wx:if="{{goods.goodsSkuInfo}}">多规格</view>
       </view>
       <view class="mt20 row-between">
         <text class="goods-price">￥{{goods.priceLable}}</text>
@@ -76,7 +75,7 @@
         font-size: $text-lg;
       }
       .goods-name{
-        max-width: 280rpx;
+        max-width: 380rpx;
       }
       .goods-sku-badge{
         background-color: $color-primary;
