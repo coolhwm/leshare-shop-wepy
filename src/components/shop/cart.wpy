@@ -8,7 +8,8 @@
 
     <view class="info-box column">
       <text class="price">￥{{totalPrice}}</text>
-      <text class="muted xs">共计{{totalCount}}件商品</text>
+      <text class="muted xs" wx:if="{{totalCount > 0}}">共计{{totalCount}}件商品</text>
+      <text class="muted xs" wx:else>请选择商品加入购物车</text>
     </view>
 
     <view class="cart-btn column-center {{totalCount < 1 ? 'cart-btn-disable' : ''}}" @tap.stop="buy">

@@ -13,7 +13,7 @@
       <view class="sku-list-box column">
         <text class="weak sm">规格:</text>
         <view class="sku-item-box row">
-          <block  wx:for-item="skuValue"  wx:for="{{sku}}">
+          <block  wx:for-item="skuValue"  wx:for="{{sku}}" wx:key="index">
             <view class="sku-item label {{selected == skuValue ? 'primary' : ''}}" @tap="select({{skuValue}})">
               {{skuValue}}
             </view>
