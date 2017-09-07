@@ -53,7 +53,7 @@
     <view class="photo-box sub-box">
       <text class="sub-title">门店照片</text>
       <view class="content row-between">
-        <image @tap="preview({{item.url}})" mode="aspectFill" class="shop-photo" src="{{item.url}}/medium" wx:for="{{shop.images}}" wx:key="index"></image>
+        <image @tap="previewShopImages({{item.url}})" mode="aspectFill" class="shop-photo" src="{{item.url}}/medium" wx:for="{{shop.images}}" wx:key="index"></image>
       </view>
     </view>
 
@@ -62,7 +62,7 @@
       <text class="sub-title">招牌推荐</text>
       <view class="content column">
         <view class="goods-box row" wx:for="{{goods}}" wx:key="index">
-          <image class="goods-image" src="{{item.imageUrl}}" @tap="preview({{item.imageUrl}})"/>
+          <image class="goods-image" src="{{item.imageUrl}}" @tap="previewGoodsImages({{item.imageUrl}})"/>
           <view class="main column">
             <text class="title">{{item.name}}</text>
             <text class="price">￥{{item.priceLable}}</text>
@@ -123,8 +123,19 @@
           address: this.data.shop.describe
         });
       },
-      preview (url) {
-        wepy.previewImage({urls: [url]});
+      previewGoodsImages(url) {
+        const urls = this.goods.map(item => item.imageUrl);
+        wepy.previewImage({
+          current: url,
+          urls: urls
+        });
+      },
+      previewShopImages (url) {
+        const urls = this.shop.images.map(item => item.url);
+        wepy.previewImage({
+          current: url,
+          urls: urls
+        });
       },
       share () {
         wepy.showShareMenu();
