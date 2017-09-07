@@ -12,9 +12,8 @@
       <text class="muted xs" wx:else>请选择商品加入购物车</text>
     </view>
 
-    <view class="cart-btn column-center {{totalCount < 1 ? 'cart-btn-disable' : ''}}" @tap.stop="buy">
-      <text wx:if="{{totalCount < 1}}">请选择</text>
-      <text wx:else>去结算</text>
+    <view class="cart-btn column-center {{buyStatus != 1 ? 'cart-btn-disable' : ''}}" @tap.stop="buy">
+      <text>{{buyText}}</text>
     </view>
   </view>
 
@@ -67,7 +66,9 @@
   import Tips from '../../utils/Tips';
   export default class ShopCart extends wepy.component {
     props = {
-      carts: {}
+      carts: {},
+      status: {},
+      buyStatus: 0
     };
     data = {
       isCartDisplay: 'false'
@@ -80,7 +81,9 @@
         this.updateNum('minus', cart);
       },
       cart() {
-        if (this.totalCount < 1) {
+        if (!this.status.open) {
+          Tips.modal(this.status.closeTips);
+        } else if (this.totalCount < 1) {
           Tips.alert('请选择商品');
         } else {
           this.isCartDisplay = 'true';
@@ -90,7 +93,9 @@
         this.$emit('clear');
       },
       buy() {
-        if (this.totalCount < 1) {
+        if (!this.status.open) {
+          Tips.modal(this.status.closeTips);
+        } else if (this.totalCount < 1) {
           Tips.alert('请选择商品');
         } else {
           this.$emit('buy');
@@ -118,6 +123,21 @@
           count += item.goodsNum
         });
         return count;
+      },
+      buyText() {
+        if (!this.status.open) {
+          this.buyStatus = 0;
+          this.$apply();
+          return '休息中';
+        } else if (this.totalCount < 1) {
+          this.buyStatus = 2;
+          this.$apply();
+          return '请选择';
+        } else {
+          this.buyStatus = 1;
+          this.$apply();
+          return '去结算';
+        }
       }
     }
     components = {

@@ -4,9 +4,6 @@
     <AddressSelector :address.sync="selectedAddress" @select.user="address" />
 
     <view class="mt20"></view>
-    <!--<view class="weui-cells-form">-->
-      <!--<ActionSheet title="支付方式" describe="在线支付"/>-->
-    <!--</view>-->
 
     <!--订单项目-->
     <OrderItem :order.sync="trade" action="0"></OrderItem>

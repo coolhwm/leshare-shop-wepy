@@ -38,7 +38,7 @@
     </view>
 
     <!-- 购物车 -->
-    <ShopCart :carts.sync="carts" @plus.user="plus" @minus.user="minus" @clear.user="clear" @buy.user="buy"/>
+    <ShopCart :carts.sync="carts" :status.sync="status" @plus.user="plus" @minus.user="minus" @clear.user="clear" @buy.user="buy"/>
 
     <!--SKU选择器-->
     <SkuSelector :display.sync="skuDisplay" :goods.sync="skuGoods" @select.user="selectSku" />
@@ -78,6 +78,7 @@
       shop: {
         notices: []
       },
+      status: {},
       notices: [],
       categories: {},
       coupons: [],
@@ -91,6 +92,7 @@
       await auth.user();
       // 加载店铺信息
       this.shop = await shop.info();
+      this.status = await shop.getStatus();
       this.shop.notices = await shop.notices();
       // 加载优惠券
       const {pickList} = await coupon.shelf()
