@@ -63,10 +63,10 @@
       <view class="content column">
         <view class="goods-box row" wx:for="{{goods}}" wx:key="index">
           <image class="goods-image" src="{{item.imageUrl}}" @tap="previewGoodsImages({{item.imageUrl}})"/>
-          <view class="main column">
+          <navigator class="main column"  url="/pages/shop/index"  open-type="redirect">
             <text class="title">{{item.name}}</text>
             <text class="price">￥{{item.priceLable}}</text>
-          </view>
+          </navigator>
         </view>
       </view>
     </view>
@@ -83,7 +83,6 @@
   import goods from '../../api/goods';
   import base from '../../mixins/base';
   import Copyright from '../../components/common/copyright';
-  // import Tips from '../../utils/Tips';
 
   export default class ShopHome extends wepy.page {
     def = {
