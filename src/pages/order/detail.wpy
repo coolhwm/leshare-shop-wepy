@@ -66,7 +66,7 @@
     <!--操作栏-->
     <view class="order-action-bar row-end" wx:if="{{action != 0}}">
       <view class="zan-btn zan-btn--small" @tap="again({{order}})">再来一单</view>
-      <view class="zan-btn zan-btn--small" @tap="close({{order.orderId}})"  wx:if="{{order.status == 1}}">取消订单</view>
+      <view class="zan-btn zan-btn--small" @tap="close({{order.orderId}})"  wx:if="{{order.status == 1 || (order.status == 2 && order.paymentType == 0)}}">取消订单</view>
       <view class="zan-btn zan-btn--small zan-btn--primary" @tap="pay({{order.orderId}})" wx:if="{{order.status == 1}}">立即支付</view>
       <!--<view class="zan-btn zan-btn&#45;&#45;small zan-btn&#45;&#45;primary" @tap="receive({{order.orderId}})" wx:if="{{order.status == 3}}">完成订单</view>-->
 
