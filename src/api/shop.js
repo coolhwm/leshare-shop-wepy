@@ -27,6 +27,15 @@ export default class shop extends base {
   }
 
   /**
+   * 判断店铺是否营业
+   */
+  static async isStatusOpen() {
+    const url = `${this.baseUrl}/shops/status`;
+    const {open} = await this.get(url);
+    return open;
+  }
+
+  /**
    * 获取店铺公告（第一个）
    */
   static async notices() {

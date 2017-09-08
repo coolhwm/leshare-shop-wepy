@@ -5,7 +5,7 @@
     <ShopHeader :shop.sync="shop" />
 
     <!--功能区域-->
-    <ShopNav badegText="外卖" title="点外卖"  navText="我的" navUrl="../order/list" navType="navigate"/>
+    <ShopNav badegText="外卖" :title.sync="title"  navText="我的" navUrl="../order/list" navType="navigate"/>
 
     <!--主内容区域-->
     <view class="main-box row">
@@ -84,7 +84,8 @@
       coupons: [],
       carts: [],
       skuDisplay: 'false',
-      skuGoods: {}
+      skuGoods: {},
+      title: '点外卖'
     }
     data = {...this.def};
     async onLoad () {
@@ -92,8 +93,8 @@
       await auth.user();
       // 加载店铺信息
       this.shop = await shop.info();
-      this.status = await shop.getStatus();
       this.shop.notices = await shop.notices();
+      await this.loadStatus();
       // 加载优惠券
       const {pickList} = await coupon.shelf()
       this.coupons = pickList;
@@ -106,10 +107,16 @@
       await this.next();
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupons.bind(this), this);
 
-      const limit = await delivery.limitPrice();
-      console.info(limit);
       this.loaded();
     };
+    async onShow () {
+      if (this.init) {
+        // 重新判断店铺状态
+        Tips.setLoading();
+        await this.loadStatus();
+        this.loaded();
+      }
+    }
     // 分页加载完毕
     onPageLoad() {
       this.setGoodsNum();
@@ -142,6 +149,14 @@
       const {pickList} = await coupon.shelf()
       this.coupons = pickList;
       this.$apply();
+    }
+    // 更新状态
+    async loadStatus() {
+      this.status = await shop.getStatus();
+      this.title = this.status.open ? '点外卖' : this.status.closeTips;
+      if (!this.init) {
+        Tips.modal(this.status.closeTips);
+      }
     }
     methods = {
       switchTab() {

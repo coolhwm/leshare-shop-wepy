@@ -60,9 +60,9 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-  import base from '../../mixins/base'
-  import input from '../../mixins/input'
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import input from '../../mixins/input';
   import address from '../../api/address';
   import coupon from '../../api/coupon';
   import order from '../../api/order';
@@ -92,6 +92,8 @@
     data = {...this.def}
 
     async onLoad ({trade}) {
+      const isOpen = await this.checkShopStatus();
+      if (!isOpen) { return; }
       // 订单数据
       this.trade = JSON.parse(trade);
       // 默认地址
@@ -163,6 +165,8 @@
        */
       async confirm(formId) {
         // TODO 下单前订单状态检查
+        const isOpen = await this.checkShopStatus();
+        if (!isOpen) { return; }
         Tips.loading()
         // 数据准备
         this.trade.deliveryType = 'CITY';
@@ -202,6 +206,19 @@
       } else {
         this.selectedDelivery = null;
       }
+    }
+    /**
+     * 检查店铺状态
+     */
+    async checkShopStatus() {
+      // 检查店铺状态
+      const status = await shop.isStatusOpen();
+      Tips.loaded();
+      if (!status) {
+        await Tips.modal('店铺已休息');
+        wepy.navigateBack();
+      }
+      return status;
     }
     /**
      * 回调更新优惠券
