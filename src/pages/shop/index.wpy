@@ -117,6 +117,9 @@
         this.loaded();
       }
     }
+    onShareAppMessage () {
+      return {};
+    }
     // 分页加载完毕
     onPageLoad() {
       this.setGoodsNum();
