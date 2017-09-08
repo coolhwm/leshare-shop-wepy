@@ -101,7 +101,7 @@
       // 收货地址
       this.address = {
         name: this.order.receiveName,
-        fullAddress: this.order.address,
+        simpleAddress: this.order.address,
         phone: this.order.receivePhone
       };
       this.loaded();

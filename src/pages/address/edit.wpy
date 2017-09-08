@@ -31,7 +31,7 @@
             <view class="weui-label">联系电话</view>
           </view>
           <view class="weui-cell__bd">
-            <input class="weui-input" id="phone" placeholder="收货人电话" maxlength="11" @input="input" value="{{input.phone}}"/>
+            <input class="weui-input" id="phone" placeholder="收货人电话" type="number" maxlength="11" @input="input" value="{{input.phone}}"/>
           </view>
         </view>
 

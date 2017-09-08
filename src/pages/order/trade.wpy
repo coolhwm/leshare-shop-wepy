@@ -187,15 +187,20 @@
         this.trade.formId = detail.formId;
         // 创建订单
         const trade = await order.createOrder(this.trade, this.selectedAddress);
-        // 发起预支付
-        const payment = await order.prepayOrder(trade.orderId);
-        Tips.loaded();
-        // 微信支付
-        try {
-          await order.wxpayOrder(payment);
-          await Tips.success('支付成功');
-        } catch (e) {
-          await Tips.success('支付取消');
+        if (trade.paymentType == 1) {
+          // 在线支付/发起预支付
+          const payment = await order.prepayOrder(trade.orderId);
+          Tips.loaded();
+          // 微信支付
+          try {
+            await order.wxpayOrder(payment);
+            await Tips.success('支付成功');
+          } catch (e) {
+            await Tips.alert('支付取消');
+          }
+        } else {
+          // 线下支付
+          await Tips.success('下单成功');
         }
         this.$redirect('list');
       }
