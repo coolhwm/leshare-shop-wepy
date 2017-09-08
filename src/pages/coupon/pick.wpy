@@ -61,10 +61,16 @@
     }
     methods = {
       async pick(couponId) {
-        await coupon.pick(couponId);
-        await Tips.success('领取成功');
-        await this.loadCoupons();
-        this.$apply();
+        try {
+          await coupon.pick(couponId);
+          await Tips.success('领取成功');
+          await this.loadCoupons();
+          this.$apply();
+        } catch (e) {
+          if (e.serverCode == '50001') {
+            Tips.alert('已经领过了');
+          }
+        }
       }
     }
     components = {

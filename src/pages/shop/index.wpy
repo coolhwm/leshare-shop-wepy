@@ -105,8 +105,9 @@
       // 加载商品
       this.page = goods.page(true);
       await this.next();
+      // 监听事件
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupons.bind(this), this);
-
+      Event.listen(Event.CART_LIST_CLEAR, this.doClear.bind(this), this);
       this.loaded();
     };
     async onShow () {
@@ -175,11 +176,17 @@
        * 领取优惠券
        */
       async pickCoupon({id}) {
-        await coupon.pick(id);
-        await Tips.success('领取成功');
-        // 加载优惠券
-        const {pickList} = await coupon.shelf()
-        this.coupons = pickList;
+        try {
+          await coupon.pick(id);
+          await Tips.success('领取成功');
+          // 加载优惠券
+          const {pickList} = await coupon.shelf()
+          this.coupons = pickList;
+        } catch (e) {
+          if (e.serverCode == '50001') {
+            Tips.alert('已经领过了');
+          }
+        }
         this.$apply();
       },
       /**
@@ -248,11 +255,7 @@
           return;
         }
         await Tips.confirm('确认清空购物车？');
-        await cart.clear();
-        this.carts = [];
-        this.setCategoryNum();
-        this.setGoodsNum();
-        this.loaded();
+        await this.doClear();
       },
       /**
        * 确认购买
@@ -264,6 +267,13 @@
         };
         this.$navigate('../order/trade', param);
       }
+    }
+    async doClear() {
+      await cart.clear();
+      this.carts = [];
+      this.setCategoryNum();
+      this.setGoodsNum();
+      this.loaded();
     }
     async skuSelector(goodsId) {
       this.skuGoods = await goods.getInfo(goodsId);

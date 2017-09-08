@@ -73,7 +73,8 @@
   import address from '../../api/address';
   import coupon from '../../api/coupon';
   import order from '../../api/order';
-  import shop from '../../api/shop'
+  import cart from '../../api/cart';
+  import shop from '../../api/shop';
   import FormTips from '../../components/weui/tips';
   import ActionBar from '../../components/common/action_bar';
   import AddressSelector from '../../components/address/selector';
@@ -201,6 +202,12 @@
         } else {
           // 线下支付
           await Tips.success('下单成功');
+        }
+        // 清空购物车
+        Event.emit(Event.CART_LIST_CLEAR);
+        // 卡券领取更新
+        if (trade.couponUsedId) {
+          Event.emit(Event.COUPON_LIST_UPDATE);
         }
         this.$redirect('list');
       }
