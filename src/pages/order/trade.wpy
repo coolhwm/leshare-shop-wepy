@@ -51,10 +51,17 @@
     </view>
 
     <!--操作底栏-->
-    <OrderConfirmBar :trade.sync="trade" @confirm.user="confirm"
-      :address.sync="selectedAddress"
-      :delilveries.sync="delilveries"
-      :selectedDelivery.sync="selectedDelivery" />
+    <view class="tarde-action-bar row-end">
+      <view>
+        <text>待支付 </text>
+        <text class="major mr20">￥{{trade.finalPrice}}</text>
+      </view>
+      <form class="trade-confirm-button {{confirmStatus? '' : 'trade-confirm-disable' }} row-center" report-submit @submit="confirm" >
+        <button plain form-type="submit" >{{confirmText}}</button>
+      </form>
+    </view>
+    <view class="tarde-action-bar-placeholder">
+    </view>
 
   </view>
 </template>
@@ -70,7 +77,6 @@
   import FormTips from '../../components/weui/tips';
   import ActionBar from '../../components/common/action_bar';
   import AddressSelector from '../../components/address/selector';
-  import OrderConfirmBar from '../../components/order/confirm_bar';
   import ActionSheet from '../../components/weui/action_sheet';
   import OrderItem from '../../components/order/customer_item';
   import Tips from '../../utils/Tips';
@@ -87,7 +93,9 @@
       delilveries: [],
       selectedDelivery: null,
       coupons: [],
-      selectedCoupon: null
+      selectedCoupon: null,
+      confirmStatus: false,
+      confirmText: '立即下单'
     }
     data = {...this.def}
 
@@ -163,15 +171,20 @@
       /**
        * 确定下单
        */
-      async confirm(formId) {
-        // TODO 下单前订单状态检查
+      async confirm({detail}) {
+        // 检查店铺状态
         const isOpen = await this.checkShopStatus();
         if (!isOpen) { return; }
+        // 检查是否可以购买
+        if (!this.confirmStatus) {
+          Tips.alert(this.confirmText);
+          return;
+        }
         Tips.loading()
         // 数据准备
         this.trade.deliveryType = 'CITY';
         // 表单ID
-        this.trade.formId = formId;
+        this.trade.formId = detail.formId;
         // 创建订单
         const trade = await order.createOrder(this.trade, this.selectedAddress);
         // 发起预支付
@@ -253,14 +266,30 @@
     }
     computed = {
       delilveryText() {
-        if (this.selectedDelivery) {
-          const fee = this.selectedDelivery.fee > 0 ? `￥${this.selectedDelivery.fee}` : '免配送费';
-          return `${this.selectedDelivery.name} ${fee}`;
+        let confirmStatus = false;
+        let deliveryText = '暂不支持配送';
+        let confirmText = '立即下单';
+        if (!this.selectedAddress) {
+          deliveryText = '请选择收货地址';
+          confirmText = '请选择地址';
         } else if (this.delilveries.length < 1) {
-          return '暂不支持配送';
+          confirmText = deliveryText = '暂不支持配送';
+        } else if (!this.selectedDelivery) {
+          confirmText = deliveryText = '请选择配送方式';
+        } else if (this.selectedDelivery.limitPrice > this.trade.dealPrice) {
+          deliveryText = `${this.selectedDelivery.name} 起送价￥${this.selectedDelivery.limitPrice}`;
+          confirmText = `起送价￥${this.selectedDelivery.limitPrice}`;
         } else {
-          return '请先选择收货地址';
+          const fee = this.selectedDelivery.fee > 0 ? `￥${this.selectedDelivery.fee}` : '免配送费';
+          deliveryText = `${this.selectedDelivery.name} ${fee}`;
+          confirmStatus = true;
+          confirmText = '立即下单';
         }
+        // 刷新视图
+        this.confirmStatus = confirmStatus;
+        this.confirmText = confirmText;
+        this.$apply();
+        return deliveryText;
       },
       delilveryCount() {
         if (this.delilveries) {
@@ -281,7 +310,6 @@
       ActionBar: ActionBar,
       ActionSheet: ActionSheet,
       AddressSelector: AddressSelector,
-      OrderConfirmBar: OrderConfirmBar,
       OrderItem: OrderItem
     }
     mixins = [base, input]
@@ -310,6 +338,42 @@
     .price-box{
       padding:5rpx 0;
     }
+  }
+
+  /*购买栏*/
+  .tarde-action-bar{
+    position: fixed;
+    z-index: 10000;
+    bottom: 0;
+    height: 100rpx;
+    width: 100%;
+    background-color: #FFF;
+    border-top: $border;
+
+    text{
+      font-size: $text-xxl;
+    }
+
+    /*操作底栏*/
+    .trade-confirm-button{
+      height: 100%;
+      width: 280rpx;
+      line-height: 100rpx;
+      text-align: center;
+      background-color: $color-primary;
+      color: #FFF;
+      button{
+        color: #FFF;
+      }
+    }
+
+    .trade-confirm-disable{
+      background-color: #B0B0B0;
+    }
+  }
+  .tarde-action-bar-placeholder{
+    width: 100%;
+    height: 100rpx;
   }
 
 </style>
