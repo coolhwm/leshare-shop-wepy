@@ -158,7 +158,7 @@
     async loadStatus() {
       this.status = await shop.getStatus();
       this.title = this.status.open ? '点外卖' : this.status.closeTips;
-      if (!this.init) {
+      if (!this.init && !this.status.open) {
         Tips.modal(this.status.closeTips);
       }
     }
