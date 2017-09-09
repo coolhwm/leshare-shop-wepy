@@ -40,7 +40,7 @@
       available: [],
       disable: [],
       isPageEmpty: false
-    }
+    };
     data = {...this.def};
     async onLoad ({goodsList}) {
       this.goodsList = JSON.parse(goodsList);
@@ -54,6 +54,10 @@
       this.isPageEmpty = available.length == 0 && disable.length == 0;
       this.loaded();
     }
+    async onPullDownRefresh () {
+      await this.load();
+      wepy.stopPullDownRefresh();
+    }
     methods = {
       add() {
         this.$navigate('edit?mode=create');
@@ -62,7 +66,7 @@
         Event.emit(Event.TRADE_ADDRESS_UPDATE, address);
         wepy.navigateBack();
       }
-    }
+    };
     events = {};
     components = {
       Placeholder: Placeholder,

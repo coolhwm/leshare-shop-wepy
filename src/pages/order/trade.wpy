@@ -96,8 +96,8 @@
       selectedCoupon: null,
       confirmStatus: false,
       confirmText: '立即下单'
-    }
-    data = {...this.def}
+    };
+    data = {...this.def};
 
     async onLoad ({trade}) {
       const isOpen = await this.checkShopStatus();
@@ -136,7 +136,7 @@
             'goodsSku': null
           }
         ]
-      }
+      };
       // 默认地址
       this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
       // 处理配送方式
@@ -213,7 +213,7 @@
           Tips.alert(this.confirmText);
           return;
         }
-        Tips.loading()
+        Tips.loading();
         // 数据准备
         this.trade.deliveryType = 'CITY';
         // 表单ID
@@ -243,7 +243,7 @@
         }
         this.$redirect('list');
       }
-    }
+    };
     /**
      * 更新配送方式
      */
@@ -351,15 +351,15 @@
       couponLabel () {
         return this.selectedCoupon ? '已选择' : this.coupons.length + '张可用';
       }
-    }
+    };
     components = {
       Tips: FormTips,
       ActionBar: ActionBar,
       ActionSheet: ActionSheet,
       AddressSelector: AddressSelector,
       OrderItem: OrderItem
-    }
-    mixins = [base, input]
+    };
+    mixins = [base, input];
     config = {
       navigationBarTitleText: '订单详情'
     }

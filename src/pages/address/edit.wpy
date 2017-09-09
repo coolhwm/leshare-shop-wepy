@@ -91,7 +91,7 @@
       init: false,
       location: null,
       mode: 'create'
-    }
+    };
     data = {...this.def};
     async onLoad ({mode, id}) {
       if (mode == 'edit') {

@@ -49,7 +49,7 @@
         notices: []
       },
       couponsNum: '0张'
-    }
+    };
     data = {...this.def};
     async onLoad () {
       // 加载店铺信息
@@ -62,9 +62,6 @@
       // 监听更新事件
       Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
     };
-    methods = {
-
-    }
     events = {};
     components = {
       Placeholder: Placeholder,

@@ -24,7 +24,7 @@
     def = {
       init: false,
       coupons: []
-    }
+    };
     data = {...this.def};
     async onLoad ({coupons}) {
       this.coupons = JSON.parse(coupons);
@@ -36,7 +36,7 @@
         Event.emit(Event.TRADE_COUPON_UPDATE, coupon);
         wepy.navigateBack();
       }
-    }
+    };
     events = {};
     components = {
       Placeholder: Placeholder,

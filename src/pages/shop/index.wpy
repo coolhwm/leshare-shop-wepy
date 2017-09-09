@@ -86,7 +86,7 @@
       skuGoods: {},
       title: '在线商城',
       badegText: '商城'
-    }
+    };
     data = {...this.def};
     async onLoad () {
       // 用户信息获取
@@ -280,7 +280,7 @@
         };
         this.$navigate('../order/trade', param);
       }
-    }
+    };
     async doClear() {
       await cart.clear();
       this.carts = [];

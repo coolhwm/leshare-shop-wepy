@@ -50,7 +50,7 @@
         selectedId: 'NEVER_USED',
         scroll: false
       }
-    }
+    };
     data = {...this.def};
     async onLoad () {
       this.page = coupon.page();
@@ -70,7 +70,7 @@
       switchTab() {
         this.reload();
       }
-    }
+    };
     events = {};
     components = {
       Placeholder: Placeholder,

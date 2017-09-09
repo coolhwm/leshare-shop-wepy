@@ -106,7 +106,7 @@
         this.searchLocations = await address.search(value);
         this.$apply();
       }
-    }
+    };
     events = {};
     components = {
       SearchBar: SearchBar
