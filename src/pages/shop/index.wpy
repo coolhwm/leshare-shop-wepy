@@ -5,8 +5,7 @@
     <ShopHeader :shop.sync="shop" />
 
     <!--功能区域-->
-    <ShopNav :badegText="badegText" :title.sync="title"  navText="我的" navUrl="../order/list" navType="navigate"/>
-
+    <ShopNav :badegText.sync="badegText" :title.sync="title"  navText="我的" navUrl="../order/list" navType="navigate"/>
     <!--主内容区域-->
     <view class="main-box row">
       <!--分类侧边栏-->
@@ -98,8 +97,8 @@
       // 店铺类型
       const type = shop.type();
       this.title = type.name;
-      wepy.setNavigationBarTitle({title: type.name })
-      this.badegText = type.badegText;
+      this.badegText = type.badgeText;
+      wepy.setNavigationBarTitle({ title: type.name });
       // 店铺状态
       await this.loadStatus();
       // 加载优惠券
@@ -164,7 +163,7 @@
     // 更新状态
     async loadStatus() {
       this.status = await shop.getStatus();
-      this.title = this.status.open ? shop.type().badegText : this.status.closeTips;
+      this.title = this.status.open ? shop.type().name : this.status.closeTips;
       if (!this.init && !this.status.open) {
         Tips.modal(this.status.closeTips);
       }
