@@ -5,7 +5,7 @@
     <repeat for="{{available}}" key="index" index="index" item="item">
       <Address :address.sync="item" @select.user="select"/>
     </repeat>
-    <view class="disable-title-box">
+    <view class="disable-title-box" wx:if="{{disable.length > 0}}">
       <text class="muted">以下地址不满足配送条件：</text>
     </view>
     <repeat for="{{disable}}" key="index" index="index" item="item">
@@ -38,7 +38,8 @@
       init: false,
       goodsList: [],
       available: [],
-      disable: []
+      disable: [],
+      isPageEmpty: false
     }
     data = {...this.def};
     async onLoad ({goodsList}) {
@@ -50,6 +51,7 @@
       const {available, disable} = await address.available(this.goodsList);
       this.available = available;
       this.disable = disable;
+      this.isPageEmpty = available.length == 0 && disable.length == 0;
       this.loaded();
     }
     methods = {

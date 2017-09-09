@@ -281,6 +281,9 @@
      * 回调更新优惠券
      */
     updateCoupon(coupon) {
+      if (!coupon) {
+        return;
+      }
       this.selectedCoupon = coupon;
       this.trade.couponUsedId = coupon.id;
       this.trade.couponPrice = coupon.price.toFixed(2);
