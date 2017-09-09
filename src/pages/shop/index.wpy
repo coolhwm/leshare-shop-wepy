@@ -14,7 +14,7 @@
       <!--右侧滚动-->
       <scroll-view scroll-y class="goods-box" bindscrolltolower="onReachBottom">
         <!--卡券区域（只在推荐的时候展现）-->
-        <scroll-view scroll-x	 class="coupon-box" wx:if="{{categories.selectedId==-1 && coupons.length > 0}}">
+        <scroll-view scroll-x	class="coupon-box" wx:if="{{categories.selectedId==-1 && coupons.length > 0}}">
           <repeat for="{{coupons}}" key="index" index="index" item="item">
             <CouponItem :coupon.sync="item" @pick.user="pickCoupon" />
           </repeat>
@@ -319,7 +319,7 @@
           return this.categories.list.find(item => item.id == selectedId).title;
         }
       }
-    }
+    };
     components = {
       ShopHeader: ShopHeader,
       SideTab: SideTab,

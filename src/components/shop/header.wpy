@@ -49,6 +49,7 @@
 
     .shop-content{
       flex: 1;
+      max-width: 480rpx;
       height: 70px;
       justify-content: flex-start;
       margin-left: 15px;

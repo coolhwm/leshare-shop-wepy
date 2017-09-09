@@ -52,7 +52,7 @@
     <!--门店照片区域-->
     <view class="photo-box sub-box" wx:if="{{shop.images.length > 0}}">
       <text class="sub-title">门店照片</text>
-      <view class="content row-between">
+      <view class="content row">
         <image @tap="previewShopImages({{item.url}})" mode="aspectFill" class="shop-photo" src="{{item.url}}/medium" wx:for="{{shop.images}}" wx:key="index"></image>
       </view>
     </view>
@@ -208,6 +208,7 @@
         flex-wrap: wrap;
         margin-top: 40rpx;
         .shop-photo{
+          margin-right: 10rpx;
           height: 200rpx;
           width: 200rpx;
         }
