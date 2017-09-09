@@ -204,6 +204,7 @@
        * 增加商品
        */
       async plus({goodsId, goodsSku}) {
+        Tips.setLoading();
         // 商品里列表
         const goods = this.findGoods(goodsId);
         console.info(goodsId, goods);
@@ -231,6 +232,7 @@
        * 减少商品
        */
       async minus({goodsId, goodsSku}) {
+        Tips.setLoading();
         // 商品对象
         const goods = this.findGoods(goodsId);
         // 特殊情况，商品已经不足1个

@@ -30,7 +30,7 @@
     methods = {
       call() {
         wepy.makePhoneCall({
-          phoneNumber: '059187519835'
+          phoneNumber: '15960163650'
         });
       }
     };

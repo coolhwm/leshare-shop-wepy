@@ -30,7 +30,6 @@
       this.coupons = JSON.parse(coupons);
       this.loaded();
     };
-
     methods = {
       select (coupon) {
         Event.emit(Event.TRADE_COUPON_UPDATE, coupon);
@@ -44,8 +43,7 @@
     };
     mixins = [base, pagination];
     config = {
-      navigationBarTitleText: '选择优惠券',
-      enablePullDownRefresh: true
+      navigationBarTitleText: '选择优惠券'
     };
   }
 </script>
