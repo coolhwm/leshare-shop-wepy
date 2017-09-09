@@ -47,7 +47,7 @@
         if (address != '') {
           this.$emit('select', address);
         } else {
-          Tips.alert('不满足配送条件');
+          Tips.alert('非配送区域');
         }
       },
       edit(id) {

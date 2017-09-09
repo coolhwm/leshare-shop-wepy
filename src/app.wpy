@@ -81,6 +81,7 @@ export default class extends wepy.app {
 
   globalData = {
     auth: {},
+    shopType: '2',
     shopName: '连江什么鬼炸鸡汉堡',
     shopCode: 'eemTgbKrhqiYKMFowcBCQ1Zr7G13bWUT',
     baseUrl: 'https://api.leshare.shop/v1/customer'

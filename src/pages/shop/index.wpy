@@ -5,7 +5,7 @@
     <ShopHeader :shop.sync="shop" />
 
     <!--功能区域-->
-    <ShopNav badegText="外卖" :title.sync="title"  navText="我的" navUrl="../order/list" navType="navigate"/>
+    <ShopNav :badegText="badegText" :title.sync="title"  navText="我的" navUrl="../order/list" navType="navigate"/>
 
     <!--主内容区域-->
     <view class="main-box row">
@@ -85,7 +85,8 @@
       carts: [],
       skuDisplay: 'false',
       skuGoods: {},
-      title: '点外卖'
+      title: '在线商城',
+      badegText: '商城'
     }
     data = {...this.def};
     async onLoad () {
@@ -94,6 +95,12 @@
       // 加载店铺信息
       this.shop = await shop.info();
       this.shop.notices = await shop.notices();
+      // 店铺类型
+      const type = shop.type();
+      this.title = type.name;
+      wepy.setNavigationBarTitle({title: type.name })
+      this.badegText = type.badegText;
+      // 店铺状态
       await this.loadStatus();
       // 加载优惠券
       const {pickList} = await coupon.shelf()
@@ -157,7 +164,7 @@
     // 更新状态
     async loadStatus() {
       this.status = await shop.getStatus();
-      this.title = this.status.open ? '点外卖' : this.status.closeTips;
+      this.title = this.status.open ? shop.type().badegText : this.status.closeTips;
       if (!this.init && !this.status.open) {
         Tips.modal(this.status.closeTips);
       }
@@ -320,7 +327,6 @@
     };
     mixins = [base, pagination];
     config = {
-      navigationBarTitleText: '点外卖'
     };
   }
 </script>

@@ -16,7 +16,7 @@
       <view class="row-between">
         <navigator class="shop-btn column-center" url="/pages/shop/index"  open-type="redirect">
           <image class="icon-xl" src="/images/home/food.png"></image>
-          <text class="weak">点外卖</text>
+          <text class="weak">{{shopTitle}}</text>
         </navigator>
         <view class="shop-btn column-center" @tap="phone">
           <image class="icon-xl" src="/images/home/phone.png"></image>
@@ -89,7 +89,8 @@
       init: false,
       shop: {},
       status: {},
-      goods: []
+      goods: [],
+      shopTitle: '在线商城'
     };
     data = {...this.def};
     async onLoad () {
@@ -102,7 +103,7 @@
       } else {
         this.goods = list;
       }
-
+      this.shopTitle = shop.type().name;
       this.loaded();
     };
     onShareAppMessage () {

@@ -1,7 +1,19 @@
 
 import base from './base';
+import wepy from 'wepy';
 
 export default class shop extends base {
+
+  static TYPE = {
+    '1': {
+      name: '在线商城',
+      badgeText: '商城'
+    },
+    '2': {
+      name: '点外卖',
+      badgeText: '外卖'
+    }
+  }
   /**
    * 获取店铺信息
    */
@@ -10,6 +22,14 @@ export default class shop extends base {
     return await this.get(url);
   }
 
+  /**
+   * 获取店铺类型
+   */
+  static type() {
+    const type = wepy.$instance.globalData.shopType;
+    console.info(type);
+    return this.TYPE[type];
+  }
   /**
    * 获取店铺状态
    */
