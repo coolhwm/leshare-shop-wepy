@@ -233,7 +233,8 @@
       async minus({goodsId, goodsSku}) {
         // 商品对象
         const goods = this.findGoods(goodsId);
-        if (goods.num < 1) {
+        // 特殊情况，商品已经不足1个
+        if (goods && goods.num < 1) {
           return;
         }
         // 若果购物车有多个对象，但是goodsSku 为空，那么则无法操作
@@ -244,6 +245,7 @@
         }
         // 购物车对象
         const target = this.findCart(goodsId, goodsSku);
+        // 减少商品
         if (goods) {
           goods.num -= 1;
         }
