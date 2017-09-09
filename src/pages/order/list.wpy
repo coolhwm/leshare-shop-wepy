@@ -20,7 +20,7 @@
   </view>
 
   <!--占位符-->
-  <Placeholder :show.sync="isPageEmpty" message="您还没有相关公告信息"/>
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关订单" top="600rpx"/>
 </template>
 
 <script>
@@ -76,7 +76,7 @@
     };
     mixins = [base, pagination];
     config = {
-      navigationBarTitleText: '我的记录',
+      navigationBarTitleText: '我的订单',
       enablePullDownRefresh: true
     };
   }

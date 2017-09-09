@@ -13,7 +13,7 @@
     </repeat>
 
     <!--占位符-->
-    <Placeholder :show.sync="isEmpty" message="目前没有可以领取的优惠券" top="500rpx"/>
+    <Placeholder :show.sync="isEmpty" message="目前没有可以领取的优惠券" top="600rpx"/>
   </view>
 </template>
 

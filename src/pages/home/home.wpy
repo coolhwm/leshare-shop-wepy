@@ -50,7 +50,7 @@
     </view>
 
     <!--门店照片区域-->
-    <view class="photo-box sub-box">
+    <view class="photo-box sub-box" wx:if="{{shop.images.length > 0}}">
       <text class="sub-title">门店照片</text>
       <view class="content row-between">
         <image @tap="previewShopImages({{item.url}})" mode="aspectFill" class="shop-photo" src="{{item.url}}/medium" wx:for="{{shop.images}}" wx:key="index"></image>
@@ -58,7 +58,7 @@
     </view>
 
     <!--热门商品区域-->
-    <view class="recommend-box sub-box">
+    <view class="recommend-box sub-box" wx:if="{{goods.length > 0}}">
       <text class="sub-title">招牌推荐</text>
       <view class="content column">
         <view class="goods-box row" wx:for="{{goods}}" wx:key="index">

@@ -182,12 +182,13 @@
           // 加载优惠券
           const {pickList} = await coupon.shelf()
           this.coupons = pickList;
+          Tips.loaded();
+          this.$apply();
         } catch (e) {
           if (e.serverCode == '50001') {
             Tips.alert('已经领过了');
           }
         }
-        this.$apply();
       },
       /**
        * 增加商品
