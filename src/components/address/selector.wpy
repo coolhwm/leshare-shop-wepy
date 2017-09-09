@@ -15,7 +15,7 @@
     <!-- 地址内容 -->
     <view class="address-info-box column" wx:if="{{address}}">
       <view class="user-info-box row">
-        <text class="user-name">{{address.name}}</text>
+        <text class="user-name">{{address.name}} {{address.sexText}}</text>
         <text class="user-phone">{{address.phone}}</text>
         <view class="ml10 label small primary" wx:if="{{address.isDefault == 1}}">默认</view>
       </view>

@@ -191,8 +191,9 @@
           Tips.loaded();
           this.$apply();
         } catch (e) {
+          Tips.loaded();
           if (e.serverCode == '50001') {
-            Tips.alert('已经领过了');
+            Tips.alert('已达领取上限');
           }
         }
       },

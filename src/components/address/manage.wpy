@@ -3,7 +3,7 @@
     <!-- 地址内容 -->
     <view class="address-info-container"  @tap="select({{disabled != '1' ? address : ''}})">
       <view class="address-name-phone-container">
-        <text class="address-info-name">{{address.name}}</text>
+        <text class="address-info-name">{{address.name}} {{address.sexText}}</text>
         <text class="address-info-phone">{{address.phone}}</text>
       </view>
       <view class="address-detail-container">

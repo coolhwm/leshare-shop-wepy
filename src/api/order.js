@@ -361,7 +361,7 @@ export default class order extends base {
    * 处理订单地址
    */
   static _processOrderAddress (order, address) {
-    order.receiveName = address.name
+    order.receiveName = `${address.name} ${address.sexText}`;
     order.receivePhone = address.phone
     order.address = address.fullAddress
   }

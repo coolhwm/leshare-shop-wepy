@@ -7,7 +7,7 @@
     <!-- 地址内容 -->
     <view class="info-box column">
       <view class="row-between">
-        <text>收货人：{{address.name}} </text>
+        <text>收货人：{{address.name}} {{address.sexText}}</text>
         <text>{{address.phone}}</text>
       </view>
       <view class="mt10">

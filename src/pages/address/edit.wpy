@@ -15,15 +15,24 @@
         </view>
 
         <!--性别-->
-        <!--<view class="weui-cell weui-cells_after-title">-->
-          <!--<view class="weui-cell__hd">-->
-            <!--<view class="weui-label"> </view>-->
-          <!--</view>-->
-          <!--<view class="weui-cell__bd weui-cell__ft_in-radio">-->
-            <!--<icon class="weui-icon-checkbox_circle" type="circle" size="18"></icon> 先生-->
-            <!--<icon class="weui-icon-checkbox_circle" type="circle" size="18"></icon> 女士-->
-          <!--</view>-->
-        <!--</view>-->
+        <view class="weui-cell weui-cells_after-title">
+          <view class="weui-cell__hd">
+            <view class="weui-label">称呼</view>
+          </view>
+          <view class="weui-cell__bd">
+            <view class="row">
+              <radio-group class="radio-group row" @change="radio" id="sex">
+                <label class="radio row">
+                  <radio value="1" checked="{{input.sex == 1}}"/>先生
+                </label>
+                <label class="radio ml20 row" >
+                  <radio value="2" checked="{{input.sex == 2}}"/>女士
+                </label>
+              </radio-group>
+            </view>
+
+          </view>
+        </view>
 
         <!--联系电话-->
         <view class="weui-cell weui-cell_input">
@@ -141,7 +150,6 @@
       param.country = this.location.country;
       param.town = this.location.town;
       param.fullAddress = this.location.detail + param.detail;
-      param.sex = 0;
       param.latitude = this.location.latitude;
       param.longitude = this.location.longitude;
       return param;
@@ -152,6 +160,11 @@
           value: this.input.name,
           method: 'required',
           message: '请输入联系人'
+        },
+        {
+          value: this.input.sex,
+          method: 'required',
+          message: '请选择您的称呼'
         },
         {
           value: this.input.phone,
