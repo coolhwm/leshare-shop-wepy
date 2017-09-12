@@ -26,7 +26,6 @@
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
-  import shop from '../../api/shop';
   import order from '../../api/order';
   import coupons from '../../api/coupon';
   import pagination from '../../mixins/pagination.wpy';
@@ -36,6 +35,7 @@
   import Loadmore from '../../components/weui/loadmore';
   import OrderItem from '../../components/order/customer_item';
   import Event from '../../utils/Event';
+  import Cache from '../../utils/Cache';
 
   export default class OrderList extends wepy.page {
     def = {
@@ -53,11 +53,14 @@
     data = {...this.def};
     async onLoad () {
       // 加载店铺信息
-      this.shop = await shop.info();
-      this.shop.notices = await shop.notices();
+      this.shop = await Cache.shop();
+      this.shop.notices = await Cache.notices();
       this.page = order.page();
-      const ownCoupons = await coupons.own();
-      this.couponsNum = ownCoupons.length + '张';
+      // -- 异步加载
+      coupons.own().then(ownCoupons => {
+        this.couponsNum = ownCoupons.length + '张';
+        this.loaded();
+      });
       await this.next();
       // 监听更新事件
       Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);

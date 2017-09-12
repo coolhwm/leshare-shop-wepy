@@ -27,7 +27,6 @@ export default class shop extends base {
    */
   static type() {
     const type = wepy.$instance.globalData.shopType;
-    console.info(type);
     return this.TYPE[type];
   }
   /**

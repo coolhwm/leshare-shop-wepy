@@ -82,6 +82,8 @@
   import shop from '../../api/shop';
   import goods from '../../api/goods';
   import base from '../../mixins/base';
+  import Cache from '../../utils/Cache';
+  import Tips from '../../utils/Tips';
   import Copyright from '../../components/common/copyright';
 
   export default class ShopHome extends wepy.page {
@@ -95,8 +97,8 @@
     data = {...this.def};
     async onLoad () {
       await auth.login();
-      this.shop = await shop.info();
-      this.status = await shop.getStatus();
+      this.shop = await Cache.shop();
+      this.status = await Cache.status();
       const {list} = await goods.page(true).next();
       if (list.length > 5) {
         this.goods = list.slice(0, 5);
@@ -105,7 +107,12 @@
       }
       this.shopTitle = shop.type().name;
       this.loaded();
+      this.preload();
     };
+    preload() {
+      Tips.setLoading();
+      Cache.categories().then(() => Cache.notices()).then(() => Tips.loaded);
+    }
     onShareAppMessage () {
       return {};
     }

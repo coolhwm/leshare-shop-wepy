@@ -22,12 +22,12 @@
   import coupon from '../../api/coupon';
   import base from '../../mixins/base';
   import ShopHeader from '../../components/shop/header';
-  import shop from '../../api/shop';
   import ShopNav from '../../components/shop/nav';
   import Placeholder from '../../components/common/placeholder';
   import CouponItem from '../../components/coupons/pick_item';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
+  import Cache from '../../utils/Cache';
 
   export default class CouponPick extends wepy.page {
     def = {
@@ -42,8 +42,8 @@
     data = {...this.def};
     async onLoad () {
       // 加载店铺信息
-      this.shop = await shop.info();
-      this.shop.notices = await shop.notices();
+      this.shop = await Cache.shop();
+      this.shop.notices = await Cache.notices();
       // 优惠券信息
       await this.loadCoupons();
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupons.bind(this), this);

@@ -53,7 +53,6 @@
   import coupon from '../../api/coupon';
   import cart from '../../api/cart';
   import order from '../../api/order';
-  import delivery from '../../api/delivery';
   import base from '../../mixins/base';
   import pagination from '../../mixins/pagination.wpy';
   import SideTab from '../../components/common/side_tab';
@@ -66,6 +65,7 @@
   import ShopCart from '../../components/shop/cart';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
+  import Cache from '../../utils/Cache';
 
   export default class ShopIndex extends wepy.page {
     def = {
@@ -89,11 +89,12 @@
     };
     data = {...this.def};
     async onLoad () {
-      // 用户信息获取
+      // -- 用户信息
       await auth.user();
+      // -- 缓存信息
       // 加载店铺信息
-      this.shop = await shop.info();
-      this.shop.notices = await shop.notices();
+      this.shop = await Cache.shop();
+      this.shop.notices = await Cache.notices();
       // 店铺类型
       const type = shop.type();
       this.title = type.name;
@@ -101,17 +102,21 @@
       wepy.setNavigationBarTitle({ title: type.name });
       // 店铺状态
       await this.loadStatus();
-      // 加载优惠券
-      const {pickList} = await coupon.shelf()
-      this.coupons = pickList;
       // 加载商品分类
-      this.categories = await goods.categories();
+      this.categories = await Cache.categories();
+      // -- 需要实时加载的信息
       // 加载购物车
       this.carts = await cart.list();
       // 加载商品
       this.page = goods.page(true);
       await this.next();
-      // 监听事件
+      // -- 异步加载的信息
+      // 加载优惠券
+      coupon.shelf().then(({pickList}) => {
+        this.coupons = pickList;
+        this.loaded();
+      });
+      // -- 监听事件
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupons.bind(this), this);
       Event.listen(Event.CART_LIST_CLEAR, this.doClear.bind(this), this);
       this.loaded();
@@ -162,7 +167,7 @@
     }
     // 更新状态
     async loadStatus() {
-      this.status = await shop.getStatus();
+      this.status = await Cache.status();
       this.title = this.status.open ? shop.type().name : this.status.closeTips;
       if (!this.init && !this.status.open) {
         Tips.modal(this.status.closeTips);
@@ -207,7 +212,6 @@
         Tips.setLoading();
         // 商品里列表
         const goods = this.findGoods(goodsId);
-        console.info(goodsId, goods);
         if (goods) {
           if (goods.goodsSkuInfo && goodsSku == null) {
             await this.skuSelector(goodsId);
