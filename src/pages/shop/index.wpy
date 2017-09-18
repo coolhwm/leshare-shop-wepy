@@ -146,7 +146,7 @@
       this.categories.list.forEach(item => {
         item.count = 0;
         this.carts.forEach(cart => {
-          if (item.id == cart.shopCategory.id) {
+          if (cart.shopCategory && item.id == cart.shopCategory.id) {
             item.count += cart.goodsNum;
           }
         });

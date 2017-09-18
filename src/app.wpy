@@ -78,12 +78,11 @@ export default class extends wepy.app {
       navigationBarBackgroundColor: '#1296db'
     }
   };
-
   globalData = {
     auth: {},
     shopType: '2',
-    shopName: '连江什么鬼炸鸡汉堡',
-    shopCode: 'eemTgbKrhqiYKMFowcBCQ1Zr7G13bWUT',
+    shopName: '卜菲力牛排杯',
+    shopCode: 'xxfTgbKrhqiYKMFowcBCQ1Zr7G13bWUT',
     baseUrl: 'https://api.leshare.shop/v1/customer'
     // baseUrl: 'http://192.168.31.124:9999/v1/customer'
   }
