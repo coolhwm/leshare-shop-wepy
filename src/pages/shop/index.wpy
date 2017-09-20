@@ -110,6 +110,13 @@
       // 加载商品
       this.page = goods.page(true);
       await this.next();
+      // 检查是否没有推荐商品
+      if (this.page.list.length == 0) {
+        this.categories.list.splice(0, 1);
+        this.categories.selectedId = this.categories.list[0].id;
+        this.page = goods.page(false);
+        await this.next();
+      }
       // -- 异步加载的信息
       // 加载优惠券
       coupon.shelf().then(({pickList}) => {

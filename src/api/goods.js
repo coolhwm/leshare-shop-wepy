@@ -59,13 +59,11 @@ export default class goods extends base {
         };
       }));
     }
-    const tab = {
+    return {
       list: list,
       selectedId: '-1',
       scroll: false
     };
-
-    return tab;
   }
 
   /**
