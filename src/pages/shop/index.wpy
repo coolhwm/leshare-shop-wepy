@@ -156,7 +156,7 @@
       this.categories.list.forEach(item => {
         item.count = 0;
         this.carts.forEach(cart => {
-          if (cart.shopCategory && item.id == cart.shopCategory.id) {
+          if (cart.shopCategory && item.id == cart.shopCategory) {
             item.count += cart.goodsNum;
           }
         });
@@ -225,7 +225,6 @@
        * 增加商品
        */
       async plus({goodsId, goodsSku}) {
-        Tips.setLoading();
         // 商品里列表
         const goods = this.findGoods(goodsId);
         if (goods) {
@@ -238,13 +237,30 @@
         // 购物车
         const target = this.findCart(goodsId, goodsSku);
         if (target) {
+          // 购物车中已存在
           target.goodsNum += 1;
-          await cart.update(target.cartId, target.goodsNum);
+          target.totalPrice = (target.goodsNum * target.goodsPrice).toFixed(2);
         } else {
-          const data = await cart.add(goodsId, 1, goodsSku);
-          data.shopCategory = { id: goods.innerCid };
-          this.carts.push(data);
+          // 购物车中不存在
+          let goodsPrice;
+          if (goodsSku) {
+            const skuInfo = goods.goodsSkuInfo.goodsSkuDetails.find(item => item.sku == goodsSku);
+            goodsPrice = skuInfo.goodsSkuDetailBase.price;
+          } else {
+            goodsPrice = goods.sellPrice;
+          }
+          this.carts.push({
+            goodsId: goodsId,
+            goodsSku: goodsSku,
+            goodsName: goods.name,
+            shopCategory: goods.innerCid,
+            goodsImage: goods.imageUrl,
+            goodsPrice: goodsPrice,
+            goodsNum: 1,
+            totalPrice: goodsPrice
+          });
         }
+        // 重置数据
         this.setCategoryNum();
         this.skuGoods = {};
         this.loaded();
@@ -268,16 +284,15 @@
         }
         // 购物车对象
         const target = this.findCart(goodsId, goodsSku);
+        if (target.goodsNum == 1) {
+          this.removeCart(goodsId, goodsSku);
+        } else {
+          target.goodsNum -= 1;
+          target.totalPrice = (target.goodsNum * target.goodsPrice).toFixed(2);
+        }
         // 减少商品
         if (goods) {
           goods.num -= 1;
-        }
-        if (target.goodsNum == 1) {
-          this.removeCart(target.cartId);
-          cart.remove(target.cartId);
-        } else {
-          target.goodsNum -= 1;
-          await cart.update(target.cartId, target.goodsNum);
         }
         this.setCategoryNum();
         this.loaded();
@@ -305,7 +320,6 @@
       }
     };
     async doClear() {
-      await cart.clear();
       this.carts = [];
       this.setCategoryNum();
       this.setGoodsNum();
@@ -337,8 +351,8 @@
       });
       return count;
     }
-    removeCart(cartId) {
-      const index = this.carts.findIndex(item => item.cartId == cartId);
+    removeCart(goodsId, goodsSku) {
+      const index = this.carts.findIndex(item => item.goodsId == goodsId && item.goodsSku == goodsSku);
       this.carts.splice(index, 1);
     }
     computed = {

@@ -33,14 +33,14 @@
         <block wx:for="{{carts}}" wx:key="index">
           <view class="cart-item row-between">
             <!--商品名称-->
-            <view class="column">
-              <text class="lg">{{item.goodsName}}</text>
+            <view class="cart-title column">
+              <text class="lg inline">{{item.goodsName}}</text>
               <text class="xs muted" wx:if="{{item.goodsSku}}">{{item.goodsSku}}</text>
             </view>
 
             <!--右侧-->
             <view class="row">
-              <text>￥{{item.goodsPrice * item.goodsNum}}</text>
+              <text>￥{{item.totalPrice}}</text>
               <!--数量选择器-->
 
               <view class="quantity row">
@@ -106,7 +106,7 @@
       const param = {
         goodsId: cart.goodsId,
         goodsSku: cart.goodsSku
-      }
+      };
       this.$emit(event, param);
     }
     computed = {
@@ -206,6 +206,9 @@
     .cart-item{
       height: 100rpx;
       border-bottom: $border;
+    }
+    .cart-title{
+      max-width: 400rpx;
     }
 
     .quantity{
