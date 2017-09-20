@@ -312,7 +312,13 @@
       this.loaded();
     }
     async skuSelector(goodsId) {
-      this.skuGoods = await goods.getInfo(goodsId);
+      if (this.details[goodsId]) {
+        this.skuGoods = this.details[goodsId];
+      } else {
+        const detail = await goods.getInfo(goodsId);
+        this.skuGoods = detail;
+        this.details[goodsId] = detail;
+      }
       this.skuDisplay = 'true';
       this.loaded();
     }
