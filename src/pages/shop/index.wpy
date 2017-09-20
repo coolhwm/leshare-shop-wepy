@@ -51,7 +51,6 @@
   import shop from '../../api/shop';
   import goods from '../../api/goods';
   import coupon from '../../api/coupon';
-  import cart from '../../api/cart';
   import order from '../../api/order';
   import base from '../../mixins/base';
   import pagination from '../../mixins/pagination.wpy';
@@ -107,8 +106,8 @@
       // 加载商品分类
       this.categories = await Cache.categories();
       // -- 需要实时加载的信息
-      // 加载购物车
-      this.carts = await cart.list();
+      // 购物车
+      this.carts = wepy.getStorageSync('carts');
       // 加载商品
       this.page = goods.page(true);
       await this.next();
@@ -262,6 +261,7 @@
         }
         // 重置数据
         this.setCategoryNum();
+        this.saveCartStore();
         this.skuGoods = {};
         this.loaded();
       },
@@ -294,7 +294,9 @@
         if (goods) {
           goods.num -= 1;
         }
+        // 重置数据
         this.setCategoryNum();
+        this.saveCartStore();
         this.loaded();
       },
       /**
@@ -335,6 +337,12 @@
       }
       this.skuDisplay = 'true';
       this.loaded();
+    }
+    saveCartStore() {
+      wepy.setStorage({
+        key: 'carts',
+        data: this.carts
+      });
     }
     findGoods(goodsId) {
       return this.page.list.find(item => item.id == goodsId);
