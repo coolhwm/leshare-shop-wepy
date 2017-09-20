@@ -80,9 +80,9 @@ export default class extends wepy.app {
   };
   globalData = {
     auth: {},
-    shopType: '1',
-    shopName: '连江日用品专营店',
-    shopCode: 'owVHb1gHrvktni80kjMlFMzSDJDWY0xR',
+    shopType: '2',
+    shopName: '卜菲力牛排杯',
+    shopCode: 'xxfTgbKrhqiYKMFowcBCQ1Zr7G13bWUT',
     baseUrl: 'https://api.leshare.shop/v1/customer'
   }
 }

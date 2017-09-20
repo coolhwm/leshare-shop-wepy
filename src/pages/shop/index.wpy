@@ -107,7 +107,8 @@
       this.categories = await Cache.categories();
       // -- 需要实时加载的信息
       // 购物车
-      this.carts = wepy.getStorageSync('carts');
+      const carts = wepy.getStorageSync('carts');
+      this.carts = carts == '' ? [] : carts;
       // 加载商品
       this.page = goods.page(true);
       await this.next();
@@ -328,6 +329,10 @@
       this.carts = [];
       this.setCategoryNum();
       this.setGoodsNum();
+      wepy.setStorage({
+        key: 'carts',
+        data: []
+      });
       this.loaded();
     }
     async skuSelector(goodsId) {
