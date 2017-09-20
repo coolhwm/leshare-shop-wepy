@@ -1,11 +1,14 @@
 <template>
   <view class="goods-item row">
-    <image class="icon-xxl" src="{{goods.imageUrl}}" @tap="preview({{goods}})"></image>
+    <image class="goods-image" src="{{goods.imageUrl}}" @tap="preview({{goods}})"></image>
     <view class="goods-main column">
-      <view class="row-between">
-        <text class="goods-name inline">{{goods.name}}</text>
+      <view class="goods-name row-between">
+        <text>{{goods.name}}</text>
       </view>
-      <view class="mt20 row-between">
+      <view>
+        <text class="xs muted">总售{{goods.salesVolume}}件</text>
+      </view>
+      <view class="row-between">
         <text class="goods-price">￥{{goods.priceLable}}</text>
 
         <!--数量选择器-->
@@ -32,7 +35,7 @@
       }
     };
     components = {
-    }
+    };
     methods = {
       plus(goods) {
         this.updateNum('plus', goods);
@@ -51,7 +54,7 @@
       const param = {
         goodsId: goods.id,
         sku: goods.sku
-      }
+      };
       this.$emit(event, param);
     }
     events = {};
@@ -65,14 +68,18 @@
   .goods-item{
     padding: 10px 15px 10px 0;
     border-bottom: $border;
+    .goods-image{
+      width: 70px;
+      height: 70px;
+    }
     .goods-main{
       margin-left: 10px;
       flex: 1;
       justify-content: flex-start;
-      height: 60px;
+      min-height: 70px;
       .goods-price{
         color: $color-major;
-        font-size: $text-lg;
+        font-size: $text-xl;
       }
       .goods-name{
         max-width: 380rpx;
