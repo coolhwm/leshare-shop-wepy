@@ -189,6 +189,7 @@
         // 先判断缓存中是否存在商品列表
         if (this.pages[selectedId]) {
           this.page = this.pages[selectedId];
+          this.setGoodsNum();
           this.loaded();
         } else {
           this.page = goods.page(selectedId == -1);
@@ -251,6 +252,7 @@
           } else {
             goodsPrice = goods.sellPrice;
           }
+          goodsPrice = goodsPrice.toFixed(2);
           this.carts.push({
             goodsId: goodsId,
             goodsSku: goodsSku,
