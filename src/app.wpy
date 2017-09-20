@@ -59,10 +59,10 @@ export default class extends wepy.app {
   }
   config = {
     pages: [
+      'pages/shop/index',
       'pages/home/home',
       'pages/address/edit',
       'pages/order/trade',
-      'pages/shop/index',
       'pages/coupon/pick',
       'pages/coupon/list',
       'pages/order/list',
@@ -84,7 +84,6 @@ export default class extends wepy.app {
     shopName: '卜菲力牛排杯',
     shopCode: 'xxfTgbKrhqiYKMFowcBCQ1Zr7G13bWUT',
     baseUrl: 'https://api.leshare.shop/v1/customer'
-    // baseUrl: 'http://192.168.31.124:9999/v1/customer'
   }
 }
 </script>

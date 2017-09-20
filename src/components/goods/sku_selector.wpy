@@ -119,8 +119,13 @@
     padding-left: 30rpx;
     padding-right: 30rpx;
     .sku-item-box{
-      padding-top: 20rpx;
+      flex-wrap: wrap;
+      padding-top: 10rpx;
       padding-bottom: 20rpx;
+
+      .sku-item{
+        margin-top: 10rpx;
+      }
     }
   }
   .sku-btn-box{
