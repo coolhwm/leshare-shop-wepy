@@ -13,7 +13,7 @@
 
         <!--数量选择器-->
         <view class="quantity row">
-          <block wx:if="{{goods.num != 0}}">
+          <block wx:if="{{goods.num > 0}}">
             <image class="minus" src="/images/icons/minus.png" @tap="minus({{goods}})" />
             <view class="number">
               <text>{{goods.num}}</text>

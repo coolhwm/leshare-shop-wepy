@@ -76,7 +76,7 @@ export default class cart extends base {
     const url = `${this.baseUrl}/carts/${cartId}`
     const param = {
       goodsNum: num
-    }
+    };
     return this.put(url, param)
   }
 

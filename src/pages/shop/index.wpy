@@ -170,7 +170,7 @@
     }
     // 更新卡券
     async loadCoupons() {
-      const {pickList} = await coupon.shelf()
+      const {pickList} = await coupon.shelf();
       this.coupons = pickList;
       this.$apply();
     }
@@ -206,7 +206,7 @@
           await coupon.pick(id);
           await Tips.success('领取成功');
           // 加载优惠券
-          const {pickList} = await coupon.shelf()
+          const {pickList} = await coupon.shelf();
           this.coupons = pickList;
           Tips.loaded();
           this.$apply();
@@ -224,6 +224,7 @@
        * 增加商品
        */
       async plus({goodsId, goodsSku}) {
+        let num;
         // 商品里列表
         const goods = this.findGoods(goodsId);
         if (goods) {
@@ -231,13 +232,14 @@
             await this.skuSelector(goodsId);
             return;
           }
-          goods.num += 1;
+          num = goods.num ? goods.num + 1 : 1;
+          goods.num = num;
         }
         // 购物车
         const target = this.findCart(goodsId, goodsSku);
         if (target) {
           // 购物车中已存在
-          target.goodsNum += 1;
+          target.goodsNum = num != null ? num : target.goodsNum + 1;
           target.totalPrice = (target.goodsNum * target.goodsPrice).toFixed(2);
         } else {
           // 购物车中不存在
@@ -269,7 +271,7 @@
        * 减少商品
        */
       async minus({goodsId, goodsSku}) {
-        Tips.setLoading();
+        let num;
         // 商品对象
         const goods = this.findGoods(goodsId);
         // 特殊情况，商品已经不足1个
@@ -285,14 +287,15 @@
         // 购物车对象
         const target = this.findCart(goodsId, goodsSku);
         if (target.goodsNum == 1) {
-          this.removeCart(goodsId, goodsSku);
+          this.removeCart(goodsId, target.goodsSku);
         } else {
-          target.goodsNum -= 1;
+          num = target.goodsNum - 1;
+          target.goodsNum = num;
           target.totalPrice = (target.goodsNum * target.goodsPrice).toFixed(2);
         }
         // 减少商品
         if (goods) {
-          goods.num -= 1;
+          goods.num = num;
         }
         // 重置数据
         this.setCategoryNum();
