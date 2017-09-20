@@ -75,6 +75,7 @@
         ]
       },
       pages: {},
+      details: {},
       shop: {
         notices: []
       },
@@ -245,6 +246,7 @@
           this.carts.push(data);
         }
         this.setCategoryNum();
+        this.skuGoods = {};
         this.loaded();
       },
       /**

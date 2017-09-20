@@ -66,6 +66,7 @@
           goodsId: this.goods.id,
           goodsSku: this.selected
         });
+        this.selected = null;
         this.display = 'false';
       }
     };
@@ -74,12 +75,12 @@
     };
     computed = {
       sku() {
-        if (this.goods.id) {
+        if (this.goods && this.goods.id) {
           skuData = new Sku(this.goods);
           return skuData.labels[0].value;
         }
       }
-    }
+    };
     events = {};
     onLoad() {
     }
