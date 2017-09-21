@@ -1,12 +1,12 @@
 <template>
   <view class="goods-item row">
-    <image class="goods-image" src="{{goods.imageUrl}}" @tap="preview({{goods}})"></image>
-    <view class="goods-main column">
+    <image class="goods-image" src="{{goods.imageUrl}}" @tap.stop="preview({{goods}})"></image>
+    <view class="goods-main column" @tap="detail({{goods}})">
       <view class="goods-name row-between">
         <text>{{goods.name}}</text>
       </view>
       <view>
-        <text class="xs muted">总售{{goods.salesVolume}}件</text>
+        <text class="xs muted">已售{{goods.salesVolume}}件</text>
       </view>
       <view class="row-between">
         <text class="goods-price">￥{{goods.priceLable}}</text>
@@ -14,13 +14,13 @@
         <!--数量选择器-->
         <view class="quantity row">
           <block wx:if="{{goods.num > 0}}">
-            <image class="minus" src="/images/icons/minus.png" @tap="minus({{goods}})" />
+            <image class="minus" src="/images/icons/minus.png" @tap.stop="minus({{goods}})" />
             <view class="number">
               <text>{{goods.num}}</text>
             </view>
           </block>
 
-          <image class="plus" src="/images/icons/plus.png" @tap="plus({{goods}})" />
+          <image class="plus" src="/images/icons/plus.png" @tap.stop="plus({{goods}})" />
         </view>
       </view>
     </view>
@@ -48,6 +48,9 @@
         wepy.previewImage({
           urls: urls
         });
+      },
+      detail(goods) {
+        this.$emit('detail', goods);
       }
     };
     updateNum(event, goods) {

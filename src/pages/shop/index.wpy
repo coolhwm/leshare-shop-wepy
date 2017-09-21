@@ -28,13 +28,46 @@
         <!--商品列表-->
         <view class="goods-list">
           <repeat for="{{page.list}}" key="index" index="index" item="item">
-            <GoodsItem :goods.sync="item" @plus.user="plus" @minus.user="minus" />
+            <GoodsItem :goods.sync="item" @plus.user="plus" @minus.user="minus" @detail.user="detail"/>
           </repeat>
         </view>
 
         <Loadmore :page.sync="page"/>
       </scroll-view>
     </view>
+
+    <!--商品详情区域-->
+    <scroll-view class="goods-detail-box" wx:if="{{detailDisplay}}">
+      <!-- 轮播图 -->
+      <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" catchtap="preview">
+        <block wx:for="{{detail.images}}" wx:key="id">
+          <swiper-item>
+            <image src="{{item.url}}" mode="aspectFill"></image>
+          </swiper-item>
+        </block>
+      </swiper>
+
+      <view class="info-box column">
+        <text class="name">{{detail.name}}</text>
+        <text class="sm muted mt10">已售{{detail.salesVolume}}件</text>
+        <view class="row-between mt10">
+          <text class="major xxl">￥{{detail.priceLable}}</text>
+          <!--数量选择器-->
+          <view class="quantity row">
+            <block wx:if="{{detail.num > 0}}">
+              <image class="minus" src="/images/icons/minus.png" @tap.stop="detailMinus({{detail}})" />
+              <view class="number">
+                <text>{{detail.num}}</text>
+              </view>
+              <image class="plus" src="/images/icons/plus.png" @tap.stop="detailPlus({{detail}})" />
+            </block>
+            <view class="quantity-cart-btn" wx:else @tap.stop="detailPlus({{detail}})">
+              加入购物车
+            </view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
 
     <!-- 购物车 -->
     <ShopCart :carts.sync="carts" :status.sync="status" @plus.user="plus" @minus.user="minus" @clear.user="clear" @buy.user="buy"/>
@@ -74,6 +107,8 @@
         ]
       },
       pages: {},
+      detail: {
+      },
       details: {},
       shop: {
         notices: []
@@ -84,6 +119,7 @@
       coupons: [],
       carts: [],
       skuDisplay: 'false',
+      detailDisplay: false,
       skuGoods: {},
       title: '在线商城',
       badegText: '商城'
@@ -164,10 +200,24 @@
     }
     // 设置商品列表的数量
     setGoodsNum() {
+      // 处理商品列表
       this.page.list.forEach(goods => {
-        const cart = this.carts.find(cart => cart.goodsId == goods.id);
-        goods.num = cart ? cart.goodsNum : 0;
+        goods.num = this.countCartGoodNum(goods.id);
       });
+      // 处理商品详情
+      if (this.detail) {
+        this.detail.num = this.countCartGoodNum(this.detail.id);
+      }
+    }
+    // 同步数量
+    countCartGoodNum(goodsId) {
+      let num = 0;
+      this.carts.forEach(cart => {
+        if (cart.goodsId == goodsId) {
+          num += cart.goodsNum;
+        }
+      });
+      return num;
     }
     // 更新卡券
     async loadCoupons() {
@@ -226,7 +276,6 @@
        * 增加商品
        */
       async plus({goodsId, goodsSku}) {
-        let num;
         // 商品里列表
         const goods = this.findGoods(goodsId);
         if (goods) {
@@ -234,14 +283,12 @@
             await this.skuSelector(goodsId);
             return;
           }
-          num = goods.num ? goods.num + 1 : 1;
-          goods.num = num;
         }
         // 购物车
         const target = this.findCart(goodsId, goodsSku);
         if (target) {
           // 购物车中已存在
-          target.goodsNum = num != null ? num : target.goodsNum + 1;
+          target.goodsNum = target.goodsNum + 1;
           target.totalPrice = (target.goodsNum * target.goodsPrice).toFixed(2);
         } else {
           // 购物车中不存在
@@ -249,8 +296,10 @@
           if (goodsSku) {
             const skuInfo = goods.goodsSkuInfo.goodsSkuDetails.find(item => item.sku == goodsSku);
             goodsPrice = skuInfo.goodsSkuDetailBase.price;
-          } else {
+          } else if (goods) {
             goodsPrice = goods.sellPrice;
+          } else if (this.detail && this.detail.id == goodsId) {
+            goodsPrice = this.detail.sellPrice;
           }
           goodsPrice = goodsPrice.toFixed(2);
           this.carts.push({
@@ -265,6 +314,7 @@
           });
         }
         // 重置数据
+        this.setGoodsNum();
         this.setCategoryNum();
         this.saveCartStore();
         this.skuGoods = {};
@@ -274,7 +324,6 @@
        * 减少商品
        */
       async minus({goodsId, goodsSku}) {
-        let num;
         // 商品对象
         const goods = this.findGoods(goodsId);
         // 特殊情况，商品已经不足1个
@@ -292,15 +341,11 @@
         if (target.goodsNum == 1) {
           this.removeCart(goodsId, target.goodsSku);
         } else {
-          num = target.goodsNum - 1;
-          target.goodsNum = num;
+          target.goodsNum -= 1;
           target.totalPrice = (target.goodsNum * target.goodsPrice).toFixed(2);
         }
-        // 减少商品
-        if (goods) {
-          goods.num = num;
-        }
         // 重置数据
+        this.setGoodsNum();
         this.setCategoryNum();
         this.saveCartStore();
         this.loaded();
@@ -325,6 +370,32 @@
           trade: JSON.stringify(trade)
         };
         this.$navigate('../order/trade', param);
+      },
+      /**
+       * 商品详情
+       */
+      async detail(goods) {
+        this.detail = this.findGoods(goods.id);
+        this.detailDisplay = true;
+      },
+      /**
+       * 详情页减少商品
+       * @param detail
+       */
+      detailMinus(detail) {
+        const minus = this.methods.minus.bind(this);
+        minus({
+          goodsId: detail.id
+        });
+      },
+      /**
+       * 详情页面增加商品
+       */
+      detailPlus(detail) {
+        const plus = this.methods.plus.bind(this);
+        plus({
+          goodsId: detail.id
+        });
       }
     };
     async doClear() {
@@ -426,6 +497,42 @@
       width: 545rpx;
       border-bottom: $border;
       white-space: nowrap;
+    }
+  }
+
+
+  .goods-detail-box{
+    position: fixed;
+    top: 0;
+    bottom: 100rpx;
+    width: 750rpx;
+    background-color: #FFF;
+
+    .info-box{
+      padding: 20rpx;
+      .name{
+        font-size: $text-xxl;
+        font-weight: bold;
+      }
+    }
+
+    .quantity-cart-btn{
+      background-color: $color-primary;
+      font-size: $text-sm;
+      height: 20px;
+      color: #FFF;
+      padding: 4px 13px;
+      border-radius: 20px;
+    }
+
+    .goods-swiper{
+      height: 650rpx;
+      width: 750rpx;
+
+      image{
+        width:100%;
+        height:650rpx;
+      }
     }
   }
 
