@@ -404,7 +404,10 @@
       /**
        * 确认购买
        */
-      buy () {
+      async buy () {
+        // 权限校验
+        const result = await auth.user({block: true, redirect: false});
+        if (!result) return;
         const trade = order.createCartTrade(this.carts);
         const param = {
           trade: JSON.stringify(trade)

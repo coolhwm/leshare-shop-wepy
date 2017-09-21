@@ -27,6 +27,7 @@
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import order from '../../api/order';
+  import auth from '../../api/auth';
   import coupons from '../../api/coupon';
   import pagination from '../../mixins/pagination.wpy';
   import Placeholder from '../../components/common/placeholder';
@@ -52,6 +53,9 @@
     };
     data = {...this.def};
     async onLoad () {
+      // 权限校验
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
       // 加载店铺信息
       this.shop = await Cache.shop();
       this.shop.notices = await Cache.notices();

@@ -79,6 +79,7 @@
 <script>
   import wepy from 'wepy'
   import base from '../../mixins/base';
+  import auth from '../../api/auth';
   import order from '../../api/order';
   import cart from '../../api/cart';
   import Tips from '../../utils/Tips';
@@ -96,6 +97,8 @@
     };
     data = {...this.def};
     async onLoad ({orderId}) {
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
       // 订单信息
       this.order = await order.getInfo(orderId);
       // 收货地址

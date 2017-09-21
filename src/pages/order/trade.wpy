@@ -70,6 +70,7 @@
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import input from '../../mixins/input';
+  import auth from '../../api/auth';
   import address from '../../api/address';
   import coupon from '../../api/coupon';
   import order from '../../api/order';
@@ -101,7 +102,8 @@
 
     async onLoad ({trade}) {
       const isOpen = await this.checkShopStatus();
-      if (!isOpen) { return; }
+      const result = await auth.user({block: true, redirect: true});
+      if (!result || !isOpen) { return; }
       // 订单数据
       this.trade = JSON.parse(trade);
       // 默认地址
