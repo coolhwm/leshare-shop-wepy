@@ -269,9 +269,10 @@
     }
     methods = {
       switchTab() {
+        Tips.setLoading();
         const selectedId = this.categories.selectedId;
         // 先判断缓存中是否存在商品列表
-        if (this.pages[selectedId]) {
+        if (this.pages[selectedId] && this.pages[selectedId].list.length > 0) {
           this.page = this.pages[selectedId];
           this.setGoodsNum();
           this.loaded();
@@ -585,8 +586,8 @@
       bottom: 70px;
       right: 20px;
       background-color: #FFF;
-      height: 45px;
-      width: 45px;
+      height: 46px;
+      width: 46px;
       border-radius: 50%;
       image{
         height: 40px;

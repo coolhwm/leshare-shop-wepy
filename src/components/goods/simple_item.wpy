@@ -1,12 +1,14 @@
 <template>
-  <view class="goods-item row" @tap="detail({{goods}})">
-    <image class="goods-image" src="{{goods.imageUrl}}"></image>
+  <view class="goods-item row" >
+    <image class="goods-image" src="{{goods.imageUrl}}" @tap="detail({{goods}})"></image>
     <view class="goods-main column" >
-      <view class="goods-name row-between">
-        <text>{{goods.name}}</text>
-      </view>
-      <view>
-        <text class="xs muted">已售{{goods.salesVolume}}件</text>
+      <view @tap="detail({{goods}})">
+        <view class="goods-name row-between">
+          <text>{{goods.name}}</text>
+        </view>
+        <view>
+          <text class="xs muted">已售{{goods.salesVolume}}件</text>
+        </view>
       </view>
       <view class="row-between">
         <text class="goods-price">￥{{goods.priceLable}}</text>
@@ -100,8 +102,8 @@
 
   .quantity{
     image{
-      height: 45rpx;
-      width: 45rpx;
+      height: 50rpx;
+      width: 50rpx;
     }
     .number{
       font-size: $text-sm;
