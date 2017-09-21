@@ -155,7 +155,7 @@
       badegText: '商城'
     };
     data = {...this.def};
-    async onLoad () {
+    async onLoad ({goodsId}) {
       // -- 用户信息
       await auth.user();
       // -- 缓存信息
@@ -186,6 +186,11 @@
         this.categories.selectedId = this.categories.list[0].id;
         this.page = goods.page(false);
         await this.next();
+      }
+      // 处理推荐跳转
+      if (goodsId) {
+        const detail = this.methods.detail.bind(this);
+        detail({id: goodsId});
       }
       // -- 监听事件
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupons.bind(this), this);
