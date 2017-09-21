@@ -48,7 +48,10 @@
       </swiper>
 
       <view class="info-box column">
-        <text class="name">{{detail.name}}</text>
+        <view class="row">
+          <view class="small label primary" wx:if="{{isRecommend == 1}}">推荐</view>
+          <text class="name">{{detail.name}}</text>
+        </view>
         <text class="sm muted mt10">已售{{detail.salesVolume}}件</text>
         <view class="row-between mt10">
           <text class="major xxl">￥{{detail.priceLable}}</text>
@@ -103,8 +106,7 @@
     def = {
       init: false,
       page: {
-        list: [
-        ]
+        list: []
       },
       pages: {},
       detail: {
@@ -374,13 +376,18 @@
       /**
        * 商品详情
        */
-      async detail(goods) {
-        this.detail = this.findGoods(goods.id);
+      async detail({id}) {
+        Tips.setLoading();
+        this.detail = this.findGoods(id);
         this.detailDisplay = true;
+        if (!this.details[id]) {
+          this.details[id] = await goods.getInfo(id);
+        }
+        Tips.loaded();
+        this.$apply();
       },
       /**
        * 详情页减少商品
-       * @param detail
        */
       detailMinus(detail) {
         const minus = this.methods.minus.bind(this);
@@ -506,9 +513,10 @@
     top: 0;
     bottom: 100rpx;
     width: 750rpx;
-    background-color: #FFF;
+    background-color: $color-bg-body;
 
     .info-box{
+      background-color: #FFF;
       padding: 20rpx;
       .name{
         font-size: $text-xxl;
