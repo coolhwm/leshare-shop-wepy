@@ -8,7 +8,7 @@
       <view class="address"  @tap="nav">
         <text class="weak">地址:{{shop.address}}</text> <image class="icon" src="/images/icons/more-gray.png"></image>
       </view>
-      <text class="time weak lg">营业时间：{{status.timeText}}</text>
+      <text class="time weak lg"> {{status.timeText ? '营业时间：' + status.timeText: ''}} </text>
     </view>
 
     <!--操作向导区域-->
@@ -98,21 +98,26 @@
     async onLoad () {
       await auth.login();
       this.shop = await Cache.shop();
-      this.status = await Cache.status();
-      const {list} = await goods.page(true).next();
-      if (list.length > 5) {
-        this.goods = list.slice(0, 5);
-      } else {
-        this.goods = list;
-      }
       this.shopTitle = shop.type().name;
       this.loaded();
       this.preload();
     };
     preload() {
       Tips.setLoading();
+      Cache.status().then(status => {
+        this.status = status;
+        return goods.page(true).next();
+      }).then(({list}) => {
+        if (list.length > 5) {
+          this.goods = list.slice(0, 5);
+        } else {
+          this.goods = list;
+        }
+        this.loaded();
+      });
       shop.visit();
-      Cache.categories().then(() => Cache.notices()).then(() => Tips.loaded);
+      Cache.notices().then();
+      Cache.categories().then();
     }
     onShareAppMessage () {
       return {};
