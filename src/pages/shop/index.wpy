@@ -180,21 +180,25 @@
       await this.next();
       // 检查是否没有推荐商品
       if (this.page.list.length == 0) {
-        this.categories.list.splice(0, 1);
+        if (this.categories.list[0].id == -1) {
+          this.categories.list.splice(0, 1);
+        }
         this.categories.selectedId = this.categories.list[0].id;
         this.page = goods.page(false);
         await this.next();
       }
-      // -- 异步加载的信息
-      // 加载优惠券
-      coupon.shelf().then(({pickList}) => {
-        this.coupons = pickList;
-        this.loaded();
-      });
       // -- 监听事件
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupons.bind(this), this);
       Event.listen(Event.CART_LIST_CLEAR, this.doClear.bind(this), this);
       this.loaded();
+
+      // -- 异步加载的信息
+      // 加载优惠券
+      Tips.setLoading();
+      coupon.shelf().then(({pickList}) => {
+        this.coupons = pickList;
+        this.loaded();
+      });
     };
     async onShow () {
       if (this.init) {
