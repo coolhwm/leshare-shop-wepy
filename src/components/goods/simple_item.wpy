@@ -1,7 +1,7 @@
 <template>
-  <view class="goods-item row">
-    <image class="goods-image" src="{{goods.imageUrl}}" @tap.stop="preview({{goods}})"></image>
-    <view class="goods-main column" @tap="detail({{goods}})">
+  <view class="goods-item row" @tap="detail({{goods}})">
+    <image class="goods-image" src="{{goods.imageUrl}}"></image>
+    <view class="goods-main column" >
       <view class="goods-name row-between">
         <text>{{goods.name}}</text>
       </view>

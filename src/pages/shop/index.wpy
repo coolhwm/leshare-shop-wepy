@@ -37,9 +37,15 @@
     </view>
 
     <!--商品详情区域-->
-    <scroll-view class="goods-detail-box" wx:if="{{detailDisplay}}">
+    <scroll-view  class="goods-detail-box" scroll-y	 wx:if="{{detailDisplay}}">
+
+      <!--返回按钮-->
+      <view class="back-btn column-center">
+        <image src="/images/icons/back.png" @tap="detaiLBack" />
+      </view>
+
       <!-- 轮播图 -->
-      <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" catchtap="preview">
+      <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" @tap="previewDetailSwiper">
         <block wx:for="{{detail.images}}" wx:key="id">
           <swiper-item>
             <image src="{{item.url}}" mode="aspectFill"></image>
@@ -47,16 +53,17 @@
         </block>
       </swiper>
 
+      <!--信息区域-->
       <view class="info-box column">
         <view class="row">
           <view class="small label primary" wx:if="{{isRecommend == 1}}">推荐</view>
           <text class="name">{{detail.name}}</text>
         </view>
         <text class="sm muted mt10">已售{{detail.salesVolume}}件</text>
-        <view class="row-between mt10">
+        <view class="price row-between mt10">
           <text class="major xxl">￥{{detail.priceLable}}</text>
           <!--数量选择器-->
-          <view class="quantity row">
+          <view class="quantity row mr20">
             <block wx:if="{{detail.num > 0}}">
               <image class="minus" src="/images/icons/minus.png" @tap.stop="detailMinus({{detail}})" />
               <view class="number">
@@ -70,6 +77,27 @@
           </view>
         </view>
       </view>
+
+      <!--详情区域-->
+      <view class="detail-box" wx:if="{{currentDetailList.length > 0}}">
+        <!--详情标题-->
+        <view class="detail-title row-center">
+          <text class="primary lg">── 商品详情 ──</text>
+        </view>
+
+        <view class="hr-light"></view>
+
+        <!--详情类列表区域/遍历详情-->
+        <view class="detail-list column">
+          <block wx:for="{{currentDetailList}}" wx:key="id">
+            <!--文本-->
+            <text class="mb20 lg" wx:if="{{item.type == 1}}">{{item.content}}</text>
+            <!--图片-->
+            <image src="{{item.content}}" mode="widthFix" wx:if="{{item.type == 2}}" @tap="previewDetailImages({{item.content}})"/>
+          </block>
+        </view>
+      </view>
+
     </scroll-view>
 
     <!-- 购物车 -->
@@ -387,6 +415,13 @@
         this.$apply();
       },
       /**
+       * 关闭详情页面
+       */
+      detaiLBack() {
+        this.detailDisplay = false;
+        this.detail = null;
+      },
+      /**
        * 详情页减少商品
        */
       detailMinus(detail) {
@@ -402,6 +437,25 @@
         const plus = this.methods.plus.bind(this);
         plus({
           goodsId: detail.id
+        });
+      },
+      /**
+       * 预览详情页面
+       */
+      previewDetailImages(current) {
+        const urls = this.currentDetailList.filter(v => v.type == 2).map(v => v.content);
+        wepy.previewImage({
+          urls: urls,
+          current: current
+        });
+      },
+      /**
+       * 预览轮播图
+       */
+      previewDetailSwiper() {
+        const urls = this.detail.images.map(value => value.url);
+        wepy.previewImage({
+          urls: urls
         });
       }
     };
@@ -452,6 +506,11 @@
       this.carts.splice(index, 1);
     }
     computed = {
+      currentDetailList() {
+        if (this.detail && this.details[this.detail.id]) {
+          return this.details[this.detail.id].goodsDetails;
+        }
+      },
       selectedCategoryName() {
         if (this.init) {
           const selectedId = this.categories.selectedId;
@@ -515,12 +574,31 @@
     width: 750rpx;
     background-color: $color-bg-body;
 
+    .back-btn{
+      position: fixed;
+      bottom: 70px;
+      right: 20px;
+      background-color: #FFF;
+      height: 45px;
+      width: 45px;
+      border-radius: 50%;
+      image{
+        height: 40px;
+        width: 40px;
+      }
+    }
+
     .info-box{
       background-color: #FFF;
       padding: 20rpx;
+      border-bottom: $border;
+      border-top: $border;
       .name{
         font-size: $text-xxl;
         font-weight: bold;
+      }
+      .price{
+        height: 32px;
       }
     }
 
@@ -540,6 +618,31 @@
       image{
         width:100%;
         height:650rpx;
+      }
+    }
+
+    .detail-box{
+      border-top: $border;
+      background-color: #FFF;
+      margin-top: 20rpx;
+
+      .detail-title{
+        height: 75rpx;
+      }
+      .hr-light{
+        height: 1px;
+        background-color: #e6e6e6;
+        width: 100%;
+      }
+
+      .detail-list{
+        padding-bottom: 20rpx;
+        image{
+          width: 100%;
+        }
+        text{
+          padding: 20rpx;
+        }
       }
     }
   }
