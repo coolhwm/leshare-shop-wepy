@@ -111,6 +111,7 @@
     };
     preload() {
       Tips.setLoading();
+      shop.visit();
       Cache.categories().then(() => Cache.notices()).then(() => Tips.loaded);
     }
     onShareAppMessage () {

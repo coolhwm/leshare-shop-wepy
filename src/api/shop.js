@@ -13,6 +13,16 @@ export default class shop extends base {
       name: '点外卖',
       badgeText: '外卖'
     }
+  };
+
+  /**
+   * 访问店铺
+   */
+  static visit() {
+    const url = `${this.baseUrl}/visit_shops`;
+    wepy.getSystemInfo().then(res => {
+      return this.post(url, res);
+    }).then(_ => {});
   }
   /**
    * 获取店铺信息

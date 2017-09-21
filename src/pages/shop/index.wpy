@@ -509,6 +509,8 @@
       currentDetailList() {
         if (this.detail && this.details[this.detail.id]) {
           return this.details[this.detail.id].goodsDetails;
+        } else {
+          return null;
         }
       },
       selectedCategoryName() {
