@@ -1,7 +1,5 @@
 import base from './base';
-// import wepy from 'wepy'
 import Page from '../utils/Page';
-// import Lang from '../utils/Lang'
 
 /**
  * 商品服务类
