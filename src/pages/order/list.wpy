@@ -2,7 +2,7 @@
   <view class="container" wx:if="{{init}}">
 
     <!-- 店铺信息区域 -->
-    <ShopHeader :shop.sync="shop" />
+    <ShopHeader :shop.sync="shop" navType="navigateBack"/>
 
     <!--功能区域-->
     <HomeNav badegText="我的" title="我的订单"  navText="返回" navType="navigateBack"/>
