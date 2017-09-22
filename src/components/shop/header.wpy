@@ -1,6 +1,6 @@
 <template>
   <!-- 店铺信息区域 -->
-  <view class="shop-box row" @tap="home">
+  <navigator class="shop-box row" url="/pages/home/home" open-type="{{navType}}">
     <image class="shop-avatar" src="{{shop.avatar}}/medium" wx:if="{{shop.avatar}}" />
     <view class="shop-content column">
       <view class="column">
@@ -10,24 +10,18 @@
       <text class="mt20 xs">公告：{{shop.notices[0].content}}</text>
     </view>
     <image class="icon" src="/images/icons/more-white.png" />
-  </view>
+  </navigator>
 </template>
 
 <script>
   import wepy from 'wepy'
   export default class ShopHeader extends wepy.component {
     props = {
-      shop: {}
-    };
-    data = {};
-    methods = {
-      home() {
-        this.$root.$redirect('../home/home');
+      shop: {},
+      navType: {
+        default: 'redirect'
       }
     };
-    events = {};
-    onLoad() {
-    }
   }
 </script>
 

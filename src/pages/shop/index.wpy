@@ -527,7 +527,7 @@
         }
       },
       selectedCategoryName() {
-        if (this.init) {
+        if (this.init && this.categories) {
           const selectedId = this.categories.selectedId;
           return this.categories.list.find(item => item.id == selectedId).title;
         }

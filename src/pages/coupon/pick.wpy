@@ -1,7 +1,7 @@
 <template>
   <view class="container" wx:if="{{init}}">
     <!-- 店铺信息区域 -->
-    <ShopHeader :shop.sync="shop" />
+    <ShopHeader :shop.sync="shop" navType="navigateBack" />
 
     <!--功能区域-->
     <HomeNav badegText="优惠" title="领取优惠券"  navText="首页" navType="navigateBack"/>

@@ -42,7 +42,7 @@
           <text class="weak">领优惠券</text>
         </navigator>
 
-        <navigator class="shop-btn column-center" url="/pages/order/list">
+        <navigator class="shop-btn column-center" url="/pages/order/list" open-type="redirect">
           <image class="icon-xl" src="/images/home/my.png"></image>
           <text class="weak">我的订单</text>
         </navigator>

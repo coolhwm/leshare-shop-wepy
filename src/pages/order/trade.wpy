@@ -82,6 +82,7 @@
   import OrderItem from '../../components/order/customer_item';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
+  import Cache from '../../utils/Cache';
 
   export default class OrderTrade extends wepy.page {
     def = {
@@ -113,7 +114,7 @@
       // 可用卡券
       this.coupons = await coupon.available(this.trade.orderGoodsInfos);
       // 店铺信息
-      this.shop = await shop.info();
+      this.shop = await Cache.shop();
       this.loaded();
       // 事件注册
       Event.listen(Event.TRADE_ADDRESS_UPDATE, this.updateAddress.bind(this), this);
