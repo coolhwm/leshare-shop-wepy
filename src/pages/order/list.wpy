@@ -61,8 +61,8 @@
       this.shop.notices = await Cache.notices();
       this.page = order.page();
       // -- 异步加载
-      coupons.own().then(ownCoupons => {
-        this.couponsNum = ownCoupons.length + '张';
+      Cache.coupon().then(({ownList}) => {
+        this.couponsNum = ownList.length + '张';
         this.loaded();
       });
       await this.next();

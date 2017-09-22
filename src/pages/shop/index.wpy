@@ -200,7 +200,7 @@
       // -- 异步加载的信息
       // 加载优惠券
       Tips.setLoading();
-      coupon.shelf().then(({pickList}) => {
+      Cache.coupon().then(({pickList}) => {
         this.coupons = pickList;
         this.loaded();
       });
@@ -260,7 +260,7 @@
     }
     // 更新卡券
     async loadCoupons() {
-      const {pickList} = await coupon.shelf();
+      const {pickList} = await Cache.coupon(true);
       this.coupons = pickList;
       this.$apply();
     }
@@ -298,7 +298,7 @@
           await coupon.pick(id);
           await Tips.success('领取成功');
           // 加载优惠券
-          const {pickList} = await coupon.shelf();
+          const {pickList} = await Cache.coupon(true);
           this.coupons = pickList;
           Tips.loaded();
           this.$apply();

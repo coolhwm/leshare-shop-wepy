@@ -53,7 +53,7 @@
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupons.bind(this), this);
     };
     async loadCoupons () {
-      const shelf = await coupon.shelf();
+      const shelf = await Cache.coupon(true);
       this.coupons = shelf.pickList;
       this.couponsNum = shelf.ownList.length + '张';
       this.isEmpty = shelf.pickList.length < 1;

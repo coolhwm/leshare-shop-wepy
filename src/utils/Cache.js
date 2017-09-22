@@ -1,9 +1,22 @@
 import shop from '../api/shop';
 import goods from '../api/goods';
+import coupon from '../api/coupon';
 
 export default class Cache {
   static cache = new Map();
   static _debug = true;
+
+  /**
+   * 目前卡券信息（已领取/未领取）
+   */
+  static async coupon(reload = false) {
+    const KEY = 'COUPON_SHELF';
+    if (reload || this.isExpired(KEY)) {
+      const info = await coupon.shelf();
+      this.set(KEY, info);
+    }
+    return this.cache.get(KEY);
+  }
 
   /**
    * 获取店铺信息（缓存）
@@ -67,6 +80,16 @@ export default class Cache {
       this.log(`cache [${key}] exists, interval=${interval}`);
     }
     return isExpired;
+  }
+
+  /**
+   * 删除缓存对象
+   */
+  static remove(key) {
+    if (key == null) {
+      return;
+    }
+    this.cache.delete(key);
   }
 
   /**
