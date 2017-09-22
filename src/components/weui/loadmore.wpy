@@ -11,7 +11,7 @@
   </view>
 
   <!--无数据提示-->
-  <view class="weui-loadmore weui-loadmore_line" wx:if="{{page.empty && emptyText}}">
+  <view class="weui-loadmore weui-loadmore_line" wx:if="{{!page.loading && page.empty && emptyText}}">
     <view class="weui-loadmore__tips weui-loadmore__tips_in-line">{{emptyText}}</view>
   </view>
 
