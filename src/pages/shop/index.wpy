@@ -56,7 +56,7 @@
       <!--信息区域-->
       <view class="info-box column">
         <view class="row">
-          <view class="small label primary" wx:if="{{isRecommend == 1}}">推荐</view>
+          <view class="small label primary" wx:if="{{detail.isRecommend == 1}}">推荐</view>
           <text class="name">{{detail.name}}</text>
         </view>
         <text class="sm muted mt10">已售{{detail.salesVolume}}件</text>
