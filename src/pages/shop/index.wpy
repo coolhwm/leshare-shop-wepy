@@ -32,7 +32,7 @@
           </repeat>
         </view>
 
-        <Loadmore :page.sync="page"/>
+        <Loadmore :page.sync="page" emptyText="暂无商品"/>
       </scroll-view>
     </view>
 
