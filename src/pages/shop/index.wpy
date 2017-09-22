@@ -194,7 +194,8 @@
       }
       // -- 监听事件
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupons.bind(this), this);
-      Event.listen(Event.CART_LIST_CLEAR, this.doClear.bind(this), this);
+      Event.listen(Event.CART_LIST_CLEAR, this.doClearCart.bind(this), this);
+      Event.listen(Event.CART_LIST_RESET, this.doResetCart.bind(this), this);
       this.loaded();
 
       // -- 异步加载的信息
@@ -315,7 +316,7 @@
       /**
        * 增加商品
        */
-      async plus({goodsId, goodsSku}) {
+      async plus({goodsId, goodsSku, count = 1}) {
         // 商品里列表
         const goods = this.findGoods(goodsId);
         if (goods) {
@@ -328,7 +329,7 @@
         const target = this.findCart(goodsId, goodsSku);
         if (target) {
           // 购物车中已存在
-          target.goodsNum = target.goodsNum + 1;
+          target.goodsNum = target.goodsNum + count;
           target.totalPrice = (target.goodsNum * target.goodsPrice).toFixed(2);
         } else {
           // 购物车中不存在
@@ -399,7 +400,7 @@
           return;
         }
         await Tips.confirm('确认清空购物车？');
-        await this.doClear();
+        await this.doClearCart();
       },
       /**
        * 确认购买
@@ -472,7 +473,7 @@
         });
       }
     };
-    async doClear() {
+    async doClearCart() {
       this.carts = [];
       this.setCategoryNum();
       this.setGoodsNum();
@@ -480,6 +481,27 @@
         key: 'carts',
         data: []
       });
+      this.loaded();
+    }
+    async doResetCart(goodsList) {
+      this.carts = [];
+      goodsList.forEach(goods => {
+        this.carts.push({
+          goodsId: goods.goodsId,
+          goodsSku: goods.goodsSku,
+          goodsName: goods.goodsName,
+          shopCategory: null,
+          goodsImage: goods.imageUrl,
+          goodsPrice: goods.goodsPrice,
+          goodsNum: goods.count,
+          totalPrice: (goods.goodsPrice * goods.count).toFixed(2)
+        });
+      });
+      // 重置数据
+      this.setGoodsNum();
+      this.setCategoryNum();
+      this.saveCartStore();
+      this.loaded();
       this.loaded();
     }
     async skuSelector(goodsId) {

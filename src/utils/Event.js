@@ -23,6 +23,8 @@ export default class Event {
   static SHOP_INFO_UPDATE = 'SHOP_INFO_UPDATE';
   // 购物车清空
   static CART_LIST_CLEAR = 'CART_LIST_CLEAR';
+  // 购物车增加
+  static CART_LIST_RESET = 'CART_LIST_RESET';
   // 地址详情更新
   static ADDRESS_DETAIL_UPDATE = 'ADDRESS_DETAIL_UPDATE';
   // 地址列表更新

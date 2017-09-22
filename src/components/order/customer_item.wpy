@@ -52,10 +52,10 @@
 
 <script>
   import wepy from 'wepy';
-  import cart from '../../api/cart';
   import order from '../../api/order';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
+  import Route from '../../utils/Route';
   import OrderGoods from './goods';
   export default class OrderItem extends wepy.component {
     props = {
@@ -70,7 +70,7 @@
     data = {
       expand: {},
       shopName: {}
-    }
+    };
     onLoad () {
       this.shopName = wepy.$instance.globalData.shopName;
     }
@@ -86,16 +86,9 @@
        * 再来一单
        */
       async again(order) {
-        // 清空购物车
-        await cart.clear();
-        // 商品加入购物车
-        const list = order.orderGoodsInfos;
-        console.info(list);
-        for (const goods of list) {
-          await cart.add(goods.goodsId, goods.count, goods.goodsSku);
-        }
+        Event.emit(Event.CART_LIST_RESET, order.orderGoodsInfos);
         // 跳转到首页，重新加载
-        this.$root.$redirect('../shop/index');
+        Route.backIfExists('/pages/shop/index');
       },
       /**
        * 订单详情

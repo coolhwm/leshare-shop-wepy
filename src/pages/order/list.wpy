@@ -28,7 +28,6 @@
   import base from '../../mixins/base';
   import order from '../../api/order';
   import auth from '../../api/auth';
-  import coupons from '../../api/coupon';
   import pagination from '../../mixins/pagination.wpy';
   import Placeholder from '../../components/common/placeholder';
   import ShopHeader from '../../components/shop/header';
