@@ -72,4 +72,19 @@ export default class shop extends base {
     const data = await this.get(url);
     return data == null || data.length < 1 ? [{ content: '暂无公告' }] : data;
   }
+  /**
+   * 查询满减信息
+   */
+  static reduces() {
+    const url = `${this.baseUrl}/reduce_rule`;
+    return this.get(url).then(data => {
+      data.forEach(item => {
+        item.showText = `满${item.limitPrice}减${item.fee}`;
+      });
+      const showText = data.map(v => v.showText).join(',');
+      return {
+        list: data, showText
+      }
+    });
+  }
 }

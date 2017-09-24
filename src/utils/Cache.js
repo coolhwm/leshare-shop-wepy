@@ -7,6 +7,17 @@ export default class Cache {
   static _debug = true;
 
   /**
+   *  优惠信息
+   */
+  static async reduce(reload = false) {
+    const KEY = 'REDUCE_RULE';
+    if (reload || this.isExpired(KEY)) {
+      const info = await shop.reduces();
+      this.set(KEY, info);
+    }
+    return this.cache.get(KEY);
+  }
+  /**
    * 目前卡券信息（已领取/未领取）
    */
   static async coupon(reload = false) {

@@ -11,6 +11,11 @@
       <text class="time weak lg"> {{status.timeText ? '营业时间：' + status.timeText: '　'}} </text>
     </view>
 
+    <!--优惠信息-->
+    <view class="reduce-box row" wx:if="{{reduce.list.length > 0}}">
+      <image class="icon" src="/images/icons/reduce.png"></image><text class="weak ml10 inline">{{reduce.showText}}</text>
+    </view>
+
     <!--操作向导区域-->
     <view class="nav-box column-cernter">
       <view class="row-between">
@@ -92,7 +97,8 @@
       shop: {},
       status: {},
       goods: [],
-      shopTitle: '在线商城'
+      shopTitle: '在线商城',
+      reduce: null
     };
     data = {...this.def};
     async onLoad () {
@@ -114,6 +120,9 @@
         } else {
           this.goods = list;
         }
+        return Cache.reduce()
+      }).then(data => {
+        this.reduce = data;
         this.loaded();
       });
       // 记录访问信息
@@ -261,6 +270,9 @@
       }
     }
 
-
+    .reduce-box{
+      padding: 30rpx 0;
+      border-bottom: $border;
+    }
   }
 </style>
