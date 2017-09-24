@@ -1,5 +1,8 @@
 <template>
   <!-- 购物车底栏 -->
+  <view class="reduce-box row-center" wx:if="{{reduce && reduce.list.length > 0}}">
+    <text class="weak xs inline">{{reduceText}}</text>
+  </view>
   <view class="cart-box row" @tap="cart">
     <view class="icon-box column-center">
       <image class="icon-lg" src="/images/icons/cart.png" />
@@ -62,6 +65,7 @@
 
 <script>
   import wepy from 'wepy';
+  import Cache from '../../utils/Cache';
   import SilderPanel from '../../components/common/slider_panel';
   import Tips from '../../utils/Tips';
   export default class ShopCart extends wepy.component {
@@ -73,8 +77,12 @@
       buyStatus: 0
     };
     data = {
-      isCartDisplay: 'false'
+      isCartDisplay: 'false',
+      reduce: null
     };
+    async onLoad() {
+      this.reduce = await Cache.reduce();
+    }
     methods = {
       plus(cart) {
         this.updateNum('plus', cart);
@@ -140,19 +148,60 @@
           this.$apply();
           return '去结算';
         }
+      },
+      reduceText() {
+        if (!this.reduce || this.reduce.list < 1) {
+          return null;
+        }
+        if (this.totalPrice == 0) {
+          return this.reduce.showText;
+        }
+        // 获取最大扣减金额
+        let match = {
+          fee: 0
+        };
+        let lowest = {
+          limitPrice: Number.MAX_VALUE
+        };
+        // 满减计算
+        this.reduce.list.forEach(item => {
+          if (this.totalPrice >= item.limitPrice && item.fee > match.fee) {
+            match = item;
+          }
+          if (item.limitPrice < lowest.limitPrice) {
+            lowest = item;
+          }
+        });
+        if (match.fee == 0) {
+          // 不满足最低扣减金额
+          const diff = lowest.limitPrice - this.totalPrice;
+          return `满${lowest.limitPrice}减${lowest.fee}，还差${diff}元`;
+        } else {
+          // 已满足某一档的情况
+          return `已满${match.limitPrice}，结算立减${match.fee}元`;
+        }
       }
-    }
+    };
     components = {
       SilderPanel: SilderPanel
     };
     events = {};
-    onLoad() {
-    }
   }
 </script>
 
 <style lang="scss">
   @import "../../styles/variable";
+
+  .reduce-box{
+    padding: 5rpx 0;
+    z-index: 1000;
+    bottom: 55px;
+    width: 100%;
+    position: absolute;
+    background-color: #FFFAD8;
+    border-top:1px solid #FDF5C8;
+    -webkit-filter:opacity(.9);
+  }
 
   .cart-box{
     background-color: #FCFCFC;

@@ -11,9 +11,11 @@ export default class auth extends base {
       try {
         await this.checkLoginCode(loginCode);
       } catch (e) {
+        console.warn('check login code fial', loginCode);
         await this.doLogin();
       }
     } else {
+      console.warn('login code not exists', loginCode);
       await this.doLogin();
     }
   }

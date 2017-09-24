@@ -41,20 +41,21 @@ export default class extends wepy.app {
     }
     return header;
   }
-  async onLaunch() {
-    await this.syncStoreConfig('login_code');
-    await this.syncStoreConfig('third_session');
-    await this.syncStoreConfig('user');
+  onLaunch() {
+    this.syncStoreConfig('login_code');
+    this.syncStoreConfig('third_session');
+    this.syncStoreConfig('user');
+    console.info('[auth]onLaunch end');
   }
-  async syncStoreConfig(key) {
+  syncStoreConfig(key) {
     try {
-      const result = await wepy.getStorage({key: key});
-      const value = result.data;
+      const value = wepy.getStorageSync(key);
       if (value !== '') {
+        console.info(`[auth]${key} sync success `);
         wepy.$instance.globalData.auth[key] = value;
       }
     } catch (e) {
-      console.warn(`${key} sync fail `);
+      console.warn(`[auth]${key} sync fail `);
     }
   }
   config = {
@@ -80,7 +81,8 @@ export default class extends wepy.app {
     }
   };
   globalData = {
-    auth: {},
+    auth: {
+    },
     shopType: '2',
     shopName: '连江什么鬼炸鸡汉堡',
     shopCode: 'eemTgbKrhqiYKMFowcBCQ1Zr7G13bWUT',

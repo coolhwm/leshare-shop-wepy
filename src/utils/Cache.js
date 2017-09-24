@@ -79,16 +79,16 @@ export default class Cache {
   static isExpired(key, minute = 5) {
     const value = this.cache.get(key);
     if (value == null) {
-      this.log(`cache [${key}] not exists`);
+      this.log(`[cache]${key} not exists`);
       return true;
     }
     const interval = new Date().getTime() - value._lastupdate;
     const isExpired = interval > minute * 60 * 1000;
     if (isExpired) {
-      this.log(`cache [${key}] expired, interval=${interval}`);
+      this.log(`[cache]${key} expired, interval=${interval}`);
       this.cache.delete(key);
     } else {
-      this.log(`cache [${key}] exists, interval=${interval}`);
+      this.log(`[cache]${key} exists, interval=${interval}`);
     }
     return isExpired;
   }
