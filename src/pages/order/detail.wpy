@@ -57,7 +57,14 @@
         <text>优惠券</text>
         <text class="major">-￥{{order.couponPrice}}</text>
       </view>
-      <view class="final-box" wx:if="{{order.status != 1}}">
+      <view class="price-box row-between" wx:if="{{order.reduceFee > 0}}">
+        <view class="row">
+          <image class="icon" src="/images/icons/reduce.png"></image>
+          <text>优惠满减</text>
+        </view>
+        <text class="major">-￥{{order.reduceFee}}</text>
+      </view>
+      <view class="final-box">
         <text class="lg">实付款：</text>
         <text class="lg major">￥{{order.finalPrice}}</text>
       </view>

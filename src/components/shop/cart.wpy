@@ -1,7 +1,7 @@
 <template>
   <!-- 购物车底栏 -->
   <view class="reduce-box row-center" wx:if="{{reduce && reduce.list.length > 0}}">
-    <text class="weak xs inline">{{reduceText}}</text>
+    <text class="weak xs inline">{{matchReduce.showText}}</text>
   </view>
   <view class="cart-box row" @tap="cart">
     <view class="icon-box column-center">
@@ -108,7 +108,11 @@
         } else if (this.totalCount < 1) {
           Tips.alert('请选择商品');
         } else {
-          this.$emit('buy');
+          const param = {};
+          if (this.matchReduce.match) {
+            param.reduce = this.matchReduce.match;
+          }
+          this.$emit('buy', param);
         }
       }
     };
@@ -149,12 +153,14 @@
           return '去结算';
         }
       },
-      reduceText() {
+      matchReduce() {
         if (!this.reduce || this.reduce.list < 1) {
-          return null;
+          return {};
         }
         if (this.totalPrice == 0) {
-          return this.reduce.showText;
+          return {
+            showText: this.reduce.showText
+          };
         }
         // 获取最大扣减金额
         let match = {
@@ -175,10 +181,16 @@
         if (match.fee == 0) {
           // 不满足最低扣减金额
           const diff = lowest.limitPrice - this.totalPrice;
-          return `满${lowest.limitPrice}减${lowest.fee}，还差${diff}元`;
+          return {
+            showText: `满${lowest.limitPrice}减${lowest.fee}，还差${diff}元`,
+            lowest: lowest
+          };
         } else {
           // 已满足某一档的情况
-          return `已满${match.limitPrice}，结算立减${match.fee}元`;
+          return {
+            match: match,
+            showText: `已满${match.limitPrice}，结算立减${match.fee}元`
+          };
         }
       }
     };

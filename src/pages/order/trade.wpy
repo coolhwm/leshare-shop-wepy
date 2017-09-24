@@ -44,7 +44,14 @@
         <text>优惠券</text>
         <text class="major">-￥{{trade.couponPrice}}</text>
       </view>
-      <view class="final-box" wx:if="{{trade.status != 1}}">
+      <view class="price-box row-between" wx:if="{{reduceFee > 0}}">
+        <view class="row">
+          <image class="icon" src="/images/icons/reduce.png"></image>
+          <text>优惠满减</text>
+        </view>
+        <text class="major">-￥{{reduceFee}}</text>
+      </view>
+      <view class="final-box" wx:if="{{trade.status}}">
         <text class="lg">实付款：</text>
         <text class="lg major">￥{{trade.finalPrice}}</text>
       </view>
@@ -97,7 +104,8 @@
       coupons: [],
       selectedCoupon: null,
       confirmStatus: false,
-      confirmText: '立即下单'
+      confirmText: '立即下单',
+      reduce: null
     };
     data = {...this.def};
 
@@ -115,6 +123,8 @@
       this.coupons = await coupon.available(this.trade.orderGoodsInfos);
       // 店铺信息
       this.shop = await Cache.shop();
+      // 优惠信息
+      this.reduce = await Cache.reduce();
       this.loaded();
       // 事件注册
       Event.listen(Event.TRADE_ADDRESS_UPDATE, this.updateAddress.bind(this), this);
@@ -162,11 +172,11 @@
         const trade = this.trade;
         await Tips.actionWithFunc(['在线支付', '线下支付'],
           () => {
-            trade.paymentText = '在线支付'
+            trade.paymentText = '在线支付';
             trade.paymentType = 1
           },
           () => {
-            trade.paymentText = '线下支付'
+            trade.paymentText = '线下支付';
             trade.paymentType = 0
           });
         this.$apply();
@@ -279,6 +289,8 @@
       trade.finalPrice += trade.dealPrice ? parseFloat(trade.dealPrice) : 0;
       trade.finalPrice += trade.postFee ? parseFloat(trade.postFee) : 0;
       trade.finalPrice -= trade.couponPrice ? parseFloat(trade.couponPrice) : 0;
+      trade.reduceFee = this.reduceFee;
+      trade.finalPrice -= this.reduceFee;
       trade.finalPrice = trade.finalPrice.toFixed(2);
     }
     computed = {
@@ -320,6 +332,19 @@
       },
       couponLabel () {
         return this.selectedCoupon ? '已选择' : this.coupons.length + '张可用';
+      },
+      reduceFee () {
+        if (!this.reduce) {
+          return 0;
+        }
+        const dealPrice = this.trade.dealPrice;
+        let reduceFee = 0;
+        this.reduce.list.forEach(item => {
+          if (dealPrice >= item.limitPrice && item.fee > reduceFee) {
+            reduceFee = item.fee;
+          }
+        });
+        return reduceFee.toFixed(2);
       }
     };
     components = {
