@@ -67,6 +67,7 @@ export default class extends wepy.app {
       'pages/home/home',
       'pages/home/login',
       'pages/shop/index',
+      'pages/goods/comment_list',
       'pages/address/edit',
       'pages/order/trade',
       'pages/coupon/pick',

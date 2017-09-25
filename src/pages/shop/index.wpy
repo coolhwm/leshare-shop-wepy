@@ -493,6 +493,12 @@
         wepy.previewImage({
           urls: urls
         });
+      },
+      /**
+       * 评价列表
+       */
+      comments() {
+        this.$navigate(`/pages/goods/comment_list?goodsId=${this.detail.id}`);
       }
     };
     async doClearCart() {
@@ -586,7 +592,7 @@
         } else if (count.ALL == 0) {
           return '该商品暂无评价';
         } else {
-          const rate = (count.GOOD / count.ALL * 100).toFixed(1);
+          const rate = (count.GOOD / count.ALL * 100).toFixed(0);
           return `共${count.ALL}条评价，${rate}%好评`;
         }
       }
