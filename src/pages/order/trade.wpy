@@ -291,6 +291,10 @@
       trade.finalPrice -= trade.couponPrice ? parseFloat(trade.couponPrice) : 0;
       trade.reduceFee = this.reduceFee;
       trade.finalPrice -= this.reduceFee;
+      // 防止价格小于0
+      if (trade.finalPrice < 0) {
+        trade.finalPrice = 0;
+      }
       trade.finalPrice = trade.finalPrice.toFixed(2);
     }
     computed = {

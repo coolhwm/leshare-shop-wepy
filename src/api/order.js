@@ -225,6 +225,9 @@ export default class order extends base {
     if (param && param.reduce) {
       reduceFee = param.reduce.fee;
       finalPrice -= reduceFee;
+      if (finalPrice < 0) {
+        finalPrice = 0;
+      }
     }
     finalPrice = finalPrice.toFixed(2);
     // 构造交易对象
