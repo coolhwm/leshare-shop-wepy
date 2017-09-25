@@ -43,7 +43,7 @@
       <view class="zan-btn zan-btn--small" @tap="again({{order}})">再来一单</view>
       <view class="zan-btn zan-btn--small" @tap="close({{order.orderId}})"  wx:if="{{order.status == 1 || (order.status == 2 && order.paymentType == 0)}}">取消订单</view>
       <view class="zan-btn zan-btn--small zan-btn--primary" @tap="pay({{order.orderId}})" wx:if="{{order.status == 1}}">立即支付</view>
-      <!--<view class="zan-btn zan-btn&#45;&#45;small zan-btn&#45;&#45;primary" @tap="receive({{order.orderId}})" wx:if="{{order.status == 3}}">完成订单</view>-->
+      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="comment({{order}})" wx:if="{{order.status == 4}}">评价订单</view>
       <!--TODO 评价/退款-->
     </view>
 
@@ -91,9 +91,30 @@
         Route.backIfExists('/pages/shop/index');
       },
       /**
+       * 评价订单
+       */
+      comment(order) {
+        const scores = order.orderGoodsInfos.map(item => {
+          return {
+            goodsId: item.goodsId,
+            orderId: order.orderId,
+            sku: item.goodsSku,
+            preview: item.imageUrl,
+            star: 5,
+            starArr: [1, 1, 1, 1, 1],
+            comment: ''
+          };
+        });
+        const data = JSON.stringify(scores);
+        this.$root.$navigate(`/pages/goods/comment_edit?orderId=${order.orderId}&data=${data}`);
+      },
+      /**
        * 订单详情
        */
       detail(orderId) {
+        if (this.action == 0) {
+          return;
+        }
         this.$root.$navigate(`detail?orderId=${orderId}`);
       },
       /**

@@ -1,15 +1,19 @@
 export default class Route {
   /**
-   * 如果上一个页面符合条件，则navigaetBack，否则调用redirectTo
+   * 如果能够后退（多层），则navigaetBack，否则调用redirectTo
    */
   static backIfExists(url) {
     const pages = getCurrentPages();
-    if (pages.length < 2 || '/' + pages[pages.length - 2].route != url) {
+    const index = pages.findIndex(item => ('/' + item.route) == url);
+    if (pages.length < 2 || index < 0) {
       wx.redirectTo({
         url: url
       });
     } else {
-      wx.navigateBack()
+      const delta = pages.length - 1 - index;
+      wx.navigateBack({
+        delta: delta
+      });
     }
   }
 }

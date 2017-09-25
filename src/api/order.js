@@ -1,7 +1,6 @@
 import base from './base';
 import Page from '../utils/Page';
 import wepy from 'wepy';
-import Cache from '../utils/Cache';
 
 /**
  * 订单服务类
