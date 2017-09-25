@@ -71,6 +71,8 @@ export default class extends wepy.app {
       'pages/goods/comment_edit',
       'pages/address/edit',
       'pages/order/trade',
+      'pages/order/refund_edit',
+      'pages/order/refund_detail',
       'pages/coupon/pick',
       'pages/coupon/list',
       'pages/order/list',

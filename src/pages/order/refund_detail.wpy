@@ -1,0 +1,24 @@
+<template>
+</template>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+
+  export default class OrderIndex extends wepy.page {
+    def = {};
+    data = {...this.def};
+    onLoad (options) {
+    };
+    events = {};
+    components = {};
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '订单详情'
+    };
+  }
+</script>

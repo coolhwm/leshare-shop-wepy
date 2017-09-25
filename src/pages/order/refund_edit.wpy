@@ -1,0 +1,130 @@
+<template>
+  <Tips />
+  <view class="container">
+    <view class="h-gap"></view>
+    <view class="weui-cells weui-cells-form">
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__hd">
+          <view class="weui-label">订单号</view>
+        </view>
+        <view class="weui-cell__bd">
+          <input class="weui-input" value="{{input.uuid}}" disabled/>
+        </view>
+      </view>
+
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__hd">
+          <view class="weui-label">退款金额</view>
+        </view>
+        <view class="weui-cell__bd">
+          <input class="weui-input" value="￥{{input.price}}" />
+        </view>
+      </view>
+
+      <view class="weui-cell weui-cell_select"  >
+        <view class="weui-cell__hd weui-cell__hd_in-select-after">
+          <view class="weui-label">退款原因</view>
+        </view>
+        <view class="weui-cell__bd">
+          <picker @change="input" id="cause"  value="{{input.cause}}" range="{{resons}}">
+            <view class="weui-select weui-select_in-select-after">{{resons[input.cause]}}</view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__hd">
+          <view class="weui-label">联系人</view>
+        </view>
+        <view class="weui-cell__bd">
+          <input class="weui-input" @input="input" id="contactName"  value="{{input.contactName}}" placeholder="联系人姓名"/>
+        </view>
+      </view>
+
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__hd">
+          <view class="weui-label">联系方式</view>
+        </view>
+        <view class="weui-cell__bd">
+          <input class="weui-input" @input="input" id="contactPhone"  type="number" maxlength="11" value="{{input.contactPhone}}" placeholder="手机号码" />
+        </view>
+      </view>
+
+    </view>
+
+    <!--操作栏-->
+    <ActionBar @tap.user="submit" okText="提交申请"/>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import order from '../../api/order';
+  import base from '../../mixins/base';
+  import input from '../../mixins/input';
+  import ActionBar from '../../components/common/action_bar';
+  import FormTips from '../../components/weui/tips';
+  import Tips from '../../utils/Tips';
+  import Route from '../../utils/Route';
+  import Event from '../../utils/Event';
+
+  export default class RefundEdit extends wepy.page {
+    def = {
+      init: false,
+      resons: ['重复下单/误下单', '操作有误', '其他渠道价格更低', '不想买了', '其他原因']
+    };
+    data = {...this.def};
+    async onLoad ({refund}) {
+      this.input = JSON.parse(refund);
+      this.input.cause = 0;
+      this.loaded();
+    };
+    methods = {
+      async submit() {
+        if (!this.validate()) {
+          return;
+        }
+        // 数据准备
+        const refund = this.input;
+        refund.cause = this.resons[refund.cause];
+        // 发起退款
+        await Tips.confirm('您确认要申请退款吗？');
+        await order.refundOrder(refund.orderId, refund);
+        await Tips.success('退款申请成功');
+        Event.emit(Event.ORDER_LIST_UPDATE);
+        Route.backIfExists('/pages/order/list');
+      }
+    };
+    validate() {
+      const rules = [
+        {
+          value: this.input.contactName,
+          method: 'required',
+          message: '联系人姓名不能为空'
+        },
+        {
+          value: this.input.contactPhone,
+          method: 'required',
+          message: '联系人电话不能为空'
+        },
+        {
+          value: this.input.contactPhone,
+          method: 'tel',
+          message: '联系人电话格式错误'
+        }];
+      return this.check(rules);
+    }
+    components = {
+      ActionBar: ActionBar,
+      Tips: FormTips
+    };
+    mixins = [base, input];
+    config = {
+      navigationBarTitleText: '编辑配送员信息'
+    };
+  }
+</script>
+
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>
