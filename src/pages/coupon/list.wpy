@@ -19,6 +19,7 @@
 
 <script>
   import wepy from 'wepy';
+  import auth from '../../api/auth';
   import base from '../../mixins/base';
   import coupon from '../../api/coupon';
   import pagination from '../../mixins/pagination.wpy';
@@ -53,6 +54,8 @@
     };
     data = {...this.def};
     async onLoad () {
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
       this.page = coupon.page();
       await this.next();
     };

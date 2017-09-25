@@ -8,7 +8,12 @@
       <view class="address"  @tap="nav">
         <text class="weak">地址:{{shop.address}}</text> <image class="icon" src="/images/icons/more-gray.png"></image>
       </view>
-      <text class="time weak lg">营业时间：{{status.timeText}}</text>
+      <text class="time weak lg"> {{status.timeText ? '营业时间：' + status.timeText: '　'}} </text>
+    </view>
+
+    <!--优惠信息-->
+    <view class="reduce-box row" wx:if="{{reduce.list.length > 0}}">
+      <image class="icon" src="/images/icons/reduce.png"></image><text class="weak ml10 inline">{{reduce.showText}}</text>
     </view>
 
     <!--操作向导区域-->
@@ -42,7 +47,7 @@
           <text class="weak">领优惠券</text>
         </navigator>
 
-        <navigator class="shop-btn column-center" url="/pages/order/list">
+        <navigator class="shop-btn column-center" url="/pages/order/list" >
           <image class="icon-xl" src="/images/home/my.png"></image>
           <text class="weak">我的订单</text>
         </navigator>
@@ -63,7 +68,7 @@
       <view class="content column">
         <view class="goods-box row" wx:for="{{goods}}" wx:key="index">
           <image class="goods-image" src="{{item.imageUrl}}" @tap="previewGoodsImages({{item.imageUrl}})"/>
-          <navigator class="main column"  url="/pages/shop/index"  open-type="redirect">
+          <navigator class="main column"  url="/pages/shop/index?goodsId={{item.id}}"  open-type="redirect">
             <text class="title">{{item.name}}</text>
             <text class="price">￥{{item.priceLable}}</text>
           </navigator>
@@ -92,27 +97,45 @@
       shop: {},
       status: {},
       goods: [],
-      shopTitle: '在线商城'
+      shopTitle: '在线商城',
+      reduce: null
     };
     data = {...this.def};
-    async onLoad () {
+    async onLoad ({sence}) {
+      console.info('sence:', sence);
       await auth.login();
       this.shop = await Cache.shop();
-      this.status = await Cache.status();
-      const {list} = await goods.page(true).next();
-      if (list.length > 5) {
-        this.goods = list.slice(0, 5);
-      } else {
-        this.goods = list;
-      }
       this.shopTitle = shop.type().name;
       this.loaded();
+      this.visit(sence);
       this.preload();
     };
+    visit(sence) {
+      // 记录访问信息
+      shop.visit(sence, wepy.$instance.globalData.scene);
+      wepy.$instance.globalData.scene = '';
+    }
     preload() {
       Tips.setLoading();
-      shop.visit();
-      Cache.categories().then(() => Cache.notices()).then(() => Tips.loaded);
+      // 状态信息/推荐商品异步加载
+      Cache.status().then(status => {
+        this.status = status;
+        return goods.page(true).next();
+      }).then(({list}) => {
+        if (list.length > 5) {
+          this.goods = list.slice(0, 5);
+        } else {
+          this.goods = list;
+        }
+        return Cache.reduce()
+      }).then(data => {
+        this.reduce = data;
+        this.loaded();
+      });
+      // 页面缓存预加载
+      Cache.notices().then();
+      Cache.categories().then();
+      Cache.coupon().then();
     }
     onShareAppMessage () {
       return {};
@@ -252,6 +275,9 @@
       }
     }
 
-
+    .reduce-box{
+      padding: 30rpx 0;
+      border-bottom: $border;
+    }
   }
 </style>

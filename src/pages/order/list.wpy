@@ -2,7 +2,7 @@
   <view class="container" wx:if="{{init}}">
 
     <!-- 店铺信息区域 -->
-    <ShopHeader :shop.sync="shop" />
+    <ShopHeader :shop.sync="shop" navType="navigateBack"/>
 
     <!--功能区域-->
     <HomeNav badegText="我的" title="我的订单"  navText="返回" navType="navigateBack"/>
@@ -27,7 +27,7 @@
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import order from '../../api/order';
-  import coupons from '../../api/coupon';
+  import auth from '../../api/auth';
   import pagination from '../../mixins/pagination.wpy';
   import Placeholder from '../../components/common/placeholder';
   import ShopHeader from '../../components/shop/header';
@@ -52,13 +52,16 @@
     };
     data = {...this.def};
     async onLoad () {
+      // 权限校验
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
       // 加载店铺信息
       this.shop = await Cache.shop();
       this.shop.notices = await Cache.notices();
       this.page = order.page();
       // -- 异步加载
-      coupons.own().then(ownCoupons => {
-        this.couponsNum = ownCoupons.length + '张';
+      Cache.coupon().then(({ownList}) => {
+        this.couponsNum = ownList.length + '张';
         this.loaded();
       });
       await this.next();

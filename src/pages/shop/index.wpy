@@ -32,7 +32,7 @@
           </repeat>
         </view>
 
-        <Loadmore :page.sync="page"/>
+        <Loadmore :page.sync="page" emptyText="暂无商品"/>
       </scroll-view>
     </view>
 
@@ -55,11 +55,15 @@
 
       <!--信息区域-->
       <view class="info-box column">
+
+        <!--基本信息-->
         <view class="row">
-          <view class="small label primary" wx:if="{{isRecommend == 1}}">推荐</view>
+          <view class="small label primary" wx:if="{{detail.isRecommend == 1}}">推荐</view>
           <text class="name">{{detail.name}}</text>
         </view>
         <text class="sm muted mt10">已售{{detail.salesVolume}}件</text>
+
+        <!--价格区域-->
         <view class="price row-between mt10">
           <text class="major xxl">￥{{detail.priceLable}}</text>
           <!--数量选择器-->
@@ -75,6 +79,12 @@
               加入购物车
             </view>
           </view>
+        </view>
+
+        <!--评价向导-->
+        <view class="comment-box row-between" @tap="comments">
+          <text class="muted">{{commentText}}</text>
+          <image class="icon" src="/images/icons/more-gray.png" />
         </view>
       </view>
 
@@ -113,6 +123,7 @@
   import wepy from 'wepy';
   import auth from '../../api/auth';
   import shop from '../../api/shop';
+  import comment from '../../api/comment';
   import goods from '../../api/goods';
   import coupon from '../../api/coupon';
   import order from '../../api/order';
@@ -126,6 +137,7 @@
   import SkuSelector from '../../components/goods/sku_selector';
   import Loadmore from '../../components/weui/loadmore';
   import ShopCart from '../../components/shop/cart';
+  import Navigator from '../../components/weui/navigator';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
   import Cache from '../../utils/Cache';
@@ -140,6 +152,7 @@
       detail: {
       },
       details: {},
+      commentCounts: {},
       shop: {
         notices: []
       },
@@ -155,7 +168,7 @@
       badegText: '商城'
     };
     data = {...this.def};
-    async onLoad () {
+    async onLoad ({goodsId}) {
       // -- 用户信息
       await auth.user();
       // -- 缓存信息
@@ -187,15 +200,21 @@
         this.page = goods.page(false);
         await this.next();
       }
+      // 处理推荐跳转
+      if (goodsId) {
+        const detail = this.methods.detail.bind(this);
+        detail({id: goodsId});
+      }
       // -- 监听事件
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupons.bind(this), this);
-      Event.listen(Event.CART_LIST_CLEAR, this.doClear.bind(this), this);
+      Event.listen(Event.CART_LIST_CLEAR, this.doClearCart.bind(this), this);
+      Event.listen(Event.CART_LIST_RESET, this.doResetCart.bind(this), this);
       this.loaded();
 
       // -- 异步加载的信息
       // 加载优惠券
       Tips.setLoading();
-      coupon.shelf().then(({pickList}) => {
+      Cache.coupon().then(({pickList}) => {
         this.coupons = pickList;
         this.loaded();
       });
@@ -255,7 +274,7 @@
     }
     // 更新卡券
     async loadCoupons() {
-      const {pickList} = await coupon.shelf();
+      const {pickList} = await Cache.coupon(true);
       this.coupons = pickList;
       this.$apply();
     }
@@ -293,7 +312,7 @@
           await coupon.pick(id);
           await Tips.success('领取成功');
           // 加载优惠券
-          const {pickList} = await coupon.shelf();
+          const {pickList} = await Cache.coupon(true);
           this.coupons = pickList;
           Tips.loaded();
           this.$apply();
@@ -310,7 +329,7 @@
       /**
        * 增加商品
        */
-      async plus({goodsId, goodsSku}) {
+      async plus({goodsId, goodsSku, count = 1}) {
         // 商品里列表
         const goods = this.findGoods(goodsId);
         if (goods) {
@@ -323,7 +342,7 @@
         const target = this.findCart(goodsId, goodsSku);
         if (target) {
           // 购物车中已存在
-          target.goodsNum = target.goodsNum + 1;
+          target.goodsNum = target.goodsNum + count;
           target.totalPrice = (target.goodsNum * target.goodsPrice).toFixed(2);
         } else {
           // 购物车中不存在
@@ -394,13 +413,16 @@
           return;
         }
         await Tips.confirm('确认清空购物车？');
-        await this.doClear();
+        await this.doClearCart();
       },
       /**
        * 确认购买
        */
-      buy () {
-        const trade = order.createCartTrade(this.carts);
+      async buy (res) {
+        // 权限校验
+        const result = await auth.user({block: true, redirect: false});
+        if (!result) return;
+        const trade = order.createCartTrade(this.carts, res);
         const param = {
           trade: JSON.stringify(trade)
         };
@@ -411,10 +433,19 @@
        */
       async detail({id}) {
         Tips.setLoading();
+        // 处理详情数据
         this.detail = this.findGoods(id);
         this.detailDisplay = true;
         if (!this.details[id]) {
           this.details[id] = await goods.getInfo(id);
+        }
+        // 处理评价数据
+        if (this.commentCounts[id]) {
+          this.detail.commentCount = this.commentCounts[id];
+        } else {
+          const count = await comment.count(id);
+          this.detail.commentCount = count.ALL;
+          this.commentCounts[id] = count.ALL;
         }
         Tips.loaded();
         this.$apply();
@@ -464,7 +495,7 @@
         });
       }
     };
-    async doClear() {
+    async doClearCart() {
       this.carts = [];
       this.setCategoryNum();
       this.setGoodsNum();
@@ -472,6 +503,27 @@
         key: 'carts',
         data: []
       });
+      this.loaded();
+    }
+    async doResetCart(goodsList) {
+      this.carts = [];
+      goodsList.forEach(goods => {
+        this.carts.push({
+          goodsId: goods.goodsId,
+          goodsSku: goods.goodsSku,
+          goodsName: goods.goodsName,
+          shopCategory: null,
+          goodsImage: goods.imageUrl,
+          goodsPrice: goods.goodsPrice,
+          goodsNum: goods.count,
+          totalPrice: (goods.goodsPrice * goods.count).toFixed(2)
+        });
+      });
+      // 重置数据
+      this.setGoodsNum();
+      this.setCategoryNum();
+      this.saveCartStore();
+      this.loaded();
       this.loaded();
     }
     async skuSelector(goodsId) {
@@ -519,9 +571,22 @@
         }
       },
       selectedCategoryName() {
-        if (this.init) {
+        if (this.init && this.categories) {
           const selectedId = this.categories.selectedId;
           return this.categories.list.find(item => item.id == selectedId).title;
+        }
+      },
+      commentText() {
+        if (!this.detail) {
+          return '用户评价加载中...';
+        }
+        const count = this.detail.commentCount;
+        if (!count) {
+          return '用户评价加载中...';
+        } else if (count == 0) {
+          return '该商品暂无评价';
+        } else {
+          return `共 ${count} 条用户评价`;
         }
       }
     };
@@ -530,10 +595,12 @@
       SideTab: SideTab,
       CouponItem: CouponItem,
       GoodsItem: GoodsItem,
+      CommentNav: ShopNav,
       ShopNav: ShopNav,
       Loadmore: Loadmore,
       ShopCart: ShopCart,
-      SkuSelector: SkuSelector
+      SkuSelector: SkuSelector,
+      Navigator: Navigator
     };
     mixins = [base, pagination];
     config = {
@@ -583,7 +650,7 @@
 
     .back-btn{
       position: fixed;
-      bottom: 70px;
+      bottom: 80px;
       right: 20px;
       background-color: #FFF;
       height: 46px;
@@ -606,6 +673,11 @@
       }
       .price{
         height: 32px;
+        padding-bottom: 10rpx;
+      }
+      .comment-box{
+        padding-top: 20rpx;
+        border-top: $border;
       }
     }
 

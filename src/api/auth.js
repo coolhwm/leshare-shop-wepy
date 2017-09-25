@@ -11,9 +11,11 @@ export default class auth extends base {
       try {
         await this.checkLoginCode(loginCode);
       } catch (e) {
+        console.warn('check login code fial', loginCode);
         await this.doLogin();
       }
     } else {
+      console.warn('login code not exists', loginCode);
       await this.doLogin();
     }
   }
@@ -21,23 +23,35 @@ export default class auth extends base {
   /**
    * 获取用户信息
    */
-  static async user() {
-    // 检查
-    if (this.hasConfig('user')) {
-      return;
+  static async user(param = {block: false, redirect: false}, userInfo) {
+    try {
+      // 检查
+      if (this.hasConfig('user')) {
+        return true;
+      }
+      // 重新登录
+      await this.login();
+      // 获取用户信息
+      const rawUser = userInfo != null ? userInfo : await wepy.getUserInfo();
+      // 检查是否通过
+      await this.checkUserInfo(rawUser);
+      // 解密信息
+      const {user} = await this.decodeUserInfo(rawUser);
+      // 保存登录信息
+      await this.setConfig('user', user);
+      return true;
+    } catch (error) {
+      console.error('授权失败', error);
+      if (param.block) {
+        const url = `/pages/home/login?redirect=${param.redirect}`;
+        if (param.redirect) {
+          wepy.redirectTo({url});
+        } else {
+          wepy.navigateTo({url});
+        }
+      }
+      return false;
     }
-    // 重新登录
-    await this.login();
-    // 获取用户信息
-    const rawUser = await wepy.getUserInfo();
-    // 检查是否通过
-    await this.checkUserInfo(rawUser);
-    // 解密信息
-    const {user} = await this.decodeUserInfo(rawUser);
-    // 保存登录信息
-    await this.setConfig('user', user);
-    // TODO 如果失败了要跳转到授权页面
-    // wepy.navigate();
   }
 
   /**

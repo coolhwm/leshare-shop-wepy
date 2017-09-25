@@ -38,6 +38,15 @@
   border-color: $color-danger;
 }
 
+.zan-btn--fill {
+  background-color: $color-primary;
+  color:#FFF;
+}
+.zan-btn--plain.zan-btn--fill {
+  background-color: $color-primary;
+  color:#FFF;
+}
+
 .zan-btn--small {
   display: inline-block;
   height: 30px;
@@ -66,6 +75,10 @@
   height: 50px;
 }
 
+.zan-btns {
+  margin: 15px;
+}
+
 .zan-btn.zan-btn--disabled {
   /* 防止样式被 button[disabled] 的规则覆盖，所以使用了important */
   color: #999 ! important;
@@ -73,4 +86,12 @@
   border-color: #e5e5e5 ! important;
   cursor: not-allowed ! important;
   opacity: 1 ! important;
+}
+
+.zan-panel {
+  background: #fff;
+  border-top: 1rpx solid #e5e5e5;
+  border-bottom: 1rpx solid #e5e5e5;
+  margin-top: 10px;
+  overflow: hidden;
 }

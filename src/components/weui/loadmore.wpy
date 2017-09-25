@@ -10,12 +10,18 @@
     <view class="weui-loadmore__tips weui-loadmore__tips_in-line weui-loadmore__tips_in-dot"></view>
   </view>
 
+  <!--无数据提示-->
+  <view class="weui-loadmore weui-loadmore_line" wx:if="{{!page.loading && page.empty && emptyText}}">
+    <view class="weui-loadmore__tips weui-loadmore__tips_in-line">{{emptyText}}</view>
+  </view>
+
 </template>
 
 <script>
   import wepy from 'wepy'
   export default class Loadmore extends wepy.component {
     props = {
+      emptyText: {},
       page: {}
     };
   }

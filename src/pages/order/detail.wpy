@@ -57,7 +57,14 @@
         <text>优惠券</text>
         <text class="major">-￥{{order.couponPrice}}</text>
       </view>
-      <view class="final-box" wx:if="{{order.status != 1}}">
+      <view class="price-box row-between" wx:if="{{order.reduceFee > 0}}">
+        <view class="row">
+          <image class="icon" src="/images/icons/reduce.png"></image>
+          <text>优惠满减</text>
+        </view>
+        <text class="major">-￥{{order.reduceFee}}</text>
+      </view>
+      <view class="final-box">
         <text class="lg">实付款：</text>
         <text class="lg major">￥{{order.finalPrice}}</text>
       </view>
@@ -79,11 +86,12 @@
 <script>
   import wepy from 'wepy'
   import base from '../../mixins/base';
+  import auth from '../../api/auth';
   import order from '../../api/order';
-  import cart from '../../api/cart';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
   import Address from '../../components/address/display';
+  import Route from '../../utils/Route';
   import OrderItem from '../../components/order/customer_item';
   export default class OrderDetail extends wepy.page {
     def = {
@@ -96,6 +104,8 @@
     };
     data = {...this.def};
     async onLoad ({orderId}) {
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
       // 订单信息
       this.order = await order.getInfo(orderId);
       // 收货地址
@@ -111,15 +121,9 @@
        * 再来一单
        */
       async again(order) {
-        // 清空购物车
-        await cart.clear();
-        // 商品加入购物车
-        const list = order.orderGoodsInfos;
-        for (const goods of list) {
-          await cart.add(goods.goodsId, goods.count, goods.goodsSku);
-        }
+        Event.emit(Event.CART_LIST_RESET, order.orderGoodsInfos);
         // 跳转到首页，重新加载
-        this.$root.$redirect('../shop/index');
+        Route.backIfExists('/pages/shop/index');
       },
       /**
        * 关闭订单

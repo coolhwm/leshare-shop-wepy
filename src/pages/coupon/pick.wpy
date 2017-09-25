@@ -1,7 +1,7 @@
 <template>
   <view class="container" wx:if="{{init}}">
     <!-- 店铺信息区域 -->
-    <ShopHeader :shop.sync="shop" />
+    <ShopHeader :shop.sync="shop" navType="navigateBack" />
 
     <!--功能区域-->
     <HomeNav badegText="优惠" title="领取优惠券"  navText="首页" navType="navigateBack"/>
@@ -21,6 +21,7 @@
   import wepy from 'wepy';
   import coupon from '../../api/coupon';
   import base from '../../mixins/base';
+  import auth from '../../api/auth';
   import ShopHeader from '../../components/shop/header';
   import ShopNav from '../../components/shop/nav';
   import Placeholder from '../../components/common/placeholder';
@@ -41,6 +42,9 @@
     };
     data = {...this.def};
     async onLoad () {
+      // 权限校验
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
       // 加载店铺信息
       this.shop = await Cache.shop();
       this.shop.notices = await Cache.notices();
@@ -49,7 +53,7 @@
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupons.bind(this), this);
     };
     async loadCoupons () {
-      const shelf = await coupon.shelf();
+      const shelf = await Cache.coupon(true);
       this.coupons = shelf.pickList;
       this.couponsNum = shelf.ownList.length + '张';
       this.isEmpty = shelf.pickList.length < 1;

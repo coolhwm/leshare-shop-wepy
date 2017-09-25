@@ -41,25 +41,31 @@ export default class extends wepy.app {
     }
     return header;
   }
-  async onLaunch() {
-    await this.syncStoreConfig('login_code');
-    await this.syncStoreConfig('third_session');
-    await this.syncStoreConfig('user');
+  onLaunch({scene}) {
+    // 同步权限数据
+    this.syncStoreConfig('login_code');
+    this.syncStoreConfig('third_session');
+    this.syncStoreConfig('user');
+    // 获取保存场景值
+    console.info('[scene]onLaunch scene', scene);
+    wepy.$instance.globalData.scene = scene;
+    console.info('[auth]onLaunch end');
   }
-  async syncStoreConfig(key) {
+  syncStoreConfig(key) {
     try {
-      const result = await wepy.getStorage({key: key});
-      const value = result.data;
+      const value = wepy.getStorageSync(key);
       if (value !== '') {
+        console.info(`[auth]${key} sync success `);
         wepy.$instance.globalData.auth[key] = value;
       }
     } catch (e) {
-      console.warn(`${key} sync fail `);
+      console.warn(`[auth]${key} sync fail `);
     }
   }
   config = {
     pages: [
       'pages/home/home',
+      'pages/home/login',
       'pages/shop/index',
       'pages/address/edit',
       'pages/order/trade',
@@ -79,11 +85,14 @@ export default class extends wepy.app {
     }
   };
   globalData = {
-    auth: {},
+    auth: {
+    },
+    scene: '',
     shopType: '2',
     shopName: '连江什么鬼炸鸡汉堡',
     shopCode: 'eemTgbKrhqiYKMFowcBCQ1Zr7G13bWUT',
-    baseUrl: 'https://api.leshare.shop/v1/customer'
+    // baseUrl: 'https://api.leshare.shop/v1/customer'
+    baseUrl: 'http://106.14.195.68:9999/v1/customer'
   }
 }
 </script>

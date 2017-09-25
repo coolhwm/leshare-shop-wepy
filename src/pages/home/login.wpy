@@ -1,0 +1,96 @@
+<template>
+  <view wx:if="{{init}}">
+    <!-- 头图区域 -->
+    <view class="user-info-container">
+      <image class="user-avatar" src="{{shop.avatar}}" />
+      <text class="user-nickname">{{shop.name}}</text>
+      <text class="user-desc">购买商品、查看订单需要进行用户信息授权</text>
+    </view>
+
+
+    <view class="zan-panel">
+      <view class="zan-btns">
+        <button open-type="getUserInfo" class="zan-btn zan-btn--fill" bindgetuserinfo="confirm">确认授权</button>
+        <button class="zan-btn" catchtap="back">随便逛逛</button>
+      </view>
+    </view>
+
+    <Copyright />
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import auth from '../../api/auth';
+  import Cache from '../../utils/Cache';
+  import base from '../../mixins/base';
+  import Tips from '../../utils/Tips';
+
+  export default class UserLogin extends wepy.page {
+    def = {
+      redirect: 'false',
+      init: false,
+      shop: {}
+    };
+    data = {...this.def};
+    async onLoad ({redirect}) {
+      this.redirect = redirect;
+      this.shop = await Cache.shop();
+      this.loaded();
+    };
+    methods = {
+      async confirm({detail}) {
+        if (detail.rawData) {
+          await auth.user({block: false, redirect: false}, detail);
+          Tips.success('授权成功');
+          if (this.redirect == 'true') {
+            this.$redirect('/pages/shop/index');
+          } else {
+            wepy.navigateBack();
+          }
+        } else {
+          Tips.error('授权失败');
+        }
+      }
+    };
+    events = {
+    };
+    components = {};
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '用户授权'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  /*用户信息*/
+  .user-info-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 400rpx;
+    background-color: #1296db;
+    padding-left: 50rpx;
+    padding-right: 50rpx;
+  }
+  .user-avatar{
+    height:160rpx;
+    width: 160rpx;
+    border-radius: 50%;
+  }
+
+  .user-nickname{
+    color: white;
+    font-size: 40rpx;
+  }
+
+  .user-desc{
+    color: white;
+    font-size: 30rpx;
+    margin-top: 30rpx;
+  }
+</style>
