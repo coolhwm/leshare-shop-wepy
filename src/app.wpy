@@ -41,10 +41,14 @@ export default class extends wepy.app {
     }
     return header;
   }
-  onLaunch() {
+  onLaunch({scene}) {
+    // 同步权限数据
     this.syncStoreConfig('login_code');
     this.syncStoreConfig('third_session');
     this.syncStoreConfig('user');
+    // 获取保存场景值
+    console.info('[scene]onLaunch scene', scene);
+    wepy.$instance.globalData.scene = scene;
     console.info('[auth]onLaunch end');
   }
   syncStoreConfig(key) {
@@ -83,6 +87,7 @@ export default class extends wepy.app {
   globalData = {
     auth: {
     },
+    scene: '',
     shopType: '2',
     shopName: '连江什么鬼炸鸡汉堡',
     shopCode: 'eemTgbKrhqiYKMFowcBCQ1Zr7G13bWUT',

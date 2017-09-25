@@ -101,13 +101,20 @@
       reduce: null
     };
     data = {...this.def};
-    async onLoad () {
+    async onLoad ({sence}) {
+      console.info('sence:', sence);
       await auth.login();
       this.shop = await Cache.shop();
       this.shopTitle = shop.type().name;
       this.loaded();
+      this.visit(sence);
       this.preload();
     };
+    visit(sence) {
+      // 记录访问信息
+      shop.visit(sence, wepy.$instance.globalData.scene);
+      wepy.$instance.globalData.scene = '';
+    }
     preload() {
       Tips.setLoading();
       // 状态信息/推荐商品异步加载
@@ -125,8 +132,6 @@
         this.reduce = data;
         this.loaded();
       });
-      // 记录访问信息
-      shop.visit();
       // 页面缓存预加载
       Cache.notices().then();
       Cache.categories().then();

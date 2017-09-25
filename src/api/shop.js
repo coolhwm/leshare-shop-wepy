@@ -18,9 +18,11 @@ export default class shop extends base {
   /**
    * 访问店铺
    */
-  static visit() {
+  static visit(customScene, scene) {
     const url = `${this.baseUrl}/visit_shops`;
     wepy.getSystemInfo().then(res => {
+      res.customScene = customScene;
+      res.scene = scene;
       return this.post(url, res);
     }).then(_ => {});
   }
