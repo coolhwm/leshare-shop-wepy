@@ -77,6 +77,7 @@
       <view class="zan-btn zan-btn--small zan-btn--primary" @tap="pay({{order.orderId}})" wx:if="{{order.status == 1}}">立即支付</view>
       <view class="zan-btn zan-btn--small" @tap="refund({{order}})" wx:if="{{order.status == 2}}">申请退款</view>
       <view class="zan-btn zan-btn--small zan-btn--primary" @tap="comment({{order}})" wx:if="{{order.status == 4}}">评价订单</view>
+      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="unrefund({{order}})" wx:if="{{order.status == 5}}">撤销退款</view>
       <!--撤销退款-->
     </view>
   </view>
@@ -200,6 +201,18 @@
         const refundStr = JSON.stringify(refund);
         await Tips.confirm('您确认要申请退款吗？');
         this.$navigate(`/pages/order/refund_edit?refund=${refundStr}`);
+      },
+      /**
+       * 撤销退款
+       */
+      async unrefund(redundOrder) {
+        const orderId = redundOrder.orderId;
+        const refundUuid = redundOrder.curRefund.refundUuid;
+        await Tips.confirm('您确认取消退款申请吗？');
+        await order.cancelRefund(orderId, refundUuid);
+        await Tips.success('取消成功');
+        Event.emit(Event.ORDER_LIST_UPDATE);
+        Route.backIfExists('/pages/order/list');
       }
     };
     components = {
