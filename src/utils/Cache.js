@@ -4,7 +4,7 @@ import coupon from '../api/coupon';
 
 export default class Cache {
   static cache = new Map();
-  static _debug = true;
+  static _debug = false;
 
   /**
    *  优惠信息

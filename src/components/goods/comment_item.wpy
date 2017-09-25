@@ -2,9 +2,9 @@
   <view class="score-box">
     <view class="header-box">
       <view class="info-box">
-        <image class="avatar" src="{{comment.avatar}}"></image>
+        <image class="avatar" src="/images/icons/customer.png"></image>
         <view class="name-box">
-          <text class="username">{{comment.nickName}}</text>
+          <text class="username">匿名用户</text>
           <text class="date">{{comment.createTime}}</text>
         </view>
       </view>
