@@ -75,6 +75,7 @@
       <view class="zan-btn zan-btn--small" @tap="again({{order}})">再来一单</view>
       <view class="zan-btn zan-btn--small" @tap="close({{order.orderId}})"  wx:if="{{order.status == 1 || (order.status == 2 && order.paymentType == 0)}}">取消订单</view>
       <view class="zan-btn zan-btn--small zan-btn--primary" @tap="pay({{order.orderId}})" wx:if="{{order.status == 1}}">立即支付</view>
+      <view class="zan-btn zan-btn--small" @tap="refundDetail({{order.curRefund}})" wx:if="{{order.curRefund}}">退款详情</view>
       <view class="zan-btn zan-btn--small" @tap="refund({{order}})" wx:if="{{order.status == 2}}">申请退款</view>
       <view class="zan-btn zan-btn--small zan-btn--primary" @tap="comment({{order}})" wx:if="{{order.status == 4}}">评价订单</view>
       <view class="zan-btn zan-btn--small zan-btn--primary" @tap="unrefund({{order}})" wx:if="{{order.status == 5}}">撤销退款</view>
@@ -205,14 +206,21 @@
       /**
        * 撤销退款
        */
-      async unrefund(redundOrder) {
-        const orderId = redundOrder.orderId;
-        const refundUuid = redundOrder.curRefund.refundUuid;
+      async unrefund(refundOrder) {
+        const orderId = refundOrder.orderId;
+        const refundUuid = refundOrder.curRefund.refundUuid;
         await Tips.confirm('您确认取消退款申请吗？');
         await order.cancelRefund(orderId, refundUuid);
         await Tips.success('取消成功');
         Event.emit(Event.ORDER_LIST_UPDATE);
         Route.backIfExists('/pages/order/list');
+      },
+      /**
+       * 退款详情
+       */
+      refundDetail(refund) {
+        const refundStr = JSON.stringify(refund);
+        this.$navigate(`/pages/order/refund_detail?refund=${refundStr}`);
       }
     };
     components = {

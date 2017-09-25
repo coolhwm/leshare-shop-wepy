@@ -1,24 +1,69 @@
 <template>
+  <view class="weui-cells-form">
+    <view class="weui-cell">
+      <view class="weui-cell__bd">订单号</view>
+      <view class="weui-cell__ft">{{refund.orderUuid}}</view>
+    </view>
+
+    <view class="weui-cell">
+      <view class="weui-cell__bd">退款单号：</view>
+      <view class="weui-cell__ft">{{refund.refundUuid}}</view>
+    </view>
+
+    <view class="weui-cell">
+      <view class="weui-cell__bd">退款金额：</view>
+      <view class="weui-cell__ft">￥{{refund.refundPrice}}</view>
+    </view>
+
+    <view class="weui-cell">
+      <view class="weui-cell__bd">退款原因：</view>
+      <view class="weui-cell__ft">{{refund.cause}}</view>
+    </view>
+    <view class="weui-cell">
+      <view class="weui-cell__bd">联系方式：</view>
+      <view class="weui-cell__ft">{{refund.contactName}} {{refund.contactPhone}}</view>
+    </view>
+  </view>
+
+  <!--跟踪信息-->
+  <view class="steps-box panel">
+    <ZanStep :steps.sync="steps" />
+  </view>
+
 </template>
 
-<style lang="scss">
-  @import "../../styles/variable";
-</style>
 
 <script>
   import wepy from 'wepy';
+  import order from '../../api/order';
+  import ZanStep from '../../components/zanui/setp';
   import base from '../../mixins/base';
 
   export default class OrderIndex extends wepy.page {
-    def = {};
+    def = {
+      refund: {},
+      steps: {}
+    };
     data = {...this.def};
-    onLoad (options) {
+    onLoad ({refund}) {
+      this.refund = JSON.parse(refund);
+      this.steps = order.createOrderRefundSetps(this.refund);
+      this.loaded();
     };
     events = {};
-    components = {};
+    components = {
+      ZanStep: ZanStep
+    };
     mixins = [base];
     config = {
       navigationBarTitleText: '订单详情'
     };
   }
 </script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .steps-box{
+    padding-left: 20rpx;
+  }
+</style>
