@@ -10,8 +10,9 @@
 
     <view class="zan-panel">
       <view class="zan-btns">
-        <button open-type="getUserInfo" class="zan-btn zan-btn--fill" bindgetuserinfo="confirm">确认授权</button>
-        <button class="zan-btn" catchtap="back">随便逛逛</button>
+        <button open-type="getUserInfo" class="zan-btn zan-btn--fill" bindgetuserinfo="confirm" wx:if="{{reInfo}}" >确认授权</button>
+        <button class="zan-btn zan-btn--fill" @tap="tips" wx:else >确认授权</button>
+        <button class="zan-btn" @tap="back">随便逛逛</button>
       </view>
     </view>
 
@@ -26,17 +27,22 @@
   import Cache from '../../utils/Cache';
   import base from '../../mixins/base';
   import Tips from '../../utils/Tips';
+  import WxUtils from '../../utils/WxUtils';
 
   export default class UserLogin extends wepy.page {
     def = {
       redirect: 'false',
       init: false,
-      shop: {}
+      shop: {},
+      reInfo: null,
+      reAuth: null
+
     };
     data = {...this.def};
     async onLoad ({redirect}) {
       this.redirect = redirect;
       this.shop = await Cache.shop();
+      this.reInfo = WxUtils.canIUse('button.open-type.getUserInfo');
       this.loaded();
     };
     methods = {
@@ -52,6 +58,12 @@
         } else {
           Tips.error('授权失败');
         }
+      },
+      back() {
+        wepy.navigateBack();
+      },
+      tips() {
+        Tips.modal('微信版本过低，请更新微信，或在列表删除小程序后重新访问');
       }
     };
     events = {

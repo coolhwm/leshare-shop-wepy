@@ -53,7 +53,7 @@
         <text>运费</text>
         <text class="major">+￥{{order.postFee}}</text>
       </view>
-      <view class="price-box row-between" wx:if="{{order.couponPrice}}">
+      <view class="price-box row-between" wx:if="{{order.couponPrice > 0}}">
         <text>优惠券</text>
         <text class="major">-￥{{order.couponPrice}}</text>
       </view>
@@ -75,11 +75,12 @@
       <view class="zan-btn zan-btn--small" @tap="again({{order}})">再来一单</view>
       <view class="zan-btn zan-btn--small" @tap="close({{order.orderId}})"  wx:if="{{order.status == 1 || (order.status == 2 && order.paymentType == 0)}}">取消订单</view>
       <view class="zan-btn zan-btn--small zan-btn--primary" @tap="pay({{order.orderId}})" wx:if="{{order.status == 1}}">立即支付</view>
-      <!--<view class="zan-btn zan-btn&#45;&#45;small zan-btn&#45;&#45;primary" @tap="receive({{order.orderId}})" wx:if="{{order.status == 3}}">完成订单</view>-->
-
-      <!--TODO 评价/退款-->
+      <view class="zan-btn zan-btn--small" @tap="refundDetail({{order.curRefund}})" wx:if="{{order.curRefund}}">退款详情</view>
+      <view class="zan-btn zan-btn--small" @tap="refund({{order}})" wx:if="{{order.status == 2}}">申请退款</view>
+      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="comment({{order}})" wx:if="{{order.status == 4}}">评价订单</view>
+      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="unrefund({{order}})" wx:if="{{order.status == 5}}">撤销退款</view>
+      <!--撤销退款-->
     </view>
-
   </view>
 </template>
 
@@ -91,7 +92,7 @@
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
   import Address from '../../components/address/display';
-  import Route from '../../utils/Route';
+  import Route from '../../utils/WxUtils';
   import OrderItem from '../../components/order/customer_item';
   export default class OrderDetail extends wepy.page {
     def = {
@@ -123,7 +124,25 @@
       async again(order) {
         Event.emit(Event.CART_LIST_RESET, order.orderGoodsInfos);
         // 跳转到首页，重新加载
-        Route.backIfExists('/pages/shop/index');
+        Route.backOrRedirect('/pages/shop/index');
+      },
+      /**
+       * 评价订单
+       */
+      comment(order) {
+        const scores = order.orderGoodsInfos.map(item => {
+          return {
+            goodsId: item.goodsId,
+            orderId: order.orderId,
+            sku: item.goodsSku,
+            preview: item.imageUrl,
+            star: 5,
+            starArr: [1, 1, 1, 1, 1],
+            comment: ''
+          };
+        });
+        const data = JSON.stringify(scores);
+        this.$navigate(`/pages/goods/comment_edit?orderId=${order.orderId}&data=${data}`);
       },
       /**
        * 关闭订单
@@ -170,6 +189,38 @@
           await Tips.success('操作失败');
         }
         Event.emit(Event.ORDER_LIST_UPDATE);
+      },
+      /**
+       * 申请退款
+       */
+      async refund(refundOrder) {
+        if (Number(refundOrder.finalPrice) == 0) {
+          Tips.alert('￥0 订单无需退款');
+          return;
+        }
+        const refund = order.createOrderRefund(refundOrder);
+        const refundStr = JSON.stringify(refund);
+        await Tips.confirm('您确认要申请退款吗？');
+        this.$navigate(`/pages/order/refund_edit?refund=${refundStr}`);
+      },
+      /**
+       * 撤销退款
+       */
+      async unrefund(refundOrder) {
+        const orderId = refundOrder.orderId;
+        const refundUuid = refundOrder.curRefund.refundUuid;
+        await Tips.confirm('您确认取消退款申请吗？');
+        await order.cancelRefund(orderId, refundUuid);
+        await Tips.success('取消成功');
+        Event.emit(Event.ORDER_LIST_UPDATE);
+        Route.backOrRedirect('/pages/order/list');
+      },
+      /**
+       * 退款详情
+       */
+      refundDetail(refund) {
+        const refundStr = JSON.stringify(refund);
+        this.$navigate(`/pages/order/refund_detail?refund=${refundStr}`);
       }
     };
     components = {

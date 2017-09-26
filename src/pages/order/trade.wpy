@@ -89,6 +89,7 @@
   import OrderItem from '../../components/order/customer_item';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
+  import Route from '../../utils/WxUtils';
   import Cache from '../../utils/Cache';
 
   export default class OrderTrade extends wepy.page {
@@ -221,7 +222,7 @@
         if (trade.couponUsedId) {
           Event.emit(Event.COUPON_LIST_UPDATE);
         }
-        this.$redirect('list');
+        Route.backOrRedirect('/pages/order/list');
       }
     };
     /**

@@ -5,7 +5,7 @@
     <ShopHeader :shop.sync="shop" />
 
     <!--功能区域-->
-    <ShopNav :badegText.sync="badegText" :title.sync="title"  navText="我的" navUrl="../order/list" navType="navigate"/>
+    <ShopNav :badegText.sync="badegText" :title.sync="title"  navText="我的" navUrl="/pages/order/list" />
     <!--主内容区域-->
     <view class="main-box row">
       <!--分类侧边栏-->
@@ -152,7 +152,7 @@
       detail: {
       },
       details: {},
-      commentCounts: {},
+      comments: {},
       shop: {
         notices: []
       },
@@ -426,7 +426,7 @@
         const param = {
           trade: JSON.stringify(trade)
         };
-        this.$navigate('../order/trade', param);
+        this.$navigate(`../order/trade`, param);
       },
       /**
        * 商品详情
@@ -440,12 +440,12 @@
           this.details[id] = await goods.getInfo(id);
         }
         // 处理评价数据
-        if (this.commentCounts[id]) {
-          this.detail.commentCount = this.commentCounts[id];
+        if (this.comments[id]) {
+          this.detail.comment = this.comments[id];
         } else {
           const count = await comment.count(id);
-          this.detail.commentCount = count.ALL;
-          this.commentCounts[id] = count.ALL;
+          this.detail.comment = count;
+          this.comments[id] = count;
         }
         Tips.loaded();
         this.$apply();
@@ -493,6 +493,12 @@
         wepy.previewImage({
           urls: urls
         });
+      },
+      /**
+       * 评价列表
+       */
+      comments() {
+        this.$navigate(`/pages/goods/comment_list?goodsId=${this.detail.id}`);
       }
     };
     async doClearCart() {
@@ -580,13 +586,14 @@
         if (!this.detail) {
           return '用户评价加载中...';
         }
-        const count = this.detail.commentCount;
+        const count = this.detail.comment;
         if (!count) {
           return '用户评价加载中...';
-        } else if (count == 0) {
+        } else if (count.ALL == 0) {
           return '该商品暂无评价';
         } else {
-          return `共 ${count} 条用户评价`;
+          const rate = (count.GOOD / count.ALL * 100).toFixed(0);
+          return `共${count.ALL}条评价，${rate}%好评`;
         }
       }
     };

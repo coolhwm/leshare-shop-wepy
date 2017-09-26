@@ -37,10 +37,14 @@
       <view class="nav-gap"></view>
 
       <view class="row-between">
-        <button class="shop-btn pain-btn column-center" @tap="share" open-type="share">
+        <button class="shop-btn pain-btn column-center" plain open-type="share" wx:if="{{share}}">
           <image class="icon-xl" src="/images/home/share.png"></image>
           <text class="weak">分享好友</text>
         </button>
+        <view class="shop-btn column-center" plain @tap="share" open-type="share" wx:else>
+          <image class="icon-xl" src="/images/home/share.png"></image>
+          <text class="weak">分享好友</text>
+        </view>
 
         <navigator class="shop-btn column-center"  url="/pages/coupon/pick">
           <image class="icon-xl" src="/images/home/coupon.png"></image>
@@ -89,6 +93,7 @@
   import base from '../../mixins/base';
   import Cache from '../../utils/Cache';
   import Tips from '../../utils/Tips';
+  import WxUtils from '../../utils/WxUtils';
   import Copyright from '../../components/common/copyright';
 
   export default class ShopHome extends wepy.page {
@@ -98,16 +103,17 @@
       status: {},
       goods: [],
       shopTitle: '在线商城',
-      reduce: null
+      reduce: null,
+      share: null
     };
     data = {...this.def};
     async onLoad ({sence}) {
-      console.info('sence:', sence);
       await auth.login();
       this.shop = await Cache.shop();
       this.shopTitle = shop.type().name;
       this.loaded();
       this.visit(sence);
+      this.share = WxUtils.canIUse('button.open-type.share');
       this.preload();
     };
     visit(sence) {
@@ -169,7 +175,7 @@
         });
       },
       share () {
-        wepy.showShareMenu();
+        Tips.modal('当前版本过低，请更新微信或点击右上角进行分享');
       }
     };
     components = {
@@ -221,6 +227,10 @@
 
       .shop-btn{
         text{margin-top: 10rpx;}
+      }
+      .shop-btn{
+        padding: 0;
+        line-height: 1;
       }
     }
 

@@ -4,30 +4,29 @@
       <view class="label primary small" wx:if="{{badegText}}">{{badegText}}</view>
       <text>{{title}}</text>
     </view>
-    <navigator class="footer row" wx:if="{{navText}}" url="{{navUrl}}" open-type="{{navType}}">
+    <view class="footer row" wx:if="{{navText}}" @tap="goto">
       <text class="muted">{{navText}}</text>
       <image class="icon" src="/images/icons/more-gray.png" />
-    </navigator>
+    </view>
   </view>
 </template>
 
 <script>
-  import wepy from 'wepy'
+  import wepy from 'wepy';
+  import WxUtils from '../../utils/WxUtils';
   export default class ShopNav extends wepy.component {
     props = {
       badegText: {},
       navText: {},
       navUrl: {},
-      navType: {
-        default: 'redirect'
-      },
       title: {},
       last: 'false'
     };
-    data = {};
-    events = {};
-    onLoad() {
-    }
+    methods = {
+      goto() {
+        WxUtils.backOrNavigate(this.navUrl);
+      }
+    };
   }
 </script>
 

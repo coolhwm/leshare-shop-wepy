@@ -5,8 +5,9 @@
 </style>
 
 <script>
-import wepy from 'wepy'
-import 'wepy-async-function'
+import wepy from 'wepy';
+import WxUtils from './utils/WxUtils';
+import 'wepy-async-function';
 
 export default class extends wepy.app {
   constructor () {
@@ -41,15 +42,19 @@ export default class extends wepy.app {
     }
     return header;
   }
-  onLaunch({scene}) {
+  onLaunch(param) {
+    // 校验SDK
+    WxUtils.checkSDK();
     // 同步权限数据
     this.syncStoreConfig('login_code');
     this.syncStoreConfig('third_session');
     this.syncStoreConfig('user');
     // 获取保存场景值
-    console.info('[scene]onLaunch scene', scene);
-    wepy.$instance.globalData.scene = scene;
-    console.info('[auth]onLaunch end');
+    if (param && param.scene) {
+      console.info('[scene]onLaunch scene', param.scene);
+      wepy.$instance.globalData.scene = param.scene;
+      console.info('[auth]onLaunch end');
+    }
   }
   syncStoreConfig(key) {
     try {
@@ -67,8 +72,12 @@ export default class extends wepy.app {
       'pages/home/home',
       'pages/home/login',
       'pages/shop/index',
+      'pages/goods/comment_list',
+      'pages/goods/comment_edit',
       'pages/address/edit',
       'pages/order/trade',
+      'pages/order/refund_edit',
+      'pages/order/refund_detail',
       'pages/coupon/pick',
       'pages/coupon/list',
       'pages/order/list',

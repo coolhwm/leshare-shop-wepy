@@ -1,0 +1,97 @@
+<template>
+  <view class="score-box">
+    <view class="header-box">
+      <view class="info-box">
+        <image class="avatar" src="/images/icons/customer.png"></image>
+        <view class="name-box">
+          <text class="username">匿名用户</text>
+          <text class="date">{{comment.createTime}}</text>
+        </view>
+      </view>
+      <view class="star-box">
+        <block wx:for="{{comment.starArr}}" wx:key="*this">
+          <image src="/images/icons/star{{item == 1 ? '-fill' : ''}}.png"  ></image>
+        </block>
+      </view>
+    </view>
+    <view class="content-box">
+      {{comment.comment ? comment.comment : '好评！'}}
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class CommentItem extends wepy.component {
+    props = {
+      comment: {
+      }
+    };
+    data = {};
+    methods = {};
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .score-box{
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 30rpx;
+    border-bottom: 1px solid #EDEDED;
+  }
+
+
+  .header-box{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .info-box{
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+  }
+
+  .info-box .avatar{
+    height: 70rpx;
+    width: 70rpx;
+    border-radius: 50%;
+    vertical-align: middle;
+  }
+
+  .info-box .username{
+    font-size:28rpx;
+    color: #262626;
+  }
+
+  .info-box .date{
+    font-size:26rpx;
+    color: #A3A3A3;
+  }
+
+  .name-box{
+    display: flex;
+    flex-direction: column;
+    margin-left: 20rpx;
+  }
+
+  .star-box image{
+    height: 40rpx;
+    width: 40rpx;
+    vertical-align: middle;
+  }
+
+  .content-box{
+    padding-left: 90rpx;
+    margin-top: 20rpx;
+    font-size: 28rpx;
+    color: #262626;
+  }
+</style>

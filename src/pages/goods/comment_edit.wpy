@@ -1,0 +1,132 @@
+<template>
+  <view class="score-item-box" wx:for="{{scores}}" wx:key="index" wx:for-item="goods" wx:for-index="index">
+    <view class="socre-header">
+      <image class="goods-img" src='{{goods.preview}}'></image>
+      <text class="title">商品评分</text>
+      <view class="star-box">
+        <block wx:for="{{goods.starArr}}" wx:key="index" wx:for-index="index">
+          <image src="/images/icons/star{{item == 1 ? '-fill' : ''}}.png"  @tap="star({{goods}}, {{index}})" ></image>
+        </block>
+      </view>
+    </view>
+    <view class="score-note">
+      <textarea @input="input" data-index="{{index}}"  auto-height placeholder="请填写评价，说说它的优点和美中不足的地方吧" />
+    </view>
+  </view>
+
+  <view class="zan-panel">
+    <view class="zan-btns">
+      <button class="zan-btn zan-btn--fill" @tap="confirm">提交评价</button>
+    </view>
+  </view>
+
+</template>
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import Tips from '../../utils/Tips';
+  import Route from '../../utils/WxUtils';
+  import Event from '../../utils/Event';
+  import comment from '../../api/comment';
+
+  export default class CommentEdit extends wepy.page {
+    def = {
+      init: false,
+      orderId: '',
+      scores: []
+    };
+    data = {...this.def};
+    onLoad ({orderId, data}) {
+      this.scores = JSON.parse(data);
+      this.orderId = orderId;
+      this.loaded();
+    };
+    methods = {
+      star(goods, index) {
+        console.info(goods, index);
+        const {goodsId, sku} = goods;
+        const score = this.scores.find(item => item.goodsId == goodsId && item.sku == sku);
+        for (let i = 0; i < 5; i++) {
+          score.starArr[i] = i <= index ? 1 : 0;
+        }
+        score.star = index + 1;
+      },
+      input(event) {
+        const index = event.currentTarget.dataset.index;
+        this.scores[index].comment = event.detail.value;
+      },
+      async confirm() {
+        const data = this.scores.map(item => {
+          return {
+            comment: item.comment,
+            sku: item.sku,
+            star: item.star,
+            goodsId: item.goodsId,
+            orderId: this.orderId
+          }
+        });
+        await Tips.confirm('确认评价？');
+        await comment.add(data);
+        await Tips.success('评价成功');
+        Event.emit(Event.ORDER_LIST_UPDATE);
+        Route.backOrRedirect('/pages/order/list');
+      }
+    };
+    components = {};
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '订单评价'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .score-item-box{
+    margin-top: 10rpx;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .socre-header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20rpx 30rpx;
+    border-top: 1px solid #EDEDED;
+    border-bottom: 1px solid #EDEDED;
+  }
+
+  .socre-header .title{
+    font-size: 28rpx;
+    margin-left: 30rpx;
+  }
+  .score-note{
+    border-bottom:  1px solid #EDEDED;
+  }
+
+  .goods-img{
+    height: 60rpx;
+    width: 60rpx;
+    vertical-align: middle;
+  }
+
+  .star-box image{
+    height: 50rpx;
+    width: 50rpx;
+    vertical-align: middle;
+    margin-left: 30rpx;
+  }
+
+  textarea{
+    padding: 10rpx;
+    width: 90%;
+    min-height: 80px;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: MicroSoft Yahei;
+    font-size: 30rpx;
+    color: #666;
+  }
+</style>
