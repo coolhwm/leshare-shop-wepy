@@ -54,7 +54,7 @@
   import order from '../../api/order';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
-  import Route from '../../utils/Route';
+  import Route from '../../utils/WxUtils';
   import OrderGoods from './goods';
   export default class OrderItem extends wepy.component {
     props = {
@@ -87,7 +87,7 @@
       async again(order) {
         Event.emit(Event.CART_LIST_RESET, order.orderGoodsInfos);
         // 跳转到首页，重新加载
-        Route.backIfExists('/pages/shop/index');
+        Route.backOrRedirect('/pages/shop/index');
       },
       /**
        * 评价订单

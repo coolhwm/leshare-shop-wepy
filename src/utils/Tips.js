@@ -84,20 +84,13 @@ export default class Tips {
   /**
    * 警告框
    */
-  static alert (title, duration = 500) {
+  static alert (title) {
     wx.showToast({
       title: title,
       image: '/images/icons/alert.png',
       mask: true,
-      duration: duration
-    });
-    if (duration > 0) {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve();
-        }, duration);
-      });
-    }
+      duration: 500
+    })
   }
 
   /**
@@ -127,10 +120,14 @@ export default class Tips {
       return;
     }
     this.isLoading = true;
-    wx.showLoading({
-      title: title,
-      mask: true
-    });
+    if (wx.showLoading) {
+      wx.showLoading({
+        title: title,
+        mask: true
+      });
+    } else {
+      wx.showNavigationBarLoading();
+    }
   }
 
   /**
@@ -139,7 +136,11 @@ export default class Tips {
   static loaded () {
     if (this.isLoading) {
       this.isLoading = false
-      wx.hideLoading()
+      if (wx.hideLoading) {
+        wx.hideLoading();
+      } else {
+        wx.hideNavigationBarLoading();
+      }
     }
   }
 
@@ -165,18 +166,15 @@ export default class Tips {
   }
 
   static actionWithFunc (items, ...functions) {
-    return new Promise(resolve => {
-      wx.showActionSheet({
-        itemList: items,
-        success: function (res) {
-          const index = res.tapIndex
-          if (index >= 0 && index < functions.length) {
-            functions[index]()
-          }
-          resolve();
+    wx.showActionSheet({
+      itemList: items,
+      success: function (res) {
+        const index = res.tapIndex
+        if (index >= 0 && index < functions.length) {
+          functions[index]()
         }
-      });
-    });
+      }
+    })
   }
 
   static share (title, url, desc) {

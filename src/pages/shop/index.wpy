@@ -5,7 +5,7 @@
     <ShopHeader :shop.sync="shop" />
 
     <!--功能区域-->
-    <ShopNav :badegText.sync="badegText" :title.sync="title"  navText="我的" navUrl="../order/list" navType="navigate"/>
+    <ShopNav :badegText.sync="badegText" :title.sync="title"  navText="我的" navUrl="/pages/order/list" />
     <!--主内容区域-->
     <view class="main-box row">
       <!--分类侧边栏-->
@@ -426,7 +426,7 @@
         const param = {
           trade: JSON.stringify(trade)
         };
-        this.$navigate('../order/trade', param);
+        this.$navigate(`../order/trade`, param);
       },
       /**
        * 商品详情

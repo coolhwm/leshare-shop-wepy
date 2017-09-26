@@ -92,7 +92,7 @@
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
   import Address from '../../components/address/display';
-  import Route from '../../utils/Route';
+  import Route from '../../utils/WxUtils';
   import OrderItem from '../../components/order/customer_item';
   export default class OrderDetail extends wepy.page {
     def = {
@@ -124,7 +124,7 @@
       async again(order) {
         Event.emit(Event.CART_LIST_RESET, order.orderGoodsInfos);
         // 跳转到首页，重新加载
-        Route.backIfExists('/pages/shop/index');
+        Route.backOrRedirect('/pages/shop/index');
       },
       /**
        * 评价订单
@@ -213,7 +213,7 @@
         await order.cancelRefund(orderId, refundUuid);
         await Tips.success('取消成功');
         Event.emit(Event.ORDER_LIST_UPDATE);
-        Route.backIfExists('/pages/order/list');
+        Route.backOrRedirect('/pages/order/list');
       },
       /**
        * 退款详情

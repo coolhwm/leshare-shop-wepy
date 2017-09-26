@@ -64,7 +64,7 @@
   import ActionBar from '../../components/common/action_bar';
   import FormTips from '../../components/weui/tips';
   import Tips from '../../utils/Tips';
-  import Route from '../../utils/Route';
+  import Route from '../../utils/WxUtils';
   import Event from '../../utils/Event';
 
   export default class RefundEdit extends wepy.page {
@@ -91,7 +91,7 @@
         await order.refundOrder(refund.orderId, refund);
         await Tips.success('退款申请成功');
         Event.emit(Event.ORDER_LIST_UPDATE);
-        Route.backIfExists('/pages/order/list');
+        Route.backOrRedirect('/pages/order/list');
       }
     };
     validate() {
