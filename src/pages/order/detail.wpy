@@ -141,8 +141,8 @@
             comment: ''
           };
         });
-        const data = JSON.stringify(scores);
-        this.$navigate(`/pages/goods/comment_edit?orderId=${order.orderId}&data=${data}`);
+        this.$preload('data', scores);
+        this.$root.$navigate(`/pages/goods/comment_edit?orderId=${order.orderId}`);
       },
       /**
        * 关闭订单

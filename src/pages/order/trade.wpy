@@ -110,12 +110,12 @@
     };
     data = {...this.def};
 
-    async onLoad ({trade}) {
+    async onLoad (params, {preload}) {
       const isOpen = await this.checkShopStatus();
       const result = await auth.user({block: true, redirect: true});
       if (!result || !isOpen) { return; }
       // 订单数据
-      this.trade = JSON.parse(trade);
+      this.trade = preload.trade;
       // 默认地址
       this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
       // 处理配送方式

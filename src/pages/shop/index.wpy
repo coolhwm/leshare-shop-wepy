@@ -423,10 +423,8 @@
         const result = await auth.user({block: true, redirect: false});
         if (!result) return;
         const trade = order.createCartTrade(this.carts, res);
-        const param = {
-          trade: JSON.stringify(trade)
-        };
-        this.$navigate(`../order/trade`, param);
+        this.$preload('trade', trade);
+        this.$navigate(`../order/trade`);
       },
       /**
        * 商品详情

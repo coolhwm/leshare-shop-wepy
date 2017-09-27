@@ -36,8 +36,8 @@
       scores: []
     };
     data = {...this.def};
-    onLoad ({orderId, data}) {
-      this.scores = JSON.parse(data);
+    onLoad ({orderId}, {preload}) {
+      this.scores = preload.data;
       this.orderId = orderId;
       this.loaded();
     };
