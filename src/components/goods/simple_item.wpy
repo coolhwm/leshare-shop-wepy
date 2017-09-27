@@ -1,6 +1,6 @@
 <template>
   <view class="goods-item row" >
-    <image class="goods-image" src="{{goods.imageUrl}}" @tap="detail({{goods}})"></image>
+    <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="detail({{goods}})"></image>
     <view class="goods-main column" >
       <view @tap="detail({{goods}})">
         <view class="goods-name row-between">

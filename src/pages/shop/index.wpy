@@ -103,7 +103,7 @@
             <!--文本-->
             <text class="mb20 lg" wx:if="{{item.type == 1}}">{{item.content}}</text>
             <!--图片-->
-            <image src="{{item.content}}" mode="widthFix" wx:if="{{item.type == 2}}" @tap="previewDetailImages({{item.content}})"/>
+            <image src="{{item.content}}" lazy-load mode="widthFix" wx:if="{{item.type == 2}}" @tap="previewDetailImages({{item.content}})"/>
           </block>
         </view>
       </view>
