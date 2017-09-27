@@ -150,9 +150,8 @@
        * 选择地址
        */
       address () {
-        this.$navigate('../address/list', {
-          goodsList: JSON.stringify(this.trade.orderGoodsInfos)
-        });
+        this.$preload('goodsList', this.trade.orderGoodsInfos);
+        this.$navigate('../address/list');
       },
       /**
        * 选择优惠券
