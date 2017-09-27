@@ -231,6 +231,7 @@ export default class order extends base {
     finalPrice = finalPrice.toFixed(2);
     // 构造交易对象
     return {
+      orderType: param.orderType,
       dealPrice: price.toFixed(2),
       reduceFee: reduceFee,
       finalPrice: finalPrice,

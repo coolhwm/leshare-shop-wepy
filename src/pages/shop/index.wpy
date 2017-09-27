@@ -48,7 +48,7 @@
       <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" @tap="previewDetailSwiper">
         <block wx:for="{{detail.images}}" wx:key="id">
           <swiper-item>
-            <image src="{{item.url}}" mode="aspectFill"></image>
+            <image src="{{item.url}}/preview" mode="aspectFill"></image>
           </swiper-item>
         </block>
       </swiper>
@@ -418,11 +418,13 @@
       /**
        * 确认购买
        */
-      async buy (res) {
+      async buy (param) {
         // 权限校验
         const result = await auth.user({block: true, redirect: false});
         if (!result) return;
-        const trade = order.createCartTrade(this.carts, res);
+        // 订单类型
+        param.orderType = 20;
+        const trade = order.createCartTrade(this.carts, param);
         this.$preload('trade', trade);
         this.$navigate(`../order/trade`);
       },
@@ -445,6 +447,7 @@
           this.detail.comment = count;
           this.comments[id] = count;
         }
+        console.info(this.detail);
         Tips.loaded();
         this.$apply();
       },
