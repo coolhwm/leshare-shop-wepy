@@ -1,11 +1,11 @@
 <template>
   <!--遮罩层-->
-  <CoverPanel :display.sync="display" @tap.user="close" />
+  <view class="slider-panel-cover" wx:if="{{display == 'true'}}" @tap="close"></view>
 
   <!--滑动面板-->
-  <view class="slider-panel-box {{display == 'true' ? 'slider-panel-show' : '' }} " style="min-height: {{minHeight}}; bottom: {{paddingButtom}}">
+  <view class="slider-panel-box {{display == 'true' ? 'slider-panel-show' : '' }} " style="min-height: {{minHeight}}">
     <!--面板标题-->
-    <view class="header-box" wx:if="{{header == 'true'}}">
+    <view class="header-box">
       <!--标题槽位-->
       <view class="title-box">
         <slot name="title"></slot>
@@ -22,7 +22,6 @@
       <slot  name="content"></slot>
     </scroll-view>
 
-
     <!-- 按钮区域 -->
     <view class="btn-box row-center" wx:if="{{btn == 'true'}}">
       <view class="btn-back column-center" @tap="close"><text>取消</text></view>
@@ -32,8 +31,7 @@
 </template>
 
 <script>
-  import wepy from 'wepy';
-  import CoverPanel from './cover_panel';
+  import wepy from 'wepy'
   export default class SliderPanel extends wepy.component {
     props = {
       display: {
@@ -46,41 +44,47 @@
       minHeight: {
         default: 0
       },
-      header: {
-        default: 'true'
-      },
       btn: {
         default: 'false'
-      },
-      paddingButtom: {
-        default: '0'
       }
+    };
+    data = {
     };
     methods = {
       close() {
         this.display = 'false';
       }
     };
-    components = {
-      CoverPanel: CoverPanel
-    };
+    events = {};
+    onLoad() {
+    }
   }
 </script>
 
 <style lang="scss">
   @import "../../styles/variable";
+  .slider-panel-cover{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    background-color: black;
+    -webkit-filter:opacity(.6);
+    z-index: 100000;
+  }
 
   .slider-panel-box{
     position: fixed;
     display: flex;
     flex-direction: column;
-    /*bottom:50px;*/
+    bottom: 0;
     width: 100%;
-    z-index: 10000;
+    z-index: 100000;
     background-color:#F8F8F8;
     transform: translateY(150%);
     transition: all 0.4s ease;
     padding-bottom: 20rpx;
+    overflow-y: scroll;
 
     .header-box{
       text-align: center;
