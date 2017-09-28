@@ -1,7 +1,7 @@
 ## 1. 项目描述
 基于微信小程序开发的外卖店铺，采用`wepy`框架开发。
 
-> 小程序卖家端：https://github.com/coolhwm/leshare-seller-wepy
+> 小程序商家管理端：https://github.com/coolhwm/leshare-seller-wepy
 
 *项目截图待补充*
 
