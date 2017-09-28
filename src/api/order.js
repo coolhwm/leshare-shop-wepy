@@ -1,6 +1,7 @@
 import base from './base';
 import Page from '../utils/Page';
 import wepy from 'wepy';
+import {ACTIONS, ACTION_MAP} from './order_dict';
 
 /**
  * 订单服务类
@@ -10,13 +11,14 @@ export default class order extends base {
   static statusDict = {
     '0': '全部',
     '1': '等待买家付款',
-    '2': '等待店家确认',
+    '2': '等待店家接单',
     '3': '店家配送中',
     '4': '等待买家评价',
     '5': '申请退款中',
     '6': '交易成功',
     '7': '交易关闭',
-    '8': '卖家已退款'
+    '8': '卖家已退款',
+    '9': '店家已接单'
   };
 
   // 字符字典
@@ -34,13 +36,14 @@ export default class order extends base {
 
   static statusDesc = {
     '1': '请于24小时内付款，超时订单自动关闭',
-    '2': '您已完成付款，等待店家确认',
-    '3': '店家正在备货配送中，请您耐心等待',
+    '2': '您已完成付款，等待店家确认，超时未接单将自动退款',
+    '3': '店家已发货，请您耐心等待',
     '4': '卖家已收到您的货款，请对本次交易进行评价',
     '5': '您已发起退款申请，等待卖家处理',
     '6': '交易已完成，卖家已收到您的货款',
     '7': '本交易已取消，欢迎您下次光临',
-    '8': '钱款已原路退回，请查收'
+    '8': '钱款已原路退回，请查收',
+    '9': '店家正在备货配送中，请您耐心等待'
   };
 
   /**
@@ -359,6 +362,25 @@ export default class order extends base {
   /** ********************* 数据处理方法 ***********************/
 
   /**
+   * 处理订单动作
+   */
+  static _processOrderAction(order, inner = false) {
+    const basic = [ACTIONS.AGAIN];
+    // 有退款的情况
+    if (order.curRefund) {
+      basic.push(ACTIONS.REFUND_DETAIL);
+    }
+    const key = `${order.orderType}-${order.paymentType}-${order.status}`;
+    const actions = ACTION_MAP[key];
+    if (actions) {
+      const display = inner ? actions.filter(v => v.inner != true) : actions;
+      order.actions = basic.concat(display);
+    } else {
+      order.actions = basic;
+    }
+  }
+
+  /**
    * 梳理订单图片（单独下单）
    */
   static _processSingleOrderImageUrl (goods, seletedSku) {
@@ -385,20 +407,15 @@ export default class order extends base {
   static _processOrderListItem (order) {
     const status = order.status;
     order.statusText = this.statusDict[status];
-    // 动作控制 待付款/待评论/待收货/待发货（线下）
-    order.isAction = status == 1 || status == 3 || status == 4;
-    if (order.paymentType == 0 && order.status == 2) {
-      order.isAction = true;
-    }
-
     order.shopName = this.shopName;
     // 处理订单价格
     this._processOrderPrice(order);
+    // 处理订单动作
+    this._processOrderAction(order, true);
     // 处理商品信息
     const goods = order.orderGoodsInfos;
     this._processOrderGoods(goods);
   }
-
   /**
    * 处理订单详情
    */
@@ -417,6 +434,8 @@ export default class order extends base {
     this._processOrderDetailDelivery(detail);
     // 处理订单价格
     this._processOrderPrice(detail);
+    // 处理订单动作
+    this._processOrderAction(detail);
     // 处理商品信息
     this._processOrderGoods(detail.orderGoodsInfos);
   }
