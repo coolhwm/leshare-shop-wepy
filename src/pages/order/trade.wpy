@@ -110,12 +110,12 @@
     };
     data = {...this.def};
 
-    async onLoad ({trade}) {
+    async onLoad (params, {preload}) {
       const isOpen = await this.checkShopStatus();
       const result = await auth.user({block: true, redirect: true});
       if (!result || !isOpen) { return; }
       // 订单数据
-      this.trade = JSON.parse(trade);
+      this.trade = preload.trade;
       // 默认地址
       this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
       // 处理配送方式
@@ -150,9 +150,8 @@
        * 选择地址
        */
       address () {
-        this.$navigate('../address/list', {
-          goodsList: JSON.stringify(this.trade.orderGoodsInfos)
-        });
+        this.$preload('goodsList', this.trade.orderGoodsInfos);
+        this.$navigate('../address/list');
       },
       /**
        * 选择优惠券

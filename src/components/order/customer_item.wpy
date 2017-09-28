@@ -39,13 +39,16 @@
     </view>
 
     <!--操作栏-->
-    <view class="order-action-bar row-end" wx:if="{{action != 0}}">
-      <view class="zan-btn zan-btn--small" @tap="again({{order}})">再来一单</view>
-      <view class="zan-btn zan-btn--small" @tap="close({{order.orderId}})"  wx:if="{{order.status == 1 || (order.status == 2 && order.paymentType == 0)}}">取消订单</view>
-      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="pay({{order.orderId}})" wx:if="{{order.status == 1}}">立即支付</view>
-      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="comment({{order}})" wx:if="{{order.status == 4}}">评价订单</view>
-    </view>
+    <view class="order-action-bar row-end" wx:if="{{order.actions.length > 0}}">
+      <!--<view class="zan-btn zan-btn&#45;&#45;small" @tap="again({{order}})">再来一单</view>-->
+      <!--<view class="zan-btn zan-btn&#45;&#45;small" @tap="close({{order.orderId}})"  wx:if="{{order.status == 1 || (order.status == 2 && order.paymentType == 0)}}">取消订单</view>-->
+      <!--<view class="zan-btn zan-btn&#45;&#45;small zan-btn&#45;&#45;primary" @tap="pay({{order.orderId}})" wx:if="{{order.status == 1}}">立即支付</view>-->
+      <!--<view class="zan-btn zan-btn&#45;&#45;small zan-btn&#45;&#45;primary" @tap="comment({{order}})" wx:if="{{order.status == 4}}">评价订单</view>-->
 
+      <block wx:for="{{order.actions}}" wx:for-item="action" wx:key="index">
+        <view class="zan-btn zan-btn--small {{action.primary ? 'zan-btn--primary' : ''}}" @tap="action({{action.func}}, {{order}})">{{action.name}}</view>
+      </block>
+    </view>
   </view>
 </template>
 
@@ -73,39 +76,91 @@
     onLoad () {
       this.shopName = wepy.$instance.globalData.shopName;
     }
+    /**
+     * 关闭订单
+     */
+    async close({orderId}) {
+      await Tips.confirm('确定关闭该订单？');
+      try {
+        await order.closeOrder(orderId);
+        await Tips.success('关闭成功');
+      } catch (e) {
+        console.warn(e);
+        await Tips.success('关闭失败');
+      }
+      Event.emit(Event.ORDER_LIST_UPDATE);
+    }
+    /**
+     * 订单支付
+     */
+    async pay({orderId}) {
+      try {
+        const payment = await order.prepayOrder(orderId);
+        Tips.loaded();
+        await order.wxpayOrder(payment);
+        await Tips.success('支付成功');
+      } catch (e) {
+        console.warn(e);
+        await Tips.success('支付取消');
+      }
+      Event.emit(Event.ORDER_LIST_UPDATE);
+    }
+    /**
+     * 订单收货
+     */
+    async receive({orderId}) {
+      await Tips.confirm('是否已收到外卖？');
+      try {
+        await order.confirmOrder(orderId);
+        await Tips.success('订单已完成');
+      } catch (e) {
+        console.warn(e);
+        await Tips.success('操作失败');
+      }
+      Event.emit(Event.ORDER_LIST_UPDATE);
+    }
+    /**
+     * 再来一单
+     */
+    async again(order) {
+      Event.emit(Event.CART_LIST_RESET, order.orderGoodsInfos);
+      // 跳转到首页，重新加载
+      Route.backOrRedirect('/pages/shop/index');
+    }
+    /**
+     * 评价订单
+     */
+    comment(order) {
+      const scores = order.orderGoodsInfos.map(item => {
+        return {
+          goodsId: item.goodsId,
+          orderId: order.orderId,
+          sku: item.goodsSku,
+          preview: item.imageUrl,
+          star: 5,
+          starArr: [1, 1, 1, 1, 1],
+          comment: ''
+        };
+      });
+      this.$root.$preload('data', scores);
+      this.$root.$navigate(`/pages/goods/comment_edit?orderId=${order.orderId}`);
+    }
     methods = {
+      action(funcName, order) {
+        console.info('[action]' + funcName);
+        if (this[funcName]) {
+          const func = this[funcName].bind(this);
+          func(order);
+        } else {
+          Tips.error('未知错误');
+        }
+      },
       /**
        * 商品展开收缩
        */
       expand(orderId) {
         orderId = orderId == null ? 0 : orderId;
         this.expand[orderId] = !this.expand[orderId];
-      },
-      /**
-       * 再来一单
-       */
-      async again(order) {
-        Event.emit(Event.CART_LIST_RESET, order.orderGoodsInfos);
-        // 跳转到首页，重新加载
-        Route.backOrRedirect('/pages/shop/index');
-      },
-      /**
-       * 评价订单
-       */
-      comment(order) {
-        const scores = order.orderGoodsInfos.map(item => {
-          return {
-            goodsId: item.goodsId,
-            orderId: order.orderId,
-            sku: item.goodsSku,
-            preview: item.imageUrl,
-            star: 5,
-            starArr: [1, 1, 1, 1, 1],
-            comment: ''
-          };
-        });
-        const data = JSON.stringify(scores);
-        this.$root.$navigate(`/pages/goods/comment_edit?orderId=${order.orderId}&data=${data}`);
       },
       /**
        * 订单详情
@@ -116,49 +171,7 @@
         }
         this.$root.$navigate(`detail?orderId=${orderId}`);
       },
-      /**
-       * 关闭订单
-       */
-      async close(orderId) {
-        await Tips.confirm('确定关闭该订单？');
-        try {
-          await order.closeOrder(orderId);
-          await Tips.success('关闭成功');
-        } catch (e) {
-          console.warn(e);
-          await Tips.success('关闭失败');
-        }
-        Event.emit(Event.ORDER_LIST_UPDATE);
-      },
-      /**
-       * 订单支付
-       */
-      async pay(orderId) {
-        try {
-          const payment = await order.prepayOrder(orderId);
-          Tips.loaded();
-          await order.wxpayOrder(payment);
-          await Tips.success('支付成功');
-        } catch (e) {
-          console.warn(e);
-          await Tips.success('支付取消');
-        }
-        Event.emit(Event.ORDER_LIST_UPDATE);
-      },
-      /**
-       * 订单收货
-       */
-      async receive(orderId) {
-        await Tips.confirm('是否已收到外卖？');
-        try {
-          await order.confirmOrder(orderId);
-          await Tips.success('订单已完成');
-        } catch (e) {
-          console.warn(e);
-          await Tips.success('操作失败');
-        }
-        Event.emit(Event.ORDER_LIST_UPDATE);
-      }
+
     };
     components = {
       OrderGoods: OrderGoods

@@ -54,7 +54,7 @@
       nearbyLocations: null,
       searchLocations: null,
       isSearch: false
-    }
+    };
     data = {...this.def};
     async onLoad () {
       await this.locate();

@@ -72,14 +72,16 @@
 
     <!--操作栏-->
     <view class="order-action-bar row-end" wx:if="{{action != 0}}">
-      <view class="zan-btn zan-btn--small" @tap="again({{order}})">再来一单</view>
-      <view class="zan-btn zan-btn--small" @tap="close({{order.orderId}})"  wx:if="{{order.status == 1 || (order.status == 2 && order.paymentType == 0)}}">取消订单</view>
-      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="pay({{order.orderId}})" wx:if="{{order.status == 1}}">立即支付</view>
-      <view class="zan-btn zan-btn--small" @tap="refundDetail({{order.curRefund}})" wx:if="{{order.curRefund}}">退款详情</view>
-      <view class="zan-btn zan-btn--small" @tap="refund({{order}})" wx:if="{{order.status == 2}}">申请退款</view>
-      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="comment({{order}})" wx:if="{{order.status == 4}}">评价订单</view>
-      <view class="zan-btn zan-btn--small zan-btn--primary" @tap="unrefund({{order}})" wx:if="{{order.status == 5}}">撤销退款</view>
-      <!--撤销退款-->
+      <block wx:for="{{order.actions}}" wx:for-item="action" wx:key="index">
+        <view class="zan-btn zan-btn--small {{action.primary ? 'zan-btn--primary' : ''}}" @tap="action({{action.func}}, {{order}})">{{action.name}}</view>
+      </block>
+      <!--<view class="zan-btn zan-btn&#45;&#45;small" @tap="again({{order}})">再来一单</view>-->
+      <!--<view class="zan-btn zan-btn&#45;&#45;small" @tap="close({{order.orderId}})"  wx:if="{{order.status == 1 || (order.status == 2 && order.paymentType == 0)}}">取消订单</view>-->
+      <!--<view class="zan-btn zan-btn&#45;&#45;small zan-btn&#45;&#45;primary" @tap="pay({{order.orderId}})" wx:if="{{order.status == 1}}">立即支付</view>-->
+      <!--<view class="zan-btn zan-btn&#45;&#45;small" @tap="refundDetail({{order.curRefund}})" wx:if="{{order.curRefund}}">退款详情</view>-->
+      <!--<view class="zan-btn zan-btn&#45;&#45;small" @tap="refund({{order}})" wx:if="{{order.status == 2}}">申请退款</view>-->
+      <!--<view class="zan-btn zan-btn&#45;&#45;small zan-btn&#45;&#45;primary" @tap="comment({{order}})" wx:if="{{order.status == 4}}">评价订单</view>-->
+      <!--<view class="zan-btn zan-btn&#45;&#45;small zan-btn&#45;&#45;primary" @tap="unrefund({{order}})" wx:if="{{order.status == 5}}">撤销退款</view>-->
     </view>
   </view>
 </template>
@@ -117,110 +119,119 @@
       };
       this.loaded();
     };
+    /**
+     * 再来一单
+     */
+    async again(order) {
+      Event.emit(Event.CART_LIST_RESET, order.orderGoodsInfos);
+      // 跳转到首页，重新加载
+      Route.backOrRedirect('/pages/shop/index');
+    }
+    /**
+     * 评价订单
+     */
+    comment(order) {
+      const scores = order.orderGoodsInfos.map(item => {
+        return {
+          goodsId: item.goodsId,
+          orderId: order.orderId,
+          sku: item.goodsSku,
+          preview: item.imageUrl,
+          star: 5,
+          starArr: [1, 1, 1, 1, 1],
+          comment: ''
+        };
+      });
+      this.$preload('data', scores);
+      this.$root.$navigate(`/pages/goods/comment_edit?orderId=${order.orderId}`);
+    }
+    /**
+     * 关闭订单
+     */
+    async close({orderId}) {
+      await Tips.confirm('确定关闭该订单？');
+      try {
+        await order.closeOrder(orderId);
+        await Tips.success('关闭成功');
+        wepy.navigateBack();
+      } catch (e) {
+        console.warn(e);
+        await Tips.success('关闭失败');
+      }
+      Event.emit(Event.ORDER_LIST_UPDATE);
+    }
+    /**
+     * 订单支付
+     */
+    async pay({orderId}) {
+      try {
+        const payment = await order.prepayOrder(orderId);
+        Tips.loaded();
+        await order.wxpayOrder(payment);
+        await Tips.success('支付成功');
+        wepy.navigateBack();
+      } catch (e) {
+        console.warn(e);
+        await Tips.success('支付取消');
+      }
+      Event.emit(Event.ORDER_LIST_UPDATE);
+    }
+    /**
+     * 订单收货
+     */
+    async receive({orderId}) {
+      await Tips.confirm('是否已收到外卖？');
+      try {
+        await order.confirmOrder(orderId);
+        await Tips.success('订单已完成');
+        wepy.navigateBack();
+      } catch (e) {
+        console.warn(e);
+        await Tips.success('操作失败');
+      }
+      Event.emit(Event.ORDER_LIST_UPDATE);
+    }
+    /**
+     * 申请退款
+     */
+    async refund(refundOrder) {
+      if (Number(refundOrder.finalPrice) == 0) {
+        Tips.alert('￥0 订单无需退款');
+        return;
+      }
+      const refund = order.createOrderRefund(refundOrder);
+      const refundStr = JSON.stringify(refund);
+      await Tips.confirm('您确认要申请退款吗？');
+      this.$navigate(`/pages/order/refund_edit?refund=${refundStr}`);
+    }
+    /**
+     * 撤销退款
+     */
+    async unrefund(refundOrder) {
+      const orderId = refundOrder.orderId;
+      const refundUuid = refundOrder.curRefund.refundUuid;
+      await Tips.confirm('您确认取消退款申请吗？');
+      await order.cancelRefund(orderId, refundUuid);
+      await Tips.success('取消成功');
+      Event.emit(Event.ORDER_LIST_UPDATE);
+      Route.backOrRedirect('/pages/order/list');
+    }
+    /**
+     * 退款详情
+     */
+    refundDetail({curRefund}) {
+      const refundStr = JSON.stringify(curRefund);
+      this.$navigate(`/pages/order/refund_detail?refund=${refundStr}`);
+    }
     methods = {
-      /**
-       * 再来一单
-       */
-      async again(order) {
-        Event.emit(Event.CART_LIST_RESET, order.orderGoodsInfos);
-        // 跳转到首页，重新加载
-        Route.backOrRedirect('/pages/shop/index');
-      },
-      /**
-       * 评价订单
-       */
-      comment(order) {
-        const scores = order.orderGoodsInfos.map(item => {
-          return {
-            goodsId: item.goodsId,
-            orderId: order.orderId,
-            sku: item.goodsSku,
-            preview: item.imageUrl,
-            star: 5,
-            starArr: [1, 1, 1, 1, 1],
-            comment: ''
-          };
-        });
-        const data = JSON.stringify(scores);
-        this.$navigate(`/pages/goods/comment_edit?orderId=${order.orderId}&data=${data}`);
-      },
-      /**
-       * 关闭订单
-       */
-      async close(orderId) {
-        await Tips.confirm('确定关闭该订单？');
-        try {
-          await order.closeOrder(orderId);
-          await Tips.success('关闭成功');
-          wepy.navigateBack();
-        } catch (e) {
-          console.warn(e);
-          await Tips.success('关闭失败');
+      action(funcName, order) {
+        console.info('[action]' + funcName);
+        if (this[funcName]) {
+          const func = this[funcName].bind(this);
+          func(order);
+        } else {
+          Tips.error('未知错误');
         }
-        Event.emit(Event.ORDER_LIST_UPDATE);
-      },
-      /**
-       * 订单支付
-       */
-      async pay(orderId) {
-        try {
-          const payment = await order.prepayOrder(orderId);
-          Tips.loaded();
-          await order.wxpayOrder(payment);
-          await Tips.success('支付成功');
-          wepy.navigateBack();
-        } catch (e) {
-          console.warn(e);
-          await Tips.success('支付取消');
-        }
-        Event.emit(Event.ORDER_LIST_UPDATE);
-      },
-      /**
-       * 订单收货
-       */
-      async receive(orderId) {
-        await Tips.confirm('是否已收到外卖？');
-        try {
-          await order.confirmOrder(orderId);
-          await Tips.success('订单已完成');
-          wepy.navigateBack();
-        } catch (e) {
-          console.warn(e);
-          await Tips.success('操作失败');
-        }
-        Event.emit(Event.ORDER_LIST_UPDATE);
-      },
-      /**
-       * 申请退款
-       */
-      async refund(refundOrder) {
-        if (Number(refundOrder.finalPrice) == 0) {
-          Tips.alert('￥0 订单无需退款');
-          return;
-        }
-        const refund = order.createOrderRefund(refundOrder);
-        const refundStr = JSON.stringify(refund);
-        await Tips.confirm('您确认要申请退款吗？');
-        this.$navigate(`/pages/order/refund_edit?refund=${refundStr}`);
-      },
-      /**
-       * 撤销退款
-       */
-      async unrefund(refundOrder) {
-        const orderId = refundOrder.orderId;
-        const refundUuid = refundOrder.curRefund.refundUuid;
-        await Tips.confirm('您确认取消退款申请吗？');
-        await order.cancelRefund(orderId, refundUuid);
-        await Tips.success('取消成功');
-        Event.emit(Event.ORDER_LIST_UPDATE);
-        Route.backOrRedirect('/pages/order/list');
-      },
-      /**
-       * 退款详情
-       */
-      refundDetail(refund) {
-        const refundStr = JSON.stringify(refund);
-        this.$navigate(`/pages/order/refund_detail?refund=${refundStr}`);
       }
     };
     components = {

@@ -19,10 +19,10 @@
     <!--操作向导区域-->
     <view class="nav-box column-cernter">
       <view class="row-between">
-        <navigator class="shop-btn column-center" url="/pages/shop/index"  open-type="redirect">
+        <view class="shop-btn column-center" @tap="shop">
           <image class="icon-xl" src="/images/home/food.png"></image>
           <text class="weak">{{shopTitle}}</text>
-        </navigator>
+        </view>
         <view class="shop-btn column-center" @tap="phone">
           <image class="icon-xl" src="/images/home/phone.png"></image>
           <text class="weak">电话联系</text>
@@ -147,6 +147,10 @@
       return {};
     }
     methods = {
+      shop() {
+        this.$redirect('/pages/shop/index');
+        // url="/pages/shop/index"  open-type="redirect"
+      },
       phone() {
         wepy.makePhoneCall({phoneNumber: this.shop.phone});
       },

@@ -42,8 +42,8 @@
       isPageEmpty: false
     };
     data = {...this.def};
-    async onLoad ({goodsList}) {
-      this.goodsList = JSON.parse(goodsList);
+    async onLoad (params, {preload}) {
+      this.goodsList = preload.goodsList;
       await this.load();
       Event.listen(Event.ADDRESS_LIST_UPDATE, this.load.bind(this), this);
     };

@@ -35,81 +35,6 @@
         <Loadmore :page.sync="page" emptyText="暂无商品"/>
       </scroll-view>
     </view>
-
-    <!--商品详情区域-->
-    <scroll-view  class="goods-detail-box" scroll-y	 wx:if="{{detailDisplay}}">
-
-      <!--返回按钮-->
-      <view class="back-btn column-center">
-        <image src="/images/icons/back.png" @tap="detaiLBack" />
-      </view>
-
-      <!-- 轮播图 -->
-      <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" @tap="previewDetailSwiper">
-        <block wx:for="{{detail.images}}" wx:key="id">
-          <swiper-item>
-            <image src="{{item.url}}" mode="aspectFill"></image>
-          </swiper-item>
-        </block>
-      </swiper>
-
-      <!--信息区域-->
-      <view class="info-box column">
-
-        <!--基本信息-->
-        <view class="row">
-          <view class="small label primary" wx:if="{{detail.isRecommend == 1}}">推荐</view>
-          <text class="name">{{detail.name}}</text>
-        </view>
-        <text class="sm muted mt10">已售{{detail.salesVolume}}件</text>
-
-        <!--价格区域-->
-        <view class="price row-between mt10">
-          <text class="major xxl">￥{{detail.priceLable}}</text>
-          <!--数量选择器-->
-          <view class="quantity row mr20">
-            <block wx:if="{{detail.num > 0}}">
-              <image class="minus" src="/images/icons/minus.png" @tap.stop="detailMinus({{detail}})" />
-              <view class="number">
-                <text>{{detail.num}}</text>
-              </view>
-              <image class="plus" src="/images/icons/plus.png" @tap.stop="detailPlus({{detail}})" />
-            </block>
-            <view class="quantity-cart-btn" wx:else @tap.stop="detailPlus({{detail}})">
-              加入购物车
-            </view>
-          </view>
-        </view>
-
-        <!--评价向导-->
-        <view class="comment-box row-between" @tap="comments">
-          <text class="muted">{{commentText}}</text>
-          <image class="icon" src="/images/icons/more-gray.png" />
-        </view>
-      </view>
-
-      <!--详情区域-->
-      <view class="detail-box" wx:if="{{currentDetailList.length > 0}}">
-        <!--详情标题-->
-        <view class="detail-title row-center">
-          <text class="primary lg">── 商品详情 ──</text>
-        </view>
-
-        <view class="hr-light"></view>
-
-        <!--详情类列表区域/遍历详情-->
-        <view class="detail-list column">
-          <block wx:for="{{currentDetailList}}" wx:key="id">
-            <!--文本-->
-            <text class="mb20 lg" wx:if="{{item.type == 1}}">{{item.content}}</text>
-            <!--图片-->
-            <image src="{{item.content}}" mode="widthFix" wx:if="{{item.type == 2}}" @tap="previewDetailImages({{item.content}})"/>
-          </block>
-        </view>
-      </view>
-
-    </scroll-view>
-
     <!-- 购物车 -->
     <ShopCart :carts.sync="carts" :status.sync="status" @plus.user="plus" @minus.user="minus" @clear.user="clear" @buy.user="buy"/>
 
@@ -123,7 +48,6 @@
   import wepy from 'wepy';
   import auth from '../../api/auth';
   import shop from '../../api/shop';
-  import comment from '../../api/comment';
   import goods from '../../api/goods';
   import coupon from '../../api/coupon';
   import order from '../../api/order';
@@ -149,10 +73,7 @@
         list: []
       },
       pages: {},
-      detail: {
-      },
       details: {},
-      comments: {},
       shop: {
         notices: []
       },
@@ -209,6 +130,7 @@
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupons.bind(this), this);
       Event.listen(Event.CART_LIST_CLEAR, this.doClearCart.bind(this), this);
       Event.listen(Event.CART_LIST_RESET, this.doResetCart.bind(this), this);
+      Event.listen(Event.CART_LIST_ADD, this.doAddCart.bind(this), this);
       this.loaded();
 
       // -- 异步加载的信息
@@ -418,87 +340,21 @@
       /**
        * 确认购买
        */
-      async buy (res) {
+      async buy (param) {
         // 权限校验
         const result = await auth.user({block: true, redirect: false});
         if (!result) return;
-        const trade = order.createCartTrade(this.carts, res);
-        const param = {
-          trade: JSON.stringify(trade)
-        };
-        this.$navigate(`../order/trade`, param);
+        // 订单类型
+        param.orderType = 20;
+        const trade = order.createCartTrade(this.carts, param);
+        this.$preload('trade', trade);
+        this.$navigate(`../order/trade`);
       },
       /**
        * 商品详情
        */
       async detail({id}) {
-        Tips.setLoading();
-        // 处理详情数据
-        this.detail = this.findGoods(id);
-        this.detailDisplay = true;
-        if (!this.details[id]) {
-          this.details[id] = await goods.getInfo(id);
-        }
-        // 处理评价数据
-        if (this.comments[id]) {
-          this.detail.comment = this.comments[id];
-        } else {
-          const count = await comment.count(id);
-          this.detail.comment = count;
-          this.comments[id] = count;
-        }
-        Tips.loaded();
-        this.$apply();
-      },
-      /**
-       * 关闭详情页面
-       */
-      detaiLBack() {
-        this.detailDisplay = false;
-        this.detail = null;
-      },
-      /**
-       * 详情页减少商品
-       */
-      detailMinus(detail) {
-        const minus = this.methods.minus.bind(this);
-        minus({
-          goodsId: detail.id
-        });
-      },
-      /**
-       * 详情页面增加商品
-       */
-      detailPlus(detail) {
-        const plus = this.methods.plus.bind(this);
-        plus({
-          goodsId: detail.id
-        });
-      },
-      /**
-       * 预览详情页面
-       */
-      previewDetailImages(current) {
-        const urls = this.currentDetailList.filter(v => v.type == 2).map(v => v.content);
-        wepy.previewImage({
-          urls: urls,
-          current: current
-        });
-      },
-      /**
-       * 预览轮播图
-       */
-      previewDetailSwiper() {
-        const urls = this.detail.images.map(value => value.url);
-        wepy.previewImage({
-          urls: urls
-        });
-      },
-      /**
-       * 评价列表
-       */
-      comments() {
-        this.$navigate(`/pages/goods/comment_list?goodsId=${this.detail.id}`);
+        this.$navigate(`/pages/goods/detail?goodsId=${id}`);
       }
     };
     async doClearCart() {
@@ -531,6 +387,12 @@
       this.saveCartStore();
       this.loaded();
       this.loaded();
+    }
+    doAddCart(goods) {
+      const plus = this.methods.plus.bind(this);
+      plus({
+        goodsId: goods.id
+      });
     }
     async skuSelector(goodsId) {
       if (this.details[goodsId]) {
@@ -569,31 +431,10 @@
       this.carts.splice(index, 1);
     }
     computed = {
-      currentDetailList() {
-        if (this.detail && this.details[this.detail.id]) {
-          return this.details[this.detail.id].goodsDetails;
-        } else {
-          return null;
-        }
-      },
       selectedCategoryName() {
         if (this.init && this.categories) {
           const selectedId = this.categories.selectedId;
           return this.categories.list.find(item => item.id == selectedId).title;
-        }
-      },
-      commentText() {
-        if (!this.detail) {
-          return '用户评价加载中...';
-        }
-        const count = this.detail.comment;
-        if (!count) {
-          return '用户评价加载中...';
-        } else if (count.ALL == 0) {
-          return '该商品暂无评价';
-        } else {
-          const rate = (count.GOOD / count.ALL * 100).toFixed(0);
-          return `共${count.ALL}条评价，${rate}%好评`;
         }
       }
     };
@@ -644,92 +485,6 @@
       width: 545rpx;
       border-bottom: $border;
       white-space: nowrap;
-    }
-  }
-
-
-  .goods-detail-box{
-    position: fixed;
-    top: 0;
-    bottom: 100rpx;
-    width: 750rpx;
-    background-color: $color-bg-body;
-
-    .back-btn{
-      position: fixed;
-      bottom: 80px;
-      right: 20px;
-      background-color: #FFF;
-      height: 46px;
-      width: 46px;
-      border-radius: 50%;
-      image{
-        height: 40px;
-        width: 40px;
-      }
-    }
-
-    .info-box{
-      background-color: #FFF;
-      padding: 20rpx;
-      border-bottom: $border;
-      border-top: $border;
-      .name{
-        font-size: $text-xxl;
-        font-weight: bold;
-      }
-      .price{
-        height: 32px;
-        padding-bottom: 10rpx;
-      }
-      .comment-box{
-        padding-top: 20rpx;
-        border-top: $border;
-      }
-    }
-
-    .quantity-cart-btn{
-      background-color: $color-primary;
-      font-size: $text-sm;
-      height: 20px;
-      color: #FFF;
-      padding: 4px 13px;
-      border-radius: 20px;
-    }
-
-    .goods-swiper{
-      height: 650rpx;
-      width: 750rpx;
-
-      image{
-        width:100%;
-        height:650rpx;
-      }
-    }
-
-    .detail-box{
-      border-top: $border;
-      background-color: #FFF;
-      margin-top: 20rpx;
-
-      .detail-title{
-        height: 75rpx;
-      }
-      .hr-light{
-        height: 1px;
-        background-color: #e6e6e6;
-        width: 100%;
-      }
-
-      .detail-list{
-        padding-bottom: 20rpx;
-        image{
-          width: 100%;
-        }
-        text{
-          padding: 20rpx;
-        }
-      }
     }
   }
 
