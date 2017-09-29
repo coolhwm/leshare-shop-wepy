@@ -170,16 +170,17 @@
        */
       async paymentType () {
         const trade = this.trade;
-        await Tips.actionWithFunc(['在线支付', '线下支付'],
+        Tips.actionWithFunc(['在线支付', '线下支付'],
           () => {
             trade.paymentText = '在线支付';
-            trade.paymentType = 1
+            trade.paymentType = 1;
+            this.$apply();
           },
           () => {
             trade.paymentText = '线下支付';
-            trade.paymentType = 0
+            trade.paymentType = 0;
+            this.$apply();
           });
-        this.$apply();
       },
       /**
        * 确定下单
@@ -193,7 +194,6 @@
           Tips.alert(this.confirmText);
           return;
         }
-        Tips.loading();
         // 数据准备
         this.trade.deliveryType = 'CITY';
         // 表单ID
@@ -203,7 +203,6 @@
         if (trade.paymentType == 1) {
           // 在线支付/发起预支付
           const payment = await order.prepayOrder(trade.orderId);
-          Tips.loaded();
           // 微信支付
           try {
             await order.wxpayOrder(payment);

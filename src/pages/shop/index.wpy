@@ -236,15 +236,13 @@
           // 加载优惠券
           const {pickList} = await Cache.coupon(true);
           this.coupons = pickList;
-          Tips.loaded();
-          this.$apply();
+          this.loaded();
         } catch (e) {
-          Tips.loaded();
           if (e.serverCode == '50001') {
-            Tips.alert('已达领取上限');
+            await Tips.alert('已达领取上限');
             const index = this.coupons.findIndex(item => item.id == id);
             this.coupons.splice(index, 1);
-            this.$apply();
+            this.loaded();
           }
         }
       },

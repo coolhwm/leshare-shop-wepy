@@ -7,7 +7,7 @@
           <image class="icon" src="/images/icons/shop-gray.png"/>
           <text class="sm ml10">{{shopName}}</text>
         </view>
-        <text class="sm primary">{{order.statusText}}{{order.paymentType == 0 ? '(线下支付)' : ''}}</text>
+        <text class="sm primary" wx:if="{{order.statusText}}">{{order.statusText}}{{order.paymentType == 0 ? '(线下支付)' : ''}}</text>
       </view>
       <view class="order-info-container row-between">
         <text>{{order.orderTime}}</text>

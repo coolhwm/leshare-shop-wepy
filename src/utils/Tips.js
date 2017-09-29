@@ -92,6 +92,11 @@ export default class Tips {
       mask: true,
       duration: 500
     });
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+      }, 500);
+    });
   }
 
   /**
