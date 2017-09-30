@@ -251,9 +251,10 @@
       border-bottom: $border;
       .content{
         flex-wrap: wrap;
-        margin-top: 40rpx;
+        margin-top: 30rpx;
         .shop-photo{
           margin-right: 10rpx;
+          margin-top:10rpx;
           height: 200rpx;
           width: 200rpx;
         }
