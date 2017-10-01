@@ -6,7 +6,19 @@
   <view class="container" wx:if="{{init}}">
     <AddressSelector :address.sync="selectedAddress" @select.user="address" />
 
-    <view class="mt20"></view>
+    <!--备注信息-->
+    <view class="remark-box weui-cells weui-cells_after-title weui-cells-merge-top">
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__hd" >
+          <view class="weui-label">订单备注</view>
+        </view>
+        <view class="weui-cell__bd">
+          <input class="weui-input" id="message"  @input="input" value="{{trade.message}}" placeholder="请输入订单备注"/>
+        </view>
+        <view class="weui-cell__ft">
+        </view>
+      </view>
+    </view>
 
     <!--订单项目-->
     <OrderItem :order.sync="trade" action="0"></OrderItem>
@@ -27,10 +39,6 @@
         </view>
         <view class="weui-cell__ft {{coupons.length > 0 ? 'weui-cell__ft_in-access' : ''}}">{{couponText}}</view>
       </view>
-      <!--<view class="weui-cell">-->
-        <!--<view class="weui-cell__bd">买家留言</view>-->
-        <!--<view class="weui-cell__ft">{{trade.message ? trade.message : '无'}}</view>-->
-      <!--</view>-->
     </view>
 
     <!--信息汇总-->
@@ -79,7 +87,6 @@
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
-  import input from '../../mixins/input';
   import auth from '../../api/auth';
   import address from '../../api/address';
   import coupon from '../../api/coupon';
@@ -121,34 +128,7 @@
       const result = await auth.user({block: true, redirect: true});
       if (!result || !isOpen) { return; }
       // 订单数据
-      // this.trade = preload.trade;
-      this.trade = {
-        'orderType': 20,
-        'dealPrice': '100.00',
-        'reduceFee': 0,
-        'finalPrice': '100.00',
-        'paymentType': '1',
-        'paymentText': '在线支付',
-        'orderGoodsInfos': [
-          {
-            'goodsId': 3,
-            'goodsName': '招牌培根蔬萃双层鸡肉堡（辣）',
-            'imageUrl': 'http://ostb6zm4z.bkt.clouddn.com/FsTeNwC6NEpEnk9UShDMhaEI3aB7/medium',
-            'goodsPrice': '13.00',
-            'count': 1,
-            'goodsSku': '辣'
-          },
-          {
-            'goodsId': 11,
-            'goodsName': '什么鬼招牌鸡排',
-            'imageUrl': 'http://img.leshare.shop/FtAqU26NliIbOjh9DHWA9bhFzqNJ/medium',
-            'goodsPrice': '15.00',
-            'count': 3
-          }
-        ],
-        'deliveryType': 'CITY',
-        'postFee': '0.00'
-      };
+      this.trade = preload.trade;
       this.goodsList = this.trade.orderGoodsInfos;
       // 默认地址
       this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
@@ -165,8 +145,10 @@
       Event.listen(Event.TRADE_ADDRESS_UPDATE, this.updateAddress.bind(this), this);
       Event.listen(Event.TRADE_COUPON_UPDATE, this.updateCoupon.bind(this), this);
     };
-
     methods = {
+      input({detail}) {
+        this.trade.message = detail.value;
+      },
       /**
        * 选择配送方式
        */
@@ -393,7 +375,7 @@
       OrderItem: OrderItem,
       AddressList: AddressList
     };
-    mixins = [base, input];
+    mixins = [base];
     config = {
       navigationBarTitleText: '订单详情'
     }
@@ -403,6 +385,12 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+
+  .remark-box{
+    border-top: $border;
+    margin-top: 10rpx;
+    margin-bottom: 10rpx;
+  }
 
   //汇总栏
   .summary-box{
