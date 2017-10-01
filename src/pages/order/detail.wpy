@@ -126,6 +126,8 @@
       Event.emit(Event.CART_LIST_RESET, order.orderGoodsInfos);
       // 跳转到首页，重新加载
       Route.backOrRedirect('/pages/shop/index');
+      // 预加载/处理首页没打开的情况
+      this.$root.$preload('cart', order.orderGoodsInfos);
     }
     /**
      * 评价订单
