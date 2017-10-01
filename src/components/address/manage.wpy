@@ -54,7 +54,7 @@
         const param = {
           mode: 'edit',
           id: id
-        }
+        };
         this.$root.$navigate('edit', param);
       },
       async setDefault(id) {

@@ -112,7 +112,7 @@
       confirmText: '立即下单',
       reduce: null,
       goodsList: null,
-      isAddressListDisplay: true
+      isAddressListDisplay: false
     };
     data = {...this.def};
 
@@ -184,8 +184,9 @@
        * 选择地址
        */
       address () {
-        this.$preload('goodsList', this.trade.orderGoodsInfos);
-        this.$navigate('../address/list');
+        this.isAddressListDisplay = true;
+        // this.$preload('goodsList', this.trade.orderGoodsInfos);
+        // this.$navigate('../address/list');
       },
       /**
        * 选择优惠券

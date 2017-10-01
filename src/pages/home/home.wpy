@@ -148,8 +148,7 @@
     }
     methods = {
       shop() {
-        this.$redirect('/pages/shop/index');
-        // url="/pages/shop/index"  open-type="redirect"
+        this.$navigate('/pages/shop/index');
       },
       phone() {
         wepy.makePhoneCall({phoneNumber: this.shop.phone});

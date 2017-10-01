@@ -1,20 +1,22 @@
 <template>
-  <view class="address-panel" wx:if="{{display}}">
+  <scroll-view scroll-y class="address-panel" wx:if="{{display && init}}" >
 
     <!--列表展现-->
     <repeat for="{{available}}" key="index" index="index" item="item">
       <Address :address.sync="item" @select.user="select"/>
     </repeat>
+
     <view class="disable-title-box" wx:if="{{disable.length > 0}}">
       <text class="muted">以下地址不满足配送条件：</text>
     </view>
     <repeat for="{{disable}}" key="index" index="index" item="item">
-      <Address :address.sync="item" @select.user="select" disabled="1"/>
+      <DisableAddress :address.sync="item" @select.user="select" :disabled.sync="disableValue"/>
     </repeat>
 
-    <view class="zan-panel" wx:if="{{!isPageEmpty}}">
+    <view class="zan-panel {{isPageEmpty ? 'zan-panel-bottom' : '' }}">
       <view class="zan-btns">
-        <button class="zan-btn zan-btn--fill" @tap="confirm">新增地址</button>
+        <button class="zan-btn zan-btn--fill" @tap="add">新增地址</button>
+        <button class="zan-btn" @tap="back">返回</button>
       </view>
     </view>
 
@@ -22,8 +24,8 @@
     <Loadmore :page.sync="page"/>
 
     <!--占位符-->
-    <Placeholder :show.sync="isPageEmpty" message="您还没有收货地址" type="add"/>
-  </view>
+    <Placeholder :show.sync="isPageEmpty" message="您还没有收货地址"  @tap.user="add"/>
+  </scroll-view>
 </template>
 
 <script>
@@ -39,19 +41,33 @@
     props = {
       goodsList: {},
       display: {
-        default: false
+        default: false,
+        twoWay: true
       }
     };
     data = {
+      disableValue: 1,
       init: false,
       available: [],
       disable: [],
       isPageEmpty: false
     };
     async onLoad () {
-      // this.goodsList = preload.goodsList;
-      Event.listen(Event.ADDRESS_LIST_UPDATE, this.load.bind(this), this);
+      Event.listen(Event.ADDRESS_LIST_UPDATE, this.update.bind(this), this);
     };
+    async update (isCreate) {
+      await this.load();
+      const size = this.available.length;
+      if (size == 1 && isCreate) {
+        // 如果只有一个可用地址，则直接选定并返回
+        Event.emit(Event.TRADE_ADDRESS_UPDATE, this.available[0]);
+        this.display = false;
+        this.$apply();
+      } else if (size == 0) {
+        // 没有地址的情况，要通知父页面
+        Event.emit(Event.TRADE_ADDRESS_UPDATE, null);
+      }
+    }
     async load() {
       const {available, disable} = await address.available(this.goodsList);
       this.available = available;
@@ -64,28 +80,37 @@
       wepy.stopPullDownRefresh();
     }
     watch = {
-      async goodsList(value) {
-        if (value != null && this.init == false) {
+      async display(value) {
+        // 首次加载（商品列表加载完毕/页面为初始化/页面已展现）
+        if (this.init == false && value == true) {
           await this.load();
           this.init = true;
+          // 一个地址也没有
+          if (this.isPageEmpty) {
+            this.$root.$navigate('/pages/address/edit?mode=create');
+          }
           this.$apply();
         }
       }
     };
     methods = {
       add() {
-        this.$navigate('edit?mode=create');
+        this.$root.$navigate('/pages/address/edit?mode=create');
+      },
+      back() {
+        this.display = false;
       },
       select(address) {
         Event.emit(Event.TRADE_ADDRESS_UPDATE, address);
-        wepy.navigateBack();
+        this.display = false;
       }
     };
     events = {};
     components = {
       Placeholder: Placeholder,
       Loadmore: Loadmore,
-      Address: Address
+      Address: Address,
+      DisableAddress: Address
     };
     mixins = [base];
     config = {
@@ -98,9 +123,15 @@
 <style lang="scss">
   @import "../../styles/variable";
 
+  .zan-panel-bottom{
+    width: 750rpx;
+    position: fixed;
+    bottom: 0;
+  }
+
   .address-panel{
     z-index: 100000;
-    position: absolute;
+    position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
