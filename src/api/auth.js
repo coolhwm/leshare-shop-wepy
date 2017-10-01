@@ -63,7 +63,7 @@ export default class auth extends base {
       rawData: rawUser.rawData,
       signature: rawUser.signature,
       thirdSession: this.getConfig('third_session'),
-      shop_code: this.getShopCode()
+      app_code: this.getShopCode()
     };
     return await this.get(url, param);
   }
@@ -77,7 +77,7 @@ export default class auth extends base {
       encryptedData: rawUser.encryptedData,
       iv: rawUser.iv,
       thirdSession: this.getConfig('third_session'),
-      shop_code: this.getShopCode()
+      app_code: this.getShopCode()
     };
     return await this.get(url, param);
   }
@@ -98,8 +98,8 @@ export default class auth extends base {
    * 获取会话
    */
   static async session(jsCode) {
-    const shopCode = wepy.$instance.globalData.shopCode;
-    const url = `${this.baseUrl}/auth/session?code=${jsCode}&shop_code=${shopCode}`;
+    const shopCode = wepy.$instance.globalData.app_code;
+    const url = `${this.baseUrl}/auth/session?code=${jsCode}&app_code=${shopCode}`;
     return await this.get(url);
   }
 
@@ -116,7 +116,7 @@ export default class auth extends base {
    * 获取店铺标识符
    */
   static getShopCode() {
-    return wepy.$instance.globalData.shopCode;
+    return wepy.$instance.globalData.app_code;
   }
 
   /**
