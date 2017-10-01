@@ -119,10 +119,7 @@ export default class order extends base {
    */
   static closeOrder (orderId) {
     const url = `${this.baseUrl}/orders/${orderId}/status/close`;
-    const param = {
-      note: '买家关闭'
-    };
-    return this.put(url, param);
+    return this.put(url, '买家关闭');
   }
 
   /**

@@ -89,7 +89,7 @@
       badegText: '商城'
     };
     data = {...this.def};
-    async onLoad ({goodsId}) {
+    async onLoad ({goodsId}, {preload}) {
       // -- 用户信息
       await auth.user();
       // -- 缓存信息
@@ -125,6 +125,10 @@
       if (goodsId) {
         const detail = this.methods.detail.bind(this);
         detail({id: goodsId});
+      }
+      // 处理购物车初始化
+      if (preload && preload.cart) {
+        await this.doResetCart(preload.cart)
       }
       // -- 监听事件
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupons.bind(this), this);
@@ -164,6 +168,9 @@
     }
     // 设置商品分类的数量
     setCategoryNum() {
+      if (!this.categories.list) {
+        return;
+      }
       this.categories.list.forEach(item => {
         item.count = 0;
         this.carts.forEach(cart => {
@@ -430,7 +437,7 @@
     }
     computed = {
       selectedCategoryName() {
-        if (this.init && this.categories) {
+        if (this.init && this.categories && this.categories.list) {
           const selectedId = this.categories.selectedId;
           return this.categories.list.find(item => item.id == selectedId).title;
         }
