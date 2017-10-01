@@ -1,5 +1,8 @@
 <template>
   <Tips/>
+
+  <AddressList :goodsList.sync="goodsList" :display.sync="isAddressListDisplay" />
+
   <view class="container" wx:if="{{init}}">
     <AddressSelector :address.sync="selectedAddress" @select.user="address" />
 
@@ -86,6 +89,7 @@
   import ActionBar from '../../components/common/action_bar';
   import AddressSelector from '../../components/address/selector';
   import ActionSheet from '../../components/weui/action_sheet';
+  import AddressList from '../../components/address/list';
   import OrderItem from '../../components/order/customer_item';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
@@ -106,7 +110,9 @@
       selectedCoupon: null,
       confirmStatus: false,
       confirmText: '立即下单',
-      reduce: null
+      reduce: null,
+      goodsList: null,
+      isAddressListDisplay: true
     };
     data = {...this.def};
 
@@ -115,7 +121,35 @@
       const result = await auth.user({block: true, redirect: true});
       if (!result || !isOpen) { return; }
       // 订单数据
-      this.trade = preload.trade;
+      // this.trade = preload.trade;
+      this.trade = {
+        'orderType': 20,
+        'dealPrice': '100.00',
+        'reduceFee': 0,
+        'finalPrice': '100.00',
+        'paymentType': '1',
+        'paymentText': '在线支付',
+        'orderGoodsInfos': [
+          {
+            'goodsId': 3,
+            'goodsName': '招牌培根蔬萃双层鸡肉堡（辣）',
+            'imageUrl': 'http://ostb6zm4z.bkt.clouddn.com/FsTeNwC6NEpEnk9UShDMhaEI3aB7/medium',
+            'goodsPrice': '13.00',
+            'count': 1,
+            'goodsSku': '辣'
+          },
+          {
+            'goodsId': 11,
+            'goodsName': '什么鬼招牌鸡排',
+            'imageUrl': 'http://img.leshare.shop/FtAqU26NliIbOjh9DHWA9bhFzqNJ/medium',
+            'goodsPrice': '15.00',
+            'count': 3
+          }
+        ],
+        'deliveryType': 'CITY',
+        'postFee': '0.00'
+      };
+      this.goodsList = this.trade.orderGoodsInfos;
       // 默认地址
       this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
       // 处理配送方式
@@ -355,7 +389,8 @@
       ActionBar: ActionBar,
       ActionSheet: ActionSheet,
       AddressSelector: AddressSelector,
-      OrderItem: OrderItem
+      OrderItem: OrderItem,
+      AddressList: AddressList
     };
     mixins = [base, input];
     config = {

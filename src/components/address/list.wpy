@@ -1,0 +1,116 @@
+<template>
+  <view class="address-panel" wx:if="{{display}}">
+
+    <!--列表展现-->
+    <repeat for="{{available}}" key="index" index="index" item="item">
+      <Address :address.sync="item" @select.user="select"/>
+    </repeat>
+    <view class="disable-title-box" wx:if="{{disable.length > 0}}">
+      <text class="muted">以下地址不满足配送条件：</text>
+    </view>
+    <repeat for="{{disable}}" key="index" index="index" item="item">
+      <Address :address.sync="item" @select.user="select" disabled="1"/>
+    </repeat>
+
+    <view class="zan-panel" wx:if="{{!isPageEmpty}}">
+      <view class="zan-btns">
+        <button class="zan-btn zan-btn--fill" @tap="confirm">新增地址</button>
+      </view>
+    </view>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+
+    <!--占位符-->
+    <Placeholder :show.sync="isPageEmpty" message="您还没有收货地址" type="add"/>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import address from '../../api/address';
+  import Placeholder from '../../components/common/placeholder';
+  import Event from '../../utils/Event';
+  import Loadmore from '../../components/weui/loadmore';
+  import Address from '../../components/address/manage';
+
+  export default class AddressList extends wepy.component {
+    props = {
+      goodsList: {},
+      display: {
+        default: false
+      }
+    };
+    data = {
+      init: false,
+      available: [],
+      disable: [],
+      isPageEmpty: false
+    };
+    async onLoad () {
+      // this.goodsList = preload.goodsList;
+      Event.listen(Event.ADDRESS_LIST_UPDATE, this.load.bind(this), this);
+    };
+    async load() {
+      const {available, disable} = await address.available(this.goodsList);
+      this.available = available;
+      this.disable = disable;
+      this.isPageEmpty = available.length == 0 && disable.length == 0;
+      this.loaded();
+    }
+    async onPullDownRefresh () {
+      await this.load();
+      wepy.stopPullDownRefresh();
+    }
+    watch = {
+      async goodsList(value) {
+        if (value != null && this.init == false) {
+          await this.load();
+          this.init = true;
+          this.$apply();
+        }
+      }
+    };
+    methods = {
+      add() {
+        this.$navigate('edit?mode=create');
+      },
+      select(address) {
+        Event.emit(Event.TRADE_ADDRESS_UPDATE, address);
+        wepy.navigateBack();
+      }
+    };
+    events = {};
+    components = {
+      Placeholder: Placeholder,
+      Loadmore: Loadmore,
+      Address: Address
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '选择地址',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .address-panel{
+    z-index: 100000;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: $color-bg-body;
+  }
+
+  .disable-title-box{
+    padding-left: 20rpx;
+    padding-top: 20rpx;
+    padding-bottom: 10rpx;
+  }
+</style>
