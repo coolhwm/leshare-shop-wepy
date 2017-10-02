@@ -6,19 +6,7 @@
   <view class="container" wx:if="{{init}}">
     <AddressSelector :address.sync="selectedAddress" @select.user="address" />
 
-    <!--备注信息-->
-    <view class="remark-box weui-cells weui-cells_after-title weui-cells-merge-top">
-      <view class="weui-cell weui-cell_input">
-        <view class="weui-cell__hd" >
-          <view class="weui-label">订单备注</view>
-        </view>
-        <view class="weui-cell__bd">
-          <input class="weui-input" id="message"  @input="input" value="{{trade.message}}" placeholder="请输入订单备注"/>
-        </view>
-        <view class="weui-cell__ft">
-        </view>
-      </view>
-    </view>
+    <view class="mt10"></view>
 
     <!--订单项目-->
     <OrderItem :order.sync="trade" action="0"></OrderItem>
@@ -27,7 +15,7 @@
     <view class="weui-cells weui-cells_after-title weui-cells-merge-top">
       <view class="weui-cell weui-cell_access" @tap="paymentType">
         <view class="weui-cell__bd">支付方式</view>
-        <view class="weui-cell__ft weui-cell__ft_in-access">{{trade.paymentText}}</view>
+        <view class="weui-cell__ft {{shop.offPay == 1 ? 'weui-cell__ft_in-access' : ''}}">{{trade.paymentText}}</view>
       </view>
       <view class="weui-cell weui-cell_access" @tap="delivery">
         <view class="weui-cell__bd">配送方式</view>
@@ -42,7 +30,7 @@
     </view>
 
     <!--信息汇总-->
-    <view class="panel summary-box mb20">
+    <view class="panel summary-box mb10">
       <view class="price-box row-between">
         <text>商品金额</text>
         <text class="major">￥{{trade.dealPrice}}</text>
@@ -65,6 +53,20 @@
       <view class="final-box" wx:if="{{trade.status}}">
         <text class="lg">实付款：</text>
         <text class="lg major">￥{{trade.finalPrice}}</text>
+      </view>
+    </view>
+
+    <!--备注信息-->
+    <view class="remark-box weui-cells weui-cells_after-title weui-cells-merge-top">
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__hd" >
+          <view class="weui-label">订单备注</view>
+        </view>
+        <view class="weui-cell__bd">
+          <input class="weui-input" id="message"  @input="input" value="{{trade.message}}" placeholder="请输入订单备注"/>
+        </view>
+        <view class="weui-cell__ft">
+        </view>
       </view>
     </view>
 
@@ -167,8 +169,6 @@
        */
       address () {
         this.isAddressListDisplay = true;
-        // this.$preload('goodsList', this.trade.orderGoodsInfos);
-        // this.$navigate('../address/list');
       },
       /**
        * 选择优惠券
@@ -186,6 +186,9 @@
        * 选择付款方式
        */
       async paymentType () {
+        if (this.shop.offPay == 0) {
+          return;
+        }
         const trade = this.trade;
         Tips.actionWithFunc(['在线支付', '线下支付'],
           () => {
@@ -388,7 +391,6 @@
 
   .remark-box{
     border-top: $border;
-    margin-top: 10rpx;
     margin-bottom: 10rpx;
   }
 
