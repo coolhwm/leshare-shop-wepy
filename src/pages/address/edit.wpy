@@ -136,7 +136,7 @@
           await address.save(param);
         }
         await Tips.success('保存成功');
-        Event.emit(Event.ADDRESS_LIST_UPDATE, true);
+        Event.emit(Event.ADDRESS_LIST_UPDATE, this.mode == 'create');
         wepy.navigateBack();
       }
     };

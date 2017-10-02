@@ -63,8 +63,8 @@
         Event.emit(Event.TRADE_ADDRESS_UPDATE, this.available[0]);
         this.display = false;
         this.$apply();
-      } else if (size == 0) {
-        // 没有地址的情况，要通知父页面
+      } else {
+        // 如果列表变更了，需要清空订单中的
         Event.emit(Event.TRADE_ADDRESS_UPDATE, null);
       }
     }

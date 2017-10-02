@@ -55,7 +55,7 @@
           mode: 'edit',
           id: id
         };
-        this.$root.$navigate('edit', param);
+        this.$root.$navigate('/pages/address/edit', param);
       },
       async setDefault(id) {
         await address.setDefault(id);
@@ -63,7 +63,7 @@
         Event.emit(Event.ADDRESS_LIST_UPDATE);
       },
       async delete(id) {
-        await Tips.confirm('确定删除该地址？')
+        await Tips.confirm('确定删除该地址？');
         await address.remove(id);
         await Tips.success('操作成功');
         Event.emit(Event.ADDRESS_LIST_UPDATE);
