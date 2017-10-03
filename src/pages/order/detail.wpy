@@ -11,14 +11,16 @@
     </view>
 
     <!--物流栏-->
-    <block wx:if="{{order.isExpress}}">
-      <view class="order-trace-bar row" @tap="trace({{order.orderId}})">
-        <image class="icon" src="/images/icons/car.png" />
-        <view class="info-box column">
-          <text class="inline">{{express.text}}</text>
-          <text class="muted sm mt10" wx:if="{{express.timestape}}">{{express.timestape}}</text>
+    <block wx:if="{{order.isExpress && order.orderExpress.telPhone}}">
+      <view class="order-trace-bar row-between" >
+        <view class="row">
+          <image class="icon" src="/images/icons/sender.png" />
+          <text class="ml20">{{order.orderExpress.note}}（{{order.orderExpress.telPhone}}）</text>
         </view>
-        <image class="icon" wx:if="{{express.timestape}}" src="/images/icons/more-gray.png" />
+        <view  class="row" @tap="sender">
+          <image class="icon" src="/images/icons/call.png"  />
+          <text class="ml10 primary">电话联系</text>
+        </view>
       </view>
     </block>
     <!--地址展现-->
@@ -234,6 +236,9 @@
         } else {
           Tips.error('未知错误');
         }
+      },
+      sender() {
+        wepy.makePhoneCall({phoneNumber: this.order.orderExpress.telPhone});
       }
     };
     computed = {
