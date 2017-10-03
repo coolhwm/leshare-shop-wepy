@@ -52,7 +52,7 @@
         // TODO 超出配送范围
         // TODO 未达到起送价格
       }
-    }
+    };
     events = {};
     onLoad() {
     }

@@ -72,8 +72,9 @@
           this.$apply();
         } catch (e) {
           if (e.serverCode == '50001') {
-            Tips.alert('已经领过了');
+            await Tips.alert('已经领过了');
           }
+          this.loaded();
         }
       }
     };

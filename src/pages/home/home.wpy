@@ -148,8 +148,7 @@
     }
     methods = {
       shop() {
-        this.$redirect('/pages/shop/index');
-        // url="/pages/shop/index"  open-type="redirect"
+        this.$navigate('/pages/shop/index');
       },
       phone() {
         wepy.makePhoneCall({phoneNumber: this.shop.phone});
@@ -251,9 +250,10 @@
       border-bottom: $border;
       .content{
         flex-wrap: wrap;
-        margin-top: 40rpx;
+        margin-top: 30rpx;
         .shop-photo{
           margin-right: 10rpx;
+          margin-top:10rpx;
           height: 200rpx;
           width: 200rpx;
         }

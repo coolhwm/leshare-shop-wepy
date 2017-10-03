@@ -60,14 +60,20 @@
       this.shop.notices = await Cache.notices();
       this.page = order.page();
       // -- 异步加载
+      this.loadCoupon();
+      // 分页加载
+      await this.next();
+      // 监听更新事件
+      Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
+      Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
+    };
+    loadCoupon() {
+      // -- 异步加载
       Cache.coupon().then(({ownList}) => {
         this.couponsNum = ownList.length + '张';
         this.loaded();
       });
-      await this.next();
-      // 监听更新事件
-      Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
-    };
+    }
     events = {};
     components = {
       Placeholder: Placeholder,

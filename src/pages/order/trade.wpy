@@ -1,9 +1,12 @@
 <template>
   <Tips/>
+
+  <AddressList :goodsList.sync="goodsList" :display.sync="isAddressListDisplay" />
+
   <view class="container" wx:if="{{init}}">
     <AddressSelector :address.sync="selectedAddress" @select.user="address" />
 
-    <view class="mt20"></view>
+    <view class="mt10"></view>
 
     <!--订单项目-->
     <OrderItem :order.sync="trade" action="0"></OrderItem>
@@ -12,7 +15,7 @@
     <view class="weui-cells weui-cells_after-title weui-cells-merge-top">
       <view class="weui-cell weui-cell_access" @tap="paymentType">
         <view class="weui-cell__bd">支付方式</view>
-        <view class="weui-cell__ft weui-cell__ft_in-access">{{trade.paymentText}}</view>
+        <view class="weui-cell__ft {{shop.offPay == 1 ? 'weui-cell__ft_in-access' : ''}}">{{trade.paymentText}}</view>
       </view>
       <view class="weui-cell weui-cell_access" @tap="delivery">
         <view class="weui-cell__bd">配送方式</view>
@@ -24,14 +27,10 @@
         </view>
         <view class="weui-cell__ft {{coupons.length > 0 ? 'weui-cell__ft_in-access' : ''}}">{{couponText}}</view>
       </view>
-      <!--<view class="weui-cell">-->
-        <!--<view class="weui-cell__bd">买家留言</view>-->
-        <!--<view class="weui-cell__ft">{{trade.message ? trade.message : '无'}}</view>-->
-      <!--</view>-->
     </view>
 
     <!--信息汇总-->
-    <view class="panel summary-box mb20">
+    <view class="panel summary-box mb10">
       <view class="price-box row-between">
         <text>商品金额</text>
         <text class="major">￥{{trade.dealPrice}}</text>
@@ -57,6 +56,20 @@
       </view>
     </view>
 
+    <!--备注信息-->
+    <view class="remark-box weui-cells weui-cells_after-title weui-cells-merge-top">
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__hd" >
+          <view class="weui-label">订单备注</view>
+        </view>
+        <view class="weui-cell__bd">
+          <input class="weui-input" id="message"  @input="input" value="{{trade.message}}" placeholder="请输入订单备注"/>
+        </view>
+        <view class="weui-cell__ft">
+        </view>
+      </view>
+    </view>
+
     <!--操作底栏-->
     <view class="tarde-action-bar row-end">
       <view>
@@ -76,7 +89,6 @@
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
-  import input from '../../mixins/input';
   import auth from '../../api/auth';
   import address from '../../api/address';
   import coupon from '../../api/coupon';
@@ -86,6 +98,7 @@
   import ActionBar from '../../components/common/action_bar';
   import AddressSelector from '../../components/address/selector';
   import ActionSheet from '../../components/weui/action_sheet';
+  import AddressList from '../../components/address/list';
   import OrderItem from '../../components/order/customer_item';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
@@ -106,7 +119,9 @@
       selectedCoupon: null,
       confirmStatus: false,
       confirmText: '立即下单',
-      reduce: null
+      reduce: null,
+      goodsList: null,
+      isAddressListDisplay: false
     };
     data = {...this.def};
 
@@ -116,6 +131,7 @@
       if (!result || !isOpen) { return; }
       // 订单数据
       this.trade = preload.trade;
+      this.goodsList = this.trade.orderGoodsInfos;
       // 默认地址
       this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
       // 处理配送方式
@@ -131,8 +147,10 @@
       Event.listen(Event.TRADE_ADDRESS_UPDATE, this.updateAddress.bind(this), this);
       Event.listen(Event.TRADE_COUPON_UPDATE, this.updateCoupon.bind(this), this);
     };
-
     methods = {
+      input({detail}) {
+        this.trade.message = detail.value;
+      },
       /**
        * 选择配送方式
        */
@@ -150,8 +168,7 @@
        * 选择地址
        */
       address () {
-        this.$preload('goodsList', this.trade.orderGoodsInfos);
-        this.$navigate('../address/list');
+        this.isAddressListDisplay = true;
       },
       /**
        * 选择优惠券
@@ -169,17 +186,21 @@
        * 选择付款方式
        */
       async paymentType () {
+        if (this.shop.offPay == 0) {
+          return;
+        }
         const trade = this.trade;
-        await Tips.actionWithFunc(['在线支付', '线下支付'],
+        Tips.actionWithFunc(['在线支付', '线下支付'],
           () => {
             trade.paymentText = '在线支付';
-            trade.paymentType = 1
+            trade.paymentType = 1;
+            this.$apply();
           },
           () => {
             trade.paymentText = '线下支付';
-            trade.paymentType = 0
+            trade.paymentType = 0;
+            this.$apply();
           });
-        this.$apply();
       },
       /**
        * 确定下单
@@ -193,7 +214,6 @@
           Tips.alert(this.confirmText);
           return;
         }
-        Tips.loading();
         // 数据准备
         this.trade.deliveryType = 'CITY';
         // 表单ID
@@ -203,7 +223,6 @@
         if (trade.paymentType == 1) {
           // 在线支付/发起预支付
           const payment = await order.prepayOrder(trade.orderId);
-          Tips.loaded();
           // 微信支付
           try {
             await order.wxpayOrder(payment);
@@ -356,9 +375,10 @@
       ActionBar: ActionBar,
       ActionSheet: ActionSheet,
       AddressSelector: AddressSelector,
-      OrderItem: OrderItem
+      OrderItem: OrderItem,
+      AddressList: AddressList
     };
-    mixins = [base, input];
+    mixins = [base];
     config = {
       navigationBarTitleText: '订单详情'
     }
@@ -368,6 +388,11 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+
+  .remark-box{
+    border-top: $border;
+    margin-bottom: 10rpx;
+  }
 
   //汇总栏
   .summary-box{

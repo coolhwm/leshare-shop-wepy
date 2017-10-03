@@ -7,7 +7,7 @@
           <image class="icon" src="/images/icons/shop-gray.png"/>
           <text class="sm ml10">{{shopName}}</text>
         </view>
-        <text class="sm primary">{{order.statusText}}{{order.paymentType == 0 ? '(线下支付)' : ''}}</text>
+        <text class="sm primary" wx:if="{{order.statusText}}">{{order.statusText}}{{order.paymentType == 0 ? '(线下支付)' : ''}}</text>
       </view>
       <view class="order-info-container row-between">
         <text>{{order.orderTime}}</text>
@@ -40,18 +40,12 @@
 
     <!--操作栏-->
     <view class="order-action-bar row-end" wx:if="{{order.actions.length > 0}}">
-      <!--<view class="zan-btn zan-btn&#45;&#45;small" @tap="again({{order}})">再来一单</view>-->
-      <!--<view class="zan-btn zan-btn&#45;&#45;small" @tap="close({{order.orderId}})"  wx:if="{{order.status == 1 || (order.status == 2 && order.paymentType == 0)}}">取消订单</view>-->
-      <!--<view class="zan-btn zan-btn&#45;&#45;small zan-btn&#45;&#45;primary" @tap="pay({{order.orderId}})" wx:if="{{order.status == 1}}">立即支付</view>-->
-      <!--<view class="zan-btn zan-btn&#45;&#45;small zan-btn&#45;&#45;primary" @tap="comment({{order}})" wx:if="{{order.status == 4}}">评价订单</view>-->
-
       <block wx:for="{{order.actions}}" wx:for-item="action" wx:key="index">
         <view class="zan-btn zan-btn--small {{action.primary ? 'zan-btn--primary' : ''}}" @tap="action({{action.func}}, {{order}})">{{action.name}}</view>
       </block>
     </view>
   </view>
 </template>
-
 <script>
   import wepy from 'wepy';
   import order from '../../api/order';
@@ -61,9 +55,9 @@
   import OrderGoods from './goods';
   export default class OrderItem extends wepy.component {
     props = {
-
       order: {
-        orderGoodsInfos: []
+        orderGoodsInfos: [],
+        orderPriceHistory: []
       },
       action: {
         default: true
@@ -124,6 +118,8 @@
      */
     async again(order) {
       Event.emit(Event.CART_LIST_RESET, order.orderGoodsInfos);
+      // 预加载/处理首页没打开的情况
+      this.$root.$preload('cart', order.orderGoodsInfos);
       // 跳转到首页，重新加载
       Route.backOrRedirect('/pages/shop/index');
     }

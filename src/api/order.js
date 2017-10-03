@@ -119,10 +119,7 @@ export default class order extends base {
    */
   static closeOrder (orderId) {
     const url = `${this.baseUrl}/orders/${orderId}/status/close`;
-    const param = {
-      note: '买家关闭'
-    };
-    return this.put(url, param);
+    return this.put(url, '买家关闭');
   }
 
   /**
@@ -216,6 +213,7 @@ export default class order extends base {
         imageUrl: goods.goodsImage,
         goodsPrice: goods.goodsPrice,
         count: goods.goodsNum,
+        innerCid: goods.innerCid,
         skuText: goods.skuText,
         goodsSku: goods.goodsSku
       };
@@ -472,9 +470,12 @@ export default class order extends base {
     const status = order.status;
     order.statusText = this.statusDict[status];
     order.statusDesc = this.statusDesc[status];
-    order.isAction = status == 1 || status == 2 || status == 3 || status == 4;
+    // 订单关闭
+    if (order.status == 7 && order.orderCloseNote) {
+      const reason = order.orderCloseNote;
+      order.statusDesc = `订单已关闭，关闭原因：${reason.note}`;
+    }
   }
-
   /**
    * 处理物流配送信息
    */
