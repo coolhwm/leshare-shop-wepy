@@ -174,7 +174,7 @@
       this.categories.list.forEach(item => {
         item.count = 0;
         this.carts.forEach(cart => {
-          if (cart.shopCategory && item.id == cart.shopCategory) {
+          if (cart.innerCid && item.id == cart.innerCid) {
             item.count += cart.goodsNum;
           }
         });
@@ -287,7 +287,7 @@
             goodsId: goodsId,
             goodsSku: goodsSku,
             goodsName: goods.name,
-            shopCategory: goods.innerCid,
+            innerCid: goods.innerCid,
             goodsImage: goods.imageUrl,
             goodsPrice: goodsPrice,
             goodsNum: 1,
@@ -374,12 +374,13 @@
     }
     async doResetCart(goodsList) {
       this.carts = [];
+      // TODO 需要检验商品是否能够再来一单
       goodsList.forEach(goods => {
         this.carts.push({
           goodsId: goods.goodsId,
           goodsSku: goods.goodsSku,
           goodsName: goods.goodsName,
-          shopCategory: null,
+          innerCid: goods.innerCid,
           goodsImage: goods.imageUrl,
           goodsPrice: goods.goodsPrice,
           goodsNum: goods.count,

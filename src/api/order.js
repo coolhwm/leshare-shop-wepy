@@ -213,6 +213,7 @@ export default class order extends base {
         imageUrl: goods.goodsImage,
         goodsPrice: goods.goodsPrice,
         count: goods.goodsNum,
+        innerCid: goods.innerCid,
         skuText: goods.skuText,
         goodsSku: goods.goodsSku
       };
