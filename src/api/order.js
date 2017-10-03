@@ -469,9 +469,12 @@ export default class order extends base {
     const status = order.status;
     order.statusText = this.statusDict[status];
     order.statusDesc = this.statusDesc[status];
-    order.isAction = status == 1 || status == 2 || status == 3 || status == 4;
+    // 订单关闭
+    if (order.status == 7 && order.orderCloseNote) {
+      const reason = order.orderCloseNote;
+      order.statusDesc = `订单已关闭，关闭原因：${reason.note}`;
+    }
   }
-
   /**
    * 处理物流配送信息
    */
