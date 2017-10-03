@@ -64,6 +64,12 @@
         </view>
         <text class="major">-￥{{order.reduceFee}}</text>
       </view>
+
+      <view class="price-hr"></view>
+      <view class="final-box origin-box" wx:if="{{order.orderPriceHistory.length > 0}}">
+        <text class="lg muted">原价：</text>
+        <text class="lg muted">￥{{originPrice}}</text>
+      </view>
       <view class="final-box">
         <text class="lg">实付款：</text>
         <text class="lg major">￥{{order.finalPrice}}</text>
@@ -75,13 +81,6 @@
       <block wx:for="{{order.actions}}" wx:for-item="action" wx:key="index">
         <view class="zan-btn zan-btn--small {{action.primary ? 'zan-btn--primary' : ''}}" @tap="action({{action.func}}, {{order}})">{{action.name}}</view>
       </block>
-      <!--<view class="zan-btn zan-btn&#45;&#45;small" @tap="again({{order}})">再来一单</view>-->
-      <!--<view class="zan-btn zan-btn&#45;&#45;small" @tap="close({{order.orderId}})"  wx:if="{{order.status == 1 || (order.status == 2 && order.paymentType == 0)}}">取消订单</view>-->
-      <!--<view class="zan-btn zan-btn&#45;&#45;small zan-btn&#45;&#45;primary" @tap="pay({{order.orderId}})" wx:if="{{order.status == 1}}">立即支付</view>-->
-      <!--<view class="zan-btn zan-btn&#45;&#45;small" @tap="refundDetail({{order.curRefund}})" wx:if="{{order.curRefund}}">退款详情</view>-->
-      <!--<view class="zan-btn zan-btn&#45;&#45;small" @tap="refund({{order}})" wx:if="{{order.status == 2}}">申请退款</view>-->
-      <!--<view class="zan-btn zan-btn&#45;&#45;small zan-btn&#45;&#45;primary" @tap="comment({{order}})" wx:if="{{order.status == 4}}">评价订单</view>-->
-      <!--<view class="zan-btn zan-btn&#45;&#45;small zan-btn&#45;&#45;primary" @tap="unrefund({{order}})" wx:if="{{order.status == 5}}">撤销退款</view>-->
     </view>
   </view>
 </template>
@@ -99,7 +98,8 @@
   export default class OrderDetail extends wepy.page {
     def = {
       order: {
-        orderGoodsInfos: []
+        orderGoodsInfos: [],
+        orderPriceHistory: []
       },
       express: {},
       address: {},
@@ -236,6 +236,18 @@
         }
       }
     };
+    computed = {
+      originPrice() {
+        if (this.order && this.order.orderPriceHistory) {
+          const records = this.order.orderPriceHistory;
+          const length = records.length;
+          if (length > 0) {
+            return records[length - 1].currentPrice.toFixed(2);
+          }
+        }
+        return null;
+      }
+    };
     components = {
       Address: Address,
       OrderItem: OrderItem
@@ -282,12 +294,22 @@
   .summary-box{
     padding: 10px 15px;
 
+    .price-hr{
+     border-top: $border;
+     width: 100%;
+    }
+
     .final-box{
       float: right;
       width: 100%;
       padding-top: 10rpx;
-      border-top: $border;
       text-align: right;
+    }
+
+    .origin-box{
+      text{
+        text-decoration: line-through;
+      }
     }
 
     .price-box{

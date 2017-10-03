@@ -46,7 +46,6 @@
     </view>
   </view>
 </template>
-
 <script>
   import wepy from 'wepy';
   import order from '../../api/order';
@@ -56,9 +55,9 @@
   import OrderGoods from './goods';
   export default class OrderItem extends wepy.component {
     props = {
-
       order: {
-        orderGoodsInfos: []
+        orderGoodsInfos: [],
+        orderPriceHistory: []
       },
       action: {
         default: true
