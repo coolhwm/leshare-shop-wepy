@@ -5,7 +5,7 @@
 
     <!--列表展现-->
     <repeat for="{{page.list}}" key="index" index="index" item="item">
-      <CouponItem :coupon.sync="item" @delete.user="delete"/>
+      <CouponItem :coupon.sync="item" @delete.user="delete" @select.user="detail"/>
     </repeat>
     <!-- 加载提示 -->
     <Loadmore :page.sync="page"/>
@@ -13,8 +13,6 @@
     <!--占位符-->
     <Placeholder :show.sync="isPageEmpty" message="您还没有相关优惠券"/>
   </view>
-
-
 </template>
 
 <script>
@@ -69,6 +67,10 @@
         await Tips.success('操作成功');
         Event.emit(Event.COUPON_LIST_UPDATE);
         this.reload();
+      },
+      detail(coupon) {
+        this.$preload('coupon', coupon);
+        this.$navigate('detail');
       },
       switchTab() {
         this.reload();

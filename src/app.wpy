@@ -82,6 +82,7 @@ export default class extends wepy.app {
       'pages/coupon/active',
       'pages/coupon/pick',
       'pages/coupon/list',
+      'pages/coupon/detail',
       'pages/order/list',
       'pages/address/list',
       'pages/address/search',

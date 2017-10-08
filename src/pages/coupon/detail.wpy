@@ -1,0 +1,52 @@
+<template>
+  <CouponItem :coupon.sync="coupon" />
+
+  <view class="qr-box column-center">
+    <text class="muted mb20 lg">线下店铺消费时出示</text>
+    <canvas style="width: 200px; height: 200px;" canvas-id="qrcode" bindtap="previewImage"></canvas>
+  </view>
+
+</template>
+
+
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import CouponItem from '../../components/coupons/item';
+  import Qrcode from '../../components/wux/qrcode/qrcode';
+  // import Tips from '../../utils/Tips';
+
+  export default class CouponDetail extends wepy.page {
+    def = {
+      coupon: null
+    };
+    data = {...this.def};
+    onLoad (options, {preload}) {
+      this.coupon = preload.coupon;
+      console.info(this.coupon.id);
+      Qrcode.init('qrcode', '' + this.coupon.id);
+    };
+    events = {};
+    components = {
+      CouponItem: CouponItem
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '使用优惠券'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .qr-box{
+    margin-top: 30rpx;
+    margin-left: 20rpx;
+    margin-right: 20rpx;
+    padding-top: 40rpx;
+    padding-bottom: 40rpx;
+    background-color: white;
+    border: $border;
+  }
+</style>
