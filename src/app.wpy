@@ -79,6 +79,7 @@ export default class extends wepy.app {
       'pages/order/trade',
       'pages/order/refund_edit',
       'pages/order/refund_detail',
+      'pages/coupon/active',
       'pages/coupon/pick',
       'pages/coupon/list',
       'pages/order/list',
@@ -99,10 +100,10 @@ export default class extends wepy.app {
     },
     scene: '',
     shopType: '2',
-    shopName: '连江什么鬼炸鸡汉堡',
-    app_code: 'eemTgbKrhqiYKMFowcBCQ1Zr7G13bWUT',
-    // baseUrl: 'http://192.168.31.124:9999/v2/customer',
+    shopName: '卜菲力牛排杯',
+    app_code: 'xxfTgbKrhqiYKMFowcBCQ1Zr7G13bWUT',
     // baseUrl: 'https://api.leshare.shop/v2/customer'
+    // baseUrl: 'http://192.168.31.124:9999/v2/customer',
     baseUrl: 'http://106.14.195.68:9999/v2/customer'
   }
 }

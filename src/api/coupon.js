@@ -95,6 +95,14 @@ export default class CouponService extends base {
     });
   }
 
+  /**
+   * 获取活动中的卡券
+   */
+  static campaign(visit) {
+    const url = `${this.baseUrl}/coupons/campaign`;
+    return this.post(url, visit);
+  }
+
   static _processPickItem (coupon) {
     coupon.beginTime = this._convertTimestapeToDay(coupon.beginTime);
     coupon.dueTime = this._convertTimestapeToDay(coupon.dueTime);
