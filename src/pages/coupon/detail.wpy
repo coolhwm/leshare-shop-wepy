@@ -1,9 +1,20 @@
 <template>
+  <Tips />
   <CouponItem :coupon.sync="coupon" />
+
+  <view class="success-box column-center"  wx:if="{{success}}">
+    <text>{{message}}</text>
+  </view>
 
   <view class="qr-box column-center" wx:if="{{!success}}">
     <text class="muted mb20 lg">线下店铺消费时出示</text>
     <canvas  style="width: 200px; height: 200px;" canvas-id="qrcode" bindtap="previewImage"></canvas>
+  </view>
+
+  <view class="zan-panel" wx:if="{{!success}}">
+    <view class="zan-btns">
+      <button class="zan-btn zan-btn--fill" @tap="check">自助核销</button>
+    </view>
   </view>
 
 </template>
@@ -13,16 +24,19 @@
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
+  import input from '../../mixins/input';
   import coupon from '../../api/coupon';
   import CouponItem from '../../components/coupons/item';
   import Qrcode from '../../components/wux/qrcode/qrcode';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
+  import FormTips from '../../components/weui/tips';
   let interval = null;
   export default class CouponDetail extends wepy.page {
     def = {
       coupon: null,
-      success: false
+      success: false,
+      message: ''
     };
     data = {...this.def};
     onLoad (options, {preload}) {
@@ -31,14 +45,14 @@
       Tips.setLoading();
       interval = setInterval(async () => {
         const ownList = await coupon.own();
-        const target = ownList.find(item => item.id == id);
+        const target = ownList ? ownList.find(item => item.id == id) : null;
         if (target == null) {
           this.coupon.status = 'USED';
+          this.message = '店家已核销';
           this.success = true;
           clearInterval(interval);
           Event.emit(Event.COUPON_LIST_UPDATE);
           await Tips.success('已核销', 1000);
-          await wepy.navigateBack();
           this.$apply();
         }
       }, 3000);
@@ -47,11 +61,32 @@
     onUnload () {
       clearInterval(interval);
     }
+    methods = {
+      async check() {
+        await Tips.confirm('确认自助核销？该优惠券将被使用，操作后请将结果给店家展示');
+        try {
+          await coupon.use(this.coupon.id);
+          this.coupon.status = 'USED';
+          this.message = '已自助核销';
+          this.success = true;
+          clearInterval(interval);
+          Event.emit(Event.COUPON_LIST_UPDATE);
+          await Tips.success('操作成功', 1000);
+          this.$apply();
+        } catch (e) {
+          console.warn(e);
+          this.tips('核销失败:' + e.message);
+          Tips.loaded();
+        }
+
+      }
+    };
     events = {};
     components = {
-      CouponItem: CouponItem
+      CouponItem: CouponItem,
+      Tips: FormTips
     };
-    mixins = [base];
+    mixins = [base, input];
     config = {
       navigationBarTitleText: '使用优惠券'
     };
@@ -68,5 +103,16 @@
     padding-bottom: 40rpx;
     background-color: white;
     border: $border;
+  }
+  .success-box{
+    background-color: white;
+    padding: 20rpx;
+    margin: 20rpx;
+    height: 100px;
+    border: $border;
+    text {
+      font-size: 27px;
+      color: $color-muted;
+    }
   }
 </style>

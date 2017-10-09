@@ -85,6 +85,14 @@ export default class CouponService extends base {
   }
 
   /**
+   * 使用卡券
+   */
+  static async use(id) {
+    const url = `${this.baseUrl}/coupons/use/${id}`;
+    return await this.put(url);
+  }
+
+  /**
    * 获取可用的卡券信息
    */
   static available (goodsList) {
