@@ -32,7 +32,7 @@ export default class CouponService extends base {
       const ownList = [];
       // 卡券分类
       coupons.forEach(coupon => {
-        const isOwn = own.some(item => item.couponId == coupon.id);
+        const isOwn = own ? own.some(item => item.couponId == coupon.id) : false;
         if (isOwn) {
           coupon.own = true;
           ownList.push(coupon);
