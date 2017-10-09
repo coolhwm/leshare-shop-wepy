@@ -15,8 +15,6 @@
   import base from '../../mixins/base';
   import CouponItem from '../../components/coupons/item';
   import Qrcode from '../../components/wux/qrcode/qrcode';
-  // import Tips from '../../utils/Tips';
-
   export default class CouponDetail extends wepy.page {
     def = {
       coupon: null
@@ -24,8 +22,7 @@
     data = {...this.def};
     onLoad (options, {preload}) {
       this.coupon = preload.coupon;
-      console.info(this.coupon.id);
-      Qrcode.init('qrcode', '' + this.coupon.id);
+      Qrcode.init('qrcode', `${this.coupon.couponId}#${this.coupon.id}`);
     };
     events = {};
     components = {

@@ -69,6 +69,9 @@
         this.reload();
       },
       detail(coupon) {
+        if (coupon.status != 'NEVER_USED') {
+          return;
+        }
         this.$preload('coupon', coupon);
         this.$navigate('detail');
       },
