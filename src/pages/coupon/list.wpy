@@ -5,7 +5,7 @@
 
     <!--列表展现-->
     <repeat for="{{page.list}}" key="index" index="index" item="item">
-      <CouponItem :coupon.sync="item" @delete.user="delete"/>
+      <CouponItem :coupon.sync="item" @delete.user="delete" @select.user="detail"/>
     </repeat>
     <!-- 加载提示 -->
     <Loadmore :page.sync="page"/>
@@ -13,8 +13,6 @@
     <!--占位符-->
     <Placeholder :show.sync="isPageEmpty" message="您还没有相关优惠券"/>
   </view>
-
-
 </template>
 
 <script>
@@ -57,18 +55,19 @@
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;
       this.page = coupon.page();
+      Event.listen(Event.COUPON_LIST_UPDATE, this.update.bind(this), this);
       await this.next();
     };
     params() {
       return {status: this.tab.selectedId};
     }
     methods = {
-      async delete({id}) {
-        await Tips.confirm('确认删除该优惠券?');
-        await coupon.remove(id);
-        await Tips.success('操作成功');
-        Event.emit(Event.COUPON_LIST_UPDATE);
-        this.reload();
+      detail(coupon) {
+        if (coupon.status != 'NEVER_USED') {
+          return;
+        }
+        this.$preload('coupon', coupon);
+        this.$navigate('detail');
       },
       switchTab() {
         this.reload();

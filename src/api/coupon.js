@@ -32,7 +32,7 @@ export default class CouponService extends base {
       const ownList = [];
       // 卡券分类
       coupons.forEach(coupon => {
-        const isOwn = own.some(item => item.couponId == coupon.id);
+        const isOwn = own ? own.some(item => item.couponId == coupon.id) : false;
         if (isOwn) {
           coupon.own = true;
           ownList.push(coupon);
@@ -85,6 +85,14 @@ export default class CouponService extends base {
   }
 
   /**
+   * 使用卡券
+   */
+  static async use(id) {
+    const url = `${this.baseUrl}/coupons/use/${id}`;
+    return await this.put(url);
+  }
+
+  /**
    * 获取可用的卡券信息
    */
   static available (goodsList) {
@@ -93,6 +101,14 @@ export default class CouponService extends base {
     return this.post(url, param).then(data => {
       return data ? data.map(coupon => this._processCouponItem(coupon)) : [];
     });
+  }
+
+  /**
+   * 获取活动中的卡券
+   */
+  static campaign(visit) {
+    const url = `${this.baseUrl}/coupons/campaign`;
+    return this.post(url, visit);
   }
 
   static _processPickItem (coupon) {
@@ -106,12 +122,14 @@ export default class CouponService extends base {
    */
   static _processCouponItem (data) {
     const root = data;
+    if (data.coupon == null) {
+      return null;
+    }
     const coupon = data.coupon;
 
     coupon.status = root.status;
     coupon.id = root.id;
     coupon.couponId = root.couponId;
-    coupon.usedTime = coupon.usedTime;
     coupon.acceptTime = root.acceptTime;
     coupon.usedTime = root.usedTime;
     coupon.beginTime = this._convertTimestapeToDay(coupon.beginTime);

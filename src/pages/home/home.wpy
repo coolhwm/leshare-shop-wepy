@@ -88,6 +88,7 @@
 <script>
   import wepy from 'wepy';
   import auth from '../../api/auth';
+  import coupon from '../../api/coupon';
   import shop from '../../api/shop';
   import goods from '../../api/goods';
   import base from '../../mixins/base';
@@ -113,9 +114,22 @@
       this.shopTitle = shop.type().name;
       this.loaded();
       this.visit(sence);
+      this.campaign(sence);
       this.share = WxUtils.canIUse('button.open-type.share');
       this.preload();
     };
+    campaign(sence) {
+      coupon.campaign({
+        sence: sence,
+        customScene: wepy.$instance.globalData.scene
+      }).then(coupon => {
+        // 当前有活动卷可以领取
+        if (coupon) {
+          this.$preload('coupon', coupon);
+          this.$navigate('/pages/coupon/active');
+        }
+      });
+    }
     visit(sence) {
       // 记录访问信息
       shop.visit(sence, wepy.$instance.globalData.scene);
