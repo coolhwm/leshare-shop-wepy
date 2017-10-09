@@ -5,7 +5,7 @@
   <!--滑动面板-->
   <view class="slider-panel-box {{display == 'true' ? 'slider-panel-show' : '' }} " style="min-height: {{minHeight}}">
     <!--面板标题-->
-    <view class="header-box">
+    <view class="header-box" wx:if="{{header == 'true'}}">
       <!--标题槽位-->
       <view class="title-box">
         <slot name="title"></slot>
@@ -40,6 +40,9 @@
       },
       backgroundColor: {
         default: '#F8F8F8'
+      },
+      header: {
+        default: 'true'
       },
       minHeight: {
         default: 0
