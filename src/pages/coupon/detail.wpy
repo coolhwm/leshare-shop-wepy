@@ -1,9 +1,9 @@
 <template>
   <CouponItem :coupon.sync="coupon" />
 
-  <view class="qr-box column-center">
+  <view class="qr-box column-center" wx:if="{{!success}}">
     <text class="muted mb20 lg">线下店铺消费时出示</text>
-    <canvas style="width: 200px; height: 200px;" canvas-id="qrcode" bindtap="previewImage"></canvas>
+    <canvas  style="width: 200px; height: 200px;" canvas-id="qrcode" bindtap="previewImage"></canvas>
   </view>
 
 </template>
@@ -13,17 +13,40 @@
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
+  import coupon from '../../api/coupon';
   import CouponItem from '../../components/coupons/item';
   import Qrcode from '../../components/wux/qrcode/qrcode';
+  import Tips from '../../utils/Tips';
+  import Event from '../../utils/Event';
+  let interval = null;
   export default class CouponDetail extends wepy.page {
     def = {
-      coupon: null
+      coupon: null,
+      success: false
     };
     data = {...this.def};
     onLoad (options, {preload}) {
       this.coupon = preload.coupon;
+      const id = preload.coupon.id;
+      Tips.setLoading();
+      interval = setInterval(async () => {
+        const ownList = await coupon.own();
+        const target = ownList.find(item => item.id == id);
+        if (target == null) {
+          this.coupon.status = 'USED';
+          this.success = true;
+          clearInterval(interval);
+          Event.emit(Event.COUPON_LIST_UPDATE);
+          await Tips.success('已核销', 1000);
+          await wepy.navigateBack();
+          this.$apply();
+        }
+      }, 3000);
       Qrcode.init('qrcode', `${this.coupon.couponId}#${this.coupon.id}`);
     };
+    onUnload () {
+      clearInterval(interval);
+    }
     events = {};
     components = {
       CouponItem: CouponItem

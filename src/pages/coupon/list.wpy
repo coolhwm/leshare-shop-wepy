@@ -55,6 +55,7 @@
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;
       this.page = coupon.page();
+      Event.listen(Event.COUPON_LIST_UPDATE, this.update.bind(this), this);
       await this.next();
     };
     params() {
