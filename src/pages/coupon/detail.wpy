@@ -8,12 +8,13 @@
 
   <view class="qr-box column-center" wx:if="{{!success}}">
     <text class="muted mb20 lg">线下店铺消费时出示</text>
-    <canvas  style="width: 200px; height: 200px;" canvas-id="qrcode" bindtap="previewImage"></canvas>
+    <canvas  style="width: 200px; height: 200px;" canvas-id="qrcode"></canvas>
   </view>
 
   <view class="zan-panel" wx:if="{{!success}}">
     <view class="zan-btns">
       <button class="zan-btn zan-btn--fill" @tap="check">自助核销</button>
+      <button class="zan-btn" @tap="delete">删除优惠券</button>
     </view>
   </view>
 
@@ -78,8 +79,14 @@
           this.tips('核销失败:' + e.message);
           Tips.loaded();
         }
-
-      }
+      },
+      async delete() {
+        await Tips.confirm('确认删除该优惠券?');
+        await coupon.remove(this.coupon.id);
+        await Tips.success('操作成功');
+        Event.emit(Event.COUPON_LIST_UPDATE);
+        wepy.navigateBack();
+      },
     };
     events = {};
     components = {

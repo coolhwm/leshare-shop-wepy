@@ -62,13 +62,6 @@
       return {status: this.tab.selectedId};
     }
     methods = {
-      async delete({id}) {
-        await Tips.confirm('确认删除该优惠券?');
-        await coupon.remove(id);
-        await Tips.success('操作成功');
-        Event.emit(Event.COUPON_LIST_UPDATE);
-        this.reload();
-      },
       detail(coupon) {
         if (coupon.status != 'NEVER_USED') {
           return;
