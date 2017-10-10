@@ -8,7 +8,7 @@
       <CouponItem :coupon.sync="item" @delete.user="delete" @select.user="detail"/>
     </repeat>
 
-    <view class="zan-panel" wx:if="{{!success}}" wx:if="{{!isPageEmpty && tab.selectedId == 'NEVER_USED'}}">
+    <view class="zan-panel"  wx:if="{{!isPageEmpty && tab.selectedId == 'NEVER_USED'}}">
       <view class="zan-btns">
         <button class="zan-btn zan-btn--fill" @tap="use">立即下单使用</button>
       </view>

@@ -12,8 +12,13 @@
     </view>
 
     <!--优惠信息-->
-    <view class="reduce-box row" wx:if="{{reduce.list.length > 0}}">
-      <image class="icon" src="/images/icons/reduce.png"></image><text class="weak ml10 inline">{{reduce.showText}}</text>
+    <view class="reduce-box column" wx:if="{{reduce.list.length > 0 || notices.length > 0}}">
+      <view class="reduce-item row" wx:if="{{reduce.list.length > 0}}">
+        <image class="icon" src="/images/icons/reduce.png"></image><text class="weak ml10 inline" >{{reduce.showText}}</text>
+      </view>
+      <view class="reduce-item row" wx:for="{{notices}}" wx:key="index">
+        <image class="icon" src="/images/icons/sale.png"></image><text class="weak ml10 inline">{{item.content}}</text>
+      </view>
     </view>
 
     <!--操作向导区域-->
@@ -108,7 +113,8 @@
       shopTitle: '在线商城',
       reduce: null,
       share: null,
-      coupon: null
+      coupon: null,
+      notices: null
     };
     data = {...this.def};
     async onLoad ({sence}) {
@@ -151,13 +157,15 @@
         } else {
           this.goods = list;
         }
-        return Cache.reduce()
+        return Cache.reduce();
       }).then(data => {
         this.reduce = data;
+        return Cache.notices();
+      }).then(data => {
+        this.notices = data;
         this.loaded();
       });
       // 页面缓存预加载
-      Cache.notices().then();
       Cache.categories().then();
       Cache.coupon().then(({ownList}) => {
         this.coupon = ownList.length;
@@ -228,13 +236,13 @@
     .header-box{
       border-bottom: $border;
       .avatar{
-        margin-top: 130rpx;
+        margin-top: 110rpx;
         width: 80px;
         height: 80px;
         border-radius: 50%;
       }
       .name{
-        margin-top: 90rpx;
+        margin-top: 70rpx;
         font-size: 42rpx;
         font-weight: bold;
       }
@@ -318,8 +326,13 @@
     }
 
     .reduce-box{
-      padding: 30rpx 0;
+      padding-top: 25rpx;
+      padding-bottom: 15rpx;
       border-bottom: $border;
+
+      .reduce-item{
+        margin-bottom: 10rpx;
+      }
     }
   }
 </style>
