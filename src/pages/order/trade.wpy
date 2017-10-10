@@ -142,6 +142,14 @@
       this.shop = await Cache.shop();
       // 优惠信息
       this.reduce = await Cache.reduce();
+      // 自动选择优惠券
+      if (this.coupons && this.coupons.length > 0) {
+        let selected = this.coupons[0];
+        this.coupons.forEach(item => {
+          selected = item.price > selected.price ? item : selected;
+        });
+        this.updateCoupon(selected);
+      }
       this.loaded();
       // 事件注册
       Event.listen(Event.TRADE_ADDRESS_UPDATE, this.updateAddress.bind(this), this);
@@ -281,11 +289,14 @@
      */
     updateCoupon(coupon) {
       if (!coupon) {
-        return;
+        this.selectedCoupon = null;
+        this.trade.couponUsedId = null;
+        this.trade.couponPrice = null;
+      } else {
+        this.selectedCoupon = coupon;
+        this.trade.couponUsedId = coupon.id;
+        this.trade.couponPrice = coupon.price.toFixed(2);
       }
-      this.selectedCoupon = coupon;
-      this.trade.couponUsedId = coupon.id;
-      this.trade.couponPrice = coupon.price.toFixed(2);
       this.updateTradePrice();
       this.$apply();
     }

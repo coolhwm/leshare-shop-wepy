@@ -6,6 +6,12 @@
       <CouponItem :coupon.sync="item" @select.user="select"/>
     </repeat>
 
+    <view class="zan-panel">
+      <view class="zan-btns">
+        <button class="zan-btn" @tap="select({{null}})">不使用优惠券</button>
+      </view>
+    </view>
+
   </view>
 
   <!--占位符-->

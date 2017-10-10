@@ -37,7 +37,7 @@
 
   export default class CouponList extends wepy.page {
     def = {
-      init: true,
+      init: false,
       page: {
         list: [
         ]
