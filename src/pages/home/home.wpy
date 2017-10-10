@@ -46,9 +46,10 @@
           <text class="weak">分享好友</text>
         </view>
 
-        <navigator class="shop-btn column-center"  url="/pages/coupon/pick">
+        <navigator class="shop-btn column-center"  url="/pages/coupon/list">
           <image class="icon-xl" src="/images/home/coupon.png"></image>
-          <text class="weak">领优惠券</text>
+          <view class="weui-badge" style="position: absolute;top: 0;right: 0;" wx:if="{{coupon > 0}}">{{coupon}}张</view>
+          <text class="weak">我的优惠券</text>
         </navigator>
 
         <navigator class="shop-btn column-center" url="/pages/order/list" >
@@ -95,6 +96,7 @@
   import Cache from '../../utils/Cache';
   import Tips from '../../utils/Tips';
   import WxUtils from '../../utils/WxUtils';
+  import Event from '../../utils/Event';
   import Copyright from '../../components/common/copyright';
 
   export default class ShopHome extends wepy.page {
@@ -105,7 +107,8 @@
       goods: [],
       shopTitle: '在线商城',
       reduce: null,
-      share: null
+      share: null,
+      coupon: null
     };
     data = {...this.def};
     async onLoad ({sence}) {
@@ -117,6 +120,7 @@
       this.campaign(sence);
       this.share = WxUtils.canIUse('button.open-type.share');
       this.preload();
+      Event.listen(Event.COUPON_LIST_UPDATE, this.updateCoupon.bind(this), this);
     };
     campaign(sence) {
       coupon.campaign({
@@ -155,7 +159,16 @@
       // 页面缓存预加载
       Cache.notices().then();
       Cache.categories().then();
-      Cache.coupon().then();
+      Cache.coupon().then(({ownList}) => {
+        this.coupon = ownList.length;
+        this.$apply();
+      });
+    }
+    updateCoupon() {
+      Cache.coupon(true).then(({ownList}) => {
+        this.coupon = ownList.length;
+        this.loaded();
+      });
     }
     onShareAppMessage () {
       return {};
@@ -243,6 +256,7 @@
       }
 
       .shop-btn{
+        position: relative;
         text{margin-top: 10rpx;}
       }
       .shop-btn{

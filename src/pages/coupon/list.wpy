@@ -7,11 +7,18 @@
     <repeat for="{{page.list}}" key="index" index="index" item="item">
       <CouponItem :coupon.sync="item" @delete.user="delete" @select.user="detail"/>
     </repeat>
+
+    <view class="zan-panel" wx:if="{{!success}}" wx:if="{{!isPageEmpty && tab.selectedId == 'NEVER_USED'}}">
+      <view class="zan-btns">
+        <button class="zan-btn zan-btn--fill" @tap="use">立即下单使用</button>
+      </view>
+    </view>
+
     <!-- 加载提示 -->
     <Loadmore :page.sync="page"/>
 
     <!--占位符-->
-    <Placeholder :show.sync="isPageEmpty" message="您还没有相关优惠券"/>
+    <Placeholder :show.sync="isPageEmpty" message="您还没有相关优惠券" />
   </view>
 </template>
 
@@ -25,8 +32,8 @@
   import ZanTab from '../../components/zanui/tab';
   import CouponItem from '../../components/coupons/item';
   import Loadmore from '../../components/weui/loadmore';
-  import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
+  import WxUtils from '../../utils/WxUtils';
 
   export default class CouponList extends wepy.page {
     def = {
@@ -71,6 +78,9 @@
       },
       switchTab() {
         this.reload();
+      },
+      use() {
+        WxUtils.backOrRedirect('/pages/shop/index');
       }
     };
     events = {};

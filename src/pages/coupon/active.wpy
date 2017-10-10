@@ -18,6 +18,7 @@
   import auth from '../../api/auth';
   import base from '../../mixins/base';
   import Tips from '../../utils/Tips';
+  import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
 
   export default class CouponActive extends wepy.page {
@@ -53,8 +54,8 @@
       try {
         await coupon.pick(this.coupon.id);
         await Tips.success('领取成功');
-        await this.loadCoupons();
-        this.$apply();
+        Event.emit(Event.COUPON_LIST_UPDATE);
+        this.$redirect('/pages/coupon/list');
       } catch (e) {
         if (e.serverCode == '50001') {
           await Tips.alert('您已经领过了');
