@@ -172,7 +172,7 @@
       });
     }
     updateCoupon() {
-      Cache.coupon(true).then(({ownList}) => {
+      Cache.coupon().then(({ownList}) => {
         this.coupon = ownList.length;
         this.loaded();
       });

@@ -1,7 +1,7 @@
 <template>
   <!-- 购物车底栏 -->
   <view class="reduce-box row-center" wx:if="{{reduce && reduce.list.length > 0}}">
-    <text class="weak xs inline">{{matchReduce.showText}}</text>
+    <text class="weak xs inline">{{matchReduce.showText}}{{matchReduce.showText && couponText ? ' & ': ''}}{{couponText}}</text>
   </view>
   <view class="cart-box row" @tap="cart">
     <view class="icon-box column-center">
@@ -68,6 +68,8 @@
   import Cache from '../../utils/Cache';
   import SilderPanel from '../../components/common/slider_panel';
   import Tips from '../../utils/Tips';
+  import Event from '../../utils/Event';
+
   export default class ShopCart extends wepy.component {
     props = {
       carts: {
@@ -78,10 +80,21 @@
     };
     data = {
       isCartDisplay: 'false',
-      reduce: null
+      reduce: null,
+      coupons: null
     };
     async onLoad() {
       this.reduce = await Cache.reduce();
+      const {ownList} = await Cache.coupon();
+      this.coupons = ownList;
+      this.$apply();
+      Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
+    }
+    loadCoupon() {
+      Cache.coupon().then(({ownList}) => {
+        this.coupons = ownList;
+        this.$apply();
+      });
     }
     methods = {
       plus(cart) {
@@ -191,6 +204,12 @@
             match: match,
             showText: `已满${match.limitPrice}，结算立减${match.fee}元`
           };
+        }
+      },
+      couponText() {
+        if (!this.coupons || this.coupons.length < 1) {
+        } else {
+          return `${this.coupons.length}张券可用`;
         }
       }
     };

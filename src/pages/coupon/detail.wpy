@@ -32,6 +32,7 @@
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
   import FormTips from '../../components/weui/tips';
+  import Cache from '../../utils/Cache';
   let interval = null;
   export default class CouponDetail extends wepy.page {
     def = {
@@ -71,9 +72,10 @@
           this.message = '已自助核销';
           this.success = true;
           clearInterval(interval);
-          Event.emit(Event.COUPON_LIST_UPDATE);
           await Tips.success('操作成功', 1000);
           this.$apply();
+          await Cache.coupon(true);
+          Event.emit(Event.COUPON_LIST_UPDATE);
         } catch (e) {
           console.warn(e);
           this.tips('核销失败:' + e.message);
@@ -81,12 +83,13 @@
         }
       },
       async delete() {
-        await Tips.confirm('确认删除该优惠券?');
+        await Tips.confi rm('确认删除该优惠券?');
         await coupon.remove(this.coupon.id);
+        await Cache.coupon(true);
         await Tips.success('操作成功');
         Event.emit(Event.COUPON_LIST_UPDATE);
         wepy.navigateBack();
-      },
+      }
     };
     events = {};
     components = {

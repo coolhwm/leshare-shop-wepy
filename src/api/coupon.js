@@ -18,41 +18,57 @@ export default class CouponService extends base {
   /**
    * 卡券货架
    */
-  static shelf () {
-    let coupons = [];
-    return this.list().then(data => {
-      if (data == null) {
-        // return Promise.reject('无卡券')
-        return;
-      }
-      coupons = data.map(this._processPickItem.bind(this));
-      return this.own('NEVER_USED');
-    }).then(own => {
-      const pickList = [];
-      const ownList = [];
-      // 卡券分类
-      coupons.forEach(coupon => {
-        const isOwn = own ? own.some(item => item.couponId == coupon.id) : false;
-        if (isOwn) {
-          coupon.own = true;
-          ownList.push(coupon);
-        } else {
-          pickList.push(coupon);
-        }
-      });
+  static async shelf () {
+    let [ownList, pickList] = await Promise.all([this.own('NEVER_USED'), this.list()]);
+    if (ownList && ownList.length > 0) {
+      ownList = ownList.map(this._processCouponItem.bind(this));
+    } else {
+      ownList = [];
+    }
+    if (pickList && pickList.length > 0) {
+      pickList = pickList.map(this._processPickItem.bind(this));
+    } else {
+      pickList = [];
+    }
 
-      let preview = coupons.map(item => `满${item.limitPrice}减${item.price}`);
-      if (preview.length > 3) {
-        preview = preview.slice(0, 3);
-        preview.push('...');
-      }
-      return {
-        pickList: pickList,
-        ownList: ownList,
-        preview: preview,
-        size: coupons.length
-      };
-    });
+    return {
+      ownList,
+      pickList
+    };
+    // let coupons = [];
+    // return this.list().then(data => {
+    //   if (data == null) {
+    //     // return Promise.reject('无卡券')
+    //     return;
+    //   }
+    //   coupons = data.map(this._processPickItem.bind(this));
+    //   return this.own('NEVER_USED');
+    // }).then(own => {
+    //   const pickList = [];
+    //   const ownList = [];
+    //   // 卡券分类
+    //   coupons.forEach(coupon => {
+    //     const isOwn = own ? own.some(item => item.couponId == coupon.id) : false;
+    //     if (isOwn) {
+    //       coupon.own = true;
+    //       ownList.push(coupon);
+    //     } else {
+    //       pickList.push(coupon);
+    //     }
+    //   });
+    //
+    //   let preview = coupons.map(item => `满${item.limitPrice}减${item.price}`);
+    //   if (preview.length > 3) {
+    //     preview = preview.slice(0, 3);
+    //     preview.push('...');
+    //   }
+    //   return {
+    //     pickList: pickList,
+    //     ownList: ownList,
+    //     preview: preview,
+    //     size: coupons.length
+    //   };
+    // });
   }
 
   static list () {

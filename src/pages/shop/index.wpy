@@ -203,7 +203,7 @@
     }
     // 更新卡券
     async loadCoupons() {
-      const {pickList} = await Cache.coupon(true);
+      const {pickList} = await Cache.coupon();
       this.coupons = pickList;
       this.$apply();
     }
@@ -240,9 +240,8 @@
         try {
           await coupon.pick(id);
           await Tips.success('领取成功');
-          // 加载优惠券
-          const {pickList} = await Cache.coupon(true);
-          this.coupons = pickList;
+          await Cache.coupon(true);
+          Event.emit('COUPON_LIST_UPDATE');
           this.loaded();
         } catch (e) {
           if (e.serverCode == '50001') {

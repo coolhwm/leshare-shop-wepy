@@ -246,6 +246,7 @@
         Event.emit(Event.CART_LIST_CLEAR);
         // 卡券领取更新
         if (trade.couponUsedId) {
+          await Cache.coupon(true);
           Event.emit(Event.COUPON_LIST_UPDATE);
         }
         Route.backOrRedirect('/pages/order/list');
