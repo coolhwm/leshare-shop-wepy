@@ -1,5 +1,12 @@
 <template>
   <view class="container" wx:if="{{init}}">
+
+    <!--状态-->
+    <block wx:if="{{status}}">
+      <image class="status-tips" wx:if="{{status.open}}" mode="aspectFit" src="/images/icons/onsale.png"></image>
+      <image class="status-tips" wx:else mode="aspectFit" src="/images/icons/onclose.png"></image>
+    </block>
+
     <!--店铺信息区域-->
     <view class="header-box column-center">
       <image class="avatar" src="{{shop.avatar}}" />
@@ -107,7 +114,7 @@
     def = {
       init: false,
       shop: {},
-      status: {},
+      status: null,
       goods: [],
       shopTitle: '在线商城',
       reduce: null,
@@ -227,6 +234,14 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .status-tips{
+    position: absolute;
+    right: 15px;
+    top: 0;
+    width: 100rpx;
+    height: 100rpx;
+  }
+
   .container{
     background-color: #FFF;
     padding-left: 60rpx;
