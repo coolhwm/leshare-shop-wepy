@@ -168,7 +168,7 @@
         this.reduce = data;
         return Cache.notices();
       }).then(data => {
-        this.notices = data;
+        this.notices = data.filter(item => item.isHome == 1);
         this.loaded();
       });
       // 页面缓存预加载
