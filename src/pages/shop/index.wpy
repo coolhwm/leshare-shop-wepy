@@ -73,7 +73,6 @@
         list: []
       },
       pages: {},
-      details: {},
       shop: {
         notices: []
       },
@@ -400,13 +399,7 @@
       });
     }
     async skuSelector(goodsId) {
-      if (this.details[goodsId]) {
-        this.skuGoods = this.details[goodsId];
-      } else {
-        const detail = await goods.getInfo(goodsId);
-        this.skuGoods = detail;
-        this.details[goodsId] = detail;
-      }
+      this.skuGoods = this.findGoods(goodsId);
       this.skuDisplay = 'true';
       this.loaded();
     }

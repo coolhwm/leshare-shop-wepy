@@ -185,6 +185,7 @@ export default class goods extends base {
 
     // 处理图片
     this._processGoodsPreview(item);
+    this._processSkuLable(item);
     this._processGoodsPriceRange(item);
     this._processGoodsPriceLabel(item);
     this._processGoodsQuantity(item);

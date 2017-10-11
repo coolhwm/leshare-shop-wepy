@@ -7,7 +7,6 @@
         <text class="xl">{{shop.name}}</text>
         <text class="xxs inline">{{shop.address}}</text>
       </view>
-      <!--<text class="mt20 xs">公告：{{shop.notices[0].content}}</text>-->
       <swiper class="notice-swiper" vertical autoplay circular interval="3000">
         <swiper-item wx:for="{{shop.notices}}" wx:key="index">
           <text class="xs inline">公告：{{item.content}}</text>
@@ -58,6 +57,7 @@
     }
   }
   .notice-swiper{
+    margin-top: 10rpx;
     width: 100%;
     height: 20px;
 
