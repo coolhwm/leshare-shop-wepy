@@ -42,7 +42,6 @@
         const result = await auth.user({block: false, redirect: false}, detail);
         if (result) {
           await this.pickCoupon();
-          wepy.navigateBack();
         } else {
           Tips.alert('请确认授权');
         }
@@ -55,8 +54,8 @@
       try {
         await coupon.pick(this.coupon.id);
         await Cache.coupon(true);
-        Event.emit(Event.COUPON_LIST_UPDATE);
         await Tips.success('领取成功');
+        Event.emit(Event.COUPON_LIST_UPDATE);
         this.$redirect('/pages/coupon/list');
       } catch (e) {
         if (e.serverCode == '50001') {

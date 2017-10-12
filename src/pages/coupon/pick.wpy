@@ -67,9 +67,9 @@
       async pick(couponId) {
         try {
           await coupon.pick(couponId);
+          await Cache.coupon(true);
           await Tips.success('领取成功');
           await this.loadCoupons();
-          Cache.remove('COUPON_SHELF');
           this.$apply();
         } catch (e) {
           if (e.serverCode == '50001') {

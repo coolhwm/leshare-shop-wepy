@@ -39,7 +39,7 @@
     <ShopCart :carts.sync="carts" :status.sync="status" @plus.user="plus" @minus.user="minus" @clear.user="clear" @buy.user="buy"/>
 
     <!--SKU选择器-->
-    <SkuSelector :display.sync="skuDisplay" :goods.sync="skuGoods" @select.user="selectSku" />
+    <SkuSelector :display.sync="skuDisplay" :goods.sync="skuGoods" :carts.sync="carts" @select.user="selectSku" />
 
   </view>
 </template>
@@ -261,6 +261,12 @@
           if (goods.goodsSkuInfo && goodsSku == null) {
             await this.skuSelector(goodsId);
             return;
+          }
+          if (goods.goodsSkuInfo == null) {
+            const isMax = goods.goodsStocks[0].stock == 0 || goods.num >= goods.goodsStocks[0].stock;
+            if (isMax) {
+              return;
+            }
           }
         }
         // 购物车

@@ -21,9 +21,9 @@
               <text>{{goods.num}}</text>
             </view>
           </block>
-
-          <image class="plus" src="/images/icons/plus.png" @tap.stop="plus({{goods}})" />
-        </view>
+          <image class="plus" src="/images/icons/plus-gray.png" wx:if="{{goods.goodsStocks[0].stock == 0 || goods.num >= goods.goodsStocks[0].stock}}" />
+          <image class="plus" src="/images/icons/plus.png" @tap.stop="plus({{goods}})" wx:else/>
+      </view>
       </view>
     </view>
   </view>

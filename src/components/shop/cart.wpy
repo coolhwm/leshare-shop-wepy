@@ -1,6 +1,6 @@
 <template>
   <!-- 购物车底栏 -->
-  <view class="reduce-box row-center" wx:if="{{reduce && reduce.list.length > 0}}">
+  <view class="reduce-box row-center" wx:if="{{(reduce && reduce.list.length > 0) || couponText != null}}">
     <text class="weak xs inline">{{matchReduce.showText}}{{matchReduce.showText && couponText ? ' & ': ''}}{{couponText}}</text>
   </view>
   <view class="cart-box row" @tap="cart">
