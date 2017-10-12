@@ -1,6 +1,12 @@
 <template>
   <view class="container" wx:if="{{init}}">
 
+    <!--状态-->
+    <block wx:if="{{status}}">
+      <image class="status-tips" wx:if="{{status.open}}" mode="aspectFit" src="/images/icons/onsale.png"></image>
+      <image class="status-tips" wx:else mode="aspectFit" src="/images/icons/onclose.png"></image>
+    </block>
+
     <!--店铺信息区域-->
     <view class="header-box column-center">
       <image class="avatar" src="{{shop.avatar}}" />
@@ -12,8 +18,13 @@
     </view>
 
     <!--优惠信息-->
-    <view class="reduce-box row" wx:if="{{reduce.list.length > 0}}">
-      <image class="icon" src="/images/icons/reduce.png"></image><text class="weak ml10 inline">{{reduce.showText}}</text>
+    <view class="reduce-box column" wx:if="{{reduce.list.length > 0 || notices.length > 0}}" @tap="shop">
+      <view class="reduce-item row" wx:if="{{reduce.list.length > 0}}">
+        <image class="icon" src="/images/icons/reduce.png"></image><text class="weak ml10 inline" >{{reduce.showText}}</text>
+      </view>
+      <view class="reduce-item row" wx:for="{{notices}}" wx:key="index">
+        <image class="icon" src="/images/icons/sale.png"></image><text class="weak ml10 inline">{{item.content}}</text>
+      </view>
     </view>
 
     <!--操作向导区域-->
@@ -46,9 +57,10 @@
           <text class="weak">分享好友</text>
         </view>
 
-        <navigator class="shop-btn column-center"  url="/pages/coupon/pick">
+        <navigator class="shop-btn column-center"  url="/pages/coupon/list">
           <image class="icon-xl" src="/images/home/coupon.png"></image>
-          <text class="weak">领优惠券</text>
+          <view class="weui-badge" style="position: absolute;top: 0;right: 0;" wx:if="{{coupon > 0}}">{{coupon}}张</view>
+          <text class="weak">我的优惠券</text>
         </navigator>
 
         <navigator class="shop-btn column-center" url="/pages/order/list" >
@@ -95,17 +107,20 @@
   import Cache from '../../utils/Cache';
   import Tips from '../../utils/Tips';
   import WxUtils from '../../utils/WxUtils';
+  import Event from '../../utils/Event';
   import Copyright from '../../components/common/copyright';
 
   export default class ShopHome extends wepy.page {
     def = {
       init: false,
       shop: {},
-      status: {},
+      status: null,
       goods: [],
       shopTitle: '在线商城',
       reduce: null,
-      share: null
+      share: null,
+      coupon: null,
+      notices: null
     };
     data = {...this.def};
     async onLoad ({sence}) {
@@ -117,6 +132,7 @@
       this.campaign(sence);
       this.share = WxUtils.canIUse('button.open-type.share');
       this.preload();
+      Event.listen(Event.COUPON_LIST_UPDATE, this.updateCoupon.bind(this), this);
     };
     campaign(sence) {
       coupon.campaign({
@@ -147,15 +163,26 @@
         } else {
           this.goods = list;
         }
-        return Cache.reduce()
+        return Cache.reduce();
       }).then(data => {
         this.reduce = data;
+        return Cache.notices();
+      }).then(data => {
+        this.notices = data.filter(item => item.isHome == 1);
         this.loaded();
       });
       // 页面缓存预加载
-      Cache.notices().then();
       Cache.categories().then();
-      Cache.coupon().then();
+      Cache.coupon().then(({ownList}) => {
+        this.coupon = ownList.length;
+        this.$apply();
+      });
+    }
+    updateCoupon() {
+      Cache.coupon().then(({ownList}) => {
+        this.coupon = ownList.length;
+        this.loaded();
+      });
     }
     onShareAppMessage () {
       return {};
@@ -207,6 +234,14 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .status-tips{
+    position: absolute;
+    right: 30px;
+    top: 0;
+    width: 150rpx;
+    height: 150rpx;
+  }
+
   .container{
     background-color: #FFF;
     padding-left: 60rpx;
@@ -215,13 +250,13 @@
     .header-box{
       border-bottom: $border;
       .avatar{
-        margin-top: 130rpx;
+        margin-top: 110rpx;
         width: 80px;
         height: 80px;
         border-radius: 50%;
       }
       .name{
-        margin-top: 90rpx;
+        margin-top: 70rpx;
         font-size: 42rpx;
         font-weight: bold;
       }
@@ -243,6 +278,7 @@
       }
 
       .shop-btn{
+        position: relative;
         text{margin-top: 10rpx;}
       }
       .shop-btn{
@@ -304,8 +340,13 @@
     }
 
     .reduce-box{
-      padding: 30rpx 0;
+      padding-top: 25rpx;
+      padding-bottom: 15rpx;
       border-bottom: $border;
+
+      .reduce-item{
+        margin-bottom: 10rpx;
+      }
     }
   }
 </style>

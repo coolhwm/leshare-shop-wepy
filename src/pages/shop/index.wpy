@@ -39,7 +39,7 @@
     <ShopCart :carts.sync="carts" :status.sync="status" @plus.user="plus" @minus.user="minus" @clear.user="clear" @buy.user="buy"/>
 
     <!--SKU选择器-->
-    <SkuSelector :display.sync="skuDisplay" :goods.sync="skuGoods" @select.user="selectSku" />
+    <SkuSelector :display.sync="skuDisplay" :goods.sync="skuGoods" :carts.sync="carts" @select.user="selectSku" />
 
   </view>
 </template>
@@ -73,7 +73,6 @@
         list: []
       },
       pages: {},
-      details: {},
       shop: {
         notices: []
       },
@@ -203,7 +202,7 @@
     }
     // 更新卡券
     async loadCoupons() {
-      const {pickList} = await Cache.coupon(true);
+      const {pickList} = await Cache.coupon();
       this.coupons = pickList;
       this.$apply();
     }
@@ -240,9 +239,8 @@
         try {
           await coupon.pick(id);
           await Tips.success('领取成功');
-          // 加载优惠券
-          const {pickList} = await Cache.coupon(true);
-          this.coupons = pickList;
+          await Cache.coupon(true);
+          Event.emit('COUPON_LIST_UPDATE');
           this.loaded();
         } catch (e) {
           if (e.serverCode == '50001') {
@@ -263,6 +261,12 @@
           if (goods.goodsSkuInfo && goodsSku == null) {
             await this.skuSelector(goodsId);
             return;
+          }
+          if (goods.goodsSkuInfo == null) {
+            const isMax = goods.goodsStocks[0].stock == 0 || goods.num >= goods.goodsStocks[0].stock;
+            if (isMax) {
+              return;
+            }
           }
         }
         // 购物车
@@ -401,13 +405,7 @@
       });
     }
     async skuSelector(goodsId) {
-      if (this.details[goodsId]) {
-        this.skuGoods = this.details[goodsId];
-      } else {
-        const detail = await goods.getInfo(goodsId);
-        this.skuGoods = detail;
-        this.details[goodsId] = detail;
-      }
+      this.skuGoods = this.findGoods(goodsId);
       this.skuDisplay = 'true';
       this.loaded();
     }

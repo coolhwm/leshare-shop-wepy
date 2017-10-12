@@ -18,7 +18,9 @@
   import auth from '../../api/auth';
   import base from '../../mixins/base';
   import Tips from '../../utils/Tips';
+  import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
+  import Cache from '../../utils/Cache';
 
   export default class CouponActive extends wepy.page {
     def = {
@@ -40,7 +42,6 @@
         const result = await auth.user({block: false, redirect: false}, detail);
         if (result) {
           await this.pickCoupon();
-          wepy.navigateBack();
         } else {
           Tips.alert('请确认授权');
         }
@@ -52,9 +53,10 @@
     async pickCoupon() {
       try {
         await coupon.pick(this.coupon.id);
+        await Cache.coupon(true);
         await Tips.success('领取成功');
-        await this.loadCoupons();
-        this.$apply();
+        Event.emit(Event.COUPON_LIST_UPDATE);
+        this.$redirect('/pages/coupon/list');
       } catch (e) {
         if (e.serverCode == '50001') {
           await Tips.alert('您已经领过了');

@@ -53,7 +53,7 @@
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupons.bind(this), this);
     };
     async loadCoupons () {
-      const shelf = await Cache.coupon(true);
+      const shelf = await Cache.coupon();
       this.coupons = shelf.pickList;
       this.couponsNum = shelf.ownList.length + '张';
       this.isEmpty = shelf.pickList.length < 1;
@@ -67,6 +67,7 @@
       async pick(couponId) {
         try {
           await coupon.pick(couponId);
+          await Cache.coupon(true);
           await Tips.success('领取成功');
           await this.loadCoupons();
           this.$apply();
