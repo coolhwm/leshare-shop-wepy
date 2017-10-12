@@ -236,10 +236,10 @@
   @import "../../styles/variable";
   .status-tips{
     position: absolute;
-    right: 15px;
+    right: 30px;
     top: 0;
-    width: 100rpx;
-    height: 100rpx;
+    width: 150rpx;
+    height: 150rpx;
   }
 
   .container{
