@@ -102,7 +102,7 @@
   import OrderItem from '../../components/order/customer_item';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
-  import Route from '../../utils/WxUtils';
+  import WxUtils from '../../utils/WxUtils';
   import Cache from '../../utils/Cache';
 
   export default class OrderTrade extends wepy.page {
@@ -246,10 +246,12 @@
         Event.emit(Event.CART_LIST_CLEAR);
         // 卡券领取更新
         if (trade.couponUsedId) {
+          Tips.setLoading();
           await Cache.coupon(true);
+          Tips.loaded();
           Event.emit(Event.COUPON_LIST_UPDATE);
         }
-        Route.backOrRedirect('/pages/order/list');
+        WxUtils.backOrRedirect('/pages/order/list');
       }
     };
     /**
