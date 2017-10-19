@@ -94,6 +94,7 @@
       await auth.user();
       // -- 缓存信息
       // 加载店铺信息
+      this.mode = mode;
       this.shop = await Cache.shop();
       this.shop.notices = await Cache.notices();
       // 设置页面标题
@@ -167,10 +168,9 @@
       }
     }
     // 设置页面标题
-    async setShopTitle(mode = 1) {
+    async setShopTitle() {
       // 标题处理
-      this.mode = mode;
-      if (mode == 2) {
+      if (this.mode == 2) {
         this.title = '点堂食/外带';
         this.badegText = '堂食';
         wepy.setNavigationBarTitle({ title: '堂食点餐' });
@@ -229,14 +229,6 @@
       const {pickList} = await Cache.coupon();
       this.coupons = pickList;
       this.$apply();
-    }
-    // 更新状态
-    async loadStatus() {
-      this.status = await Cache.status();
-      this.title = this.status.open ? shop.type().name : this.status.closeTips;
-      if (!this.init && !this.status.open) {
-        Tips.modal(this.status.closeTips);
-      }
     }
     methods = {
       switchTab() {

@@ -232,16 +232,21 @@ export default class order extends base {
     }
     finalPrice = finalPrice.toFixed(2);
     // 构造交易对象
-    return {
+    const trade = {
       orderType: param.orderType,
       dealPrice: price.toFixed(2),
       reduceFee: reduceFee,
       finalPrice: finalPrice,
+      postFee: (0).toFixed(2),
       paymentType: '1',
       paymentText: '在线支付',
       orderGoodsInfos: orderGoodsInfos,
       shopName: this.shopName
     };
+    if (param.orderType == '30') {
+      trade.inShopTime = '立即出餐';
+    }
+    return trade;
   }
 
   /**
@@ -395,9 +400,11 @@ export default class order extends base {
    * 处理订单地址
    */
   static _processOrderAddress (order, address) {
-    order.receiveName = `${address.name} ${address.sexText}`;
-    order.receivePhone = address.phone;
-    order.address = address.fullAddress;
+    if (order.orderType == '20') {
+      order.receiveName = `${address.name} ${address.sexText}`;
+      order.receivePhone = address.phone;
+      order.address = address.fullAddress;
+    }
   }
 
   /**
