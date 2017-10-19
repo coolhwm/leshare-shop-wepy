@@ -24,7 +24,20 @@
       </view>
     </block>
     <!--地址展现-->
-    <Address :address.sync="address" />
+    <block wx:if="{{order.orderType == '20'}}">
+      <Address :address.sync="address" />
+    </block>
+    <view class="inshop-box row-between" wx:else>
+      <view class="row" wx:if="{{order.orderType == '30'}}">
+        <image class="icon" src="/images/icons/inshop.png" />
+        <text>到店堂食</text>
+      </view>
+      <view class="row"  wx:if="{{order.orderType == '33'}}">
+        <image class="icon" src="/images/icons/package.png" />
+        <text>打包带走</text>
+      </view>
+      <text class="muted mr10 sm">30分钟内到店</text>
+    </view>
 
     <!--订单项目-->
     <OrderItem :order.sync="order" action="0"></OrderItem>
@@ -35,7 +48,7 @@
         <view class="weui-cell__bd">支付方式</view>
         <view class="weui-cell__ft">{{order.paymentText}}</view>
       </view>
-      <view class="weui-cell">
+      <view class="weui-cell" wx:if="{{order.orderType == '20'}}">
         <view class="weui-cell__bd">配送方式</view>
         <view class="weui-cell__ft">{{order.deliveryText}}</view>
       </view>
@@ -336,5 +349,18 @@
     border-top: $border;
     height: 90rpx;
     padding-right: 10rpx;
+  }
+
+  .inshop-box{
+    border-top: $border;
+    border-bottom: $border;
+    height: 45px;
+    background-color: white;
+    padding-left: 20rpx;
+    margin-top: 10rpx;
+    margin-bottom: 10rpx;
+    text{
+      margin-left: 10rpx;
+    }
   }
 </style>
