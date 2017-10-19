@@ -101,8 +101,8 @@ export default class extends wepy.app {
     },
     scene: '',
     shopType: '2',
-    shopName: '连江什么鬼炸鸡汉堡',
-    app_code: 'eemTgbKrhqiYKMFowcBCQ1Zr7G13bWUT',
+    shopName: '连江日用品专营店',
+    app_code: 'owVHb1gHrvktni80kjMlFMzSDJDWY0xR',
     // baseUrl: 'https://api.leshare.shop/v2/customer'
     // baseUrl: 'http://192.168.31.124:9999/v2/customer',
     baseUrl: 'http://106.14.195.68:9999/v2/customer'

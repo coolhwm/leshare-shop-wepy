@@ -34,20 +34,28 @@
           <image class="icon-xl" src="/images/home/food.png"></image>
           <text class="weak">{{shopTitle}}</text>
         </view>
+
+        <!--堂食模式-->
+        <view class="shop-btn column-center" @tap="inshop" wx:if="{{shop.inShop == 1}}">
+          <image class="icon-xl" src="/images/home/inshop.png" ></image>
+          <text class="weak">点堂食</text>
+        </view>
+        <view class="shop-btn column-center" @tap="nav" wx:else>
+          <image class="icon-xl" src="/images/home/nav.png" ></image>
+          <text class="weak">一键导航</text>
+        </view>
+
         <view class="shop-btn column-center" @tap="phone">
           <image class="icon-xl" src="/images/home/phone.png"></image>
           <text class="weak">电话联系</text>
         </view>
 
-        <view class="shop-btn column-center" @tap="nav">
-          <image class="icon-xl" src="/images/home/nav.png" ></image>
-          <text class="weak">一键导航</text>
-        </view>
       </view>
 
       <view class="nav-gap"></view>
 
       <view class="row-between">
+        <!--兼容不同版本-->
         <button class="shop-btn pain-btn column-center" plain open-type="share" wx:if="{{share}}">
           <image class="icon-xl" src="/images/home/share.png"></image>
           <text class="weak">分享好友</text>
@@ -189,7 +197,10 @@
     }
     methods = {
       shop() {
-        this.$navigate('/pages/shop/index');
+        this.$navigate('/pages/shop/index?mode=1');
+      },
+      inshop() {
+        this.$navigate('/pages/shop/index?mode=2');
       },
       phone() {
         wepy.makePhoneCall({phoneNumber: this.shop.phone});
@@ -279,6 +290,7 @@
 
       .shop-btn{
         position: relative;
+        width: 75px;
         text{margin-top: 10rpx;}
       }
       .shop-btn{
