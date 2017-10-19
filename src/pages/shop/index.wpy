@@ -85,23 +85,19 @@
       detailDisplay: false,
       skuGoods: {},
       title: '在线商城',
-      badegText: '商城'
+      badegText: '商城',
+      mode: 1
     };
     data = {...this.def};
-    async onLoad ({goodsId}, {preload}) {
+    async onLoad ({goodsId, mode}, {preload}) {
       // -- 用户信息
       await auth.user();
       // -- 缓存信息
       // 加载店铺信息
       this.shop = await Cache.shop();
       this.shop.notices = await Cache.notices();
-      // 店铺类型
-      const type = shop.type();
-      this.title = type.name;
-      this.badegText = type.badgeText;
-      wepy.setNavigationBarTitle({ title: type.name });
-      // 店铺状态
-      await this.loadStatus();
+      // 设置页面标题
+      await this.setShopTitle(mode);
       // 加载商品分类
       this.categories = await Cache.categories();
       // -- 需要实时加载的信息
@@ -112,14 +108,7 @@
       this.page = goods.page(true);
       await this.next();
       // 检查是否没有推荐商品
-      if (this.page.list.length == 0) {
-        if (this.categories.list[0].id == -1) {
-          this.categories.list.splice(0, 1);
-        }
-        this.categories.selectedId = this.categories.list[0].id;
-        this.page = goods.page(false);
-        await this.next();
-      }
+      await this.checkOrRloadGoodsList();
       // 处理推荐跳转
       if (goodsId) {
         const detail = this.methods.detail.bind(this);
@@ -148,10 +137,11 @@
       if (this.init) {
         // 重新判断店铺状态
         Tips.setLoading();
-        await this.loadStatus();
+        await this.setShopTitle();
         this.loaded();
       }
     }
+    // 页面风险
     onShareAppMessage () {
       return {};
     }
@@ -164,6 +154,40 @@
     // 分页参数
     params() {
       return {category_id: this.categories.selectedId};
+    }
+    // 检查是否没有推荐商品
+    async checkOrRloadGoodsList() {
+      if (this.page.list.length == 0) {
+        if (this.categories.list[0].id == -1) {
+          this.categories.list.splice(0, 1);
+        }
+        this.categories.selectedId = this.categories.list[0].id;
+        this.page = goods.page(false);
+        await this.next();
+      }
+    }
+    // 设置页面标题
+    async setShopTitle(mode = 1) {
+      // 标题处理
+      this.mode = mode;
+      if (mode == 2) {
+        this.title = '点堂食/外带';
+        this.badegText = '堂食';
+        wepy.setNavigationBarTitle({ title: '堂食点餐' });
+      } else {
+        const type = shop.type();
+        this.title = type.name;
+        this.badegText = type.badgeText;
+        wepy.setNavigationBarTitle({ title: type.name });
+      }
+      // 状态处理
+      this.status = await Cache.status();
+      if (!this.status.open) {
+        this.title = this.status.closeTips;
+        if (!this.init) {
+          Tips.modal(this.status.closeTips);
+        }
+      }
     }
     // 设置商品分类的数量
     setCategoryNum() {
@@ -354,7 +378,13 @@
         const result = await auth.user({block: true, redirect: false});
         if (!result) return;
         // 订单类型
-        param.orderType = 20;
+        if (this.mode == 2) {
+          // 堂食点餐
+          param.orderType = 30;
+        } else {
+          // 外卖订单
+          param.orderType = 20;
+        }
         const trade = order.createCartTrade(this.carts, param);
         this.$preload('trade', trade);
         this.$navigate(`../order/trade`);
