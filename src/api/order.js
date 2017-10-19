@@ -244,7 +244,7 @@ export default class order extends base {
       shopName: this.shopName
     };
     if (param.orderType == '30') {
-      trade.inShopTime = '立即出餐';
+      trade.arriveTime = '立即出餐';
     }
     return trade;
   }
@@ -411,9 +411,9 @@ export default class order extends base {
    * 处理订单列表数据
    */
   static _processOrderListItem (order) {
-    const status = order.status;
-    order.statusText = this.statusDict[status];
     order.shopName = this.shopName;
+    // 处理订单状态
+    this._processOrderStatusDesc(order);
     // 处理订单价格
     this._processOrderPrice(order);
     // 处理订单动作
@@ -478,6 +478,11 @@ export default class order extends base {
     const status = order.status;
     order.statusText = this.statusDict[status];
     order.statusDesc = this.statusDesc[status];
+    // 到店特殊状态
+    if (order.orderType != '20' && status == 3) {
+      order.statusText = '店家配餐中';
+      order.statusDesc = '店家努力配餐中，请耐心等待';
+    }
     // 订单关闭
     if (order.status == 7 && order.orderCloseNote) {
       const reason = order.orderCloseNote;

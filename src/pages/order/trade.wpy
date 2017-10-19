@@ -23,9 +23,9 @@
     <view class="weui-cells weui-cells_after-title weui-cells-merge-top" >
 
       <!--堂食才有预约时间-->
-      <view class="weui-cell weui-cell_access" @tap="inShopTime" wx:if="{{trade.orderType != '20'}}">
+      <view class="weui-cell weui-cell_access" @tap="arriveTime" wx:if="{{trade.orderType != '20'}}">
         <view class="weui-cell__bd">预约时间</view>
-        <text class="weui-cell__ft weui-cell__ft_in-access">{{trade.inShopTime}} </text>
+        <text class="weui-cell__ft weui-cell__ft_in-access">{{trade.arriveTime}} </text>
       </view>
 
 
@@ -215,9 +215,9 @@
       /**
        * 选择预约时间
        */
-      async inShopTime() {
+      async arriveTime() {
         const {text} = await Tips.action('立即出餐', '15分钟内到店', '30分钟内到店', '1小时内到店');
-        this.trade.inShopTime = text;
+        this.trade.arriveTime = text;
         this.$apply();
       },
       /**
