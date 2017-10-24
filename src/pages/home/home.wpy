@@ -196,11 +196,8 @@
       return {};
     }
     methods = {
-      reportFormId(event) {
-        setTimeout(async () => {
-          const formId = event.detail.formId;
-          await shop.reportFormId([formId]);
-        }, 3000);
+      reportFormId({detail}) {
+        shop.reportFormId(detail.formId);
       },
       goto(event) {
         const url = event.currentTarget.dataset.url;
