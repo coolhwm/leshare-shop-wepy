@@ -3,21 +3,21 @@
   <view class="reduce-box row-center" wx:if="{{(reduce && reduce.list.length > 0) || couponText != null}}">
     <text class="weak xs inline">{{matchReduce.showText}}{{matchReduce.showText && couponText ? ' & ': ''}}{{couponText}}</text>
   </view>
-  <view class="cart-box row" @tap="cart">
-    <view class="icon-box column-center">
+  <view class="cart-box row">
+    <view class="icon-box column-center" @tap="cart">
       <image class="icon-lg" src="/images/icons/cart.png" />
       <view class="weui-badge cart-num">{{totalCount}}</view>
     </view>
 
-    <view class="info-box column">
+    <view class="info-box column" @tap="cart">
       <text class="price">￥{{totalPrice}}</text>
       <text class="muted xs" wx:if="{{totalCount > 0}}">共计{{totalCount}}件商品</text>
       <text class="muted xs" wx:else>请选择商品加入购物车</text>
     </view>
 
-    <view class="cart-btn column-center {{buyStatus != 1 ? 'cart-btn-disable' : ''}}" @tap.stop="buy">
-      <text>{{buyText}}</text>
-    </view>
+    <form class="cart-btn column-center {{buyStatus != 1 ? 'cart-btn-disable' : ''}}" report-submit="true"  @submit.stop="buy">
+      <button plain  form-type="submit"><text>{{buyText}}</text></button>
+    </form>
   </view>
 
   <!-- 购物车滑出栏 -->
@@ -115,7 +115,7 @@
       clear() {
         this.$emit('clear');
       },
-      buy() {
+      buy({detail}) {
         if (!this.status.open) {
           Tips.modal(this.status.closeTips);
         } else if (this.totalCount < 1) {
@@ -125,6 +125,7 @@
           if (this.matchReduce.match) {
             param.reduce = this.matchReduce.match;
           }
+          param.formId = detail.formId;
           this.$emit('buy', param);
         }
       }

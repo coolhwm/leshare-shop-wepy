@@ -94,16 +94,20 @@ export default class shop extends base {
    * 上报FORM
    */
   static reportFormId(id, delay = 3000) {
-    const url = `${this.baseUrl}/visit_shops/form_id`;
-    const param = [{
-      formId: id
-    }];
-    if (delay > 0) {
-      setTimeout(() => {
+    try {
+      const url = `${this.baseUrl}/visit_shops/form_id`;
+      const param = [{
+        formId: id
+      }];
+      if (delay > 0) {
+        setTimeout(() => {
+          this.post(url, param, false);
+        }, delay);
+      } else {
         this.post(url, param, false);
-      }, delay);
-    } else {
-      this.post(url, param, false);
+      }
+    } catch (e) {
+      console.warn('formid上报错误', e);
     }
   }
 }

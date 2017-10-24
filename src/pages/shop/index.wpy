@@ -379,6 +379,7 @@
           param.orderType = 20;
         }
         const trade = order.createCartTrade(this.carts, param);
+        shop.reportFormId(param.formId);
         this.$preload('trade', trade);
         this.$navigate(`../order/trade`);
       },
