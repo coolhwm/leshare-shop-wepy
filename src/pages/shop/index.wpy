@@ -251,9 +251,10 @@
       /**
        * 领取优惠券
        */
-      async pickCoupon({id}) {
+      async pickCoupon({id}, formId) {
         try {
           await coupon.pick(id);
+          shop.reportFormId(formId, 0);
           await Tips.success('领取成功');
           await Cache.coupon(true);
           Event.emit('COUPON_LIST_UPDATE');
