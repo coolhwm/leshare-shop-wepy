@@ -1,7 +1,7 @@
 <template>
 
   <!--全局表单/收集FORMID-->
-  <form class="container" report-submit="true" @submit="submit" wx:if="{{init}}">
+  <form class="container" report-submit="true" @submit="reportFormId" wx:if="{{init}}">
 
     <!--状态-->
     <block wx:if="{{status}}">
@@ -196,7 +196,7 @@
       return {};
     }
     methods = {
-      submit(event) {
+      reportFormId(event) {
         setTimeout(async () => {
           const formId = event.detail.formId;
           await shop.reportFormId([formId]);
