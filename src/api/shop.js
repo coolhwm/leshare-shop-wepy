@@ -89,4 +89,17 @@ export default class shop extends base {
       }
     });
   }
+
+  /**
+   * 上报FORM
+   */
+  static reportFormId(ids) {
+    const url = `${this.baseUrl}/visit_shops/form_id`;
+    const formIdList = ids.map(value => {
+      return {
+        formId: value
+      }
+    });
+    this.post(url, formIdList, false);
+  }
 }
