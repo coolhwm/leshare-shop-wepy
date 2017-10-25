@@ -1,0 +1,65 @@
+<template>
+  <view class="inshop-tab row-center">
+    <view class="tab-item row-center" @tap="tap(30)">
+      <image class="icon" src="/images/icons/inshop{{selectedId == '30' ? '' : '-gray'}}.png"/>
+      <text class="{{selectedId == '30' ? 'text-selected' : ''}}">到店堂食</text>
+    </view>
+    <view class="tab-vr"></view>
+    <view class="tab-item row-center" @tap="tap(33)">
+      <image class="icon" src="/images/icons/package{{selectedId == '33' ? '' : '-gray'}}.png"/>
+      <text class="{{selectedId == '33' ? 'text-selected' : ''}}">打包带走</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class InShopTab extends wepy.component {
+    props = {
+    };
+    data = {
+      selectedId: '30'
+    };
+    methods = {
+      tap(type) {
+        this.selectedId = type;
+        this.$apply();
+        this.$emit('tap', type);
+      }
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .inshop-tab{
+    background-color: white;
+    height: 50px;
+    border-bottom: $border;
+
+    .icon{
+      height: 25px;
+      width: 25px;
+    }
+
+    .tab-vr{
+      width: 1px;
+      height: 80%;
+      background-color: $color-bg-item;
+    }
+
+    text{
+      margin-left: 20rpx;
+      color: $color-muted;
+      font-size: $text-xxl;
+    }
+    .text-selected{
+      color: $color-primary;
+    }
+
+    .tab-item{
+      flex: 1;
+    }
+  }
+
+</style>
