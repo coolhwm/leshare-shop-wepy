@@ -7,13 +7,14 @@
   </view>
 
   <view class="qr-box column-center" wx:if="{{!success}}">
-    <text class="muted mb20 lg">线下店铺消费时出示</text>
-    <canvas  style="width: 200px; height: 200px;" canvas-id="qrcode"></canvas>
+    <text class="muted mb20 lg" wx:if="{{coupon.supportType !=1}}">线下店铺消费时出示</text>
+    <canvas  style="width: 200px; height: 200px;" canvas-id="qrcode" wx:if="{{coupon.supportType !=1}}"></canvas>
+    <text style="width: 200px; height: 200px;" class="muted lg column-center" wx:if="{{coupon.supportType ==1}}">暂不支持线下店铺消费</text>
   </view>
 
   <view class="zan-panel" wx:if="{{!success}}">
     <view class="zan-btns">
-      <button class="zan-btn zan-btn--fill" @tap="check">自助核销</button>
+      <button class="zan-btn zan-btn--fill" @tap="check" wx:if="{{coupon.isSelfUse}}">自助核销</button>
       <button class="zan-btn" @tap="delete">删除优惠券</button>
     </view>
   </view>
@@ -126,5 +127,8 @@
       font-size: 27px;
       color: $color-muted;
     }
+  }
+  .middle{
+    margin-left: 200rpx;
   }
 </style>
