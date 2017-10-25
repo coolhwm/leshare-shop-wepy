@@ -1,5 +1,7 @@
 <template>
-  <view class="container" wx:if="{{init}}">
+
+  <!--全局表单/收集FORMID-->
+  <form class="container" report-submit="true" @submit="reportFormId" wx:if="{{init}}">
 
     <!--状态-->
     <block wx:if="{{status}}">
@@ -30,25 +32,25 @@
     <!--操作向导区域-->
     <view class="nav-box column-cernter">
       <view class="row-between">
-        <view class="shop-btn column-center" @tap="shop">
+        <button class="shop-btn" plain form-type="submit" @tap="goto" data-url="/pages/shop/index?mode=1">
           <image class="icon-xl" src="/images/home/food.png"></image>
           <text class="weak">{{shopTitle}}</text>
-        </view>
+        </button>
 
         <!--堂食模式-->
-        <view class="shop-btn column-center" @tap="inshop" wx:if="{{shop.inShop == 1}}">
+        <button class="shop-btn" @tap="goto" data-url='/pages/shop/index?mode=2' plain form-type="submit" wx:if="{{shop.inShop == 1}}">
           <image class="icon-xl" src="/images/home/inshop.png" ></image>
           <text class="weak">点堂食</text>
-        </view>
-        <view class="shop-btn column-center" @tap="nav" wx:else>
+        </button>
+        <button class="shop-btn" @tap="nav" plain form-type="submit" wx:else>
           <image class="icon-xl" src="/images/home/nav.png" ></image>
           <text class="weak">一键导航</text>
-        </view>
+        </button>
 
-        <view class="shop-btn column-center" @tap="phone">
+        <button class="shop-btn" plain form-type="submit" @tap="phone">
           <image class="icon-xl" src="/images/home/phone.png"></image>
           <text class="weak">电话联系</text>
-        </view>
+        </button>
 
       </view>
 
@@ -56,25 +58,23 @@
 
       <view class="row-between">
         <!--兼容不同版本-->
-        <button class="shop-btn pain-btn column-center" plain open-type="share" wx:if="{{share}}">
+        <button class="shop-btn" plain open-type="share" form-type="submit" wx:if="{{share}}">
           <image class="icon-xl" src="/images/home/share.png"></image>
           <text class="weak">分享好友</text>
         </button>
-        <view class="shop-btn column-center" plain @tap="share" open-type="share" wx:else>
+        <button class="shop-btn" plain @tap="share" form-type="submit" open-type="share" wx:else>
           <image class="icon-xl" src="/images/home/share.png"></image>
           <text class="weak">分享好友</text>
-        </view>
-
-        <navigator class="shop-btn column-center"  url="/pages/coupon/list">
+        </button>
+        <button class="shop-btn" plain form-type="submit" @tap="goto" data-url="/pages/coupon/list">
           <image class="icon-xl" src="/images/home/coupon.png"></image>
           <view class="weui-badge" style="position: absolute;top: 0;right: 0;" wx:if="{{coupon > 0}}">{{coupon}}张</view>
           <text class="weak">我的优惠券</text>
-        </navigator>
-
-        <navigator class="shop-btn column-center" url="/pages/order/list" >
+        </button>
+        <button class="shop-btn" plain form-type="submit" @tap="goto" data-url="/pages/order/list" >
           <image class="icon-xl" src="/images/home/my.png"></image>
           <text class="weak">我的订单</text>
-        </navigator>
+        </button>
       </view>
     </view>
 
@@ -100,7 +100,7 @@
       </view>
     </view>
     <Copyright />
-  </view>
+  </form>
 
 
 </template>
@@ -196,11 +196,12 @@
       return {};
     }
     methods = {
-      shop() {
-        this.$navigate('/pages/shop/index?mode=1');
+      reportFormId({detail}) {
+        shop.reportFormId(detail.formId);
       },
-      inshop() {
-        this.$navigate('/pages/shop/index?mode=2');
+      goto(event) {
+        const url = event.currentTarget.dataset.url;
+        this.$navigate(url);
       },
       phone() {
         wepy.makePhoneCall({phoneNumber: this.shop.phone});
@@ -290,12 +291,14 @@
 
       .shop-btn{
         position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         width: 75px;
-        text{margin-top: 10rpx;}
-      }
-      .shop-btn{
         padding: 0;
         line-height: 1;
+        border: none;
+        text{margin-top: 10rpx;}
       }
     }
 
