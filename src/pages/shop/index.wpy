@@ -5,7 +5,7 @@
     <ShopHeader :shop.sync="shop" />
 
     <!--功能区域-->
-    <ShopNav :badegText.sync="badegText" :title.sync="title"  navText="我的" navUrl="/pages/order/list" />
+    <ShopNav :badegText.sync="badegText" :title.sync="title"  navText="个人中心" navUrl="/pages/customer/index" />
     <!--主内容区域-->
     <view class="main-box row">
       <!--分类侧边栏-->

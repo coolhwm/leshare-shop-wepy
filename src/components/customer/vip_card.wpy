@@ -1,0 +1,96 @@
+<template>
+    <!-- 会员卡区域 -->
+    <view class="vip-box column-between" @tap="vipDetail">
+        <view class="row">
+            <view class="title row">
+                <image class="avatar icon-xl icon-round"
+                       src="{{customer.avatar ? customer.avatar : '/images/icons/customer_white.png'}}"/>
+                <view class="info-box column">
+                    <view class="title-box">
+                        <text class="xl">{{customer.name ? customer.name : '微信用户'}}</text>
+                    </view>
+                    <text class="xl">会员等级: {{member.levelName}}</text>
+                </view>
+            </view>
+            <image class="canvas" src="/images/icons/canvas.png" @tap.stop="canvas"/>
+        </view>
+        <view class="info-box">
+            <view class="column">
+                <view class="title-box">
+                    <text class="xl">当前积分: {{member.bonus == 0 ? '暂无积分' : member.bonus}}</text>
+                </view>
+                <text class="xl">{{member.memberNumber}}</text>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import WxUtils from '../../utils/WxUtils';
+    import Qrcode from '../../components/wux/qrcode/qrcode';
+    import member from '../../api/member';
+
+    export default class VipCard extends wepy.component {
+        props = {
+            member: {},
+            type: {}
+        };
+        data = {
+            registe: false,
+            info: {}
+        };
+        methods = {
+            vipDetail(){
+                if(this.type == 'detail'){
+                    return;
+                }
+                this.$root.$navigate('/pages/customer/vip_detail?member=' + JSON.stringify(this.member));
+            },
+            canvas() {
+                if(this.member.codeUrl != null){
+                    wx.previewImage({
+                        current: this.member.codeUrl, // 当前显示图片的http链接
+                        urls: [this.member.codeUrl] // 需要预览的图片http链接列表
+                    });
+                }
+            }
+        };
+
+        async onLoad() {
+        }
+    }
+</script>
+
+<style lang="scss">
+    @import "../../styles/variable";
+
+    .vip-box {
+        position: relative;
+        padding: 15px;
+        text {
+            color: #FFF
+        }
+        background-color: #509FC9;
+        margin: 30rpx;
+        border-radius: 15rpx;
+        height: 300rpx;
+    }
+
+    .title {
+        width: 520rpx;
+    }
+
+    .canvas {
+        width: 100rpx;
+        height: 100rpx;
+    }
+
+    .column-between {
+        align-items: flex-start;
+    }
+
+    .info-box {
+        margin-left: 20rpx;
+    }
+</style>

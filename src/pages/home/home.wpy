@@ -63,9 +63,9 @@
           <text class="weak">我的优惠券</text>
         </navigator>
 
-        <navigator class="shop-btn column-center" url="/pages/order/list" >
+        <navigator class="shop-btn column-center" url="/pages/customer/index" >
           <image class="icon-xl" src="/images/home/my.png"></image>
-          <text class="weak">我的订单</text>
+          <text class="weak">个人中心</text>
         </navigator>
       </view>
     </view>

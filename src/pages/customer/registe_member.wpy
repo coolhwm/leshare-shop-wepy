@@ -1,0 +1,116 @@
+<template>
+    <Tips/>
+    <view class="container registe-box" wx:if="{{init}}">
+        <view class="weui-cell weui-cell_from">
+            <view class="weui-cell__hd">
+                <view class="weui-label">电话号码</view>
+            </view>
+            <view class="weui-cell__bd">
+                <input class="weui-input" id="phone" @input="input" value="{{input.phone}}" type="text"
+                       placeholder="请输入电话号码"/>
+            </view>
+        </view>
+        <view class="weui-cell weui-cell_from">
+            <view class="weui-cell__hd">
+                <view class="weui-label">出生日期</view>
+            </view>
+            <view class="weui-cell__bd">
+                <picker mode="date" id="birthday" @change="input" value="{{input.birthday}}"
+                        disabled="{{mode == 'edit'}}">
+                    <view class="weui-input muted">
+                        {{input.birthday ? input.birthday : '请选择出生日期'}}
+                    </view>
+                </picker>
+            </view>
+        </view>
+        <view class="weui-cell weui-cell_from">
+            <view class="weui-cell__hd">
+                <view class="weui-label">性别</view>
+            </view>
+            <view class="weui-input muted">
+                <radio-group class="radio-group" @change="input" id="sex">
+                    <label class="radio mr20" wx:key="item" wx:for="{{item}}">
+                        <radio class="mr10" value="{{item.value}}" checked="{{item.checked}}"/>
+                        {{item.value}}
+                    </label>
+                </radio-group>
+            </view>
+        </view>
+        <!--操作栏-->
+        <ActionBar @tap.user="add" okText="注册" cancelText="返回"/>
+    </view>
+</template>
+<script>
+    import wepy from 'wepy';
+    import ActionBar from '../../components/common/action_bar';
+    import input from '../../mixins/input';
+    import FormTips from '../../components/weui/tips';
+    import member from '../../api/member'
+    import Tips from '../../utils/Tips';
+    import Event from '../../utils/Event';
+
+    export default class RegisteMember extends wepy.page {
+        def = {
+            item: [
+                {id: 0, name: 'man', value: "男"},
+                {id: 1, name: 'wman', value: "女"}
+            ],
+            registeInfo: {},
+            init: false
+        };
+        data = {...this.def};
+
+        onLoad() {
+            this.init = true;
+        };
+
+        methods = {
+            async add() {
+                if (!this.validate()) {
+                    return;
+                }
+                console.log(this.input);
+                this.registeInfo = this.input;
+                await member.create(this.registeInfo);
+                await Tips.success('注册成功');
+                Event.emit(Event.REGISTE_MEMBER_UPDATE);
+                wepy.navigateBack();
+            }
+        };
+        components = {
+            ActionBar: ActionBar,
+            Tips: FormTips
+        };
+        config = {
+            navigationBarTitleText: '注册会员'
+        };
+        mixins = [input];
+
+        validate() {
+            const rules = [
+                {
+                    value: this.input.phone,
+                    method: 'required',
+                    message: '联系电话不能为空'
+                },
+                {
+                    value: this.input.phone,
+                    method: 'number',
+                    message: '联系电话只能为数字'
+                },
+                {
+                    value: this.input.phone,
+                    method: 'tel',
+                    message: '请输入正确的手机格式'
+                },
+            ];
+            return this.check(rules);
+        }
+    }
+</script>
+<style lang="scss">
+    @import "../../styles/variable";
+    .registe-box{
+        background-color: white;
+    }
+</style>

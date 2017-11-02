@@ -1,0 +1,57 @@
+<template>
+    <!-- 会员卡注册区域 -->
+    <view class="vip-box column-center">
+        <image class="avatar icon-xl icon-round"
+               src="{{customer.avatar ? customer.avatar : '/images/icons/customer_white.png'}}"/>
+        <view class="title-box">
+            <text class="xl">{{customer.name ? customer.name : '微信用户'}}</text>
+        </view>
+        <text class="zan-btn" @tap="regist">注册会员</text>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import WxUtils from '../../utils/WxUtils';
+    import Qrcode from '../../components/wux/qrcode/qrcode';
+
+    export default class RegisteMember extends wepy.component {
+        props = {};
+        data = {
+          registe: false
+        };
+        methods = {
+            regist() {
+                this.$root.$navigate('/pages/customer/registe_member')
+            }
+        };
+    }
+</script>
+
+<style lang="scss">
+    @import "../../styles/variable";
+
+    // 店铺信息
+    .vip-box {
+        position: relative;
+        padding: 15px;
+        text {
+            color: #FFF
+        }
+        background-color: #509FC9;
+        margin: 30rpx;
+        border-radius: 15rpx;
+        height: 300rpx;
+    }
+
+    .zan-btn{
+        align-items: center;
+        align-content: center;
+        height: 30px;
+        margin-top: 10px;
+        padding-left: 8px;
+        padding-right: 8px;
+        background-color: #ff8855;
+        line-height:25px;
+    }
+</style>
