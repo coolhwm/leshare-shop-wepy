@@ -8,11 +8,11 @@
       <CouponItem :coupon.sync="item" @delete.user="delete" @select.user="detail"/>
     </repeat>
 
-    <view class="zan-panel"  wx:if="{{!isPageEmpty && tab.selectedId == 'NEVER_USED'}}">
+    <form report-submit="true" @submit="use" class="zan-panel"  wx:if="{{!isPageEmpty && tab.selectedId == 'NEVER_USED'}}">
       <view class="zan-btns">
-        <button class="zan-btn zan-btn--fill" @tap="use">立即下单使用</button>
+        <button class="zan-btn zan-btn--fill" form-type="submit">立即下单使用</button>
       </view>
-    </view>
+    </form>
 
     <!-- 加载提示 -->
     <Loadmore :page.sync="page"/>
@@ -25,6 +25,7 @@
 <script>
   import wepy from 'wepy';
   import auth from '../../api/auth';
+  import shop from '../../api/shop';
   import base from '../../mixins/base';
   import coupon from '../../api/coupon';
   import pagination from '../../mixins/pagination.wpy';
@@ -79,7 +80,8 @@
       switchTab() {
         this.reload();
       },
-      use() {
+      use({detail}) {
+        shop.reportFormId(detail.formId);
         WxUtils.backOrRedirect('/pages/shop/index');
       }
     };

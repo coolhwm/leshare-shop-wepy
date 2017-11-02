@@ -1,0 +1,38 @@
+<template>
+  <view class="inshop-box row-between">
+    <view class="row" wx:if="{{order.orderType == '30'}}">
+      <image class="icon" src="/images/icons/inshop.png" />
+      <text>到店堂食</text>
+    </view>
+    <view class="row"  wx:if="{{order.orderType == '33'}}">
+      <image class="icon" src="/images/icons/package.png" />
+      <text>打包带走</text>
+    </view>
+    <text class="muted mr20 sm">{{order.arriveTime}}</text>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class InShopStatus extends wepy.component {
+    props = {
+      order: {}
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .inshop-box{
+    border-top: $border;
+    border-bottom: $border;
+    height: 45px;
+    background-color: white;
+    padding-left: 20rpx;
+    margin-top: 10rpx;
+    margin-bottom: 10rpx;
+    text{
+      margin-left: 10rpx;
+    }
+  }
+</style>

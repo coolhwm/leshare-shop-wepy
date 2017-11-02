@@ -1,5 +1,5 @@
 <template>
-  <view class="coupon-item-container {{coupon.status == 'NEVER_USED' ? '' : 'coupon-item-disable'}}"  @tap.stop="select({{coupon}})" @longtap="delete({{coupon}})">
+  <view class="coupon-item-container {{coupon.status == 'NEVER_USED' ? '' : 'coupon-item-disable'}}"  @tap.stop="select({{coupon}})">
     <!--左侧区域-->
     <view class="coupon-main-container">
       <view class="coupon-value-container">
@@ -13,7 +13,9 @@
     <view class="coupon-info-container">
       <view>
         <view class="coupon-title-container">
-          <view class="label primary small {{coupon.status == 'NEVER_USED' ? '' : 'disabled'}}">现金</view>
+          <view class="label primary small {{coupon.status == 'NEVER_USED' ? '' : 'disabled'}}" wx:if="{{coupon.supportType == 0}}">通用</view>
+          <view class="label primary small {{coupon.status == 'NEVER_USED' ? '' : 'disabled'}}" wx:if="{{coupon.supportType == 1}}">线上</view>
+          <view class="label primary small {{coupon.status == 'NEVER_USED' ? '' : 'disabled'}}" wx:if="{{coupon.supportType == 2}}">线下</view>
           <text class="coupon-title-text">{{coupon.name}}</text>
         </view>
         <text class="coupon-time-text">{{coupon.beginTime}}-{{coupon.dueTime}}</text>
@@ -49,9 +51,6 @@
     methods = {
       select(coupon) {
         this.$emit('select', coupon);
-      },
-      delete(coupon) {
-        // this.$emit('delete', coupon);
       }
     };
     events = {};
