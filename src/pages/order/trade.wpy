@@ -404,7 +404,6 @@
         // 刷新视图
         this.confirmStatus = confirmStatus;
         this.confirmText = confirmText;
-        this.$apply();
         return deliveryText;
       },
       delilveryCount() {

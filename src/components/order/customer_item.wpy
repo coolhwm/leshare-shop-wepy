@@ -172,8 +172,7 @@
           return;
         }
         this.$root.$navigate(`detail?orderId=${orderId}`);
-      },
-
+      }
     };
     components = {
       OrderGoods: OrderGoods

@@ -45,7 +45,7 @@
       isBack() {
         return this.back == 'true';
       }
-    }
+    };
     methods = {
       showInput: function () {
         this.inputShowed = true;
