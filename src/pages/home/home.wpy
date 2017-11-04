@@ -72,7 +72,7 @@
           <text class="weak">我的优惠券</text>
         </button>
 
-        <button class="shop-btn column-center" url="/pages/order/list" >
+        <button class="shop-btn" plain url="/pages/order/list" >
           <image class="icon-xl" src="/images/home/my.png"></image>
           <text class="weak">个人中心</text>
         </button>
