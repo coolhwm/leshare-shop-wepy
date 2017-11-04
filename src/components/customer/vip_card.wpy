@@ -49,7 +49,7 @@
             },
             canvas() {
                 if(this.member.codeUrl != null){
-                    wx.previewImage({
+                    wepy.previewImage({
                         current: this.member.codeUrl, // 当前显示图片的http链接
                         urls: [this.member.codeUrl] // 需要预览的图片http链接列表
                     });
@@ -82,8 +82,8 @@
     }
 
     .canvas {
-        width: 100rpx;
-        height: 100rpx;
+        width: 70rpx;
+        height: 70rpx;
     }
 
     .column-between {

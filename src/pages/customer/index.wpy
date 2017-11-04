@@ -1,16 +1,16 @@
 <template>
     <view class="container" wx:if="{{init}}">
 
-        <view wx:if="{{card}}">
+        <view wx:if="{{vipCard != null}}">
             <!-- 会员卡 -->
-            <VipCard :member.sync="member" wx:if="{{memberEmpty}}"/>
+            <VipCard :member.sync="member" wx:if="{{member != null}}"/>
 
             <!-- 会员卡注册 -->
-            <VipRegiste wx:if="{{!memberEmpty}}"/>
+            <VipRegiste wx:if="{{member == null}}"/>
         </view>
 
         <!-- 原始用户信息 -->
-        <ShopHeader :shop.sync="shop" navType="navigateBack" wx:if="{{!card}}"/>
+        <ShopHeader :shop.sync="shop" navType="navigateBack" wx:if="{{vipCard == null}}"/>
 
         <!--功能区域-->
         <HomeNav badegText="我的" title="我的订单" navText="返回" navUrl="/pages/shop/index"/>
@@ -70,14 +70,6 @@
         async onLoad() {
             this.member = await member.info();
             this.vipCard = await Vip.info();
-            if (this.vipCard == null) {
-                this.card = false;
-            }
-            this.card = true;
-            if (this.member == null) {
-                this.memberEmpty = false;
-            }
-            this.memberEmpty = true;
             //校验
             const result = await auth.user({block: true, redirect: true});
             if (!result) return;
