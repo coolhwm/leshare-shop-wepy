@@ -1,10 +1,18 @@
 <template>
   <Tips/>
 
-  <AddressList :goodsList.sync="goodsList" :display.sync="isAddressListDisplay" />
+  <!--地址浮动层-->
+  <AddressList :goodsList.sync="goodsList" :display.sync="isAddressListDisplay"/>
 
   <view class="container" wx:if="{{init}}">
-    <AddressSelector :address.sync="selectedAddress" @select.user="address" />
+    <!--地址栏/外卖情况更彰显-->
+    <block wx:if="{{trade.orderType == '20'}}">
+      <AddressSelector :address.sync="selectedAddress" @select.user="address" />
+    </block>
+    <block wx:else>
+      <InShopTab @tap.user="switchInShopType" />
+    </block>
+
 
     <view class="mt10"></view>
 
@@ -12,15 +20,26 @@
     <OrderItem :order.sync="trade" action="0"></OrderItem>
 
     <!--订单详情-->
-    <view class="weui-cells weui-cells_after-title weui-cells-merge-top">
+    <view class="weui-cells weui-cells_after-title weui-cells-merge-top" >
+
+      <!--堂食才有预约时间-->
+      <view class="weui-cell weui-cell_access" @tap="arriveTime" wx:if="{{trade.orderType != '20'}}">
+        <view class="weui-cell__bd">预约时间</view>
+        <text class="weui-cell__ft weui-cell__ft_in-access">{{trade.arriveTime}} </text>
+      </view>
+
+
+      <!--外卖才能在线支付-->
       <view class="weui-cell weui-cell_access" @tap="paymentType">
         <view class="weui-cell__bd">支付方式</view>
-        <view class="weui-cell__ft {{shop.offPay == 1 ? 'weui-cell__ft_in-access' : ''}}">{{trade.paymentText}}</view>
+        <view class="weui-cell__ft {{shop.offPay == 1 && trade.orderType == '20' ? 'weui-cell__ft_in-access' : ''}}">{{trade.paymentText}}</view>
       </view>
-      <view class="weui-cell weui-cell_access" @tap="delivery">
+      <!--外卖才有配送方式-->
+      <view class="weui-cell weui-cell_access" @tap="delivery" wx:if="{{trade.orderType == '20'}}">
         <view class="weui-cell__bd">配送方式</view>
         <text class="weui-cell__ft {{delilveryCount > 1 ? 'weui-cell__ft_in-access' : ''}}">{{delilveryText}} </text>
       </view>
+
       <view class="weui-cell weui-cell_access" @tap="coupon">
         <view class="weui-cell__bd">优惠券
           <view class="label small primary pain" wx:if="{{coupons.length > 0}}">{{couponLabel}}</view>
@@ -35,8 +54,8 @@
         <text>商品金额</text>
         <text class="major">￥{{trade.dealPrice}}</text>
       </view>
-      <view class="price-box row-between">
-        <text>运费</text>
+      <view class="price-box row-between" >
+        <text>配送费</text>
         <text class="major">+￥{{trade.postFee}}</text>
       </view>
       <view class="price-box row-between" wx:if="{{trade.couponPrice}}">
@@ -100,9 +119,10 @@
   import ActionSheet from '../../components/weui/action_sheet';
   import AddressList from '../../components/address/list';
   import OrderItem from '../../components/order/customer_item';
+  import InShopTab from '../../components/order/inshop_tab';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
-  import Route from '../../utils/WxUtils';
+  import WxUtils from '../../utils/WxUtils';
   import Cache from '../../utils/Cache';
 
   export default class OrderTrade extends wepy.page {
@@ -132,10 +152,12 @@
       // 订单数据
       this.trade = preload.trade;
       this.goodsList = this.trade.orderGoodsInfos;
-      // 默认地址
-      this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
-      // 处理配送方式
-      await this.updateDelivery();
+      if (this.trade.orderType == '20') {
+        // 默认地址
+        this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
+        // 处理配送方式
+        await this.updateDelivery();
+      }
       // 可用卡券
       this.coupons = await coupon.available(this.trade.orderGoodsInfos);
       // 店铺信息
@@ -143,13 +165,7 @@
       // 优惠信息
       this.reduce = await Cache.reduce();
       // 自动选择优惠券
-      if (this.coupons && this.coupons.length > 0) {
-        let selected = this.coupons[0];
-        this.coupons.forEach(item => {
-          selected = item.price > selected.price ? item : selected;
-        });
-        this.updateCoupon(selected);
-      }
+      this.setDefaultCoupon();
       this.loaded();
       // 事件注册
       Event.listen(Event.TRADE_ADDRESS_UPDATE, this.updateAddress.bind(this), this);
@@ -158,6 +174,12 @@
     methods = {
       input({detail}) {
         this.trade.message = detail.value;
+      },
+      /**
+       * 切换到店方式
+       */
+      switchInShopType(type) {
+        this.trade.orderType = type;
       },
       /**
        * 选择配送方式
@@ -191,10 +213,18 @@
         this.$navigate('../coupon/use', param);
       },
       /**
+       * 选择预约时间
+       */
+      async arriveTime() {
+        const {text} = await Tips.action('立即出餐', '15分钟内到店', '30分钟内到店', '1小时内到店');
+        this.trade.arriveTime = text;
+        this.$apply();
+      },
+      /**
        * 选择付款方式
        */
       async paymentType () {
-        if (this.shop.offPay == 0) {
+        if (this.shop.offPay == 0 || this.trade.orderType != '20') {
           return;
         }
         const trade = this.trade;
@@ -223,7 +253,9 @@
           return;
         }
         // 数据准备
-        this.trade.deliveryType = 'CITY';
+        if (this.trade.orderType == 20) {
+          this.trade.deliveryType = 'CITY';
+        }
         // 表单ID
         this.trade.formId = detail.formId;
         // 创建订单
@@ -246,12 +278,26 @@
         Event.emit(Event.CART_LIST_CLEAR);
         // 卡券领取更新
         if (trade.couponUsedId) {
+          Tips.setLoading();
           await Cache.coupon(true);
+          Tips.loaded();
           Event.emit(Event.COUPON_LIST_UPDATE);
         }
-        Route.backOrRedirect('/pages/order/list');
+        WxUtils.backOrRedirect('/pages/order/list');
       }
     };
+    /**
+     * 选择默认卡券
+     */
+    setDefaultCoupon() {
+      if (this.coupons && this.coupons.length > 0) {
+        let selected = this.coupons[0];
+        this.coupons.forEach(item => {
+          selected = item.price > selected.price ? item : selected;
+        });
+        this.updateCoupon(selected);
+      }
+    }
     /**
      * 更新配送方式
      */
@@ -333,26 +379,31 @@
         let confirmStatus = false;
         let deliveryText = '暂不支持配送';
         let confirmText = '立即下单';
-        if (!this.selectedAddress) {
-          deliveryText = '请选择收货地址';
-          confirmText = '请选择地址';
-        } else if (this.delilveries.length < 1) {
-          confirmText = deliveryText = '暂不支持配送';
-        } else if (!this.selectedDelivery) {
-          confirmText = deliveryText = '请选择配送方式';
-        } else if (this.selectedDelivery.limitPrice > this.trade.dealPrice) {
-          deliveryText = `${this.selectedDelivery.name} 起送价￥${this.selectedDelivery.limitPrice}`;
-          confirmText = `起送价￥${this.selectedDelivery.limitPrice}`;
-        } else {
-          const fee = this.selectedDelivery.fee > 0 ? `￥${this.selectedDelivery.fee}` : '免配送费';
-          deliveryText = `${this.selectedDelivery.name} ${fee}`;
+        const orderType = this.trade.orderType;
+        if (orderType != '20') {
           confirmStatus = true;
           confirmText = '立即下单';
+        } else {
+          if (!this.selectedAddress) {
+            deliveryText = '请选择收货地址';
+            confirmText = '请选择地址';
+          } else if (this.delilveries.length < 1) {
+            confirmText = deliveryText = '暂不支持配送';
+          } else if (!this.selectedDelivery) {
+            confirmText = deliveryText = '请选择配送方式';
+          } else if (this.selectedDelivery.limitPrice > this.trade.dealPrice) {
+            deliveryText = `${this.selectedDelivery.name} 起送价￥${this.selectedDelivery.limitPrice}`;
+            confirmText = `起送价￥${this.selectedDelivery.limitPrice}`;
+          } else {
+            const fee = this.selectedDelivery.fee > 0 ? `￥${this.selectedDelivery.fee}` : '免配送费';
+            deliveryText = `${this.selectedDelivery.name} ${fee}`;
+            confirmStatus = true;
+            confirmText = '立即下单';
+          }
         }
         // 刷新视图
         this.confirmStatus = confirmStatus;
         this.confirmText = confirmText;
-        this.$apply();
         return deliveryText;
       },
       delilveryCount() {
@@ -388,7 +439,8 @@
       ActionSheet: ActionSheet,
       AddressSelector: AddressSelector,
       OrderItem: OrderItem,
-      AddressList: AddressList
+      AddressList: AddressList,
+      InShopTab: InShopTab
     };
     mixins = [base];
     config = {

@@ -1,5 +1,5 @@
 <template>
-  <view class="coupon-item-container {{coupon.status == 'NEVER_USED' ? '' : 'coupon-item-disable'}}"  @tap.stop="select({{coupon}})" @longtap="delete({{coupon}})">
+  <view class="coupon-item-container {{coupon.status == 'NEVER_USED' ? '' : 'coupon-item-disable'}}"  @tap.stop="select({{coupon}})">
     <!--左侧区域-->
     <view class="coupon-main-container">
       <view class="coupon-value-container">
@@ -51,9 +51,6 @@
     methods = {
       select(coupon) {
         this.$emit('select', coupon);
-      },
-      delete(coupon) {
-        // this.$emit('delete', coupon);
       }
     };
     events = {};

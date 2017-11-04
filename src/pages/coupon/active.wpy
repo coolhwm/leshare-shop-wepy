@@ -1,21 +1,23 @@
 <template>
+  <form wx:if="{{init}}" report-submit="true" @submit="reportFormId">
+    <!--背景图片-->
+    <image class="active-bg" mode="widthFix" src="{{coupon.campaignImg}}" />
 
-  <!--背景图片-->
-  <image class="active-bg" mode="widthFix" src="{{coupon.campaignImg}}" />
+    <!--授权并领取按钮-->
+    <button class="active-btn" form-type="submit" open-type="getUserInfo" bindgetuserinfo="auth" plain wx:if="{{reInfo}}">
+      <image  mode="widthFix" src="http://img.leshare.shop/coupon_pick_button.png" />
+    </button>
 
-  <!--授权并领取按钮-->
-  <button class="active-btn" open-type="getUserInfo" bindgetuserinfo="auth" plain wx:if="{{reInfo}}">
-    <image  mode="widthFix" src="http://img.leshare.shop/coupon_pick_button.png" />
-  </button>
-
-  <!--兼容按钮-->
-  <image class="active-btn" @tap="pick"  mode="widthFix" wx:else  src="http://img.leshare.shop/coupon_pick_button.png" />
+    <!--兼容按钮-->
+    <image class="active-btn" @tap="pick"  mode="widthFix" wx:else  src="http://img.leshare.shop/coupon_pick_button.png" />
+  </form>
 </template>
 
 <script>
   import wepy from 'wepy';
   import coupon from '../../api/coupon';
   import auth from '../../api/auth';
+  import shop from '../../api/shop';
   import base from '../../mixins/base';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
@@ -24,6 +26,7 @@
 
   export default class CouponActive extends wepy.page {
     def = {
+      init: false,
       reInfo: false,
       coupon: null
     };
@@ -31,8 +34,12 @@
     onLoad (options, {preload}) {
       this.coupon = preload.coupon;
       this.reInfo = WxUtils.canIUse('button.open-type.getUserInfo');
+      this.loaded();
     };
     methods = {
+      reportFormId({detail}) {
+        shop.reportFormId(detail.formId);
+      },
       async auth({detail}) {
         console.info(detail);
         if (detail.rawData == null) {
