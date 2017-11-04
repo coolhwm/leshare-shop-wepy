@@ -11,21 +11,19 @@
 </template>
 
 <script>
-    import wepy from 'wepy';
-    import WxUtils from '../../utils/WxUtils';
-    import Qrcode from '../../components/wux/qrcode/qrcode';
+  import wepy from 'wepy';
 
-    export default class RegisteMember extends wepy.component {
-        props = {};
-        data = {
-          registe: false
-        };
-        methods = {
-            regist() {
-                this.$root.$navigate('/pages/customer/registe_member')
-            }
-        };
-    }
+  export default class RegisteMember extends wepy.component {
+    props = {};
+    data = {
+      registe: false
+    };
+    methods = {
+      regist () {
+        this.$root.$navigate('/pages/customer/registe_member');
+      }
+    };
+  }
 </script>
 
 <style lang="scss">

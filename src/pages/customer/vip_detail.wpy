@@ -38,29 +38,29 @@
     </view>
 </template>
 <script>
-    import wepy from 'wepy';
-    import VipCard from '../../components/customer/vip_card';
+  import wepy from 'wepy';
+  import VipCard from '../../components/customer/vip_card';
 
-    export default class VipDetail extends wepy.page {
-        def = {
-            init: false,
-            member: {},
-            detail:'detail'
-        };
-        data = {...this.def};
+  export default class VipDetail extends wepy.page {
+    def = {
+      init: false,
+      member: {},
+      detail: 'detail'
+    };
+    data = {...this.def};
 
-        async onLoad(options) {
-            this.member = JSON.parse(options.member);
-            this.init = true;
-        }
-
-        components = {
-            VipCard: VipCard
-        };
-        config = {
-            navigationBarTitleText: '会员卡详情'
-        };
+    async onLoad (options) {
+      this.member = JSON.parse(options.member);
+      this.init = true;
     }
+
+    components = {
+      VipCard: VipCard
+    };
+    config = {
+      navigationBarTitleText: '会员卡详情'
+    };
+  }
 </script>
 <style lang="scss">
     @import "../../styles/variable";

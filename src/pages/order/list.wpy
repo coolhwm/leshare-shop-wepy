@@ -66,7 +66,7 @@
       // 监听更新事件
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
       Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
-  };
+    };
     loadCoupon() {
       // -- 异步加载
       Cache.coupon().then(({ownList}) => {

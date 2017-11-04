@@ -32,40 +32,41 @@
 </template>
 
 <script>
-    import wepy from 'wepy';
-    import base from '../../mixins/base';
-    import order from '../../api/order';
-    import auth from '../../api/auth';
-    import Vip from '../../api/member_card';
-    import member from '../../api/member'
-    import pagination from '../../mixins/pagination.wpy';
-    import Placeholder from '../../components/common/placeholder';
-    import VipCard from '../../components/customer/vip_card';
-    import VipRegiste from '../../components/customer/vip_registe';
-    import ShopHeader from '../../components/shop/header';
-    import ShopNav from '../../components/shop/nav';
-    import Loadmore from '../../components/weui/loadmore';
-    import OrderItem from '../../components/order/customer_item';
-    import Event from '../../utils/Event';
-    import Cache from '../../utils/Cache';
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import order from '../../api/order';
+  import auth from '../../api/auth';
+  import Vip from '../../api/member_card';
+  import member from '../../api/member';
+  import pagination from '../../mixins/pagination.wpy';
+  import Placeholder from '../../components/common/placeholder';
+  import VipCard from '../../components/customer/vip_card';
+  import VipRegiste from '../../components/customer/vip_registe';
+  import ShopHeader from '../../components/shop/header';
+  import ShopNav from '../../components/shop/nav';
+  import Loadmore from '../../components/weui/loadmore';
+  import OrderItem from '../../components/order/customer_item';
+  import Event from '../../utils/Event';
+  import Cache from '../../utils/Cache';
 
-    export default class CustomerIndex extends wepy.page {
-        def = {
-            vipCard: {},
-            card:false,
-            init: false,
-            page: {
-                list: [
-                    {orderGoodsInfos: []}
-                ]
-            }, shop: {
-                notices: []
-            },
-            couponsNum: '0张',
-            member: {},
-            memberEmpty:false,
-        };
-        data = {...this.def};
+  export default class CustomerIndex extends wepy.page {
+    def = {
+      vipCard: {},
+      card: false,
+      init: false,
+      page: {
+        list: [
+          {orderGoodsInfos: []}
+        ]
+      },
+      shop: {
+        notices: []
+      },
+      couponsNum: '0张',
+      member: {},
+      memberEmpty: false
+    };
+    data = {...this.def};
 
         async onLoad() {
             this.member = await member.info();
@@ -87,29 +88,29 @@
             Event.listen(Event.REGISTE_MEMBER_UPDATE,this.update.bind(this), this);
         };
 
-        loadCoupon() {
-            // -- 异步加载
-            Cache.coupon().then(({ownList}) => {
-                this.couponsNum = ownList.length + '张';
-                this.loaded();
-            });
-        }
-
-        events = {};
-        components = {
-            Placeholder: Placeholder,
-            Loadmore: Loadmore,
-            VipCard: VipCard,
-            HomeNav: ShopNav,
-            CouponNav: ShopNav,
-            OrderItem: OrderItem,
-            ShopHeader: ShopHeader,
-            VipRegiste: VipRegiste
-        };
-        mixins = [base, pagination];
-        config = {
-            navigationBarTitleText: '个人中心',
-            enablePullDownRefresh: true
-        };
+    loadCoupon () {
+      // -- 异步加载
+      Cache.coupon().then(({ownList}) => {
+        this.couponsNum = ownList.length + '张';
+        this.loaded();
+      });
     }
+
+    events = {};
+    components = {
+      Placeholder: Placeholder,
+      Loadmore: Loadmore,
+      VipCard: VipCard,
+      HomeNav: ShopNav,
+      CouponNav: ShopNav,
+      OrderItem: OrderItem,
+      ShopHeader: ShopHeader,
+      VipRegiste: VipRegiste
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '个人中心',
+      enablePullDownRefresh: true
+    };
+  }
 </script>

@@ -53,9 +53,11 @@
      * 重新加载
      */
     async reload () {
-      this.page.reset();
-      await this.next();
-      wepy.stopPullDownRefresh();
+      if (this.page && this.page.reset) {
+        this.page.reset();
+        await this.next();
+        wepy.stopPullDownRefresh();
+      }
     }
 
     /**

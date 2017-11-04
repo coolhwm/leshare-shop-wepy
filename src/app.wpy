@@ -72,7 +72,6 @@ export default class extends wepy.app {
       'pages/home/home',
       'pages/home/login',
       'pages/shop/index',
-      'pages/shop/canvas',
       'pages/goods/detail',
       'pages/goods/comment_list',
       'pages/goods/comment_edit',
@@ -104,9 +103,6 @@ export default class extends wepy.app {
     auth: {
     },
     scene: '',
-//    shopType: '2',
-//    shopName: '连江什么鬼炸鸡汉堡',
-//    app_code: 'eemTgbKrhqiYKMFowcBCQ1Zr7G13bWUT',
     shopType: '1',
     shopName: '连江日用品专营店',
     app_code: 'owVHb1gHrvktni80kjMlFMzSDJDWY0xR',

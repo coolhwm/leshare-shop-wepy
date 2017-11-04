@@ -46,7 +46,6 @@
           return '选择配送方式';
         } else {
           this.confirmStatus = true;
-          this.$apply();
           return '立即下单';
         }
         // TODO 超出配送范围

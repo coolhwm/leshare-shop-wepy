@@ -25,7 +25,6 @@
   import Placeholder from '../../components/common/placeholder';
   import CouponItem from '../../components/coupons/item';
   import Event from '../../utils/Event';
-  import Cache from '../../utils/Cache';
 
   export default class CouponUse extends wepy.page {
     def = {
