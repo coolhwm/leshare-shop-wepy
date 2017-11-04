@@ -18,19 +18,19 @@
 </template>
 
 <script>
-    import wepy from 'wepy';
-    import WxUtils from '../../utils/WxUtils';
+  import wepy from 'wepy';
+  import WxUtils from '../../utils/WxUtils';
 
-    export default class ShopHeader extends wepy.component {
-        props = {
-            shop: {}
-        };
-        methods = {
-            home() {
-                WxUtils.backOrRedirect('/pages/home/home');
-            }
-        };
-    }
+  export default class ShopHeader extends wepy.component {
+    props = {
+      shop: {}
+    };
+    methods = {
+      home () {
+        WxUtils.backOrRedirect('/pages/home/home');
+      }
+    };
+  }
 </script>
 
 <style lang="scss">

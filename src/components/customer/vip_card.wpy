@@ -26,40 +26,37 @@
 </template>
 
 <script>
-    import wepy from 'wepy';
-    import WxUtils from '../../utils/WxUtils';
-    import Qrcode from '../../components/wux/qrcode/qrcode';
-    import member from '../../api/member';
+  import wepy from 'wepy';
 
-    export default class VipCard extends wepy.component {
-        props = {
-            member: {},
-            type: {}
-        };
-        data = {
-            registe: false,
-            info: {}
-        };
-        methods = {
-            vipDetail(){
-                if(this.type == 'detail'){
-                    return;
-                }
-                this.$root.$navigate('/pages/customer/vip_detail?member=' + JSON.stringify(this.member));
-            },
-            canvas() {
-                if(this.member.codeUrl != null){
-                    wx.previewImage({
-                        current: this.member.codeUrl, // 当前显示图片的http链接
-                        urls: [this.member.codeUrl] // 需要预览的图片http链接列表
-                    });
-                }
-            }
-        };
-
-        async onLoad() {
+  export default class VipCard extends wepy.component {
+    props = {
+      member: {},
+      type: {}
+    };
+    data = {
+      registe: false,
+      info: {}
+    };
+    methods = {
+      vipDetail () {
+        if (this.type == 'detail') {
+          return;
         }
+        this.$root.$navigate('/pages/customer/vip_detail?member=' + JSON.stringify(this.member));
+      },
+      canvas () {
+        if (this.member.codeUrl != null) {
+          wepy.previewImage({
+            current: this.member.codeUrl, // 当前显示图片的http链接
+            urls: [this.member.codeUrl] // 需要预览的图片http链接列表
+          });
+        }
+      }
+    };
+
+    async onLoad () {
     }
+  }
 </script>
 
 <style lang="scss">

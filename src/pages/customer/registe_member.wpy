@@ -41,72 +41,72 @@
     </view>
 </template>
 <script>
-    import wepy from 'wepy';
-    import ActionBar from '../../components/common/action_bar';
-    import input from '../../mixins/input';
-    import FormTips from '../../components/weui/tips';
-    import member from '../../api/member'
-    import Tips from '../../utils/Tips';
-    import Event from '../../utils/Event';
+  import wepy from 'wepy';
+  import ActionBar from '../../components/common/action_bar';
+  import input from '../../mixins/input';
+  import FormTips from '../../components/weui/tips';
+  import member from '../../api/member';
+  import Tips from '../../utils/Tips';
+  import Event from '../../utils/Event';
 
-    export default class RegisteMember extends wepy.page {
-        def = {
-            item: [
-                {id: 0, name: 'man', value: "男"},
-                {id: 1, name: 'wman', value: "女"}
-            ],
-            registeInfo: {},
-            init: false
-        };
-        data = {...this.def};
+  export default class RegisteMember extends wepy.page {
+    def = {
+      item: [
+        {id: 0, name: 'man', value: '男'},
+        {id: 1, name: 'wman', value: '女'}
+      ],
+      registeInfo: {},
+      init: false
+    };
+    data = {...this.def};
 
-        onLoad() {
-            this.init = true;
-        };
+    onLoad () {
+      this.init = true;
+    };
 
-        methods = {
-            async add() {
-                if (!this.validate()) {
-                    return;
-                }
-                console.log(this.input);
-                this.registeInfo = this.input;
-                await member.create(this.registeInfo);
-                await Tips.success('注册成功');
-                Event.emit(Event.REGISTE_MEMBER_UPDATE);
-                wepy.navigateBack();
-            }
-        };
-        components = {
-            ActionBar: ActionBar,
-            Tips: FormTips
-        };
-        config = {
-            navigationBarTitleText: '注册会员'
-        };
-        mixins = [input];
-
-        validate() {
-            const rules = [
-                {
-                    value: this.input.phone,
-                    method: 'required',
-                    message: '联系电话不能为空'
-                },
-                {
-                    value: this.input.phone,
-                    method: 'number',
-                    message: '联系电话只能为数字'
-                },
-                {
-                    value: this.input.phone,
-                    method: 'tel',
-                    message: '请输入正确的手机格式'
-                },
-            ];
-            return this.check(rules);
+    methods = {
+      async add () {
+        if (!this.validate()) {
+          return;
         }
+        console.log(this.input);
+        this.registeInfo = this.input;
+        await member.create(this.registeInfo);
+        await Tips.success('注册成功');
+        Event.emit(Event.REGISTE_MEMBER_UPDATE);
+        wepy.navigateBack();
+      }
+    };
+    components = {
+      ActionBar: ActionBar,
+      Tips: FormTips
+    };
+    config = {
+      navigationBarTitleText: '注册会员'
+    };
+    mixins = [input];
+
+    validate () {
+      const rules = [
+        {
+          value: this.input.phone,
+          method: 'required',
+          message: '联系电话不能为空'
+        },
+        {
+          value: this.input.phone,
+          method: 'number',
+          message: '联系电话只能为数字'
+        },
+        {
+          value: this.input.phone,
+          method: 'tel',
+          message: '请输入正确的手机格式'
+        }
+      ];
+      return this.check(rules);
     }
+  }
 </script>
 <style lang="scss">
     @import "../../styles/variable";
