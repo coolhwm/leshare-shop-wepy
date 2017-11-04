@@ -38,13 +38,13 @@
       info: {}
     };
     methods = {
-      vipDetail () {
+      vipDetail() {
         if (this.type == 'detail') {
           return;
         }
         this.$root.$navigate('/pages/customer/vip_detail?member=' + JSON.stringify(this.member));
       },
-      canvas () {
+      canvas() {
         if (this.member.codeUrl != null) {
           wepy.previewImage({
             current: this.member.codeUrl, // 当前显示图片的http链接
@@ -54,7 +54,7 @@
       }
     };
 
-    async onLoad () {
+    async onLoad() {
     }
   }
 </script>
@@ -64,18 +64,18 @@
 
     .vip-box {
         position: relative;
-        padding: 15px;
+        padding: 10px;
         text {
-            color: #FFF
+            color: $color-bg-item
         }
         background-color: #509FC9;
-        margin: 30rpx;
+        margin: 15rpx;
         border-radius: 15rpx;
         height: 300rpx;
     }
 
     .title {
-        width: 520rpx;
+        width: 560rpx;
     }
 
     .canvas {

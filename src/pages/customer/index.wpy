@@ -1,7 +1,7 @@
 <template>
     <view class="container" wx:if="{{init}}">
 
-        <view wx:if="{{vipCard != null}}">
+        <view wx:if="{{vipCard != null}}" class="box-bg">
             <!-- 会员卡 -->
             <VipCard :member.sync="member" wx:if="{{member != null}}"/>
 
@@ -13,15 +13,38 @@
         <ShopHeader :shop.sync="shop" navType="navigateBack" wx:if="{{vipCard == null}}"/>
 
         <!--功能区域-->
-        <HomeNav badegText="我的" title="我的订单" navText="返回" navUrl="/pages/shop/index"/>
-        <CouponNav title="优惠券" :navText.sync="couponsNum" navUrl="/pages/coupon/list" last="true"/>
-
-        <view class="mt10">
-            <!--列表展现-->
-            <repeat for="{{page.list}}" key="index" index="index" item="item">
-                <OrderItem :order.sync="item" @tap.user="detail"></OrderItem>
-            </repeat>
+        <view class="h-line"/>
+        <view class="bg-white">
+            <view class="weui-cell row-between">
+                <button class="shop-btn" plain @tap="goto" data-url="/pages/customer/index">
+                    <image class="icon" src="/images/icons/address.png"/>
+                    <text class="xs">常用地址</text>
+                </button>
+                <view class="ver-line"/>
+                <button class="shop-btn" plain @tap="goto" data-url="/pages/customer/index">
+                    <image class="icon" src="/images/icons/coupon.png"/>
+                    <text class="xs">优惠券</text>
+                </button>
+                <view class="ver-line"/>
+                <button class="shop-btn" plain @tap="goto" data-url="/pages/customer/index">
+                    <image class="icon" src="/images/icons/bouns.png"/>
+                    <text class="xs">我的积分</text>
+                </button>
+                <view class="ver-line"/>
+                <button class="shop-btn" plain @tap="goto" data-url="/pages/customer/index">
+                    <image class="icon" src="/images/icons/privilege.png"/>
+                    <text class="xs">我的特权</text>
+                </button>
+            </view>
         </view>
+        <view class="weui-cells-form"/>
+        <view class="bg-white">
+            <view class="weui-cell">我的订单</view>
+        </view>
+        <!--列表展现-->
+        <repeat for="{{page.list}}" key="index" index="index" item="item">
+            <OrderItem :order.sync="item" @tap.user="detail"/>
+        </repeat>
 
         <!-- 加载提示 -->
         <Loadmore :page.sync="page"/>
@@ -68,27 +91,27 @@
     };
     data = {...this.def};
 
-        async onLoad() {
-            this.member = await member.info();
-            this.vipCard = await Vip.info();
-            //校验
-            const result = await auth.user({block: true, redirect: true});
-            if (!result) return;
-            // 加载店铺信息
-            this.shop = await Cache.shop();
-            this.shop.notices = await Cache.notices();
-            this.page = order.page();
-            // -- 异步加载
-            this.loadCoupon();
-            // 分页加载
-            await this.next();
-            // 监听更新事件
-            Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
-            Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
-            Event.listen(Event.REGISTE_MEMBER_UPDATE,this.update.bind(this), this);
-        };
+    async onLoad() {
+      this.member = await member.info();
+      this.vipCard = await Vip.info();
+      // 校验
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
+      // 加载店铺信息
+      this.shop = await Cache.shop();
+      this.shop.notices = await Cache.notices();
+      this.page = order.page();
+      // -- 异步加载
+      this.loadCoupon();
+      // 分页加载
+      await this.next();
+      // 监听更新事件
+      Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
+      Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
+      Event.listen(Event.REGISTE_MEMBER_UPDATE, this.update.bind(this), this);
+    };
 
-    loadCoupon () {
+    loadCoupon() {
       // -- 异步加载
       Cache.coupon().then(({ownList}) => {
         this.couponsNum = ownList.length + '张';
@@ -114,3 +137,36 @@
     };
   }
 </script>
+<style lang="scss">
+    @import "../../styles/variable";
+
+    .box-bg {
+        background-color: #FFF;
+    }
+
+    .h-line{
+        width: 100%;
+        height: 1rpx;
+        background-color: $color-border;
+    }
+
+    .ver-line {
+        background-color: $color-muted;
+        width: 1rpx;
+        height: 50rpx;
+    }
+
+    .shop-btn {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 75px;
+        padding: 0;
+        line-height: 1;
+        border: none;
+        text {
+            margin-top: 10rpx;
+        }
+    }
+</style>
