@@ -1,13 +1,13 @@
 <template>
-    <!-- 会员卡注册区域 -->
-    <view class="vip-box column-center">
-        <image class="avatar icon-xl icon-round"
-               src="{{customer.avatar ? customer.avatar : '/images/icons/customer_white.png'}}"/>
-        <view class="title-box">
-            <text class="xl">{{customer.name ? customer.name : '微信用户'}}</text>
-        </view>
-        <text class="zan-btn" @tap="regist">注册会员</text>
+  <!-- 会员卡注册区域 -->
+  <view class="vip-box column-center">
+    <image class="avatar icon-xl icon-round"
+           src="{{customer.avatar ? customer.avatar : '/images/icons/customer_white.png'}}"/>
+    <view class="title-box">
+      <text class="xl">{{customer.name ? customer.name : '微信用户'}}</text>
     </view>
+    <text class="zan-btn" @tap="regist">注册会员</text>
+  </view>
 </template>
 
 <script>

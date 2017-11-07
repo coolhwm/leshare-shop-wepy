@@ -1,41 +1,41 @@
 <template>
-    <view class="container" wx:if="{{init}}">
-        <VipCard :member.sync="member" :type.sync="detail"/>
-        <text class="text-box xl">会员卡详情</text>
-        <view class="weui-cell"/>
-        <view class="row">
-            <view class="text-box muted">特权说明</view>
-            <text class="content-text mb20">激活成功即赠送100积分
-                每消费1.00元，赠送10积分
-                没使用1积分，抵扣1.00元
-                用卡可享受9折优惠
-                1.每消费1元积10分;
-                2.激活送100积分;
-                3.本会员卡享受5折优惠;
-                4.使用卡券买单可以享受消费积分。
-            </text>
-        </view>
-        <view class="row">
-            <view class="text-box muted">有效日期</view>
-            <text class="content-text">永久有效</text>
-        </view>
-        <view class="row">
-            <view class="text-box muted">可用时段</view>
-            <text class="content-text">周一至周五 全天</text>
-        </view>
-        <view class="row">
-            <view class="text-box muted">客服电话</view>
-            <text class="content-text">88888888</text>
-        </view>
-        <view class="row">
-            <view class="text-box muted">商务服务</view>
-            <text class="content-text zan-btn--mini">免费WIFI</text>
-        </view>
-        <view class="row">
-            <view class="text-box muted">会员须知</view>
-            <text class="content-text">1.会员积分可以在商城换取对应价值商品;</text>
-        </view>
+  <view class="container" wx:if="{{init}}">
+    <VipCard :member.sync="member" :type.sync="detail"/>
+    <text class="text-box xl">会员卡详情</text>
+    <view class="weui-cell"/>
+    <view class="row">
+      <view class="text-box muted">特权说明</view>
+      <text class="content-text mb20">激活成功即赠送100积分
+        每消费1.00元，赠送10积分
+        没使用1积分，抵扣1.00元
+        用卡可享受9折优惠
+        1.每消费1元积10分;
+        2.激活送100积分;
+        3.本会员卡享受5折优惠;
+        4.使用卡券买单可以享受消费积分。
+      </text>
     </view>
+    <view class="row">
+      <view class="text-box muted">有效日期</view>
+      <text class="content-text">永久有效</text>
+    </view>
+    <view class="row">
+      <view class="text-box muted">可用时段</view>
+      <text class="content-text">周一至周五 全天</text>
+    </view>
+    <view class="row">
+      <view class="text-box muted">客服电话</view>
+      <text class="content-text">88888888</text>
+    </view>
+    <view class="row">
+      <view class="text-box muted">商务服务</view>
+      <text class="content-text zan-btn--mini">免费WIFI</text>
+    </view>
+    <view class="row">
+      <view class="text-box muted">会员须知</view>
+      <text class="content-text">1.会员积分可以在商城换取对应价值商品;</text>
+    </view>
+  </view>
 </template>
 <script>
   import wepy from 'wepy';

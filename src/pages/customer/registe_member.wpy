@@ -1,46 +1,46 @@
 <template>
-    <Tips/>
-    <view class="container registe-box" wx:if="{{init}}">
-      <view class="weui-cells weui-cells-form">
-        <view class="weui-cell weui-cell_input">
-            <view class="weui-cell__hd">
-                <view class="weui-label">电话号码</view>
-            </view>
-            <view class="weui-cell__bd">
-                <input class="weui-input" id="phone" @input="input" value="{{input.phone}}" type="number" maxlength="11"
-                       placeholder="请输入电话号码"/>
-            </view>
+  <Tips/>
+  <view class="container registe-box" wx:if="{{init}}">
+    <view class="weui-cells weui-cells-form">
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__hd">
+          <view class="weui-label">电话号码</view>
         </view>
-        <view class="weui-cell weui-cell_input">
-            <view class="weui-cell__hd">
-                <view class="weui-label">出生日期</view>
-            </view>
-            <view class="weui-cell__bd">
-                <picker mode="date" id="birthday" @change="input" value="{{input.birthday}}"
-                        disabled="{{mode == 'edit'}}">
-                    <view class="weui-input muted">
-                        {{input.birthday ? input.birthday : '请选择出生日期'}}
-                    </view>
-                </picker>
-            </view>
-        </view>
-        <view class="weui-cell weui-cells_after-title">
-            <view class="weui-cell__hd">
-                <view class="weui-label">性别</view>
-            </view>
-            <view class="weui-cell__bd">
-                <radio-group class="radio-group row" @change="input" id="sex">
-                    <label class="radio row mr20" wx:key="item" wx:for="{{item}}">
-                        <radio  value="{{item.value}}" checked="{{item.checked}}"/>
-                        {{item.value}}
-                    </label>
-                </radio-group>
-            </view>
+        <view class="weui-cell__bd">
+          <input class="weui-input" id="phone" @input="input" value="{{input.phone}}" type="number" maxlength="11"
+                 placeholder="请输入电话号码"/>
         </view>
       </view>
-      <!--操作栏-->
-      <ActionBar @tap.user="add" okText="注册" cancelText="返回"/>
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__hd">
+          <view class="weui-label">出生日期</view>
+        </view>
+        <view class="weui-cell__bd">
+          <picker mode="date" id="birthday" @change="input" value="{{input.birthday}}"
+                  disabled="{{mode == 'edit'}}">
+            <view class="weui-input muted">
+              {{input.birthday ? input.birthday : '请选择出生日期'}}
+            </view>
+          </picker>
+        </view>
+      </view>
+      <view class="weui-cell weui-cells_after-title">
+        <view class="weui-cell__hd">
+          <view class="weui-label">性别</view>
+        </view>
+        <view class="weui-cell__bd">
+          <radio-group class="radio-group row" @change="input" id="sex">
+            <label class="radio row mr20" wx:key="item" wx:for="{{item}}">
+              <radio value="{{item.value}}" checked="{{item.checked}}"/>
+              {{item.value}}
+            </label>
+          </radio-group>
+        </view>
+      </view>
     </view>
+    <!--操作栏-->
+    <ActionBar @tap.user="add" okText="注册" cancelText="返回"/>
+  </view>
 </template>
 <script>
   import wepy from 'wepy';
