@@ -9,7 +9,7 @@
             </view>
             <swiper class="notice-swiper" vertical autoplay circular interval="3000">
                 <swiper-item wx:for="{{shop.notices}}" wx:key="index">
-                    <text class="xs inline">公告：{{item.content}}</text>
+                    <view class="notice-content">公告：{{item.content}}</view>
                 </swiper-item>
             </swiper>
         </view>
@@ -34,40 +34,45 @@
 </script>
 
 <style lang="scss">
-    @import "../../styles/variable";
+  @import "../../styles/variable";
 
-    // 店铺信息
-    .shop-box {
-        position: relative;
-        padding: 15px;
-        text {
-            color: #FFF
-        }
-        background-color: $color-primary;
+  // 店铺信息
+  .shop-box {
+    position: relative;
+    padding: 15px;
+    text {
+      color: #FFF
+    }
+    background-color: $color-primary;
 
-        .shop-avatar {
-            height: 70px;
-            width: 70px;
-            border-radius: 3px;
-        }
-
-        .shop-content {
-            flex: 1;
-            max-width: 480rpx;
-            height: 70px;
-            justify-content: flex-start;
-            margin-left: 15px;
-        }
+    .shop-avatar {
+      height: 70px;
+      width: 70px;
+      border-radius: 3px;
     }
 
-    .notice-swiper {
-        margin-top: 10rpx;
-        width: 100%;
-        height: 20px;
-
-        .swiper-item {
-            width: 100%;
-            height: 20px;
-        }
+    .shop-content {
+      flex: 1;
+      max-width: 480rpx;
+      height: 70px;
+      justify-content: flex-start;
+      margin-left: 15px;
     }
+  }
+
+  .notice-swiper {
+    margin-top: 10rpx;
+    width: 100%;
+    height: 24px;
+
+    .swiper-item {
+      width: 100%;
+      height: 24px;
+    }
+    .notice-content {
+      color: white;
+      font-size: $text-xxs;
+      line-height: 12px;
+    }
+  }
 </style>
