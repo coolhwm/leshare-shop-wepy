@@ -80,7 +80,10 @@
           goodsId: this.goods.id,
           goodsSku: this.selected
         });
+        // 清理残留数据
         this.selected = null;
+        this.price = null;
+        this.originalPrice = null;
         this.display = 'false';
       }
     };

@@ -216,7 +216,11 @@ export default class order extends base {
         count: goods.goodsNum,
         innerCid: goods.innerCid,
         skuText: goods.skuText,
-        goodsSku: goods.goodsSku
+        goodsSku: goods.goodsSku,
+        originalPrice: goods.originalPrice,
+        discount: goods.discount,
+        discountRate: goods.discountRate,
+        discountText: goods.discountText
       };
       orderGoodsInfos.push(info);
       price += goods.goodsPrice * goods.goodsNum;

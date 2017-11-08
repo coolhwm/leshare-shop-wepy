@@ -297,12 +297,14 @@
           target.totalPrice = (target.goodsNum * target.goodsPrice).toFixed(2);
         } else {
           // 购物车中不存在
-          let goodsPrice;
+          let goodsPrice, originalPrice;
           if (goodsSku) {
             const skuInfo = goods.goodsSkuInfo.goodsSkuDetails.find(item => item.sku == goodsSku);
             goodsPrice = skuInfo.goodsSkuDetailBase.price;
+            originalPrice = skuInfo.goodsSkuDetailBase.originalPrice;
           } else if (goods) {
             goodsPrice = goods.sellPrice;
+            originalPrice = goods.originalPrice;
           } else if (this.detail && this.detail.id == goodsId) {
             goodsPrice = this.detail.sellPrice;
           }
@@ -316,8 +318,10 @@
             goodsPrice: goodsPrice,
             goodsNum: 1,
             totalPrice: goodsPrice,
+            originalPrice: originalPrice,
             discount: goods.discount,
-            discountText: goods.discountRate
+            discountRate: goods.discountRate,
+            discountText: goods.discountText
           });
         }
         // 重置数据
