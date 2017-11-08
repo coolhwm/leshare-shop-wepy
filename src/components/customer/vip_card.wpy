@@ -1,28 +1,37 @@
 <template>
-  <!-- 会员卡区域 -->
-  <view class="vip-box column-between" @tap="vipDetail">
-    <view class="row">
-      <view class="title row">
+    <!-- 会员卡注册区域 -->
+    <view class="vip-box column-center" wx:if="{{member == null}}">
         <image class="avatar icon-xl icon-round"
-               src="{{customer.avatar ? customer.avatar : '/images/icons/customer_white.png'}}"/>
-        <view class="info-box column">
-          <view class="title-box">
-            <text class="xl">{{customer.name ? customer.name : '微信用户'}}</text>
-          </view>
-          <text class="xl">会员等级: {{member.levelName}}</text>
-        </view>
-      </view>
-      <image class="canvas" src="/images/icons/canvas.png" @tap.stop="canvas"/>
-    </view>
-    <view class="info-box">
-      <view class="column">
+               src="{{userInfo.avatarUrl ? userInfo.avatarUrl : '/images/icons/customer_white.png'}}"/>
         <view class="title-box">
-          <text class="xl">当前积分: {{member.bonus == 0 ? '暂无积分' : member.bonus}}</text>
+            <text class="xl">{{userInfo.nickName ? userInfo.nickName : '微信用户'}}</text>
         </view>
-        <text class="xl">{{member.memberNumber}}</text>
-      </view>
+        <text class="zan-btn" @tap="regist">注册会员</text>
     </view>
-  </view>
+    <!-- 会员卡区域 -->
+    <view class="vip-box column-between" @tap="vipDetail({{member}},{{userInfo}},{{vipCard}})" wx:if="{{member != null}}">
+        <view class="row">
+            <view class="title row">
+                <image class="avatar icon-xl icon-round"
+                       src="{{userInfo.avatarUrl ? userInfo.avatarUrl : '/images/icons/customer_white.png'}}"/>
+                <view class="info-box column">
+                    <view class="title-box">
+                        <text class="xl">{{userInfo.nickName ? userInfo.nickName : '微信用户'}}</text>
+                    </view>
+                    <text class="xl">会员等级: {{member.levelName}}</text>
+                </view>
+            </view>
+            <image class="canvas" src="/images/icons/canvas.png" @tap.stop="canvas"/>
+        </view>
+        <view class="info-box">
+            <view class="column">
+                <view class="title-box">
+                    <text class="xl">当前积分: {{member.bonus == 0 ? '暂无积分' : member.bonus}}</text>
+                </view>
+                <text class="xl">{{member.memberNumber}}</text>
+            </view>
+        </view>
+    </view>
 </template>
 
 <script>
@@ -31,18 +40,24 @@
   export default class VipCard extends wepy.component {
     props = {
       member: {},
+      vipCard: {},
+      userInfo: {},
       type: {}
     };
-    data = {
-      registe: false,
-      info: {}
-    };
     methods = {
-      vipDetail() {
+      regist () {
+        this.$root.$navigate('/pages/customer/registe_member');
+      },
+      vipDetail(member, userInfo , vipCard) {
         if (this.type == 'detail') {
           return;
         }
-        this.$root.$navigate('/pages/customer/vip_detail?member=' + JSON.stringify(this.member));
+        const params = {
+          member: member,
+          userInfo: userInfo,
+          vipCard: vipCard
+        }
+        this.$root.$navigate('/pages/customer/vip_detail?params=' + JSON.stringify(params));
       },
       canvas() {
         if (this.member.codeUrl != null) {
@@ -53,9 +68,6 @@
         }
       }
     };
-
-    async onLoad() {
-    }
   }
 </script>
 
