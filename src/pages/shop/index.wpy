@@ -76,6 +76,7 @@
       shop: {
         notices: []
       },
+      discount: null,
       status: {},
       notices: [],
       categories: {},
@@ -92,6 +93,8 @@
     async onLoad ({goodsId, mode}, {preload}) {
       // -- 用户信息
       await auth.user();
+      // 会员卡信息
+      this.discount = await Cache.discount();
       // -- 缓存信息
       // 加载店铺信息
       this.mode = mode;
@@ -106,7 +109,7 @@
       const carts = wepy.getStorageSync('carts');
       this.carts = carts == '' ? [] : carts;
       // 加载商品
-      this.page = goods.page(true);
+      this.page = goods.page(true, this.discount);
       await this.next();
       // 检查是否没有推荐商品
       await this.checkOrRloadGoodsList();
@@ -163,7 +166,7 @@
           this.categories.list.splice(0, 1);
         }
         this.categories.selectedId = this.categories.list[0].id;
-        this.page = goods.page(false);
+        this.page = goods.page(false, this.discount);
         await this.next();
       }
     }
@@ -240,7 +243,7 @@
           this.setGoodsNum();
           this.loaded();
         } else {
-          this.page = goods.page(selectedId == -1);
+          this.page = goods.page(selectedId == -1, this.discount);
           this.reload();
         }
       },
@@ -303,7 +306,7 @@
           } else if (this.detail && this.detail.id == goodsId) {
             goodsPrice = this.detail.sellPrice;
           }
-          goodsPrice = goodsPrice.toFixed(2);
+          // goodsPrice = goodsPrice.toFixed(2);
           this.carts.push({
             goodsId: goodsId,
             goodsSku: goodsSku,
@@ -464,7 +467,7 @@
           const selectedId = this.categories.selectedId;
           return this.categories.list.find(item => item.id == selectedId).title;
         }
-      }
+      },
     };
     components = {
       ShopHeader: ShopHeader,

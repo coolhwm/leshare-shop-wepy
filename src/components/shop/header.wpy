@@ -65,7 +65,9 @@
     width: 100%;
     height: 24px;
 
-    .swiper-item {
+    swiper-item {
+      display: flex;
+      flex-direction: column-reverse;
       width: 100%;
       height: 24px;
     }

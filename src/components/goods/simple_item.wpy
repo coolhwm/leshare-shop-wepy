@@ -2,16 +2,30 @@
   <view class="goods-item row" >
     <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="detail({{goods}})"></image>
     <view class="goods-main column" >
+      <!-- 主体区域-->
       <view @tap="detail({{goods}})">
         <view class="goods-name row-between">
           <text>{{goods.name}}</text>
         </view>
-        <view>
-          <text class="xs muted">已售{{goods.salesVolume}}件</text>
+        <view class="row">
+          <view>
+            <text class="xs muted">已售{{goods.salesVolume}}件</text>
+          </view>
+          <!--折扣信息-->
+          <view class="discount-box row" wx:if="{{goods.discount}}">
+            <view class="discount-rate"><text>{{goods.discountRate}}</text></view>
+            <view class="discount-text"><text>{{goods.discountText}}</text></view>
+          </view>
         </view>
       </view>
+
+      <!--价格及数量徐峥区域-->
       <view class="row-between">
-        <text class="goods-price">￥{{goods.priceLable}}</text>
+        <!--价格-->
+        <view class="price-box">
+          <text class="goods-price">￥{{goods.priceLable}}</text>
+          <text class="original-price" wx:if="{{goods.discount}}">￥{{goods.originalPrice}}</text>
+        </view>
 
         <!--数量选择器-->
         <view class="quantity row">
@@ -82,10 +96,6 @@
       flex: 1;
       justify-content: flex-start;
       min-height: 70px;
-      .goods-price{
-        color: $color-major;
-        font-size: $text-xl;
-      }
       .goods-name{
         max-width: 380rpx;
       }
@@ -98,6 +108,47 @@
         width: 72rpx;
       }
     }
+
+    .price-box{
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      .goods-price{
+        color: $color-major;
+        font-size: $text-xl;
+      }
+      .original-price{
+        color: $color-muted;
+        font-size: $text-xs;
+        text-decoration: line-through;
+      }
+    }
+
+    .discount-box{
+      border: 1px solid $color-major;
+      height: 15px;
+      margin-left: 7px;
+      text {
+        font-size: $text-xxs;
+      }
+      view{
+        display: flex;
+        align-items: center;
+        height: 15px;
+        padding: 0 3px;
+      }
+      .discount-rate{
+        background-color: $color-major;
+        text{
+          color: #FFF;
+        }
+      }
+      .discount-text {
+        text{
+          color: $color-major;
+        }
+      }
+    }
   }
 
   .quantity{
@@ -107,7 +158,7 @@
     }
     .number{
       font-size: $text-sm;
-      min-width: 30px;
+      min-width: 25px;
       text-align: center;
     }
   }

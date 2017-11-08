@@ -59,7 +59,7 @@
         }
         skuData.select('规格', skuValue);
         this.selected = skuValue;
-        this.price = skuData.detail.price.toFixed(2);
+        this.price = skuData.detail.price;
         this.$apply();
       },
       confirm() {

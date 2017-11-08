@@ -67,7 +67,7 @@
   import base from '../../mixins/base';
   import order from '../../api/order';
   import auth from '../../api/auth';
-  import Vip from '../../api/member_card';
+  import vip from '../../api/member_card';
   import member from '../../api/member';
   import pagination from '../../mixins/pagination.wpy';
   import Placeholder from '../../components/common/placeholder';
@@ -101,7 +101,7 @@
 
     async onLoad() {
       this.member = await member.info();
-      this.vipCard = await Vip.info();
+      this.vipCard = await vip.info();
       // 校验
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;

@@ -1,11 +1,46 @@
 import shop from '../api/shop';
 import goods from '../api/goods';
 import coupon from '../api/coupon';
+import vipMember from '../api/member';
+import vipCard from '../api/member_card';
 
 export default class Cache {
   static cache = new Map();
   static _debug = false;
 
+  /**
+   * 折扣信息
+   */
+  static async discount(reload = false) {
+    const KEY = 'VIP_DISCOUNT';
+    if (reload || this.isExpired(KEY)) {
+      const {member, card} = await this.vip();
+      const {level, levelName, discount} = member;
+      const rule = card.discountRules.find(item => item.level == level);
+      const categories = rule.discountCategoryLists.map(item => item.categoryId);
+      return {
+        level: levelName,
+        categories,
+        rate: discount
+      }
+    }
+    return this.cache.get(KEY);
+  }
+
+  /**
+   *  会员卡信息
+   */
+  static async vip(reload = false) {
+    const KEY = 'VIP_INFO';
+    if (reload || this.isExpired(KEY)) {
+      const card = await vipCard.info();
+      const member = await vipMember.info();
+      this.set(KEY, {
+        card, member
+      });
+    }
+    return this.cache.get(KEY);
+  }
   /**
    *  优惠信息
    */
