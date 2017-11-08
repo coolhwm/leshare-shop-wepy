@@ -56,7 +56,7 @@
           member: member,
           userInfo: userInfo,
           vipCard: vipCard
-        }
+        };
         this.$root.$navigate('/pages/customer/vip_detail?params=' + JSON.stringify(params));
       },
       canvas() {

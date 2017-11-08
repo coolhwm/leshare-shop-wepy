@@ -1,60 +1,59 @@
 <template>
-  <view class="container" wx:if="{{init}}">
+    <view class="container" wx:if="{{init}}">
 
         <view wx:if="{{vipCard != null}}" class="box-bg">
             <!-- 会员卡 -->
             <VipCard :member.sync="member" :userInfo.sync="userInfo" :vipCard.sync="vipCard"/>
         </view>
 
-      <!-- 原始用户信息 -->
-      <ShopHeader :shop.sync="shop" navType="navigateBack" wx:if="{{vipCard == null}}"/>
+        <!-- 原始用户信息 -->
+        <ShopHeader :shop.sync="shop" navType="navigateBack" wx:if="{{vipCard == null}}"/>
 
-      <!--功能区域-->
-      <view class="function-box row-between">
-        <view class="btn" @tap="goto" data-url="/pages/customer/index">
-          <image class="icon" src="/images/icons/address.png"/>
-          <text class="xs">常用地址</text>
-        </view>
+        <!--功能区域-->
+        <view class="function-box row-between">
+            <view class="btn" @tap="goto" data-url="/pages/customer/index">
+                <image class="icon" src="/images/icons/address.png"/>
+                <text class="xs">常用地址</text>
+            </view>
 
-        <view class="v-line"/>
-        <view class="btn" @tap="goto" data-url="/pages/customer/index">
-          <image class="icon" src="/images/icons/coupon.png"/>
-          <text class="xs">优惠券</text>
-        </view>
+            <view class="v-line"/>
+            <view class="btn" @tap="goto" data-url="/pages/customer/index">
+                <image class="icon" src="/images/icons/coupon.png"/>
+                <text class="xs">优惠券</text>
+            </view>
 
-        <view class="v-line"/>
-        <view class="btn" @tap="goto" data-url="/pages/customer/index">
-          <image class="icon" src="/images/icons/bouns.png"/>
-          <text class="xs">我的积分</text>
-        </view>
+            <view class="v-line"/>
+            <view class="btn" @tap="goto" data-url="/pages/customer/index">
+                <image class="icon" src="/images/icons/bouns.png"/>
+                <text class="xs">我的积分</text>
+            </view>
 
-        <view class="v-line"/>
-        <view class="btn" @tap="goto" data-url="/pages/customer/index">
-          <image class="icon" src="/images/icons/privilege.png"/>
-          <text class="xs">我的特权</text>
+            <view class="v-line"/>
+            <view class="btn" @tap="goto" data-url="/pages/customer/index">
+                <image class="icon" src="/images/icons/privilege.png"/>
+                <text class="xs">我的特权</text>
+            </view>
         </view>
-      </view>
 
     </view>
 
     <!--订单区域-->
     <view class="order-box">
-      <view class="bg-white">
-        <view class="weui-cell">我的订单</view>
-      </view>
+        <view class="bg-white">
+            <view class="weui-cell">我的订单</view>
+        </view>
 
-      <!--列表展现-->
-      <repeat for="{{page.list}}" key="index" index="index" item="item">
-        <OrderItem :order.sync="item" @tap.user="detail"/>
-      </repeat>
+        <!--列表展现-->
+        <repeat for="{{page.list}}" key="index" index="index" item="item">
+            <OrderItem :order.sync="item" @tap.user="detail"/>
+        </repeat>
 
-      <!-- 加载提示 -->
-      <Loadmore :page.sync="page"/>
+        <!-- 加载提示 -->
+        <Loadmore :page.sync="page"/>
     </view>
-  </view>
 
-  <!--占位符-->
-  <Placeholder :show.sync="isPageEmpty" message="您还没有相关订单" top="550rpx"/>
+    <!--占位符-->
+    <Placeholder :show.sync="isPageEmpty" message="您还没有相关订单" top="550rpx"/>
 </template>
 
 <script>
@@ -108,16 +107,17 @@
       this.loadCoupon();
       // 分页加载
       await this.next();
-      // 监听更新事件
-      Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
-      Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
-      Event.listen(Event.REGISTE_MEMBER_UPDATE, this.update.bind(this), this);
       try {
         const value = wepy.getStorageSync('user');
         if (value) {
           this.userInfo = value;
         }
-      } catch (e) {}
+      } catch (e) {
+      }
+      // 监听更新事件
+      Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
+      Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
+      Event.listen(Event.REGISTE_MEMBER_UPDATE, this.updataCustomerInfo.bind(this), this);
       this.loaded();
     };
 
@@ -127,6 +127,10 @@
         this.couponsNum = ownList.length + '张';
         this.loaded();
       });
+    }
+    async updataCustomerInfo() {
+      this.member = await member.info();
+      this.$apply();
     }
 
     events = {};
@@ -149,31 +153,31 @@
 <style lang="scss">
     @import "../../styles/variable";
 
-    .order-box{
-      margin-top: 10rpx;
-      border-top: $border;
+    .order-box {
+        margin-top: 10 rpx;
+        border-top: $border;
     }
 
-    .user-box{
-      background-color: white;
-      border-bottom: $border;
-      .function-box{
-        padding: 10rpx 20rpx 15rpx 20rpx;
+    .user-box {
+        background-color: white;
+        border-bottom: $border;
+        .function-box {
+            padding: 10 rpx 20 rpx 15 rpx 20 rpx;
 
-        .btn {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          width: 75px;
-          text {
-            margin-top: 5rpx;
-          }
+            .btn {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 75px;
+                text {
+                    margin-top: 5 rpx;
+                }
+            }
         }
-      }
-      .v-line {
-        background-color: #EFEFEF;
-        width: 1px;
-        height: 50rpx;
-      }
+        .v-line {
+            background-color: #EFEFEF;
+            width: 1px;
+            height: 50 rpx;
+        }
     }
 </style>
