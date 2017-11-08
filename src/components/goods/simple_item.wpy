@@ -23,7 +23,8 @@
       <view class="row-between">
         <!--价格-->
         <view class="price-box">
-          <text class="goods-price">￥{{goods.priceLable}}</text>
+          <view class="goods-unit">￥</view>
+          <text class="goods-price">{{goods.priceLable}}</text>
           <text class="original-price" wx:if="{{goods.discount}}">￥{{goods.originalPrice}}</text>
         </view>
 
@@ -113,6 +114,10 @@
       display: flex;
       flex-direction: row;
       align-items: flex-end;
+      .goods-unit{
+        color: $color-major;
+        font-size: $text-sm;
+      }
       .goods-price{
         color: $color-major;
         font-size: $text-xl;

@@ -315,7 +315,9 @@
             goodsImage: goods.imageUrl,
             goodsPrice: goodsPrice,
             goodsNum: 1,
-            totalPrice: goodsPrice
+            totalPrice: goodsPrice,
+            discount: goods.discount,
+            discountText: goods.discountRate
           });
         }
         // 重置数据
@@ -467,7 +469,7 @@
           const selectedId = this.categories.selectedId;
           return this.categories.list.find(item => item.id == selectedId).title;
         }
-      },
+      }
     };
     components = {
       ShopHeader: ShopHeader,

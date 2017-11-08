@@ -92,7 +92,6 @@ export default class goods extends base {
    * 处理折扣价格
    */
   static _processGoodsDiscount(goods, discount) {
-    console.info('before', goods);
     const isDiscount = discount.categories.some(cid => cid == goods.innerCid);
     if (!isDiscount) {
       return;
@@ -100,23 +99,28 @@ export default class goods extends base {
     const rate = discount.rate / 100;
     const isSku = goods.goodsSkuInfo;
     if (isSku) {
+      // 多规格数据处理
       const skuList = goods.goodsSkuInfo.goodsSkuDetails;
       skuList.forEach(item => {
         const detail = item.goodsSkuDetailBase;
         const price = detail.price;
+        // 最低的价格作为原价
         if (item.originalPrice == null || price < item.originalPrice) {
           item.originalPrice = price;
         }
+        // 设置原价和当前价格
+        detail.originalPrice = price;
         detail.price = (price * rate).toFixed(2);
       });
     } else {
+      // 单规格数据处理
       goods.originalPrice = goods.sellPrice;
       goods.sellPrice = (goods.sellPrice * rate).toFixed(2);
     }
+    // 折扣文本展现
     goods.discountRate = discount.rate / 10 + '折';
-    goods.discountText = `${discount.level}`;
+    goods.discountText = `会员折扣`;
     goods.discount = true;
-    console.info('after', goods);
   }
 
   /**
@@ -186,7 +190,7 @@ export default class goods extends base {
           value: skuValues
         };
         skuLabels.push(sku);
-      }  else {
+      } else {
         break;
       }
     }

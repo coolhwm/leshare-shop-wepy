@@ -1,0 +1,51 @@
+<template>
+  <!--折扣信息-->
+  <view class="discount-box row" wx:if="{{goods.discount}}">
+    <view class="discount-rate"><text>{{goods.discountRate}}</text></view>
+    <view class="discount-text"><text>会员折扣</text></view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class DiscountBadge extends wepy.component {
+    props = {
+      goods: {}
+    };
+    data = {};
+    methods = {};
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .discount-box{
+    border: 1px solid $color-major;
+    height: 15px;
+    margin-left: 7px;
+    text {
+      font-size: $text-xxs;
+    }
+    view{
+      display: flex;
+      align-items: center;
+      height: 15px;
+      padding: 0 3px;
+    }
+    .discount-rate{
+      background-color: $color-major;
+      text{
+        color: #FFF;
+      }
+    }
+    .discount-text {
+      text{
+        color: $color-major;
+      }
+    }
+  }
+</style>

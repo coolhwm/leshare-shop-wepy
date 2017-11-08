@@ -76,6 +76,11 @@ text.inline{
   white-space:nowrap;
   overflow:hidden;
 }
+text.cancel{
+  font-size: $text-sm;
+  color: $color-muted;
+  text-decoration: line-through;
+}
 
 view.bg-white{background-color: white}
 
