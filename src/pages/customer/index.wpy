@@ -3,10 +3,7 @@
 
         <view wx:if="{{vipCard != null}}" class="box-bg">
             <!-- 会员卡 -->
-            <VipCard :member.sync="member" wx:if="{{member != null}}"/>
-
-            <!-- 会员卡注册 -->
-            <VipRegiste wx:if="{{member == null}}"/>
+            <VipCard :member.sync="member" :userInfo.sync="userInfo" :vipCard.sync="vipCard"/>
         </view>
 
         <!-- 原始用户信息 -->
@@ -64,7 +61,6 @@
   import pagination from '../../mixins/pagination.wpy';
   import Placeholder from '../../components/common/placeholder';
   import VipCard from '../../components/customer/vip_card';
-  import VipRegiste from '../../components/customer/vip_registe';
   import ShopHeader from '../../components/shop/header';
   import ShopNav from '../../components/shop/nav';
   import Loadmore from '../../components/weui/loadmore';
@@ -77,6 +73,7 @@
       vipCard: {},
       card: false,
       init: false,
+      userInfo: {},
       page: {
         list: [
           {orderGoodsInfos: []}
@@ -109,6 +106,13 @@
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
       Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
       Event.listen(Event.REGISTE_MEMBER_UPDATE, this.update.bind(this), this);
+      try {
+        const value = wepy.getStorageSync('user');
+        if (value) {
+          this.userInfo = value;
+        }
+      } catch (e) {}
+      this.loaded();
     };
 
     loadCoupon() {
@@ -127,8 +131,7 @@
       HomeNav: ShopNav,
       CouponNav: ShopNav,
       OrderItem: OrderItem,
-      ShopHeader: ShopHeader,
-      VipRegiste: VipRegiste
+      ShopHeader: ShopHeader
     };
     mixins = [base, pagination];
     config = {
