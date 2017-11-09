@@ -86,6 +86,7 @@ export default class extends wepy.app {
       'pages/customer/index',
       'pages/customer/registe_member',
       'pages/customer/vip_detail',
+      'pages/customer/address_list',
       'pages/order/list',
       'pages/address/list',
       'pages/address/search',

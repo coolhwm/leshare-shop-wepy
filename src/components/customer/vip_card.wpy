@@ -6,7 +6,7 @@
         <view class="title-box">
             <text class="xl">{{userInfo.nickName ? userInfo.nickName : '微信用户'}}</text>
         </view>
-        <text class="zan-btn" @tap="regist">注册会员</text>
+        <text class="registe-btn mt10" @tap="regist">会员注册</text>
     </view>
     <!-- 会员卡区域 -->
     <view class="vip-box column-between" @tap="vipDetail({{member}},{{userInfo}},{{vipCard}})" wx:if="{{member != null}}">
@@ -48,7 +48,7 @@
       regist () {
         this.$root.$navigate('/pages/customer/registe_member');
       },
-      vipDetail(member, userInfo , vipCard) {
+      vipDetail(member, userInfo, vipCard) {
         if (this.type == 'detail') {
           return;
         }
@@ -84,6 +84,11 @@
         margin: 15rpx;
         border-radius: 15rpx;
         height: 300rpx;
+        .registe-btn{
+            border: $border;
+            border-radius: 10px;
+            padding: 5px 15px;
+        }
     }
 
     .title {

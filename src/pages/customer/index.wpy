@@ -1,59 +1,60 @@
 <template>
-    <view class="container" wx:if="{{init}}">
+  <view wx:if="{{init}}">
+    <view class="container user-box">
+      <view wx:if="{{vipCard != null}}" class="box-bg">
+        <!-- 会员卡 -->
+        <VipCard :member.sync="member" :userInfo.sync="userInfo" :vipCard.sync="vipCard"/>
+      </view>
 
-        <view wx:if="{{vipCard != null}}" class="box-bg">
-            <!-- 会员卡 -->
-            <VipCard :member.sync="member" :userInfo.sync="userInfo" :vipCard.sync="vipCard"/>
+      <!-- 原始用户信息 -->
+      <ShopHeader :shop.sync="shop" navType="navigateBack" wx:if="{{vipCard == null}}"/>
+
+      <!--功能区域-->
+      <view class="function-box row-between">
+        <view class="btn" @tap="gotoAddress">
+          <image class="icon" src="/images/icons/address.png"/>
+          <text class="xs">常用地址</text>
         </view>
 
-        <!-- 原始用户信息 -->
-        <ShopHeader :shop.sync="shop" navType="navigateBack" wx:if="{{vipCard == null}}"/>
-
-        <!--功能区域-->
-        <view class="function-box row-between">
-            <view class="btn" @tap="goto" data-url="/pages/customer/index">
-                <image class="icon" src="/images/icons/address.png"/>
-                <text class="xs">常用地址</text>
-            </view>
-
-            <view class="v-line"/>
-            <view class="btn" @tap="goto" data-url="/pages/customer/index">
-                <image class="icon" src="/images/icons/coupon.png"/>
-                <text class="xs">优惠券</text>
-            </view>
-
-            <view class="v-line"/>
-            <view class="btn" @tap="goto" data-url="/pages/customer/index">
-                <image class="icon" src="/images/icons/bouns.png"/>
-                <text class="xs">我的积分</text>
-            </view>
-
-            <view class="v-line"/>
-            <view class="btn" @tap="goto" data-url="/pages/customer/index">
-                <image class="icon" src="/images/icons/privilege.png"/>
-                <text class="xs">我的特权</text>
-            </view>
+        <view class="v-line"/>
+        <view class="btn" @tap="gotoCoupon">
+          <image class="icon" src="/images/icons/coupon.png"/>
+          <text class="xs">优惠券</text>
         </view>
+
+        <view class="v-line"/>
+        <view class="btn" @tap="gotoBonus">
+          <image class="icon" src="/images/icons/bouns.png"/>
+          <text class="xs">我的积分</text>
+        </view>
+
+        <view class="v-line"/>
+        <view class="btn" @tap="gotoDetail" url="/pages/customer/vip_detail">
+          <image class="icon" src="/images/icons/privilege.png"/>
+          <text class="xs">我的特权</text>
+        </view>
+      </view>
 
     </view>
 
     <!--订单区域-->
     <view class="order-box">
-        <view class="bg-white">
-            <view class="weui-cell">我的订单</view>
-        </view>
+      <view class="bg-white">
+        <view class="weui-cell">我的订单</view>
+      </view>
 
-        <!--列表展现-->
-        <repeat for="{{page.list}}" key="index" index="index" item="item">
-            <OrderItem :order.sync="item" @tap.user="detail"/>
-        </repeat>
+      <!--列表展现-->
+      <repeat for="{{page.list}}" key="index" index="index" item="item">
+        <OrderItem :order.sync="item" @tap.user="detail"/>
+      </repeat>
 
-        <!-- 加载提示 -->
-        <Loadmore :page.sync="page"/>
+      <!-- 加载提示 -->
+      <Loadmore :page.sync="page"/>
     </view>
 
     <!--占位符-->
     <Placeholder :show.sync="isPageEmpty" message="您还没有相关订单" top="550rpx"/>
+  </view>
 </template>
 
 <script>
@@ -63,7 +64,7 @@
   import auth from '../../api/auth';
   import Vip from '../../api/member_card';
   import member from '../../api/member';
-  import pagination from '../../mixins/pagination.wpy';
+  import pagination from '../../mixins/pagination';
   import Placeholder from '../../components/common/placeholder';
   import VipCard from '../../components/customer/vip_card';
   import ShopHeader from '../../components/shop/header';
@@ -72,6 +73,7 @@
   import OrderItem from '../../components/order/customer_item';
   import Event from '../../utils/Event';
   import Cache from '../../utils/Cache';
+  import Tips from '../../utils/Tips'
 
   export default class CustomerIndex extends wepy.page {
     def = {
@@ -132,7 +134,25 @@
       this.member = await member.info();
       this.$apply();
     }
-
+    methods = {
+      gotoAddress() {
+        this.$root.$navigate('/pages/customer/address_list');
+      },
+      gotoCoupon() {
+        this.$root.$navigate('/pages/coupon/list')
+      },
+      gotoBonus() {
+        Tips.alert('待开发！')
+      },
+      gotoDetail() {
+        const params = {
+          member: member,
+          userInfo: this.userInfo,
+          vipCard: this.vipCard
+        };
+        this.$root.$navigate('/pages/customer/vip_detail?params=' + JSON.stringify(params));
+      }
+    };
     events = {};
     components = {
       Placeholder: Placeholder,
@@ -154,7 +174,7 @@
     @import "../../styles/variable";
 
     .order-box {
-        margin-top: 10 rpx;
+        margin-top: 10rpx;
         border-top: $border;
     }
 
@@ -162,7 +182,7 @@
         background-color: white;
         border-bottom: $border;
         .function-box {
-            padding: 10 rpx 20 rpx 15 rpx 20 rpx;
+            padding: 10rpx 20rpx 15rpx 20rpx;
 
             .btn {
                 display: flex;
@@ -170,14 +190,14 @@
                 align-items: center;
                 width: 75px;
                 text {
-                    margin-top: 5 rpx;
+                    margin-top: 5rpx;
                 }
             }
         }
         .v-line {
             background-color: #EFEFEF;
             width: 1px;
-            height: 50 rpx;
+            height: 50rpx;
         }
     }
 </style>
