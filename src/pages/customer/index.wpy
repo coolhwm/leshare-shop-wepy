@@ -3,7 +3,7 @@
     <view class="container user-box">
       <view wx:if="{{vipCard != null}}" class="box-bg">
         <!-- 会员卡 -->
-        <VipCard :member.sync="member" :userInfo.sync="userInfo" :vipCard.sync="vipCard"/>
+        <VipCard :member.sync="member" :userInfo.sync="userInfo" :init.sync="init" :vipCard.sync="vipCard"/>
       </view>
 
       <!-- 原始用户信息 -->
@@ -73,7 +73,6 @@
   import OrderItem from '../../components/order/customer_item';
   import Event from '../../utils/Event';
   import Cache from '../../utils/Cache';
-  import Tips from '../../utils/Tips'
 
   export default class CustomerIndex extends wepy.page {
     def = {
@@ -115,6 +114,7 @@
           this.userInfo = value;
         }
       } catch (e) {
+        console.log(e)
       }
       // 监听更新事件
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
@@ -142,7 +142,7 @@
         this.$root.$navigate('/pages/coupon/list')
       },
       gotoBonus() {
-        Tips.alert('待开发！')
+        this.$root.$navigate('/pages/customer/bonus_list')
       },
       gotoDetail() {
         const params = {

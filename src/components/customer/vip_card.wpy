@@ -1,37 +1,39 @@
 <template>
-    <!-- 会员卡注册区域 -->
-    <view class="vip-box column-center" wx:if="{{member == null}}">
+  <view class="container" wx:if="{{init}}"/>
+  <!-- 会员卡注册区域 -->
+  <view class="vip-box column-center" wx:if="{{member == null}}">
+    <image class="avatar icon-xl icon-round"
+           src="{{userInfo.avatarUrl ? userInfo.avatarUrl : '/images/icons/customer_white.png'}}"/>
+    <view class="title-box">
+      <text class="xl">{{userInfo.nickName ? userInfo.nickName : '微信用户'}}</text>
+    </view>
+    <text class="registe-btn mt10" @tap="regist">会员注册</text>
+  </view>
+  <!-- 会员卡区域 -->
+  <view class="vip-box column-between" @tap="vipDetail({{member}},{{userInfo}},{{vipCard}})"
+        wx:if="{{member != null}}">
+    <view class="row">
+      <view class="title row">
         <image class="avatar icon-xl icon-round"
                src="{{userInfo.avatarUrl ? userInfo.avatarUrl : '/images/icons/customer_white.png'}}"/>
-        <view class="title-box">
+        <view class="info-box column">
+          <view class="title-box">
             <text class="xl">{{userInfo.nickName ? userInfo.nickName : '微信用户'}}</text>
+          </view>
+          <text class="xl">会员等级: {{member.levelName}}</text>
         </view>
-        <text class="registe-btn mt10" @tap="regist">会员注册</text>
+      </view>
+      <image class="canvas" src="/images/icons/canvas.png" @tap.stop="canvas"/>
     </view>
-    <!-- 会员卡区域 -->
-    <view class="vip-box column-between" @tap="vipDetail({{member}},{{userInfo}},{{vipCard}})" wx:if="{{member != null}}">
-        <view class="row">
-            <view class="title row">
-                <image class="avatar icon-xl icon-round"
-                       src="{{userInfo.avatarUrl ? userInfo.avatarUrl : '/images/icons/customer_white.png'}}"/>
-                <view class="info-box column">
-                    <view class="title-box">
-                        <text class="xl">{{userInfo.nickName ? userInfo.nickName : '微信用户'}}</text>
-                    </view>
-                    <text class="xl">会员等级: {{member.levelName}}</text>
-                </view>
-            </view>
-            <image class="canvas" src="/images/icons/canvas.png" @tap.stop="canvas"/>
+    <view class="info-box">
+      <view class="column">
+        <view class="title-box">
+          <text class="xl">当前积分: {{member.bonus == 0 ? '暂无积分' : member.bonus}}</text>
         </view>
-        <view class="info-box">
-            <view class="column">
-                <view class="title-box">
-                    <text class="xl">当前积分: {{member.bonus == 0 ? '暂无积分' : member.bonus}}</text>
-                </view>
-                <text class="xl">{{member.memberNumber}}</text>
-            </view>
-        </view>
+        <text class="xl">{{member.memberNumber}}</text>
+      </view>
     </view>
+  </view>
 </template>
 
 <script>
@@ -42,7 +44,10 @@
       member: {},
       vipCard: {},
       userInfo: {},
-      type: {}
+      type: {},
+      init: {
+        default: false
+      }
     };
     methods = {
       regist () {
@@ -72,39 +77,39 @@
 </script>
 
 <style lang="scss">
-    @import "../../styles/variable";
+  @import "../../styles/variable";
 
-    .vip-box {
-        position: relative;
-        padding: 10px;
-        text {
-            color: $color-bg-item
-        }
-        background-color: #509FC9;
-        margin: 15rpx;
-        border-radius: 15rpx;
-        height: 300rpx;
-        .registe-btn{
-            border: $border;
-            border-radius: 10px;
-            padding: 5px 15px;
-        }
+  .vip-box {
+    position: relative;
+    padding: 10px;
+    text {
+      color: $color-bg-item
     }
+    background-color: #509FC9;
+    margin: 15rpx;
+    border-radius: 15rpx;
+    height: 300rpx;
+    .registe-btn {
+      border: $border;
+      border-radius: 10px;
+      padding: 5px 15px;
+    }
+  }
 
-    .title {
-        width: 560rpx;
-    }
+  .title {
+    width: 560rpx;
+  }
 
-    .canvas {
-        width: 70rpx;
-        height: 70rpx;
-    }
+  .canvas {
+    width: 70rpx;
+    height: 70rpx;
+  }
 
-    .column-between {
-        align-items: flex-start;
-    }
+  .column-between {
+    align-items: flex-start;
+  }
 
-    .info-box {
-        margin-left: 20rpx;
-    }
+  .info-box {
+    margin-left: 20rpx;
+  }
 </style>

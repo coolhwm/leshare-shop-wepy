@@ -29,7 +29,6 @@
   export default class AddressList extends wepy.page {
     def = {
       init: false,
-      address: {},
       page: {
         list: [
         ]
