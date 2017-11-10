@@ -95,6 +95,14 @@
     data = {...this.def};
 
     async onLoad() {
+      try {
+        const value = wepy.getStorageSync('user');
+        if (value) {
+          this.userInfo = value;
+        }
+      } catch (e) {
+        console.log(e)
+      }
       this.member = await member.info();
       this.vipCard = await Vip.info();
       // 校验
@@ -108,19 +116,10 @@
       this.loadCoupon();
       // 分页加载
       await this.next();
-      try {
-        const value = wepy.getStorageSync('user');
-        if (value) {
-          this.userInfo = value;
-        }
-      } catch (e) {
-        console.log(e)
-      }
       // 监听更新事件
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
       Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
       Event.listen(Event.REGISTE_MEMBER_UPDATE, this.updataCustomerInfo.bind(this), this);
-      this.loaded();
     };
 
     loadCoupon() {
