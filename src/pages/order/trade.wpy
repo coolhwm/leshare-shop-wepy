@@ -528,8 +528,8 @@
           this.clearSelectedBonus();
           return false;
         }
-        // 每使用costMoneyUnit积分，抵扣reduceMoney元，最多使用maxReduceBonus积分，订单需满limitMoney元
-        const {costMoneyUnit, reduceMoney, maxReduceBonus, limitMoney} = bonusRule;
+        // 每使用costBonusUnit积分，抵扣reduceMoney元，最多使用maxReduceBonus积分，订单需满limitMoney元
+        const {costBonusUnit, reduceMoney, maxReduceBonus, limitMoney} = bonusRule;
         // 计算使用积分前的价格
         const {finalPrice, bonusPrice} = this.trade;
         const orderPrice = parseFloat(finalPrice) + (bonusPrice ? parseFloat(bonusPrice) : 0);
@@ -542,10 +542,10 @@
         }
         // 已有积分不能小于积分最小抵扣单位
         const {bonus} = member;
-        if (bonus < costMoneyUnit) {
+        if (bonus < costBonusUnit) {
           this.bonusPicker = null;
           this.clearSelectedBonus();
-          return `积分不满${costMoneyUnit}`;
+          return `积分不满${costBonusUnit}`;
         }
         // 构造积分使用数组
         const list = [{
@@ -553,9 +553,9 @@
           money: 0,
           text: `请选择`
         }];
-        for (let curBonus = costMoneyUnit, curMoney = reduceMoney;
+        for (let curBonus = costBonusUnit, curMoney = reduceMoney;
              curBonus < maxReduceBonus && curMoney < orderPrice && curBonus < bonus;
-             curBonus += costMoneyUnit, curMoney += reduceMoney) {
+             curBonus += costBonusUnit, curMoney += reduceMoney) {
           list.push({
             bonus: curBonus,
             money: curMoney,
