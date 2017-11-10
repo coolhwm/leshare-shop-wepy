@@ -3,7 +3,7 @@
     <view class="container user-box">
       <view wx:if="{{vipCard != null}}" class="box-bg">
         <!-- 会员卡 -->
-        <VipCard :member.sync="member" :userInfo.sync="userInfo" :init.sync="init" :vipCard.sync="vipCard"/>
+        <VipCard :member.sync="member" :userInfo.sync="userInfo" :vipCard.sync="vipCard"/>
       </view>
 
       <!-- 原始用户信息 -->
@@ -13,7 +13,7 @@
       <view class="function-box row-between">
         <view class="btn" @tap="gotoAddress">
           <image class="icon" src="/images/icons/address.png"/>
-          <text class="xs">常用地址</text>
+          <text class="xs">我的地址</text>
         </view>
 
         <view class="v-line"/>
@@ -170,33 +170,33 @@
   }
 </script>
 <style lang="scss">
-    @import "../../styles/variable";
+  @import "../../styles/variable";
 
-    .order-box {
-        margin-top: 10rpx;
-        border-top: $border;
-    }
+  .order-box {
+    margin-top: 10rpx;
+    border-top: $border;
+  }
 
-    .user-box {
-        background-color: white;
-        border-bottom: $border;
-        .function-box {
-            padding: 10rpx 20rpx 15rpx 20rpx;
+  .user-box {
+    background-color: white;
+    border-bottom: $border;
+    .function-box {
+      padding: 10rpx 20rpx 15rpx 20rpx;
 
-            .btn {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                width: 75px;
-                text {
-                    margin-top: 5rpx;
-                }
-            }
+      .btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 75px;
+        text {
+          margin-top: 5rpx;
         }
-        .v-line {
-            background-color: #EFEFEF;
-            width: 1px;
-            height: 50rpx;
-        }
+      }
     }
+    .v-line {
+      background-color: #EFEFEF;
+      width: 1px;
+      height: 50rpx;
+    }
+  }
 </style>
