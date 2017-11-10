@@ -21,7 +21,6 @@
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
-  import pagination from '../../mixins/pagination.wpy';
   import Placeholder from '../../components/common/placeholder';
   import CouponItem from '../../components/coupons/item';
   import Event from '../../utils/Event';
@@ -47,7 +46,7 @@
       Placeholder: Placeholder,
       CouponItem: CouponItem
     };
-    mixins = [base, pagination];
+    mixins = [base];
     config = {
       navigationBarTitleText: '选择优惠券'
     };

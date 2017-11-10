@@ -373,7 +373,8 @@ export default class order extends base {
    * 处理订单动作
    */
   static _processOrderAction(order, inner = false) {
-    const basic = [ACTIONS.AGAIN];
+    const basic = [];
+    // const basic = [ACTIONS.AGAIN];
     // 有退款的情况
     if (order.curRefund) {
       basic.push(ACTIONS.REFUND_DETAIL);

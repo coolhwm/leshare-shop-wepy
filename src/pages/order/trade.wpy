@@ -34,6 +34,7 @@
         <view class="weui-cell__bd">支付方式</view>
         <view class="weui-cell__ft {{shop.offPay == 1 && trade.orderType == '20' ? 'weui-cell__ft_in-access' : ''}}">{{trade.paymentText}}</view>
       </view>
+
       <!--外卖才有配送方式-->
       <view class="weui-cell weui-cell_access" @tap="delivery" wx:if="{{trade.orderType == '20'}}">
         <view class="weui-cell__bd">配送方式</view>
@@ -46,6 +47,20 @@
         </view>
         <view class="weui-cell__ft {{coupons.length > 0 ? 'weui-cell__ft_in-access' : ''}}">{{couponText}}</view>
       </view>
+
+      <view class="weui-cell weui-cell_access" wx:if="{{vip.card.supplyBonus == 1}}">
+        <view class="weui-cell__bd">会员积分
+          <view class="label small primary pain">共{{vip.member.bonus}}分</view>
+        </view>
+        <view class="weui-cell__ft {{bonusPicker.length > 0 ? 'weui-cell__ft_in-access' : ''}}">
+
+          <picker wx:if="{{bonusText === true}}" @change="bonusPickerUpdate" value="{{index}}" range-key="text" range="{{bonusPicker}}">
+            <view>{{selectedBonus.text}}</view>
+          </picker>
+          <text wx:else>{{bonusText}}</text>
+        </view>
+      </view>
+
     </view>
 
     <!--信息汇总-->
@@ -58,9 +73,13 @@
         <text>配送费</text>
         <text class="major">+￥{{trade.postFee}}</text>
       </view>
-      <view class="price-box row-between" wx:if="{{trade.couponPrice}}">
+      <view class="price-box row-between" wx:if="{{trade.couponPrice > 0}}">
         <text>优惠券</text>
         <text class="major">-￥{{trade.couponPrice}}</text>
+      </view>
+      <view class="price-box row-between" wx:if="{{trade.bonusPrice > 0}}">
+        <text>积分抵扣</text>
+        <text class="major">-￥{{trade.bonusPrice}}</text>
       </view>
       <view class="price-box row-between" wx:if="{{reduceFee > 0}}">
         <view class="row">
@@ -140,8 +159,11 @@
       confirmStatus: false,
       confirmText: '立即下单',
       reduce: null,
+      vip: null,
       goodsList: null,
-      isAddressListDisplay: false
+      isAddressListDisplay: false,
+      bonusPicker: null,
+      selectedBonus: null
     };
     data = {...this.def};
 
@@ -149,8 +171,49 @@
       const isOpen = await this.checkShopStatus();
       const result = await auth.user({block: true, redirect: true});
       if (!result || !isOpen) { return; }
+      // 会员信息
+      this.vip = await Cache.vip();
       // 订单数据
       this.trade = preload.trade;
+//      this.trade = {
+//        'orderType': 20,
+//        'dealPrice': '11.94',
+//        'reduceFee': 0,
+//        'finalPrice': '0.94',
+//        'postFee': '0.00',
+//        'paymentType': '1',
+//        'paymentText': '在线支付',
+//        'orderGoodsInfos': [
+//          {
+//            'goodsId': 149,
+//            'goodsName': '妙洁增厚平底垃圾袋',
+//            'imageUrl': 'http://img.leshare.shop/FienWWsoK-lGhali8n6KUS_jlRUS/medium',
+//            'goodsPrice': '3.54',
+//            'count': 1,
+//            'innerCid': 33,
+//            'goodsSku': '大号黑色20+4只*1卷装',
+//            'originalPrice': 5.9,
+//            'discount': true,
+//            'discountRate': '6折',
+//            'discountText': '会员折扣'
+//          },
+//          {
+//            'goodsId': 116,
+//            'goodsName': '波斯猫名典迷你加香型手帕纸10包',
+//            'imageUrl': 'http://img.leshare.shop/Ft5OGx3eZTjPYbDtldxc2PZakEdJ/medium',
+//            'goodsPrice': '2.10',
+//            'count': 4,
+//            'innerCid': 28,
+//            'originalPrice': 3.5,
+//            'discount': true,
+//            'discountRate': '6折',
+//            'discountText': '会员折扣'
+//          }
+//        ],
+//        'deliveryType': 'CITY',
+//        'couponUsedId': 227,
+//        'couponPrice': '11.00'
+//      };
       this.goodsList = this.trade.orderGoodsInfos;
       if (this.trade.orderType == '20') {
         // 默认地址
@@ -191,6 +254,7 @@
         const actions = this.delilveries.map(item => `${item.name} ￥${item.fee}`);
         const {index} = await Tips.action(...actions);
         this.selectedDelivery = this.delilveries[index];
+        this.selectedBonus = null;
         this.updateTradePrice();
         this.$apply();
       },
@@ -211,6 +275,17 @@
           coupons: JSON.stringify(this.coupons)
         };
         this.$navigate('../coupon/use', param);
+      },
+      /**
+       * 选择积分
+       */
+      bonusPickerUpdate ({detail}) {
+        const index = detail.value;
+        this.selectedBonus = this.bonusPicker[index];
+        this.trade.bonus = this.selectedBonus.bonus;
+        this.trade.bonusPrice = this.selectedBonus.money.toFixed(2);
+        this.updateTradePrice();
+        console.info(this.selectedBonus);
       },
       /**
        * 选择预约时间
@@ -340,6 +415,7 @@
         this.trade.couponUsedId = null;
         this.trade.couponPrice = null;
       } else {
+        this.clearSelectedBonus();
         this.selectedCoupon = coupon;
         this.trade.couponUsedId = coupon.id;
         this.trade.couponPrice = coupon.price.toFixed(2);
@@ -352,9 +428,18 @@
      */
     async updateAddress(address) {
       this.selectedAddress = address;
+      this.clearSelectedBonus();
       await this.updateDelivery();
       this.updateTradePrice();
       this.$apply();
+    }
+    /**
+     * 清理积分信息
+     */
+    clearSelectedBonus() {
+      this.selectedBonus = null;
+      this.trade.bonusPrice = 0;
+      this.trade.bonus = 0;
     }
 
     /**
@@ -363,9 +448,15 @@
     updateTradePrice() {
       const trade = this.trade;
       trade.finalPrice = 0;
+      // 商品总价
       trade.finalPrice += trade.dealPrice ? parseFloat(trade.dealPrice) : 0;
+      // 运费
       trade.finalPrice += trade.postFee ? parseFloat(trade.postFee) : 0;
+      // 优惠券
       trade.finalPrice -= trade.couponPrice ? parseFloat(trade.couponPrice) : 0;
+      // 积分
+      trade.finalPrice -= trade.bonusPrice ? parseFloat(trade.bonusPrice) : 0;
+      // 满减
       trade.reduceFee = this.reduceFee;
       trade.finalPrice -= this.reduceFee;
       // 防止价格小于0
@@ -375,6 +466,7 @@
       trade.finalPrice = trade.finalPrice.toFixed(2);
     }
     computed = {
+      // 配送费用文字
       delilveryText() {
         let confirmStatus = false;
         let deliveryText = '暂不支持配送';
@@ -406,6 +498,7 @@
         this.confirmText = confirmText;
         return deliveryText;
       },
+      // 配送方式数量
       delilveryCount() {
         if (this.delilveries) {
           return this.delilveries.length;
@@ -413,12 +506,70 @@
           return 0;
         }
       },
+      // 优惠券文字
       couponText () {
         return this.coupons.length > 0 ? (this.selectedCoupon ? '-￥' + this.selectedCoupon.price : '未使用') : '无可用';
       },
+      // 优惠券标签
       couponLabel () {
         return this.selectedCoupon ? '已选择' : this.coupons.length + '张可用';
       },
+      // 积分使用文字
+      bonusText() {
+        if (this.vip == null) {
+          return;
+        }
+        // 初始化
+        const {card, member} = this.vip;
+        const {supplyBonus, bonusRule} = card;
+        // 没有开启积分功能
+        if (supplyBonus != 1 || bonusRule == null) {
+          this.bonusPicker = null;
+          this.clearSelectedBonus();
+          return false;
+        }
+        // 每使用costMoneyUnit积分，抵扣reduceMoney元，最多使用maxReduceBonus积分，订单需满limitMoney元
+        const {costMoneyUnit, reduceMoney, maxReduceBonus, limitMoney} = bonusRule;
+        // 计算使用积分前的价格
+        const {finalPrice, bonusPrice} = this.trade;
+        const orderPrice = parseFloat(finalPrice) + (bonusPrice ? parseFloat(bonusPrice) : 0);
+        // 订单价格不能小于最低抵扣单位，也不能小于订单金额限制
+        const orderLimitPrice = Math.max(limitMoney, reduceMoney);
+        if (orderPrice < orderLimitPrice) {
+          this.bonusPicker = null;
+          this.clearSelectedBonus();
+          return `订单需满${orderLimitPrice}元`;
+        }
+        // 已有积分不能小于积分最小抵扣单位
+        const {bonus} = member;
+        if (bonus < costMoneyUnit) {
+          this.bonusPicker = null;
+          this.clearSelectedBonus();
+          return `积分不满${costMoneyUnit}`;
+        }
+        // 构造积分使用数组
+        const list = [{
+          bonus: 0,
+          money: 0,
+          text: `请选择`
+        }];
+        for (let curBonus = costMoneyUnit, curMoney = reduceMoney;
+             curBonus < maxReduceBonus && curMoney < orderPrice && curBonus < bonus;
+             curBonus += costMoneyUnit, curMoney += reduceMoney) {
+          list.push({
+            bonus: curBonus,
+            money: curMoney,
+            text: `使用${curBonus}分抵${curMoney}元`
+          });
+        }
+        this.bonusPicker = list;
+        // 展示请选择
+        if (this.selectedBonus === null) {
+          this.selectedBonus = list[0];
+        }
+        return true;
+      },
+      // 减免金额
       reduceFee () {
         if (!this.reduce) {
           return 0;

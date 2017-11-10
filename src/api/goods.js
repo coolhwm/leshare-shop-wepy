@@ -92,7 +92,7 @@ export default class goods extends base {
    * 处理折扣价格
    */
   static _processGoodsDiscount(goods, discount) {
-    const isDiscount = discount.categories.some(cid => cid == goods.innerCid);
+    const isDiscount = discount != null ? discount.categories.some(cid => cid == goods.innerCid) : false;
     if (!isDiscount) {
       return;
     }
