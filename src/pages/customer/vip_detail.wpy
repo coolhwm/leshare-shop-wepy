@@ -10,7 +10,7 @@
             <text>您当前为</text>
             <text class="xl ml10 danger">{{member.levelName}}</text>
           </view>
-          <view>{{discount}}</view>
+          <view>{{discountLevel}}</view>
         </view>
       </view>
       <view class="weui-cell">
@@ -72,7 +72,7 @@
       this.init = true
     }
     computed = {
-      discount () {
+      discountLevel () {
         if (this.vipCard.discountRules != null) {
           if (this.member.levelName == this.vipCard.discountRules.pop().levelName) {
             return '您已经是最高级会员了！'
