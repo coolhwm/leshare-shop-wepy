@@ -1,41 +1,57 @@
 <template>
-    <view class="container" wx:if="{{init}}">
-        <VipCard :member.sync="member" :userInfo.sync="userInfo" :vipCard="vipCard" :type.sync="detail"/>
-        <text class="xl ml30 mb10">会员卡详情</text>
-        <view class="weui-cell">
-            <view class="weui-label muted">特权说明</view>
-            <text>1.每消费{{vipCard.bonusRule.costBonusUnit}}元积{{vipCard.bonusRule.increaseBonus}}分;
-                2.激活送{{vipCard.bonusRule.initIncreaseBonus}}积分;
-                3.本会员卡享受{{member.discount / 10}}折优惠;
-                4.使用卡券买单可以享受消费积分。
-            </text>
+  <view class="container" wx:if="{{init}}">
+    <view class="bg-white">
+      <VipCard :member.sync="member" :userInfo.sync="userInfo" :vipCard="vipCard" :type.sync="detail"/>
+      <text class="titel-box">会员特权</text>
+      <view class="weui-cell mt20">
+        <view class="weui-label muted">会员等级</view>
+        <view class="column info-container">
+          <view>
+            <text>您当前为</text>
+            <text class="xl ml10 danger">{{member.levelName}}</text>
+          </view>
+          <view>{{discount}}</view>
         </view>
-
-        <view class="weui-cell">
-            <view class="weui-label muted">有效日期</view>
-            <text>永久有效</text>
+      </view>
+      <view class="weui-cell">
+        <view class="weui-label muted">特权说明</view>
+        <view class="column info-container">
+          <text>激活送积分：注册绑定手机开卡即送{{vipCard.bonusRule.initIncreaseBonus}}积分;
+            会员折扣：本会员卡享受{{member.discount / 10}}折优惠;
+            积分累计：每消费{{vipCard.bonusRule.costBonusUnit}}元积{{vipCard.bonusRule.increaseBonus}}分;
+            积分抵现：每使用{{vipCard.bonusRule.costMoneyUnit}}积分，抵扣{{vipCard.bonusRule.reduceMoney}}元，单笔订单最多使用{{vipCard.bonusRule.maxReduceBonus}}积分，订单需满{{vipCard.bonusRule.limitMoney}}元</text>
         </view>
-        <view class="weui-cell">
-            <view class="weui-label muted">可用时段</view>
-            <text>周一至周五 全天</text>
-        </view>
-        <view class="weui-cell">
-            <view class="weui-label muted">客服电话</view>
-            <text>{{vipCard.servicePhone}}</text>
-        </view>
-        <view class="weui-cell">
-            <view class="weui-label muted">商务服务</view>
-            <text class="zan-btn--mini">免费WIFI</text>
-        </view>
-        <view class="weui-cell">
-            <view class="weui-label muted">会员须知</view>
-            <text>1.会员积分可以在商城换取对应价值商品;</text>
-        </view>
+      </view>
+      <view class="weui-cell">
+        <view class="weui-label muted">客服电话</view>
+        <text class="info-container">{{vipCard.servicePhone}}</text>
+      </view>
+      <view class="weui-cell">
+        <view class="weui-label muted">会员须知</view>
+        <text class="info-container">{{vipCard.description}}</text>
+      </view>
+      <view class="weui-cell">
+        <view class="weui-label muted">会员提醒</view>
+        <text class="info-container">{{vipCard.notice}}</text>
+      </view>
     </view>
+    <view class="bg-white mt20">
+      <view class="titel-box">会员级别</view>
+      <repeat for="{{vipCard.discountRules}}" key="index" index="index" item="item">
+        <view class="weui-cell">
+          <view class="weui-label muted">{{item.levelName}}</view>
+          <view class="column info-container">
+            <text>消费满{{item.upgradeFee}}元可升级</text>
+            <text>可享部分商品{{item.discount / 10}}折优惠</text>
+          </view>
+        </view>
+      </repeat>
+    </view>
+  </view>
 </template>
 <script>
-  import wepy from 'wepy';
-  import VipCard from '../../components/customer/vip_card';
+  import wepy from 'wepy'
+  import VipCard from '../../components/customer/vip_card'
 
   export default class VipDetail extends wepy.page {
     def = {
@@ -43,35 +59,52 @@
       member: {},
       userInfo: {},
       vipCard: {},
-      detail: 'detail'
-    };
-    data = {...this.def};
+      detail: 'detail',
+      disconut: {}
+    }
+    data = {...this.def}
 
     async onLoad (options) {
-      const params = JSON.parse(options.params);
-      this.member = params.member;
-      this.userInfo = params.userInfo;
-      this.vipCard = params.vipCard;
-      this.init = true;
+      const params = JSON.parse(options.params)
+      this.member = params.member
+      this.userInfo = params.userInfo
+      this.vipCard = params.vipCard
+      this.init = true
     }
-
+    computed = {
+      discount () {
+        if (this.vipCard.discountRules != null) {
+          if (this.member.levelName == this.vipCard.discountRules.pop().levelName) {
+            return '您已经是最高级会员了！'
+          } else {
+            this.vipCard.discountRules.forEach(item => {
+              if (this.member.levelName == item.levelName) {
+                this.disconut = item
+              }
+            });
+            return `您还差${this.disconut.upgradeFee - this.member.totalCost}元可升级为${this.discount.levelName}`;
+          }
+        }
+      }
+    };
     components = {
       VipCard: VipCard
-    };
+    }
     config = {
       navigationBarTitleText: '会员卡详情'
-    };
+    }
   }
 </script>
 <style lang="scss">
-    @import "../../styles/variable";
-    .container{
-        background-color: white;
-        .ml30{
-            margin-left: 30rpx;
-        }
-        .zan-btn--mini{
-            background-color: $color-bg-body;
-        }
-    }
+  @import "../../styles/variable";
+  .titel-box{
+    padding: 20rpx 30rpx;
+    font-size: $text-xl;
+  }
+  .info-container {
+    width: 500rpx;
+  }
+  .zan-btn--mini {
+    background-color: $color-bg-body;
+  }
 </style>

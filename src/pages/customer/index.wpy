@@ -145,7 +145,7 @@
       },
       gotoDetail() {
         const params = {
-          member: member,
+          member: this.member,
           userInfo: this.userInfo,
           vipCard: this.vipCard
         };
