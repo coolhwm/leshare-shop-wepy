@@ -64,6 +64,10 @@
         <text>优惠券</text>
         <text class="major">-￥{{order.couponPrice}}</text>
       </view>
+      <view class="price-box row-between" wx:if="{{order.bonusPrice > 0}}">
+        <text>积分抵扣</text>
+        <text class="major">-￥{{order.bonusPrice}}</text>
+      </view>
       <view class="price-box row-between" wx:if="{{order.reduceFee > 0}}">
         <view class="row">
           <image class="icon" src="/images/icons/reduce.png"></image>
