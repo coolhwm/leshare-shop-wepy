@@ -1,14 +1,9 @@
 <template>
-  <view class="container" wx:if="{{init}}">
-
-    <!--用户信息区域-->
-    <view class="user-box">
-      <view wx:if="{{vipCard != null}}">
+  <view wx:if="{{init}}">
+    <view class="container user-box">
+      <view wx:if="{{vipCard != null}}" class="box-bg">
         <!-- 会员卡 -->
-        <VipCard :member.sync="member" wx:if="{{member != null}}"/>
-
-        <!-- 会员卡注册 -->
-        <VipRegiste wx:if="{{member == null}}"/>
+        <VipCard :member.sync="member" :userInfo.sync="userInfo" :vipCard.sync="vipCard"/>
       </view>
 
       <!-- 原始用户信息 -->
@@ -16,25 +11,25 @@
 
       <!--功能区域-->
       <view class="function-box row-between">
-        <view class="btn" @tap="goto" data-url="/pages/customer/index">
+        <view class="btn" @tap="gotoAddress">
           <image class="icon" src="/images/icons/address.png"/>
-          <text class="xs">常用地址</text>
+          <text class="xs">我的地址</text>
         </view>
 
         <view class="v-line"/>
-        <view class="btn" @tap="goto" data-url="/pages/customer/index">
+        <view class="btn" @tap="gotoCoupon">
           <image class="icon" src="/images/icons/coupon.png"/>
           <text class="xs">优惠券</text>
         </view>
 
         <view class="v-line"/>
-        <view class="btn" @tap="goto" data-url="/pages/customer/index">
+        <view class="btn" @tap="gotoBonus">
           <image class="icon" src="/images/icons/bouns.png"/>
           <text class="xs">我的积分</text>
         </view>
 
         <view class="v-line"/>
-        <view class="btn" @tap="goto" data-url="/pages/customer/index">
+        <view class="btn" @tap="gotoDetail" url="/pages/customer/vip_detail">
           <image class="icon" src="/images/icons/privilege.png"/>
           <text class="xs">我的特权</text>
         </view>
@@ -56,10 +51,10 @@
       <!-- 加载提示 -->
       <Loadmore :page.sync="page"/>
     </view>
-  </view>
 
-  <!--占位符-->
-  <Placeholder :show.sync="isPageEmpty" message="您还没有相关订单" top="550rpx"/>
+    <!--占位符-->
+    <Placeholder :show.sync="isPageEmpty" message="您还没有相关订单" top="550rpx"/>
+  </view>
 </template>
 
 <script>
@@ -69,10 +64,9 @@
   import auth from '../../api/auth';
   import vip from '../../api/member_card';
   import member from '../../api/member';
-  import pagination from '../../mixins/pagination.wpy';
+  import pagination from '../../mixins/pagination';
   import Placeholder from '../../components/common/placeholder';
   import VipCard from '../../components/customer/vip_card';
-  import VipRegiste from '../../components/customer/vip_registe';
   import ShopHeader from '../../components/shop/header';
   import ShopNav from '../../components/shop/nav';
   import Loadmore from '../../components/weui/loadmore';
@@ -85,6 +79,7 @@
       vipCard: {},
       card: false,
       init: false,
+      userInfo: {},
       page: {
         list: [
           {orderGoodsInfos: []}
@@ -100,6 +95,14 @@
     data = {...this.def};
 
     async onLoad() {
+      try {
+        const value = wepy.getStorageSync('user');
+        if (value) {
+          this.userInfo = value;
+        }
+      } catch (e) {
+        console.log(e)
+      }
       this.member = await member.info();
       this.vipCard = await vip.info();
       // 校验
@@ -116,7 +119,7 @@
       // 监听更新事件
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
       Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
-      Event.listen(Event.REGISTE_MEMBER_UPDATE, this.update.bind(this), this);
+      Event.listen(Event.REGISTE_MEMBER_UPDATE, this.updataCustomerInfo.bind(this), this);
     };
 
     loadCoupon() {
@@ -126,7 +129,29 @@
         this.loaded();
       });
     }
-
+    async updataCustomerInfo() {
+      this.member = await member.info();
+      this.$apply();
+    }
+    methods = {
+      gotoAddress() {
+        this.$root.$navigate('/pages/customer/address_list');
+      },
+      gotoCoupon() {
+        this.$root.$navigate('/pages/coupon/list')
+      },
+      gotoBonus() {
+        this.$root.$navigate('/pages/customer/bonus_list')
+      },
+      gotoDetail() {
+        const params = {
+          member: member,
+          userInfo: this.userInfo,
+          vipCard: this.vipCard
+        };
+        this.$root.$navigate('/pages/customer/vip_detail?params=' + JSON.stringify(params));
+      }
+    };
     events = {};
     components = {
       Placeholder: Placeholder,
@@ -135,8 +160,7 @@
       HomeNav: ShopNav,
       CouponNav: ShopNav,
       OrderItem: OrderItem,
-      ShopHeader: ShopHeader,
-      VipRegiste: VipRegiste
+      ShopHeader: ShopHeader
     };
     mixins = [base, pagination];
     config = {
@@ -146,33 +170,33 @@
   }
 </script>
 <style lang="scss">
-    @import "../../styles/variable";
+  @import "../../styles/variable";
 
-    .order-box{
-      margin-top: 10rpx;
-      border-top: $border;
-    }
+  .order-box {
+    margin-top: 10rpx;
+    border-top: $border;
+  }
 
-    .user-box{
-      background-color: white;
-      border-bottom: $border;
-      .function-box{
-        padding: 10rpx 20rpx 15rpx 20rpx;
+  .user-box {
+    background-color: white;
+    border-bottom: $border;
+    .function-box {
+      padding: 10rpx 20rpx 15rpx 20rpx;
 
-        .btn {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          width: 75px;
-          text {
-            margin-top: 5rpx;
-          }
+      .btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 75px;
+        text {
+          margin-top: 5rpx;
         }
       }
-      .v-line {
-        background-color: #EFEFEF;
-        width: 1px;
-        height: 50rpx;
-      }
     }
+    .v-line {
+      background-color: #EFEFEF;
+      width: 1px;
+      height: 50rpx;
+    }
+  }
 </style>

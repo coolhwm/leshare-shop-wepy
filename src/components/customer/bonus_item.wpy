@@ -1,0 +1,51 @@
+<template>
+  <view class="column item-box">
+    <view class="mode row-between">
+      <view>消费方式</view>
+      <text class="xs">{{bonusInfo.createTime}}</text>
+    </view>
+    <view class="row-between">
+      <view class="row bonus">
+        <text class="xs muted">消费金额：{{bonusInfo.costMoney}}</text>
+        <view class="v-line"/>
+        <text class="xs muted">积分：{{bonusInfo.addBonus}}</text>
+      </view>
+      <view class="row bonus">
+        <text class="xs muted">查看订单 ></text>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class BonusItem extends wepy.component {
+    props = {
+      bonusInfo: {}
+    }
+  }
+</script>
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .item-box {
+    background-color: white;
+    border: $border;
+    margin: 10rpx 10rpx 0 10rpx;
+    border-radius: 5px;
+    padding: 10rpx 30rpx;
+    .mode{
+      border-bottom: $border;
+      padding-bottom: 10rpx;
+    }
+    .bonus{
+      padding-top: 10rpx;
+      .v-line {
+        background-color: #EFEFEF;
+        width: 1px;
+        height: 20rpx;
+        margin: 10px;
+      }
+    }
+  }
+</style>

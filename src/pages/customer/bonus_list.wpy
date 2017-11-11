@@ -1,0 +1,50 @@
+<template>
+  <view class="container" wx:if="{{init}}">
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <BonusItem :bonusInfo.sync="item"/>
+    </repeat>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+
+    <!--占位符-->
+    <Placeholder :show.sync="isPageEmpty" message="您还没有历史积分" @tap.user="add"/>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import member from '../../api/member';
+  import BonusItem from '../../components/customer/bonus_item';
+  import base from '../../mixins/base';
+  import pagination from '../../mixins/pagination';
+  import Placeholder from '../../components/common/placeholder';
+  import Loadmore from '../../components/weui/loadmore';
+
+  export default class BonusList extends wepy.page {
+    def = {
+      init: false,
+      page: {
+        list: [
+        ]
+      }
+    };
+    data = {...this.def};
+    async onLoad() {
+      this.page = await member.bonusPage();
+      await this.next();
+    };
+    config = {
+      navigationBarTitleText: '历史积分',
+      enablePullDownRefresh: true
+    };
+    components = {
+      BonusItem: BonusItem,
+      Placeholder: Placeholder,
+      Loadmore: Loadmore
+    };
+    mixins = [base, pagination];
+  }
+</script>
+<style lang="scss">
+  @import "../../styles/variable";
+</style>
