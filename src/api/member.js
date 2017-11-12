@@ -21,15 +21,15 @@ export default class member extends base {
      * 历史积分信息
      */
   static async bonusPage() {
-    const url = `${this.baseUrl}/members/bonus_detail`;
+    const url = `${this.baseUrl}/members/bonus_detail?by=create_time&sort=desc`;
     return new Page(url, this.processBonusTransformation.bind(this));
   }
   static processBonusTransformation (bonusInfo) {
     const comment = {};
     if (bonusInfo.addBonus > 0) {
-      comment.costMoney = `消费金额：￥ ${bonusInfo.costMoney.toFixed(2)}`;
+      comment.costMoney = `消费金额：￥${bonusInfo.costMoney.toFixed(2)}`;
     } else {
-      comment.costMoney = `抵扣金额：￥ ${bonusInfo.costMoney.toFixed(2)}`;
+      comment.costMoney = `抵扣金额：￥${bonusInfo.costMoney.toFixed(2)}`;
     }
     comment.addBonus = bonusInfo.addBonus;
     comment.createTime = bonusInfo.createTime;

@@ -6,13 +6,16 @@
     </view>
     <view class="row-between">
       <view class="row bonus">
-        <text class="xs muted">{{bonusInfo.costMoney}}</text>
+        <view class="money-box">
+          <text class="xs muted">{{bonusInfo.costMoney}}</text>
+        </view>
+
         <view class="v-line"/>
-        <view wx:if="{{bonusInfo.addBonus > 0}}">
+        <view class="ml10" wx:if="{{bonusInfo.addBonus > 0}}">
           <text class="xs muted">积分：</text>
           <text class="xs danger">+{{bonusInfo.addBonus}}</text>
         </view>
-        <view wx:if="{{bonusInfo.addBonus < 0}}">
+        <view class="ml10" wx:if="{{bonusInfo.addBonus < 0}}">
           <text class="xs muted">积分：</text>
           <text class="xs text-color">{{bonusInfo.addBonus}}</text>
         </view>
@@ -46,6 +49,9 @@
     margin: 10rpx 10rpx 0 10rpx;
     border-radius: 5px;
     padding: 10rpx 30rpx;
+    .money-box{
+      min-width: 115px;
+    }
     .mode{
       border-bottom: $border;
       padding-bottom: 10rpx;
