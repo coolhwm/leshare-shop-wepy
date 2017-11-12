@@ -97,6 +97,7 @@
     height: 40px;
   }
   .vip-box {
+    box-shadow: 0 0 2px gray;
     position: relative;
     padding: 30rpx;
     margin: 20rpx;
