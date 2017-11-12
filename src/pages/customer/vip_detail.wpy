@@ -1,6 +1,7 @@
 <template>
   <view class="container" wx:if="{{init}}">
-    <view class="bg-white">
+
+    <view class="list-panel">
       <VipCard :member.sync="member" :userInfo.sync="userInfo" :vipCard="vipCard" :type.sync="detail"/>
       <text class="titel-box">会员特权</text>
       <view class="weui-cell mt20">
@@ -8,7 +9,7 @@
         <view class="column info-container">
           <view>
             <text>您当前为</text>
-            <text class="xl ml10 danger">{{member.levelName}}</text>
+            <text class="xl ml10 major">{{member.levelName}}</text>
           </view>
           <view>{{discountLevel}}</view>
         </view>
@@ -35,7 +36,8 @@
         <text class="info-container">{{vipCard.notice}}</text>
       </view>
     </view>
-    <view class="bg-white mt20">
+
+    <view class="list-panel">
       <view class="titel-box">会员级别</view>
       <repeat for="{{vipCard.discountRules}}" key="index" index="index" item="item">
         <view class="weui-cell">
@@ -50,8 +52,9 @@
   </view>
 </template>
 <script>
-  import wepy from 'wepy'
-  import VipCard from '../../components/customer/vip_card'
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import VipCard from '../../components/customer/vip_card';
 
   export default class VipDetail extends wepy.page {
     def = {
@@ -59,42 +62,45 @@
       member: {},
       userInfo: {},
       vipCard: {},
-      detail: 'detail',
-      disconut: {}
-    }
-    data = {...this.def}
+      detail: 'detail'
+    };
+    data = {...this.def};
 
     async onLoad (options) {
-      const params = JSON.parse(options.params)
-      this.member = params.member
-      this.userInfo = params.userInfo
-      this.vipCard = params.vipCard
-      this.init = true
+      const params = JSON.parse(options.params);
+      this.member = params.member;
+      this.userInfo = params.userInfo;
+      this.vipCard = params.vipCard;
+      this.loaded();
     }
+
     computed = {
       discountLevel () {
-        if (this.vipCard.discountRules != null) {
-          if (this.member.levelName != null) {
-            if (this.member.levelName == this.vipCard.discountRules.pop().levelName) {
-              return '您已经是最高级会员了！'
-            } else {
-              this.vipCard.discountRules.forEach(item => {
-                if (this.member.levelName == item.levelName) {
-                  this.disconut = item
-                }
-              });
-              return `您还差${this.disconut.upgradeFee - this.member.totalCost}元可升级为${this.discount.levelName}`
-            }
-          }
+        // 校验是否初始化完毕
+        if (this.member == null || this.vipCard.discountRules == null || this.member.levelName == null) {
+          return;
+        }
+        const rules = this.vipCard.discountRules;
+        const currentLevel = this.member.level;
+        const lastLevel = rules[rules.length - 1].level;
+        // 判断最高级会员
+        if (currentLevel == lastLevel) {
+          return '您已经是最高级会员了！';
+        } else {
+          const currentCost = this.member.totalCost;
+          const nextDiscount = rules.find(item => item.level == currentLevel + 1);
+          const nextCost = nextDiscount.upgradeFee;
+          return `您还差${nextCost - currentCost}元可升级为${nextDiscount.levelName}`;
         }
       }
     };
     components = {
       VipCard: VipCard
-    }
+    };
+    mixins = [base];
     config = {
       navigationBarTitleText: '会员卡详情'
-    }
+    };
   }
 </script>
 <style lang="scss">
@@ -108,5 +114,11 @@
   }
   .zan-btn--mini {
     background-color: $color-bg-body;
+  }
+  .list-panel{
+    background-color: white;
+    margin-bottom: 20rpx;
+    border-bottom: $border;
+    border-top: $border;
   }
 </style>

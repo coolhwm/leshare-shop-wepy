@@ -11,19 +11,6 @@
                  placeholder="请输入电话号码"/>
         </view>
       </view>
-      <view class="weui-cell weui-cell_input">
-        <view class="weui-cell__hd">
-          <view class="weui-label">出生日期</view>
-        </view>
-        <view class="weui-cell__bd">
-          <picker mode="date" id="birthday" @change="input" value="{{input.birthday}}"
-                  disabled="{{mode == 'edit'}}">
-            <view class="weui-input muted">
-              {{input.birthday ? input.birthday : '请选择出生日期'}}
-            </view>
-          </picker>
-        </view>
-      </view>
       <view class="weui-cell weui-cells_after-title">
         <view class="weui-cell__hd">
           <view class="weui-label">性别</view>
@@ -35,6 +22,19 @@
               {{item.value}}
             </label>
           </radio-group>
+        </view>
+      </view>
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__hd">
+          <view class="weui-label">生日</view>
+        </view>
+        <view class="weui-cell__bd">
+          <picker mode="date" id="birthday" @change="input" value="{{input.birthday}}"
+                  disabled="{{mode == 'edit'}}">
+            <view class="weui-input muted">
+              {{input.birthday ? input.birthday : '请选择生日'}}
+            </view>
+          </picker>
         </view>
       </view>
     </view>
