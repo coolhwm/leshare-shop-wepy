@@ -17,10 +17,7 @@
       <view class="weui-cell">
         <view class="weui-label muted">特权说明</view>
         <view class="column info-container">
-          <text>激活送积分：注册绑定手机开卡即送{{vipCard.bonusRule.initIncreaseBonus}}积分;
-            会员折扣：本会员卡享受{{member.discount / 10}}折优惠;
-            积分累计：每消费{{vipCard.bonusRule.costBonusUnit}}元积{{vipCard.bonusRule.increaseBonus}}分;
-            积分抵现：每使用{{vipCard.bonusRule.costMoneyUnit}}积分，抵扣{{vipCard.bonusRule.reduceMoney}}元，单笔订单最多使用{{vipCard.bonusRule.maxReduceBonus}}积分，订单需满{{vipCard.bonusRule.limitMoney}}元</text>
+          <text>{{vipDescribe}}</text>
         </view>
       </view>
       <view class="weui-cell">
@@ -75,6 +72,16 @@
     }
 
     computed = {
+      vipDescribe() {
+        if (this.vipCard == null || this.member == null || this.vipCard.bonusRule == null) {
+          return;
+        }
+        const rule = this.vipCard.bonusRule;
+        return `注册绑定手机开卡即送 ${rule.initIncreaseBonus} 积分
+        本会员卡享受 ${(this.member.discount / 10).toFixed(1)} 折优惠
+        每消费 ${rule.costBonusUnit} 元可获得 ${rule.increaseBonus} 积分
+        每使用 ${rule.costMoneyUnit} 积分，抵扣 ${rule.reduceMoney} 元现金，每笔订单最多使用 ${rule.maxReduceBonus} 积分，订单需满 ${rule.limitMoney} 元`;
+      },
       discountLevel () {
         // 校验是否初始化完毕
         if (this.member == null || this.vipCard.discountRules == null || this.member.levelName == null) {
@@ -85,12 +92,13 @@
         const lastLevel = rules[rules.length - 1].level;
         // 判断最高级会员
         if (currentLevel == lastLevel) {
-          return '您已经是最高级会员了！';
+          return '您已经是最高级别会员';
         } else {
           const currentCost = this.member.totalCost;
           const nextDiscount = rules.find(item => item.level == currentLevel + 1);
           const nextCost = nextDiscount.upgradeFee;
-          return `您还差${nextCost - currentCost}元可升级为${nextDiscount.levelName}`;
+          const costDiff = (nextCost - currentCost).toFixed(2);
+          return `再消费￥${costDiff}可升级为${nextDiscount.levelName}`;
         }
       }
     };
