@@ -111,8 +111,9 @@
   }
 </script>
 <style lang="scss">
-    @import "../../styles/variable";
-    .registe-box{
-        background-color: white;
-    }
+  @import "../../styles/variable";
+
+  .registe-box {
+    background-color: white;
+  }
 </style>
