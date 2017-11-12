@@ -73,6 +73,7 @@
   import OrderItem from '../../components/order/customer_item';
   import Event from '../../utils/Event';
   import Cache from '../../utils/Cache';
+  import Tips from '../../utils/Tips';
 
   export default class CustomerIndex extends wepy.page {
     def = {
@@ -118,7 +119,7 @@
       await this.next();
       // 监听更新事件
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
-      Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
+      Event.listen(Event.ORDER_LIST_UPDATE, this.updateOrderList.bind(this), this);
       Event.listen(Event.REGISTE_MEMBER_UPDATE, this.updataCustomerInfo.bind(this), this);
     };
 
@@ -128,6 +129,10 @@
         this.couponsNum = ownList.length + '张';
         this.loaded();
       });
+    }
+    async updateOrderList() {
+      await this.updataCustomerInfo();
+      await this.update();
     }
     async updataCustomerInfo() {
       this.member = await member.info();
@@ -141,6 +146,10 @@
         this.$root.$navigate('/pages/coupon/list')
       },
       gotoBonus() {
+        if (this.vipCard.supplyBonus != 1) {
+          Tips.alert('尚未开放');
+          return;
+        }
         this.$root.$navigate('/pages/customer/bonus_list')
       },
       gotoDetail() {

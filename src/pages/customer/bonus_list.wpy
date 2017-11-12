@@ -31,7 +31,7 @@
     data = {...this.def};
     async onLoad() {
       this.page = await member.bonusPage();
-      console.log(this.page)
+      console.log(this.page);
       await this.next();
     };
     config = {

@@ -13,13 +13,22 @@ export default class member extends base {
   /**
    * 注册会员卡信息
    */
-  static async create(param) {
-    const url = `${this.baseUrl}/members`;
+  static async create(param, code) {
+    const url = `${this.baseUrl}/members?sms_code=${code}`;
     return this.post(url, param);
   }
-    /**
-     * 历史积分信息
-     */
+
+  /**
+   * 手机验证码
+   */
+  static async code(phone) {
+    const url = `${this.baseUrl}/members/sms_code?phone=${phone}`;
+    return this.get(url);
+  }
+
+  /**
+   * 历史积分信息
+   */
   static async bonusPage() {
     const url = `${this.baseUrl}/members/bonus_detail?by=create_time&sort=desc`;
     return new Page(url, this.processBonusTransformation.bind(this));

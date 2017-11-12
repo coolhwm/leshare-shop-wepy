@@ -77,10 +77,22 @@
           return;
         }
         const rule = this.vipCard.bonusRule;
-        return `注册绑定手机开卡即送 ${rule.initIncreaseBonus} 积分
-        本会员卡享受 ${(this.member.discount / 10).toFixed(1)} 折优惠
-        每消费 ${rule.costBonusUnit} 元可获得 ${rule.increaseBonus} 积分
-        每使用 ${rule.costMoneyUnit} 积分，抵扣 ${rule.reduceMoney} 元现金，每笔订单最多使用 ${rule.maxReduceBonus} 积分，订单需满 ${rule.limitMoney} 元`;
+        let describe = '';
+        // 有折扣的情况
+        if (this.member.discount < 100) {
+          describe += `本会员卡享受 ${(this.member.discount / 10).toFixed(1)} 折优惠\n`;
+        }
+        // 开启积分规则
+        if (this.vipCard.supplyBonus == 1) {
+          // 有初始积分的情况
+          if (rule.initIncreaseBonus > 0) {
+            describe += `注册绑定手机开卡即送 ${rule.initIncreaseBonus} 积分\n`;
+          }
+
+          describe += `每消费 ${rule.costBonusUnit} 元可获得 ${rule.increaseBonus} 积分\n`;
+          describe += ` 每使用 ${rule.costMoneyUnit} 积分，抵扣 ${rule.reduceMoney} 元现金，每笔订单最多使用 ${rule.maxReduceBonus} 积分，订单需满 ${rule.limitMoney} 元\n`;
+        }
+        return describe;
       },
       discountLevel () {
         // 校验是否初始化完毕

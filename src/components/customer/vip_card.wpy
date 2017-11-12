@@ -31,7 +31,7 @@
       <image class="icon-qrcode" src="/images/icons/qrcode.png" @tap.stop="canvas"/>
     </view>
     <view class="column">
-      <text>会员积分：{{member.bonus == 0 ? '暂无积分' : member.bonus}}</text>
+      <text wx:if="{{vipCard.supplyBonus == 1}}">会员积分：{{member.bonus == 0 ? '暂无积分' : member.bonus}}</text>
       <text>会员卡号：{{member.memberNumber}}</text>
     </view>
   </view>

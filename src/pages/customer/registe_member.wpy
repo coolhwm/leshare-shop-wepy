@@ -1,14 +1,26 @@
 <template>
   <Tips/>
+  <view class="mt20"></view>
   <view class="container registe-box" wx:if="{{init}}">
     <view class="weui-cells weui-cells-form">
-      <view class="weui-cell weui-cell_input">
+      <view class="weui-cell weui-cell_input weui-cell_vcode">
         <view class="weui-cell__hd">
-          <view class="weui-label">电话号码</view>
+          <view class="weui-label">手机号码</view>
         </view>
         <view class="weui-cell__bd">
-          <input class="weui-input" id="phone" @input="input" value="{{input.phone}}" type="number" maxlength="11"
-                 placeholder="请输入电话号码"/>
+          <input class="weui-input" id="phone" type="number" value="{{input.phone}}" @input="input" maxlength="11" placeholder="请输入手机号" />
+        </view>
+        <view class="weui-cell__ft">
+          <VCode  @tap.user="code" />
+        </view>
+      </view>
+
+      <view class="weui-cell weui-cell_input weui-cell_vcode">
+        <view class="weui-cell__hd">
+          <view class="weui-label">验证码</view>
+        </view>
+        <view class="weui-cell__bd">
+          <input class="weui-input" type="number"  id="code" maxlength="4"  @input="input" placeholder="请输入验证码" />
         </view>
       </view>
       <view class="weui-cell weui-cells_after-title">
@@ -48,6 +60,7 @@
   import input from '../../mixins/input';
   import FormTips from '../../components/weui/tips';
   import member from '../../api/member';
+  import VCode from '../../components/weui/vcode';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
 
@@ -67,14 +80,44 @@
     };
 
     methods = {
+      async code() {
+        const rules = [
+          {
+            value: this.input.phone,
+            method: 'required',
+            message: '手机号码不能为空'
+          },
+          {
+            value: this.input.phone,
+            method: 'tel',
+            message: '请输入正确的手机格式'
+          }
+        ];
+        if (!this.check(rules)) {
+          return;
+        }
+        // 发送验证码
+        try {
+          await member.code(this.input.phone);
+          this.$invoke('VCode', 'cd', 60);
+          Tips.success('验证码已发送');
+        } catch (err) {
+          if (err.serverCode == 10005) {
+            console.debug('请求验证码太频繁');
+            this.$invoke('VCode', 'cd', 60);
+          }
+          this.tips(err.message);
+        } finally {
+          this.loaded();
+        }
+      },
       async add () {
         if (!this.validate()) {
           return;
         }
-        console.log(this.input);
         this.registeInfo = this.input;
         try {
-          await member.create(this.registeInfo);
+          await member.create(this.registeInfo, this.input.code);
           await Tips.success('注册成功');
           Event.emit(Event.REGISTE_MEMBER_UPDATE);
           wepy.navigateBack();
@@ -86,7 +129,8 @@
     };
     components = {
       ActionBar: ActionBar,
-      Tips: FormTips
+      Tips: FormTips,
+      VCode: VCode
     };
     config = {
       navigationBarTitleText: '注册会员'
@@ -99,16 +143,30 @@
           value: this.input.phone,
           method: 'required',
           message: '联系电话不能为空'
-        },
-        {
+        }, {
           value: this.input.phone,
           method: 'number',
           message: '联系电话只能为数字'
-        },
-        {
+        }, {
           value: this.input.phone,
           method: 'tel',
           message: '请输入正确的手机格式'
+        }, {
+          value: this.input.code,
+          method: 'required',
+          message: '请输入手机验证码'
+        }, {
+          value: this.input.sex,
+          method: 'required',
+          message: '请选择您的性别'
+        }, {
+          value: this.input.sex,
+          method: 'required',
+          message: '请选择您的性别'
+        }, {
+          value: this.input.birthday,
+          method: 'required',
+          message: '请选择您的生日'
         }
       ];
       return this.check(rules);

@@ -11,7 +11,7 @@
         </view>
 
         <view class="v-line"/>
-        <view class="ml10" wx:if="{{bonusInfo.addBonus > 0}}">
+        <view class="ml10" wx:if="{{bonusInfo.addBonus >= 0}}">
           <text class="xs muted">积分：</text>
           <text class="xs danger">+{{bonusInfo.addBonus}}</text>
         </view>
