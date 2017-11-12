@@ -48,7 +48,8 @@
         <view class="weui-cell__ft {{coupons.length > 0 ? 'weui-cell__ft_in-access' : ''}}">{{couponText}}</view>
       </view>
 
-      <view class="weui-cell weui-cell_access" wx:if="{{vip.card.supplyBonus == 1}}">
+      <!--店铺开始积分且会员已注册的情况下才显示-->
+      <view class="weui-cell weui-cell_access" wx:if="{{vip.card.supplyBonus == 1 && vip.member}}">
         <view class="weui-cell__bd">会员积分
           <view class="label small primary pain">共{{vip.member.bonus}}分</view>
         </view>
@@ -477,7 +478,7 @@
       },
       // 积分使用文字
       bonusText() {
-        if (this.vip == null) {
+        if (this.vip == null || this.vip.card == null || this.vip.member == null) {
           return;
         }
         // 初始化

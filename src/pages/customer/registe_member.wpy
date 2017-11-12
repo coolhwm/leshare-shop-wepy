@@ -73,10 +73,15 @@
         }
         console.log(this.input);
         this.registeInfo = this.input;
-        await member.create(this.registeInfo);
-        await Tips.success('注册成功');
-        Event.emit(Event.REGISTE_MEMBER_UPDATE);
-        wepy.navigateBack();
+        try {
+          await member.create(this.registeInfo);
+          await Tips.success('注册成功');
+          Event.emit(Event.REGISTE_MEMBER_UPDATE);
+          wepy.navigateBack();
+        } catch (error) {
+          this.tips(error.message);
+          Tips.loaded();
+        }
       }
     };
     components = {
