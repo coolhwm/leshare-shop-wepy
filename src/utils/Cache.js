@@ -18,6 +18,9 @@ export default class Cache {
       if (member == null || card == null) {
         return null;
       }
+      if (card.supplyDiscount != 1) {
+        return null;
+      }
       const {level, levelName, discount} = member;
       const rule = card.discountRules.find(item => item.level == level);
       const categories = rule.discountCategoryLists.map(item => item.categoryId);

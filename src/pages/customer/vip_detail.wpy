@@ -4,7 +4,9 @@
     <view class="list-panel">
       <VipCard :member.sync="member" :userInfo.sync="userInfo" :vipCard="vipCard" :type.sync="detail"/>
       <text class="titel-box">会员特权</text>
-      <view class="weui-cell mt20">
+
+      <view class="mt20"></view>
+      <view class="weui-cell" wx:if="{{vipCard.supplyDiscount == 1}}">
         <view class="weui-label muted">会员等级</view>
         <view class="column info-container">
           <view>
@@ -14,6 +16,7 @@
           <view>{{discountLevel}}</view>
         </view>
       </view>
+
       <view class="weui-cell">
         <view class="weui-label muted">特权说明</view>
         <view class="column info-container">
@@ -34,7 +37,7 @@
       </view>
     </view>
 
-    <view class="list-panel">
+    <view class="list-panel" wx:if="{{vipCard.supplyDiscount == 1}}">
       <view class="titel-box">会员级别</view>
       <repeat for="{{vipCard.discountRules}}" key="index" index="index" item="item">
         <view class="weui-cell">
@@ -79,8 +82,8 @@
         const rule = this.vipCard.bonusRule;
         let describe = '';
         // 有折扣的情况
-        if (this.member.discount < 100) {
-          describe += `本会员卡享受 ${(this.member.discount / 10).toFixed(1)} 折优惠\n`;
+        if (this.vipCard.supplyDiscount == 1 && this.member.discount < 100) {
+          describe += `本会员卡享受部分商品 ${(this.member.discount / 10).toFixed(1)} 折优惠\n`;
         }
         // 开启积分规则
         if (this.vipCard.supplyBonus == 1) {
@@ -91,6 +94,10 @@
 
           describe += `每消费 ${rule.costBonusUnit} 元可获得 ${rule.increaseBonus} 积分\n`;
           describe += ` 每使用 ${rule.costMoneyUnit} 积分，抵扣 ${rule.reduceMoney} 元现金，每笔订单最多使用 ${rule.maxReduceBonus} 积分，订单需满 ${rule.limitMoney} 元\n`;
+        }
+        // 特权为空的情况
+        if (describe == '') {
+          describe = '敬请期待';
         }
         return describe;
       },

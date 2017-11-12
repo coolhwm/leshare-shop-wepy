@@ -23,7 +23,7 @@
         <view class="info-box column">
           <text class="xl">{{userInfo.nickName ? userInfo.nickName : '微信用户'}}</text>
           <view class="cost-box row">
-            <text>{{member.levelName}}</text>
+            <text>{{vipCard.supplyBonus == 1 ? member.levelName : '注册会员'}}</text>
             <text class="ml10 xxs">已累计消费{{member.totalCost}}元</text>
           </view>
         </view>
