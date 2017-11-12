@@ -515,7 +515,7 @@
           text: `请选择`
         }];
         for (let curBonus = costBonusUnit, curMoney = reduceMoney;
-             curBonus < maxReduceBonus && curMoney < orderPrice && curBonus < bonus;
+             curBonus <= maxReduceBonus && curMoney <= orderPrice && curBonus <= bonus;
              curBonus += costBonusUnit, curMoney += reduceMoney) {
           list.push({
             bonus: curBonus,
