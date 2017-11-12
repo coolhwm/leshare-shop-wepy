@@ -22,6 +22,19 @@ export default class member extends base {
      */
   static async bonusPage() {
     const url = `${this.baseUrl}/members/bonus_detail`;
-    return new Page(url);
+    return new Page(url, this.processBonusTransformation.bind(this));
+  }
+  static processBonusTransformation (bonusInfo) {
+    const comment = {};
+    if (bonusInfo.addBonus > 0) {
+      comment.costMoney = `消费金额：￥ ${bonusInfo.costMoney.toFixed(2)}`;
+    } else {
+      comment.costMoney = `抵扣金额：￥ ${bonusInfo.costMoney.toFixed(2)}`;
+    }
+    comment.addBonus = bonusInfo.addBonus;
+    comment.createTime = bonusInfo.createTime;
+    comment.orderId = bonusInfo.orderId;
+    comment.typeDesc = bonusInfo.typeDesc;
+    return comment;
   }
 }
