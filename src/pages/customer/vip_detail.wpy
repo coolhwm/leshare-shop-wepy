@@ -74,15 +74,17 @@
     computed = {
       discountLevel () {
         if (this.vipCard.discountRules != null) {
-          if (this.member.levelName == this.vipCard.discountRules.pop().levelName) {
-            return '您已经是最高级会员了！'
-          } else {
-            this.vipCard.discountRules.forEach(item => {
-              if (this.member.levelName == item.levelName) {
-                this.disconut = item
-              }
-            });
-            return `您还差${this.disconut.upgradeFee - this.member.totalCost}元可升级为${this.discount.levelName}`;
+          if (this.member.levelName != null) {
+            if (this.member.levelName == this.vipCard.discountRules.pop().levelName) {
+              return '您已经是最高级会员了！'
+            } else {
+              this.vipCard.discountRules.forEach(item => {
+                if (this.member.levelName == item.levelName) {
+                  this.disconut = item
+                }
+              });
+              return `您还差${this.disconut.upgradeFee - this.member.totalCost}元可升级为${this.discount.levelName}`
+            }
           }
         }
       }

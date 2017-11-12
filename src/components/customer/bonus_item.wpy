@@ -1,7 +1,7 @@
 <template>
   <view class="column item-box">
     <view class="mode row-between">
-      <view>消费方式</view>
+      <view>{{bonusInfo.typeDesc}}</view>
       <text class="xs">{{bonusInfo.createTime}}</text>
     </view>
     <view class="row-between">
