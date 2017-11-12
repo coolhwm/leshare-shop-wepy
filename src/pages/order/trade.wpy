@@ -175,45 +175,6 @@
       this.vip = await Cache.vip();
       // 订单数据
       this.trade = preload.trade;
-//      this.trade = {
-//        'orderType': 20,
-//        'dealPrice': '11.94',
-//        'reduceFee': 0,
-//        'finalPrice': '0.94',
-//        'postFee': '0.00',
-//        'paymentType': '1',
-//        'paymentText': '在线支付',
-//        'orderGoodsInfos': [
-//          {
-//            'goodsId': 149,
-//            'goodsName': '妙洁增厚平底垃圾袋',
-//            'imageUrl': 'http://img.leshare.shop/FienWWsoK-lGhali8n6KUS_jlRUS/medium',
-//            'goodsPrice': '3.54',
-//            'count': 1,
-//            'innerCid': 33,
-//            'goodsSku': '大号黑色20+4只*1卷装',
-//            'originalPrice': 5.9,
-//            'discount': true,
-//            'discountRate': '6折',
-//            'discountText': '会员折扣'
-//          },
-//          {
-//            'goodsId': 116,
-//            'goodsName': '波斯猫名典迷你加香型手帕纸10包',
-//            'imageUrl': 'http://img.leshare.shop/Ft5OGx3eZTjPYbDtldxc2PZakEdJ/medium',
-//            'goodsPrice': '2.10',
-//            'count': 4,
-//            'innerCid': 28,
-//            'originalPrice': 3.5,
-//            'discount': true,
-//            'discountRate': '6折',
-//            'discountText': '会员折扣'
-//          }
-//        ],
-//        'deliveryType': 'CITY',
-//        'couponUsedId': 227,
-//        'couponPrice': '11.00'
-//      };
       this.goodsList = this.trade.orderGoodsInfos;
       if (this.trade.orderType == '20') {
         // 默认地址
@@ -358,7 +319,7 @@
           Tips.loaded();
           Event.emit(Event.COUPON_LIST_UPDATE);
         }
-        WxUtils.backOrRedirect('/pages/order/list');
+        WxUtils.backOrRedirect('/pages/customer/index');
       }
     };
     /**

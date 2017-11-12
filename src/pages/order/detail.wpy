@@ -88,7 +88,7 @@
     </view>
 
     <!--操作栏-->
-    <view class="order-action-bar row-end" wx:if="{{action != 0}}">
+    <view class="order-action-bar row-end" wx:if="{{action != 0 && order.actions.length > 0}}">
       <block wx:for="{{order.actions}}" wx:for-item="action" wx:key="index">
         <view class="zan-btn zan-btn--small {{action.primary ? 'zan-btn--primary' : ''}}" @tap="action({{action.func}}, {{order}})">{{action.name}}</view>
       </block>
