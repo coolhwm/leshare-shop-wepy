@@ -15,14 +15,17 @@ export default class Cache {
     const KEY = 'VIP_DISCOUNT';
     if (reload || this.isExpired(KEY)) {
       const {member, card} = await this.vip();
+      if (member == null || card == null) {
+        return null;
+      }
       const {level, levelName, discount} = member;
       const rule = card.discountRules.find(item => item.level == level);
       const categories = rule.discountCategoryLists.map(item => item.categoryId);
-      return {
+      this.set(KEY, {
         level: levelName,
         categories,
         rate: discount
-      }
+      });
     }
     return this.cache.get(KEY);
   }
