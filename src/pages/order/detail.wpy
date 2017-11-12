@@ -119,6 +119,7 @@
     };
     data = {...this.def};
     async onLoad ({orderId}) {
+      console.log(orderId)
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;
       // 订单信息
