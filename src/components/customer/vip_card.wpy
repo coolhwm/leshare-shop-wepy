@@ -28,7 +28,7 @@
           </view>
         </view>
       </view>
-      <image class="icon-lg" src="/images/icons/canvas.png" @tap.stop="canvas"/>
+      <image class="icon-qrcode" src="/images/icons/qrcode.png" @tap.stop="canvas"/>
     </view>
     <view class="column">
       <text>会员积分：{{member.bonus == 0 ? '暂无积分' : member.bonus}}</text>
@@ -91,6 +91,10 @@
     background-color: #FFF;
     border: 2px solid #FFF;
     box-shadow: 0 0 5px gray;
+  }
+  .icon-qrcode{
+    width: 40px;
+    height: 40px;
   }
   .vip-box {
     position: relative;
