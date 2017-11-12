@@ -2,7 +2,7 @@
   <view class="container" wx:if="{{init}}">
 
     <view class="list-panel">
-      <VipCard :member.sync="member" :userInfo.sync="userInfo" :vipCard="vipCard" :type.sync="detail"/>
+      <VipCard :member.sync="member" :userInfo.sync="userInfo" :vipCard.sync="vipCard" :type.sync="detail"/>
       <text class="titel-box">会员特权</text>
 
       <view class="mt20"></view>
@@ -10,7 +10,7 @@
         <view class="weui-label muted">会员等级</view>
         <view class="column info-container">
           <view>
-            <text>您当前为</text>
+            <text>您当前会员级别为</text>
             <text class="xl ml10 major">{{member.levelName}}</text>
           </view>
           <view>{{discountLevel}}</view>
