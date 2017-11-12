@@ -1,45 +1,52 @@
 <template>
   <view wx:if="{{init}}">
     <view class="container user-box">
-      <view wx:if="{{vipCard != null}}" class="box-bg">
+
+      <block wx:if="{{shop.supportMember == 1}}">
         <!-- 会员卡 -->
-        <VipCard :member.sync="member" :userInfo.sync="userInfo" :vipCard.sync="vipCard"/>
-      </view>
+        <view class="box-bg">
+          <VipCard :member.sync="member" :userInfo.sync="userInfo" :vipCard.sync="vipCard"/>
+        </view>
+
+        <!--功能区域-->
+        <view class="function-box row-between">
+          <view class="btn" @tap="gotoAddress">
+            <image class="icon" src="/images/icons/address.png"/>
+            <text class="xs">我的地址</text>
+          </view>
+
+          <view class="v-line"/>
+          <view class="btn" @tap="gotoCoupon">
+            <image class="icon" src="/images/icons/coupon.png"/>
+            <text class="xs">优惠券</text>
+          </view>
+
+          <view class="v-line"/>
+          <view class="btn" @tap="gotoBonus">
+            <image class="icon" src="/images/icons/bouns.png"/>
+            <text class="xs">我的积分</text>
+          </view>
+
+          <view class="v-line"/>
+          <view class="btn" @tap="gotoDetail" url="/pages/customer/vip_detail">
+            <image class="icon" src="/images/icons/privilege.png"/>
+            <text class="xs">我的特权</text>
+          </view>
+        </view>
+      </block>
 
       <!-- 原始用户信息 -->
-      <ShopHeader :shop.sync="shop" navType="navigateBack" wx:if="{{vipCard == null}}"/>
-
-      <!--功能区域-->
-      <view class="function-box row-between">
-        <view class="btn" @tap="gotoAddress">
-          <image class="icon" src="/images/icons/address.png"/>
-          <text class="xs">我的地址</text>
-        </view>
-
-        <view class="v-line"/>
-        <view class="btn" @tap="gotoCoupon">
-          <image class="icon" src="/images/icons/coupon.png"/>
-          <text class="xs">优惠券</text>
-        </view>
-
-        <view class="v-line"/>
-        <view class="btn" @tap="gotoBonus">
-          <image class="icon" src="/images/icons/bouns.png"/>
-          <text class="xs">我的积分</text>
-        </view>
-
-        <view class="v-line"/>
-        <view class="btn" @tap="gotoDetail" url="/pages/customer/vip_detail">
-          <image class="icon" src="/images/icons/privilege.png"/>
-          <text class="xs">我的特权</text>
-        </view>
-      </view>
+      <block wx:else>
+        <ShopHeader :shop.sync="shop" navType="navigateBack" />
+        <HomeNav badegText="我的" title="我的订单"  navText="返回" navUrl="/pages/shop/index" />
+        <CouponNav title="优惠券"  navText="查看" navUrl="/pages/coupon/list" last="true" />
+      </block>
 
     </view>
 
     <!--订单区域-->
     <view class="order-box">
-      <view class="bg-white">
+      <view class="bg-white" wx:if="{{shop.supportMember == 1}}">
         <view class="weui-cell">我的订单</view>
       </view>
 
@@ -135,7 +142,9 @@
       await this.update();
     }
     async updataCustomerInfo() {
-      this.member = await member.info();
+      if (this.shop.supportMember == 1) {
+        this.member = await member.info();
+      }
       this.$apply();
     }
     methods = {
@@ -190,7 +199,7 @@
     background-color: white;
     border-bottom: $border;
     .function-box {
-      padding: 10rpx 20rpx 15rpx 20rpx;
+      padding: 15rpx 20rpx 15rpx 20rpx;
 
       .btn {
         display: flex;
