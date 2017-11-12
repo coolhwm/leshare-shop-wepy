@@ -98,7 +98,7 @@
           const nextDiscount = rules.find(item => item.level == currentLevel + 1);
           const nextCost = nextDiscount.upgradeFee;
           const costDiff = (nextCost - currentCost).toFixed(2);
-          return `再消费￥${costDiff}可升级为${nextDiscount.levelName}`;
+          return `再消费${costDiff}元可升级为${nextDiscount.levelName}`;
         }
       }
     };

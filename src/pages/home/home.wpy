@@ -365,7 +365,11 @@
         flex: 1;
       }
       .reduce-item{
+        align-items: flex-start;
         margin-bottom: 10rpx;
+        image{
+          margin-top: 2px;
+        }
       }
     }
   }

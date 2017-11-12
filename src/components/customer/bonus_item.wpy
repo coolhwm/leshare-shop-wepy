@@ -10,11 +10,11 @@
         <view class="v-line"/>
         <view wx:if="{{bonusInfo.addBonus > 0}}">
           <text class="xs muted">积分：</text>
-          <text class="xs danger">+ {{bonusInfo.addBonus}}</text>
+          <text class="xs danger">+{{bonusInfo.addBonus}}</text>
         </view>
         <view wx:if="{{bonusInfo.addBonus < 0}}">
           <text class="xs muted">积分：</text>
-          <text class="xs text-color">- {{bonusInfo.addBonus}}</text>
+          <text class="xs text-color">{{bonusInfo.addBonus}}</text>
         </view>
       </view>
       <view class="row bonus" wx:if="{{bonusInfo.orderId != 0}}">
