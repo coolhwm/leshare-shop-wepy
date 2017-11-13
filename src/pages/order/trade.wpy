@@ -173,7 +173,7 @@
       const result = await auth.user({block: true, redirect: true});
       if (!result || !isOpen) { return; }
       // 会员信息
-      this.vip = await Cache.vip();
+      this.vip = await Cache.vip(true);
       // 订单数据
       this.trade = preload.trade;
       this.goodsList = this.trade.orderGoodsInfos;
