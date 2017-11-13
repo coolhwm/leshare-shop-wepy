@@ -162,12 +162,16 @@
     // 检查是否没有推荐商品
     async checkOrRloadGoodsList() {
       if (this.page.list.length == 0) {
+        // 删掉推荐分类
         if (this.categories.list[0].id == -1) {
           this.categories.list.splice(0, 1);
         }
+        // 重新请求第一个分类
         this.categories.selectedId = this.categories.list[0].id;
         this.page = goods.page(false, this.discount);
         await this.next();
+      } else {
+        this.categories.selectedId = -1;
       }
     }
     // 设置页面标题
