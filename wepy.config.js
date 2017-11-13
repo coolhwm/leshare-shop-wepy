@@ -1,20 +1,18 @@
-const path = require('path');
-var prod = process.env.NODE_ENV === 'production'
-
+const prod = process.env.NODE_ENV === 'production';
 module.exports = {
   wpyExt: '.wpy',
   build: {
     web: {
-      htmlTemplate: path.join('src', 'index.template.html'),
-      htmlOutput: path.join('web', 'index.html'),
-      jsOutput: path.join('web', 'index.js')
     }
   },
   eslint: true,
+  'autoprefixer': {
+    filter: /\.(wxss|css)$/,
+    config: {
+      browsers: ['last 11 iOS versions']
+    }
+  },
   compilers: {
-    less: {
-      compress: true
-    },
     sass: {
       outputStyle: 'expanded'
     },
@@ -25,7 +23,6 @@ module.exports = {
         'stage-1'
       ],
       plugins: [
-        'transform-decorators-legacy',
         'transform-export-extensions',
         'syntax-export-extensions'
       ]
@@ -33,16 +30,12 @@ module.exports = {
   },
   plugins: {
   }
-}
+};
 
 if (prod) {
-
   delete module.exports.compilers.babel.sourcesMap;
   // 压缩sass
-  module.exports.compilers['sass'] = {outputStyle: 'compressed'}
-
-  // 压缩less
-  module.exports.compilers['less'] = {compress: true}
+  module.exports.compilers['sass'] = {outputStyle: 'compressed'};
 
   // 压缩js
   module.exports.plugins = {
