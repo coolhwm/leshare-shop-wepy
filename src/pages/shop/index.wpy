@@ -171,6 +171,7 @@
         this.page = goods.page(false, this.discount);
         await this.next();
       } else {
+        // 默认需要选择第一个分类
         this.categories.selectedId = -1;
       }
     }
