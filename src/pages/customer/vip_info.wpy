@@ -6,13 +6,12 @@
       <view class="dash-line"/>
     </view>
     <view class="column-center">
-      <image class="avatar-image" src="{{userInfo.avatarUrl}}"/>
-      <image class="qrcode-image" src="{{member.codeUrl}}"/>
+      <image class="qrcode-image mt20" src="{{member.codeUrl}}"/>
       <view class="mt20 mb20">{{member.memberNumber}}</view>
       <view class="dash-line"/>
     </view>
     <view wx:if="{{scanning}}">
-      <text class="column-center xs muted mt10">扫描成功：已新增消费50元，获得50积分</text>
+      <text class="column-center xs muted mt10">扫描成功：已新增消费{{costPrice}}元，获得{{bonus}}积分</text>
     </view>
   </view>
 </template>
@@ -23,6 +22,7 @@
   import member from '../../api/member'
   import Tips from '../../utils/Tips'
   import Event from '../../utils/Event'
+  let interval = null;
   export default class VipInfo extends wepy.page {
     def = {
       init: false,
@@ -31,7 +31,8 @@
       cardInfo: {},
       member: {},
       scanning: false,
-      bonus: 0
+      bonus: 0,
+      costPrice: 0
     };
     data = {...this.def};
 
@@ -41,25 +42,31 @@
       this.userInfo = params.userInfo;
       this.cardInfo = params.vipCard;
       this.member = params.member;
-      setInterval((arg) => this.getTotalCost(arg), 5000);
+      interval = setInterval(async () => {
+        Tips.setLoading();
+        await this.getTotalCost();
+        Tips.loaded();
+      }, 5000);
       this.loaded();
     };
-    async getTotalCost(arg) {
+    onHide () {
+      clearInterval(interval)
+    }
+    async getTotalCost() {
       const memberInfo = await member.info();
       if (this.member.totalCost != memberInfo.totalCost) {
-        const costPrice = memberInfo.totalCost - this.member.totalCost;
+        this.costPrice = memberInfo.totalCost - this.member.totalCost;
         const bonusRule = this.cardInfo.bonusRule;
-        if ((costPrice % bonusRule.costMoneyUnit) == 0) {
-          this.bonus = (bonusRule.increaseBonus / bonusRule.costMoneyUnit) * costPrice;
+        if ((this.costPrice % bonusRule.costMoneyUnit) == 0) {
+          this.bonus = (bonusRule.increaseBonus / bonusRule.costMoneyUnit) * this.costPrice;
         } else {
-          this.bonus = (bonusRule.increaseBonus / bonusRule.costMoneyUnit) * (costPrice - (costPrice % bonusRule.costMoneyUnit));
+          this.bonus = (bonusRule.increaseBonus / bonusRule.costMoneyUnit) * (this.costPrice - (this.costPrice % bonusRule.costMoneyUnit));
         }
         this.scanning = true;
         Tips.success('扫描成功！');
         Event.emit(Event.MEMBER_CARD_UPDATE, memberInfo)
-        this.loaded();
-      } else {
-        this.loaded();
+        clearInterval(interval)
+        this.$apply();
       }
     };
     config = {
@@ -87,15 +94,8 @@
       border-bottom: 1px dashed #EDEDED;
     }
     .qrcode-image{
-      width: 155px;
-      height: 155px;
-    }
-    .avatar-image{
-      position: relative;
-      top: 112px;
-      border-radius: 50%;
-      width: 70px;
-      height: 70px;
+      width: 200px;
+      height: 200px;
     }
   }
 </style>
