@@ -2,16 +2,19 @@
   <view class="container" wx:if="{{init}}">
     <view class="column-center">
       <image class="icon-xxl logo-image mb20" src="{{shopInfo.avatar}}"/>
-      <text class="muted mt10 mb10">使用时向服务员出示此券</text>
+      <text class="muted mt10 mb20">使用时向服务员出示此券</text>
       <view class="dash-line"/>
+      <view class="column-center member-box">
+        <image class="avatar-image" src="{{userInfo.avatarUrl}}"/>
+        <image class="qrcode-image" src="{{member.codeUrl}}"/>
+      </view>
     </view>
-    <view class="column-center">
-      <image class="qrcode-image mt20" src="{{member.codeUrl}}"/>
+    <view class="column-center number-box">
       <view class="mt20 mb20">{{member.memberNumber}}</view>
       <view class="dash-line"/>
-    </view>
-    <view wx:if="{{scanning}}">
-      <text class="column-center xs muted mt10">扫描成功：已新增消费{{costPrice}}元，获得{{bonus}}积分</text>
+      <view wx:if="{{scanning}}">
+        <text class="column-center muted mt10">扫描成功：已新增消费{{costPrice}}元，获得{{bonus}}积分</text>
+      </view>
     </view>
   </view>
 </template>
@@ -74,7 +77,6 @@
         Event.emit(Event.MEMBER_CARD_UPDATE, memberInfo);
         clearInterval(interval);
         this.$apply();
-        wepy.navigateBack();
       }
     };
     config = {
@@ -101,9 +103,25 @@
       color: #EDEDED;
       border-bottom: 1px dashed #EDEDED;
     }
-    .qrcode-image{
+    .member-box{
+      position: relative;
+      top: 110px;
+      .qrcode-image {
+      position: absolute;
       width: 200px;
       height: 200px;
+      }
+      .avatar-image {
+        position: absolute;
+        z-index: 1;
+        border-radius: 50%;
+        width: 90px;
+        height: 90px;
+      }
+    }
+    .number-box{
+      position: relative;
+      top: 210px;
     }
   }
 </style>
