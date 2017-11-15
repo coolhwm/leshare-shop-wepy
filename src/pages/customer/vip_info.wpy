@@ -52,11 +52,18 @@
     onHide () {
       clearInterval(interval)
     }
+    onUnload() {
+      // 清理定时器
+      clearInterval(interval);
+    }
     async getTotalCost() {
       const memberInfo = await member.info();
       if (this.member.totalCost != memberInfo.totalCost) {
         this.costPrice = memberInfo.totalCost - this.member.totalCost;
         const bonusRule = this.cardInfo.bonusRule;
+        if (bonusRule == null) {
+          return;
+        }
         if ((this.costPrice % bonusRule.costMoneyUnit) == 0) {
           this.bonus = (bonusRule.increaseBonus / bonusRule.costMoneyUnit) * this.costPrice;
         } else {
@@ -64,9 +71,10 @@
         }
         this.scanning = true;
         Tips.success('扫描成功！');
-        Event.emit(Event.MEMBER_CARD_UPDATE, memberInfo)
-        clearInterval(interval)
+        Event.emit(Event.MEMBER_CARD_UPDATE, memberInfo);
+        clearInterval(interval);
         this.$apply();
+        wepy.navigateBack();
       }
     };
     config = {
