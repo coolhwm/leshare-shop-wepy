@@ -1,0 +1,101 @@
+<template>
+  <view class="container" wx:if="{{init}}">
+    <view class="column-center">
+      <image class="icon-xxl logo-image mb20" src="{{shopInfo.avatar}}"/>
+      <text class="muted mt10 mb10">使用时向服务员出示此券</text>
+      <view class="dash-line"/>
+    </view>
+    <view class="column-center">
+      <image class="avatar-image" src="{{userInfo.avatarUrl}}"/>
+      <image class="qrcode-image" src="{{member.codeUrl}}"/>
+      <view class="mt20 mb20">{{member.memberNumber}}</view>
+      <view class="dash-line"/>
+    </view>
+    <view wx:if="{{scanning}}">
+      <text class="column-center xs muted mt10">扫描成功：已新增消费50元，获得50积分</text>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import shopInfo from '../../api/shop'
+  import member from '../../api/member'
+  import Tips from '../../utils/Tips'
+  import Event from '../../utils/Event'
+  export default class VipInfo extends wepy.page {
+    def = {
+      init: false,
+      userInfo: {},
+      shopInfo: {},
+      cardInfo: {},
+      member: {},
+      scanning: false,
+      bonus: 0
+    };
+    data = {...this.def};
+
+    async onLoad (options) {
+      this.shopInfo = await shopInfo.info();
+      const params = JSON.parse(options.params);
+      this.userInfo = params.userInfo;
+      this.cardInfo = params.vipCard;
+      this.member = params.member;
+      setInterval((arg) => this.getTotalCost(arg), 5000);
+      this.loaded();
+    };
+    async getTotalCost(arg) {
+      const memberInfo = await member.info();
+      if (this.member.totalCost != memberInfo.totalCost) {
+        const costPrice = memberInfo.totalCost - this.member.totalCost;
+        const bonusRule = this.cardInfo.bonusRule;
+        if ((costPrice % bonusRule.costMoneyUnit) == 0) {
+          this.bonus = (bonusRule.increaseBonus / bonusRule.costMoneyUnit) * costPrice;
+        } else {
+          this.bonus = (bonusRule.increaseBonus / bonusRule.costMoneyUnit) * (costPrice - (costPrice % bonusRule.costMoneyUnit));
+        }
+        this.scanning = true;
+        Tips.success('扫描成功！');
+        Event.emit(Event.MEMBER_CARD_UPDATE, memberInfo)
+        this.loaded();
+      } else {
+        this.loaded();
+      }
+    };
+    config = {
+      navigationBarTitleText: '会员卡号'
+    };
+    mixins = [base];
+  }
+</script>
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .container {
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    .logo-image {
+      border: $border;
+      border-radius: 50%;
+      margin-top: 40rpx;
+    }
+    .dash-line {
+      width: 70%;
+      color: #EDEDED;
+      border-bottom: 1px dashed #EDEDED;
+    }
+    .qrcode-image{
+      width: 155px;
+      height: 155px;
+    }
+    .avatar-image{
+      position: relative;
+      top: 112px;
+      border-radius: 50%;
+      width: 70px;
+      height: 70px;
+    }
+  }
+</style>

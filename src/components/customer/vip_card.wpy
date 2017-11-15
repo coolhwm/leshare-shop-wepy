@@ -14,8 +14,9 @@
 
   <!-- 会员卡区域 -->
   <view class="vip-box column-between flex-start" @tap="vipDetail({{member}},{{userInfo}},{{vipCard}})" wx:if="{{member != null}}">
-    <view class="row">
-      <view class="title row">
+
+    <view class="row-between" style="width: 100%">
+      <view class="row">
         <!--头像-->
         <image class="avatar" src="{{userInfo.avatarUrl ? userInfo.avatarUrl : '/images/icons/customer_white.png'}}"/>
 
@@ -28,7 +29,8 @@
           </view>
         </view>
       </view>
-      <image class="icon-qrcode" src="/images/icons/qrcode.png" @tap.stop="canvas"/>
+      <image class="icon-qrcode" src="/images/icons/qrcode.png"
+             @tap.stop="canvas({{member}},{{userInfo}},{{vipCard}})"/>
     </view>
     <view class="row-between" style="width: 100%">
       <view class="column">
@@ -45,6 +47,7 @@
 
 <script>
   import wepy from 'wepy';
+  import base from '../../mixins/base'
 
   export default class VipCard extends wepy.component {
     props = {
@@ -68,15 +71,16 @@
         };
         this.$root.$navigate('/pages/customer/vip_detail?params=' + JSON.stringify(params));
       },
-      canvas() {
-        if (this.member.codeUrl != null) {
-          wepy.previewImage({
-            current: this.member.codeUrl, // 当前显示图片的http链接
-            urls: [this.member.codeUrl] // 需要预览的图片http链接列表
-          });
-        }
+      canvas(member, userInfo, vipCard) {
+        const params = {
+          member: member,
+          userInfo: userInfo,
+          vipCard: vipCard
+        };
+        this.$root.$navigate('/pages/customer/vip_info?params=' + JSON.stringify(params));
       }
     };
+    mixins = [base]
   }
 </script>
 
@@ -91,16 +95,16 @@
     padding: 5px 15px;
   }
   .avatar{
-    width: 60px;
-    height: 60px;
+    width: 120rpx;
+    height: 120rpx;
     border-radius: 50%;
     background-color: #FFF;
     border: 2px solid #FFF;
     box-shadow: 0 0 5px gray;
   }
   .icon-qrcode{
-    width: 40px;
-    height: 40px;
+    width: 80rpx;
+    height: 80rpx;
   }
   .vip-box {
     box-shadow: 0 0 2px gray;
@@ -112,9 +116,6 @@
     border-radius: 15rpx;
     text {
       color: white;
-    }
-    .title {
-      width: 560rpx;
     }
     .info-box {
       margin-left: 30rpx;

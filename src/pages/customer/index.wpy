@@ -128,8 +128,13 @@
       Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
       Event.listen(Event.ORDER_LIST_UPDATE, this.updateOrderList.bind(this), this);
       Event.listen(Event.REGISTE_MEMBER_UPDATE, this.updataCustomerInfo.bind(this), this);
+      Event.listen(Event.MEMBER_CARD_UPDATE, this.updateMemberCard.bind(this), this);
     };
-
+    async updateMemberCard (memberInfo) {
+      console.log(memberInfo);
+      this.member = memberInfo;
+      this.$apply();
+    }
     loadCoupon() {
       // -- 异步加载
       Cache.coupon().then(({ownList}) => {
