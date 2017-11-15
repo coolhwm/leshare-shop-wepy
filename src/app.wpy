@@ -105,9 +105,9 @@ export default class extends wepy.app {
     auth: {
     },
     scene: '',
-    shopType: '1',
-    shopName: '连江日用品专营店',
-    app_code: 'owVHb1gHrvktni80kjMlFMzSDJDWY0xR',
+    shopType: '2',
+    shopName: '77漫品连江店',
+    app_code: 'AsyQrJJ2A3JeaPs4a2M8rs9fi4AzgRcg',
     // baseUrl: 'https://api.leshare.shop/v2/customer'
     // baseUrl: 'http://192.168.31.124:9999/v2/customer',
     baseUrl: 'http://106.14.195.68:9999/v2/customer'
