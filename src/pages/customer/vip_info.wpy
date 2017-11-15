@@ -76,7 +76,8 @@
         Tips.success('扫描成功！');
         Event.emit(Event.MEMBER_CARD_UPDATE, memberInfo);
         clearInterval(interval);
-        this.$apply();
+        this.loaded();
+        setTimeout(async () => wepy.navigateBack(), 4000);
       }
     };
     config = {
