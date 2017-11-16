@@ -10,7 +10,9 @@
       </view>
     </view>
     <view class="column-center number-box">
-      <view class="mt20 mb20">{{member.memberNumber}}</view>
+      <view class="mt20 mb20">
+        <text class="xxl">{{member.memberNumber}}</text>
+      </view>
       <view class="dash-line"/>
       <view wx:if="{{scanning}}">
         <text class="column-center muted mt10">扫描成功：已新增消费{{costPrice}}元，获得{{bonus}}积分</text>
@@ -78,6 +80,11 @@
         clearInterval(interval);
         this.$apply();
         setTimeout(async () => wepy.navigateBack(), 3000);
+      }
+    };
+    computed = {
+      numberText() {
+        const number = this.member.memberNumber;
       }
     };
     config = {
