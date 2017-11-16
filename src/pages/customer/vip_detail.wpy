@@ -66,11 +66,11 @@
     };
     data = {...this.def};
 
-    async onLoad (options) {
-      const params = JSON.parse(options.params);
-      this.member = params.member;
-      this.userInfo = params.userInfo;
-      this.vipCard = params.vipCard;
+    async onLoad (options, {preload}) {
+      const param = preload.param;
+      this.member = param.member;
+      this.userInfo = param.userInfo;
+      this.vipCard = param.vipCard;
       this.loaded();
     }
 

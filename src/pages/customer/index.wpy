@@ -135,7 +135,6 @@
       }
     }
     async updateMemberCard (memberInfo) {
-      console.log(memberInfo);
       this.member = memberInfo;
       this.$apply();
     }
@@ -177,7 +176,8 @@
           userInfo: this.userInfo,
           vipCard: this.vipCard
         };
-        this.$root.$navigate('/pages/customer/vip_detail?params=' + JSON.stringify(params));
+        this.$preload('param', params);
+        this.$root.$navigate('/pages/customer/vip_detail');
       }
     };
     events = {};

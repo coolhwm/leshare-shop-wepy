@@ -39,12 +39,12 @@
     };
     data = {...this.def};
 
-    async onLoad (options) {
+    async onLoad (options, {preload}) {
       this.shopInfo = await shopInfo.info();
-      const params = JSON.parse(options.params);
-      this.userInfo = params.userInfo;
-      this.cardInfo = params.vipCard;
-      this.member = params.member;
+      const param = preload.param;
+      this.userInfo = param.userInfo;
+      this.cardInfo = param.vipCard;
+      this.member = param.member;
       interval = setInterval(async () => {
         Tips.setLoading();
         await this.getTotalCost();

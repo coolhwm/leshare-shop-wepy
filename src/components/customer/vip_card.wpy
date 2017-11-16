@@ -69,7 +69,8 @@
           userInfo: userInfo,
           vipCard: vipCard
         };
-        this.$root.$navigate('/pages/customer/vip_detail?params=' + JSON.stringify(params));
+        this.$root.$preload('param', params);
+        this.$root.$navigate('/pages/customer/vip_detail');
       },
       canvas(member, userInfo, vipCard) {
         const params = {
@@ -77,7 +78,8 @@
           userInfo: userInfo,
           vipCard: vipCard
         };
-        this.$root.$navigate('/pages/customer/vip_info?params=' + JSON.stringify(params));
+        this.$root.$preload('param', params);
+        this.$root.$navigate('/pages/customer/vip_info');
       }
     };
     mixins = [base]
