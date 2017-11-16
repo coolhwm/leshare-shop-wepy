@@ -55,12 +55,16 @@
         <OrderItem :order.sync="item" @tap.user="detail"/>
       </repeat>
 
+      <!--占位符-->
+      <view class="order-placeholder" wx:if="{{isPageEmpty}}">
+        <Placeholder :show.sync="isPageEmpty" message="您还没有历史订单" fixed="false"/>
+      </view>
+
+
       <!-- 加载提示 -->
       <Loadmore :page.sync="page"/>
     </view>
 
-    <!--占位符-->
-    <Placeholder :show.sync="isPageEmpty" message="您还没有相关订单" top="550rpx"/>
   </view>
 </template>
 
@@ -103,6 +107,24 @@
     data = {...this.def};
 
     async onLoad() {
+      // 校验
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
+      this.loadUserInfo();
+      this.member = await member.info();
+      this.vipCard = await vip.info();
+      // 加载店铺信息
+      this.shop = await Cache.shop();
+      this.shop.notices = await Cache.notices();
+      this.page = order.page();
+      // 分页加载
+      await this.next();
+      // 监听更新事件
+      Event.listen(Event.ORDER_LIST_UPDATE, this.updateOrderList.bind(this), this);
+      Event.listen(Event.REGISTE_MEMBER_UPDATE, this.updataCustomerInfo.bind(this), this);
+      Event.listen(Event.MEMBER_CARD_UPDATE, this.updateMemberCard.bind(this), this);
+    };
+    loadUserInfo() {
       try {
         const value = wepy.getStorageSync('user');
         if (value) {
@@ -111,36 +133,11 @@
       } catch (e) {
         console.log(e)
       }
-      this.member = await member.info();
-      this.vipCard = await vip.info();
-      // 校验
-      const result = await auth.user({block: true, redirect: true});
-      if (!result) return;
-      // 加载店铺信息
-      this.shop = await Cache.shop();
-      this.shop.notices = await Cache.notices();
-      this.page = order.page();
-      // -- 异步加载
-      this.loadCoupon();
-      // 分页加载
-      await this.next();
-      // 监听更新事件
-      Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
-      Event.listen(Event.ORDER_LIST_UPDATE, this.updateOrderList.bind(this), this);
-      Event.listen(Event.REGISTE_MEMBER_UPDATE, this.updataCustomerInfo.bind(this), this);
-      Event.listen(Event.MEMBER_CARD_UPDATE, this.updateMemberCard.bind(this), this);
-    };
+    }
     async updateMemberCard (memberInfo) {
       console.log(memberInfo);
       this.member = memberInfo;
       this.$apply();
-    }
-    loadCoupon() {
-      // -- 异步加载
-      Cache.coupon().then(({ownList}) => {
-        this.couponsNum = ownList.length + '张';
-        this.loaded();
-      });
     }
     async updateOrderList() {
       await this.updataCustomerInfo();
@@ -160,6 +157,10 @@
         this.$root.$navigate('/pages/coupon/list')
       },
       gotoBonus() {
+        if (this.member == null) {
+          Tips.alert('请先注册');
+          return;
+        }
         if (this.vipCard.supplyBonus != 1) {
           Tips.alert('尚未开放');
           return;
@@ -167,6 +168,10 @@
         this.$root.$navigate('/pages/customer/bonus_list')
       },
       gotoDetail() {
+        if (this.member == null) {
+          Tips.alert('请先注册');
+          return;
+        }
         const params = {
           member: this.member,
           userInfo: this.userInfo,
@@ -198,6 +203,15 @@
   .order-box {
     margin-top: 10rpx;
     border-top: $border;
+  }
+
+  .order-placeholder{
+    display: flex;
+    align-items: center;
+    border-top: $border;
+    border-bottom: $border;
+    background-color: white;
+    min-height: 250px;
   }
 
   .user-box {
