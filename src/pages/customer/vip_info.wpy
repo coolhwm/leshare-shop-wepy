@@ -2,7 +2,7 @@
   <view class="container" wx:if="{{init}}">
     <view class="column-center">
       <image class="icon-xxl logo-image mb20" src="{{shopInfo.avatar}}"/>
-      <text class="muted mt10 mb20">使用时向服务员出示此券</text>
+      <text class="muted mt10 mb20">使用时向服务员出示此页面</text>
       <view class="dash-line"/>
       <view class="column-center member-box">
         <image class="avatar-image" src="{{userInfo.avatarUrl}}"/>
@@ -77,7 +77,7 @@
         Event.emit(Event.MEMBER_CARD_UPDATE, memberInfo);
         clearInterval(interval);
         this.$apply();
-        setTimeout(async () => wepy.navigateBack(), 4000);
+        setTimeout(async () => wepy.navigateBack(), 3000);
       }
     };
     config = {

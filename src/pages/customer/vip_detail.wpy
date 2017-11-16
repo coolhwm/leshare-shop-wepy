@@ -43,7 +43,7 @@
         <view class="weui-cell">
           <view class="weui-label muted">{{item.levelName}}</view>
           <view class="column info-container">
-            <text>消费满{{item.upgradeFee}}元可升级</text>
+            <text wx:if="{{item.upgradeFee > 0}}">消费满{{item.upgradeFee}}元可升级</text>
             <text>可享部分商品{{item.discount / 10}}折优惠</text>
           </view>
         </view>
