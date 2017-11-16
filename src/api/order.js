@@ -216,7 +216,11 @@ export default class order extends base {
         count: goods.goodsNum,
         innerCid: goods.innerCid,
         skuText: goods.skuText,
-        goodsSku: goods.goodsSku
+        goodsSku: goods.goodsSku,
+        goodsSellPrice: goods.originalPrice,
+        discount: goods.discount,
+        discountRate: goods.discountRate,
+        discountText: goods.discountText
       };
       orderGoodsInfos.push(info);
       price += goods.goodsPrice * goods.goodsNum;
@@ -369,7 +373,8 @@ export default class order extends base {
    * 处理订单动作
    */
   static _processOrderAction(order, inner = false) {
-    const basic = [ACTIONS.AGAIN];
+    const basic = [];
+    // const basic = [ACTIONS.AGAIN];
     // 有退款的情况
     if (order.curRefund) {
       basic.push(ACTIONS.REFUND_DETAIL);
@@ -462,6 +467,7 @@ export default class order extends base {
     order.finalPrice = this._fixedPrice(order.finalPrice);
     order.couponPrice = this._fixedPrice(order.couponPrice);
     order.reduceFee = this._fixedPrice(order.reduceFee);
+    order.bonusPrice = this._fixedPrice(order.bonusPrice);
   }
 
   static _fixedPrice (price) {

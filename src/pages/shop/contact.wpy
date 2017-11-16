@@ -22,7 +22,7 @@
   export default class ContactIndex extends wepy.page {
     def = {};
     data = {...this.def};
-    onShareAppMessage () {
+    onShareAppMessage() {
       const title = '乐享商家助手';
       const url = '/pages/home/index';
       return Tips.share(title, url, title);

@@ -5,7 +5,7 @@
     <ShopHeader :shop.sync="shop" />
 
     <!--功能区域-->
-    <ShopNav :badegText.sync="badegText" :title.sync="title"  navText="我的" navUrl="/pages/order/list" />
+    <ShopNav :badegText.sync="badegText" :title.sync="title"  navText="个人中心" navUrl="/pages/customer/index" />
     <!--主内容区域-->
     <view class="main-box row">
       <!--分类侧边栏-->
@@ -76,6 +76,7 @@
       shop: {
         notices: []
       },
+      discount: null,
       status: {},
       notices: [],
       categories: {},
@@ -92,6 +93,8 @@
     async onLoad ({goodsId, mode}, {preload}) {
       // -- 用户信息
       await auth.user();
+      // 会员卡信息
+      this.discount = await Cache.discount();
       // -- 缓存信息
       // 加载店铺信息
       this.mode = mode;
@@ -106,7 +109,7 @@
       const carts = wepy.getStorageSync('carts');
       this.carts = carts == '' ? [] : carts;
       // 加载商品
-      this.page = goods.page(true);
+      this.page = goods.page(true, this.discount);
       await this.next();
       // 检查是否没有推荐商品
       await this.checkOrRloadGoodsList();
@@ -159,12 +162,17 @@
     // 检查是否没有推荐商品
     async checkOrRloadGoodsList() {
       if (this.page.list.length == 0) {
+        // 删掉推荐分类
         if (this.categories.list[0].id == -1) {
           this.categories.list.splice(0, 1);
         }
+        // 重新请求第一个分类
         this.categories.selectedId = this.categories.list[0].id;
-        this.page = goods.page(false);
+        this.page = goods.page(false, this.discount);
         await this.next();
+      } else {
+        // 默认需要选择第一个分类
+        this.categories.selectedId = -1;
       }
     }
     // 设置页面标题
@@ -240,7 +248,7 @@
           this.setGoodsNum();
           this.loaded();
         } else {
-          this.page = goods.page(selectedId == -1);
+          this.page = goods.page(selectedId == -1, this.discount);
           this.reload();
         }
       },
@@ -294,16 +302,18 @@
           target.totalPrice = (target.goodsNum * target.goodsPrice).toFixed(2);
         } else {
           // 购物车中不存在
-          let goodsPrice;
+          let goodsPrice, originalPrice;
           if (goodsSku) {
             const skuInfo = goods.goodsSkuInfo.goodsSkuDetails.find(item => item.sku == goodsSku);
             goodsPrice = skuInfo.goodsSkuDetailBase.price;
+            originalPrice = skuInfo.goodsSkuDetailBase.originalPrice;
           } else if (goods) {
             goodsPrice = goods.sellPrice;
+            originalPrice = goods.originalPrice;
           } else if (this.detail && this.detail.id == goodsId) {
             goodsPrice = this.detail.sellPrice;
           }
-          goodsPrice = goodsPrice.toFixed(2);
+          // goodsPrice = goodsPrice.toFixed(2);
           this.carts.push({
             goodsId: goodsId,
             goodsSku: goodsSku,
@@ -312,7 +322,11 @@
             goodsImage: goods.imageUrl,
             goodsPrice: goodsPrice,
             goodsNum: 1,
-            totalPrice: goodsPrice
+            totalPrice: goodsPrice,
+            originalPrice: originalPrice,
+            discount: goods.discount,
+            discountRate: goods.discountRate,
+            discountText: goods.discountText
           });
         }
         // 重置数据
