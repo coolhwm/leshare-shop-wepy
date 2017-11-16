@@ -11,7 +11,7 @@
         <view class="column info-container">
           <view>
             <text>您当前会员级别为</text>
-            <text class="xl ml10 major">{{member.levelName}}</text>
+            <text class="xl ml10 major">{{member.levelName ? member.levelName : '注册会员'}}</text>
           </view>
           <view>{{discountLevel}}</view>
         </view>
