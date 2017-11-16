@@ -1,0 +1,128 @@
+<template>
+  <view class="container" wx:if="{{init}}">
+    <view class="column-center">
+      <image class="icon-xxl logo-image mb20" src="{{shopInfo.avatar}}"/>
+      <text class="muted mt10 mb20">使用时向服务员出示此页面</text>
+      <view class="dash-line"/>
+      <view class="column-center member-box">
+        <image class="avatar-image" src="{{userInfo.avatarUrl}}"/>
+        <image class="qrcode-image" src="{{member.codeUrl}}"/>
+      </view>
+    </view>
+    <view class="column-center number-box">
+      <view class="mt20 mb20">{{member.memberNumber}}</view>
+      <view class="dash-line"/>
+      <view wx:if="{{scanning}}">
+        <text class="column-center muted mt10">扫描成功：已新增消费{{costPrice}}元，获得{{bonus}}积分</text>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import shopInfo from '../../api/shop'
+  import member from '../../api/member'
+  import Tips from '../../utils/Tips'
+  import Event from '../../utils/Event'
+  let interval = null;
+  export default class VipInfo extends wepy.page {
+    def = {
+      init: false,
+      userInfo: {},
+      shopInfo: {},
+      cardInfo: {},
+      member: {},
+      scanning: false,
+      bonus: 0,
+      costPrice: 0
+    };
+    data = {...this.def};
+
+    async onLoad (options) {
+      this.shopInfo = await shopInfo.info();
+      const params = JSON.parse(options.params);
+      this.userInfo = params.userInfo;
+      this.cardInfo = params.vipCard;
+      this.member = params.member;
+      interval = setInterval(async () => {
+        Tips.setLoading();
+        await this.getTotalCost();
+        Tips.loaded();
+      }, 5000);
+      this.loaded();
+    };
+    onHide () {
+      clearInterval(interval)
+    }
+    onUnload() {
+      // 清理定时器
+      clearInterval(interval);
+    }
+    async getTotalCost() {
+      const memberInfo = await member.info();
+      if (this.member.totalCost != memberInfo.totalCost) {
+        this.costPrice = memberInfo.totalCost - this.member.totalCost;
+        const bonusRule = this.cardInfo.bonusRule;
+        if (bonusRule == null) {
+          return;
+        }
+        if ((this.costPrice % bonusRule.costMoneyUnit) == 0) {
+          this.bonus = (bonusRule.increaseBonus / bonusRule.costMoneyUnit) * this.costPrice;
+        } else {
+          this.bonus = (bonusRule.increaseBonus / bonusRule.costMoneyUnit) * (this.costPrice - (this.costPrice % bonusRule.costMoneyUnit));
+        }
+        this.scanning = true;
+        Tips.success('扫描成功！');
+        Event.emit(Event.MEMBER_CARD_UPDATE, memberInfo);
+        clearInterval(interval);
+        this.$apply();
+        setTimeout(async () => wepy.navigateBack(), 3000);
+      }
+    };
+    config = {
+      navigationBarTitleText: '会员卡号'
+    };
+    mixins = [base];
+  }
+</script>
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .container {
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    .logo-image {
+      border: $border;
+      border-radius: 50%;
+      margin-top: 40rpx;
+    }
+    .dash-line {
+      width: 70%;
+      color: #EDEDED;
+      border-bottom: 1px dashed #EDEDED;
+    }
+    .member-box{
+      position: relative;
+      top: 110px;
+      .qrcode-image {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      }
+      .avatar-image {
+        position: absolute;
+        z-index: 1;
+        border-radius: 50%;
+        width: 90px;
+        height: 90px;
+      }
+    }
+    .number-box{
+      position: relative;
+      top: 210px;
+    }
+  }
+</style>

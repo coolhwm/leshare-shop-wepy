@@ -1,0 +1,72 @@
+<template>
+  <view class="column item-box">
+    <view class="mode row-between">
+      <view>{{bonusInfo.typeDesc}}</view>
+      <text class="xs">{{bonusInfo.createTime}}</text>
+    </view>
+    <view class="row-between">
+      <view class="row bonus">
+        <view class="money-box">
+          <text class="xs muted">{{bonusInfo.costMoney}}</text>
+        </view>
+
+        <view class="v-line"/>
+        <view class="ml10" wx:if="{{bonusInfo.addBonus >= 0}}">
+          <text class="xs muted">积分：</text>
+          <text class="xs danger">+{{bonusInfo.addBonus}}</text>
+        </view>
+        <view class="ml10" wx:if="{{bonusInfo.addBonus < 0}}">
+          <text class="xs muted">积分：</text>
+          <text class="xs text-color">{{bonusInfo.addBonus}}</text>
+        </view>
+      </view>
+      <view class="row bonus" wx:if="{{bonusInfo.orderId != 0}}">
+        <text class="xs muted" @tap="toOrderDetail({{bonusInfo.orderId}})">查看订单 ></text>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class BonusItem extends wepy.component {
+    props = {
+      bonusInfo: {}
+    };
+    methods= {
+      toOrderDetail (orderId) {
+        this.$root.$navigate(`/pages/order/detail?orderId=${orderId}`);
+      }
+    };
+  }
+</script>
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .item-box {
+    background-color: white;
+    border: $border;
+    margin: 10rpx 10rpx 0 10rpx;
+    border-radius: 5px;
+    padding: 10rpx 30rpx;
+    .money-box{
+      min-width: 115px;
+    }
+    .mode{
+      border-bottom: $border;
+      padding-bottom: 10rpx;
+    }
+    .bonus{
+      padding-top: 10rpx;
+      .text-color{
+        color: limegreen;
+      }
+      .v-line {
+        background-color: #EFEFEF;
+        width: 1px;
+        height: 20rpx;
+        margin: 10px;
+      }
+    }
+  }
+</style>
