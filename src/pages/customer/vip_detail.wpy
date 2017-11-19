@@ -29,11 +29,11 @@
       </view>
       <view class="weui-cell">
         <view class="weui-label muted">会员须知</view>
-        <text class="info-container">{{vipCard.description}}</text>
+        <text class="info-container">{{vipCard.description ? vipCard.description : '无'}}</text>
       </view>
       <view class="weui-cell">
         <view class="weui-label muted">会员提醒</view>
-        <text class="info-container">{{vipCard.notice}}</text>
+        <text class="info-container">{{vipCard.notice ? vipCard.notice : '无'}}</text>
       </view>
     </view>
 
@@ -44,7 +44,8 @@
           <view class="weui-label muted">{{item.levelName}}</view>
           <view class="column info-container">
             <text wx:if="{{item.upgradeFee > 0}}">消费满{{item.upgradeFee}}元可升级</text>
-            <text>可享部分商品{{item.discount / 10}}折优惠</text>
+            <text wx:if="{{item.discount < 100}}">可享部分商品{{item.discount / 10}}折优惠</text>
+            <text wx:else>暂无优惠</text>
           </view>
         </view>
       </repeat>
@@ -76,7 +77,7 @@
 
     computed = {
       vipDescribe() {
-        if (this.vipCard == null || this.member == null || this.vipCard.bonusRule == null) {
+        if (this.vipCard == null || this.member == null) {
           return;
         }
         const rule = this.vipCard.bonusRule;
@@ -86,14 +87,14 @@
           describe += `本会员卡享受部分商品 ${(this.member.discount / 10).toFixed(1)} 折优惠\n`;
         }
         // 开启积分规则
-        if (this.vipCard.supplyBonus == 1) {
+        if (this.vipCard.supplyBonus == 1 && this.vipCard.bonusRule != null) {
           // 有初始积分的情况
           if (rule.initIncreaseBonus > 0) {
             describe += `注册绑定手机开卡即送 ${rule.initIncreaseBonus} 积分\n`;
           }
 
           describe += `每消费 ${rule.costBonusUnit} 元可获得 ${rule.increaseBonus} 积分\n`;
-          describe += ` 每使用 ${rule.costMoneyUnit} 积分，抵扣 ${rule.reduceMoney} 元现金，每笔订单最多使用 ${rule.maxReduceBonus} 积分，订单需满 ${rule.limitMoney} 元\n`;
+          describe += `每使用 ${rule.costMoneyUnit} 积分，抵扣 ${rule.reduceMoney} 元现金，每笔订单最多使用 ${rule.maxReduceBonus} 积分，订单需满 ${rule.limitMoney} 元\n`;
         }
         // 特权为空的情况
         if (describe == '') {

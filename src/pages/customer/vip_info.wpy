@@ -11,7 +11,7 @@
     </view>
     <view class="column-center number-box">
       <view class="mt20 mb20">
-        <text class="xxl">{{member.memberNumber}}</text>
+        <!--<text class="xxl">{{member.memberNumber}}</text>-->
       </view>
       <view class="dash-line"/>
       <view wx:if="{{scanning}}">

@@ -81,6 +81,8 @@ export default class extends wepy.app {
       'pages/goods/comment_edit',
       'pages/address/edit',
       'pages/order/trade',
+      'pages/order/list',
+      'pages/order/detail',
       'pages/order/refund_edit',
       'pages/order/refund_detail',
       'pages/coupon/active',
@@ -93,11 +95,9 @@ export default class extends wepy.app {
       'pages/customer/address_list',
       'pages/customer/bonus_list',
       'pages/customer/vip_info',
-      'pages/order/list',
       'pages/address/list',
       'pages/address/search',
       'pages/coupon/use',
-      'pages/order/detail',
       'pages/shop/contact'
     ],
     window: {
@@ -112,9 +112,9 @@ export default class extends wepy.app {
     scene: '',
     shopType: null,
     app_code: null,
-    // baseUrl: 'https://api.leshare.shop/v2/customer'
+    baseUrl: 'https://api.leshare.shop/v2/customer'
     // baseUrl: 'http://192.168.31.124:9999/v2/customer',
-    baseUrl: 'http://106.14.195.68:9999/v2/customer'
+    // baseUrl: 'http://106.14.195.68:9999/v2/customer'
   }
 }
 </script>
