@@ -21,16 +21,15 @@ export default class Cache {
       if (card.supplyDiscount != 1) {
         return null;
       }
-      const {level, levelName, discount} = member;
-      const rule = card.discountRules.find(item => item.level == level);
+      const rule = member.discountRule;
       if (rule == null) {
         return null;
       }
       const categories = rule.discountCategoryLists.map(item => item.categoryId);
       this.set(KEY, {
-        level: levelName,
+        level: rule.levelName,
         categories,
-        rate: discount
+        rate: rule.discount
       });
     }
     return this.cache.get(KEY);
