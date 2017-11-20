@@ -86,7 +86,7 @@
         if (this.vipCard.supplyDiscount == 1) {
           const rule = this.member.discountRule;
           if (rule != null && rule.discount < 100) {
-            describe += `本会员卡享受部分商品 ${(this.member.discount / 10).toFixed(1)} 折优惠\n`;
+            describe += `本会员卡享受部分商品 ${(rule.discount / 10).toFixed(1)} 折优惠\n`;
           }
         }
         // 开启积分规则

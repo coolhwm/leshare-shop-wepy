@@ -22,24 +22,28 @@
 
         <!--用户信息-->
         <view class="info-box column">
-          <text class="xl">{{userInfo.nickName ? userInfo.nickName : '微信用户'}}</text>
+          <view class="row">
+            <text class="xxl">{{userInfo.nickName ? userInfo.nickName : '微信用户'}}</text>
+            <text class="ml10 xs">{{levelName}}</text>
+          </view>
           <view class="cost-box row">
-            <text>{{levelName}}</text>
-            <text class="ml10 xxs">已累计消费{{member.totalCost}}元</text>
+            <text class="xs">累计消费: {{member.totalCost}}元</text>
+            <text class="ml20 xs" wx:if="{{vipCard.supplyBonus == 1}}">积分: {{member.bonus}}</text>
           </view>
         </view>
       </view>
       <image class="icon-qrcode" src="/images/icons/qrcode.png"
              @tap.stop="canvas({{member}},{{userInfo}},{{vipCard}})"/>
     </view>
-    <view class="row-between" style="width: 100%">
-      <view class="column">
-        <text wx:if="{{vipCard.supplyBonus == 1}}">会员积分：{{member.bonus == 0 ? '暂无积分' : member.bonus}}</text>
-        <text>会员卡号：{{member.memberNumber}}</text>
-      </view>
-      <view class="card-title">
-        <text>{{vipCard.title}}</text>
-      </view>
+    <view class="row" style="width: 100%">
+      <text class="xxl">{{numberText}}</text>
+
+      <!--<view class="row-between">-->
+        <!---->
+      <!--</view>-->
+      <!--<view class="card-title">-->
+        <!--<text>{{vipCard.title}}</text>-->
+      <!--</view>-->
     </view>
 
   </view>
@@ -89,6 +93,18 @@
         } else {
           return '注册会员';
         }
+      },
+      numberText() {
+        if (this.member == null || this.member.memberNumber == null) return;
+        const number = this.member.memberNumber;
+        let text = '';
+        for (let i = 0; i < number.length; i++) {
+          text += number[i];
+          if ((i + 1) % 4 == 0) {
+            text += ' ';
+          }
+        }
+        return text;
       }
     };
     mixins = [base]
