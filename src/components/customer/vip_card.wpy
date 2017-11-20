@@ -24,7 +24,7 @@
         <view class="info-box column">
           <text class="xl">{{userInfo.nickName ? userInfo.nickName : '微信用户'}}</text>
           <view class="cost-box row">
-            <text>{{vipCard.supplyBonus == 1 && member.levelName ? member.levelName : '注册会员'}}</text>
+            <text>{{levelName}}</text>
             <text class="ml10 xxs">已累计消费{{member.totalCost}}元</text>
           </view>
         </view>
@@ -80,6 +80,15 @@
         };
         this.$root.$preload('param', params);
         this.$root.$navigate('/pages/customer/vip_info');
+      }
+    };
+    computed = {
+      levelName () {
+        if (this.member && this.vipCard && this.vipCard.supplyDiscount == 1 && this.member.discountRule) {
+          return this.member.discountRule.levelName;
+        } else {
+          return '注册会员';
+        }
       }
     };
     mixins = [base]

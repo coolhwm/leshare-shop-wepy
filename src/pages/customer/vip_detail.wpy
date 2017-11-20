@@ -11,7 +11,7 @@
         <view class="column info-container">
           <view>
             <text>您当前会员级别为</text>
-            <text class="xl ml10 major">{{member.levelName ? member.levelName : '注册会员'}}</text>
+            <text class="xl ml10 major">{{levelName}}</text>
           </view>
           <view>{{discountLevel}}</view>
         </view>
@@ -98,7 +98,7 @@
         }
         // 特权为空的情况
         if (describe == '') {
-          describe = '敬请期待';
+          describe = '暂无优惠';
         }
         return describe;
       },
@@ -119,6 +119,13 @@
           const nextCost = nextDiscount.upgradeFee;
           const costDiff = (nextCost - currentCost).toFixed(2);
           return `再消费${costDiff}元可升级为${nextDiscount.levelName}`;
+        }
+      },
+      levelName () {
+        if (this.member && this.vipCard && this.vipCard.supplyDiscount == 1 && this.member.discountRule) {
+          return this.member.discountRule.levelName;
+        } else {
+          return '注册会员';
         }
       }
     };
