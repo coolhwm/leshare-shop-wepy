@@ -45,6 +45,10 @@ export default class extends wepy.app {
   onLaunch(param) {
     // 校验SDK
     WxUtils.checkSDK();
+    // 同步开放平台EXT数据
+    const ext = wepy.getExtConfigSync();
+    Object.assign(wepy.$instance.globalData, ext);
+    console.info(ext);
     // 同步权限数据
     this.syncStoreConfig('login_code');
     this.syncStoreConfig('third_session');
@@ -77,17 +81,23 @@ export default class extends wepy.app {
       'pages/goods/comment_edit',
       'pages/address/edit',
       'pages/order/trade',
+      'pages/order/list',
+      'pages/order/detail',
       'pages/order/refund_edit',
       'pages/order/refund_detail',
       'pages/coupon/active',
       'pages/coupon/pick',
       'pages/coupon/list',
       'pages/coupon/detail',
-      'pages/order/list',
+      'pages/customer/index',
+      'pages/customer/registe_member',
+      'pages/customer/vip_detail',
+      'pages/customer/address_list',
+      'pages/customer/bonus_list',
+      'pages/customer/vip_info',
       'pages/address/list',
       'pages/address/search',
       'pages/coupon/use',
-      'pages/order/detail',
       'pages/shop/contact'
     ],
     window: {
@@ -100,9 +110,8 @@ export default class extends wepy.app {
     auth: {
     },
     scene: '',
-    shopType: '1',
-    shopName: '连江日用品专营店',
-    app_code: 'owVHb1gHrvktni80kjMlFMzSDJDWY0xR',
+    shopType: null,
+    app_code: null,
     // baseUrl: 'https://api.leshare.shop/v2/customer'
     // baseUrl: 'http://192.168.31.124:9999/v2/customer',
     baseUrl: 'http://106.14.195.68:9999/v2/customer'

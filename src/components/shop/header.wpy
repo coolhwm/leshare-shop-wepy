@@ -1,34 +1,35 @@
 <template>
-  <!-- 店铺信息区域 -->
-  <view class="shop-box row" url="/pages/home/home"  @tap="home">
-    <image class="shop-avatar" src="{{shop.avatar}}/medium" wx:if="{{shop.avatar}}" />
-    <view class="shop-content column">
-      <view class="column">
-        <text class="xl">{{shop.name}}</text>
-        <text class="xxs inline">{{shop.address}}</text>
-      </view>
-      <swiper class="notice-swiper" vertical autoplay circular interval="3000">
-        <swiper-item wx:for="{{shop.notices}}" wx:key="index">
-          <text class="xs inline">公告：{{item.content}}</text>
-        </swiper-item>
-      </swiper>
+    <!-- 店铺信息区域 -->
+    <view class="shop-box row" url="/pages/home/home" @tap="home">
+        <image class="shop-avatar" src="{{shop.avatar}}/medium" wx:if="{{shop.avatar}}"/>
+        <view class="shop-content column">
+            <view class="column">
+                <text class="xl">{{shop.name}}</text>
+                <text class="xxs inline">{{shop.address}}</text>
+            </view>
+            <swiper class="notice-swiper" vertical autoplay circular interval="3000">
+                <swiper-item wx:for="{{shop.notices}}" wx:key="index">
+                    <view class="notice-content">公告：{{item.content}}</view>
+                </swiper-item>
+            </swiper>
+        </view>
+        <image class="icon" src="/images/icons/more-white.png"/>
     </view>
-    <image class="icon" src="/images/icons/more-white.png" />
-  </view>
 </template>
 
 <script>
   import wepy from 'wepy';
   import WxUtils from '../../utils/WxUtils';
+
   export default class ShopHeader extends wepy.component {
     props = {
       shop: {}
     };
     methods = {
-      home() {
+      home () {
         WxUtils.backOrRedirect('/pages/home/home');
       }
-    }
+    };
   }
 </script>
 
@@ -36,19 +37,21 @@
   @import "../../styles/variable";
 
   // 店铺信息
-  .shop-box{
+  .shop-box {
     position: relative;
     padding: 15px;
-    text{color: #FFF}
+    text {
+      color: #FFF
+    }
     background-color: $color-primary;
 
-    .shop-avatar{
+    .shop-avatar {
       height: 70px;
       width: 70px;
       border-radius: 3px;
     }
 
-    .shop-content{
+    .shop-content {
       flex: 1;
       max-width: 480rpx;
       height: 70px;
@@ -56,14 +59,22 @@
       margin-left: 15px;
     }
   }
-  .notice-swiper{
+
+  .notice-swiper {
     margin-top: 10rpx;
     width: 100%;
-    height: 20px;
+    height: 24px;
 
-    swiper-item{
+    swiper-item {
+      display: flex;
+      flex-direction: column-reverse;
       width: 100%;
-      height: 20px;
+      height: 24px;
+    }
+    .notice-content {
+      color: white;
+      font-size: $text-xxs;
+      line-height: 12px;
     }
   }
 </style>

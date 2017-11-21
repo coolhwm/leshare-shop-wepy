@@ -171,9 +171,8 @@
         if (this.action == 0) {
           return;
         }
-        this.$root.$navigate(`detail?orderId=${orderId}`);
-      },
-
+        this.$root.$navigate(`/pages/order/detail?orderId=${orderId}`);
+      }
     };
     components = {
       OrderGoods: OrderGoods

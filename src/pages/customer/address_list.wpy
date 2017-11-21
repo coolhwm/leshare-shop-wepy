@@ -1,0 +1,67 @@
+<template>
+  <view wx:if="{{init}}">
+    <!--列表展现-->
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <Address :address.sync="item"/>
+    </repeat>
+
+    <ActionBar @tap.user="add" okText="添加地址" cancelText="返回" />
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+
+    <!--占位符-->
+    <Placeholder :show.sync="isPageEmpty" message="您还没有收货地址" @tap.user="add"/>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import address from '../../api/address';
+  import pagination from '../../mixins/pagination';
+  import Placeholder from '../../components/common/placeholder';
+  import Loadmore from '../../components/weui/loadmore';
+  import Address from '../../components/address/manage';
+  import ActionBar from '../../components/common/action_bar'
+  import Event from '../../utils/Event'
+
+  export default class AddressList extends wepy.page {
+    def = {
+      init: false,
+      page: {
+        list: [
+        ]
+      }
+    };
+    data = {...this.def};
+    methods = {
+      add() {
+        this.$navigate('/pages/address/edit?mode=create');
+      }
+    };
+    async onLoad () {
+      this.page = address.page();
+      await this.next();
+      Event.listen(Event.ADDRESS_LIST_UPDATE, this.update.bind(this), this);
+    };
+    async update (isCreate) {
+      this.reload();
+    }
+    components = {
+      Placeholder: Placeholder,
+      Loadmore: Loadmore,
+      Address: Address,
+      ActionBar: ActionBar
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '收货地址',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

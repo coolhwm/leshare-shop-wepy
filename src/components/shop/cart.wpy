@@ -155,15 +155,12 @@
       buyText() {
         if (!this.status.open) {
           this.buyStatus = 0;
-          this.$apply();
           return '休息中';
         } else if (this.totalCount < 1) {
           this.buyStatus = 2;
-          this.$apply();
           return '请选择';
         } else {
           this.buyStatus = 1;
-          this.$apply();
           return '去结算';
         }
       },

@@ -6,12 +6,18 @@
     <!--商品说明-->
     <view class="order-goods-title-container column">
       <text>{{goods.goodsName}}</text>
-      <text class="muted">{{goods.skuText}}</text>
+      <text class="muted" wx:if="{{goods.goodsSku}}">{{goods.goodsSku}}</text>
+      <!--折扣信息-->
+      <view class="discount-box row" wx:if="{{goods.discount}}">
+        <view class="discount-rate"><text>{{goods.discountRate}}</text></view>
+        <view class="discount-text"><text>{{goods.discountText}}</text></view>
+      </view>
     </view>
 
     <!--商品购买信息-->
     <view class="order-goods-buy-container column">
       <text>￥{{goods.goodsPrice}}</text>
+      <text class="cancel" wx:if="{{goods.goodsSellPrice}}">￥{{goods.goodsSellPrice}}</text>
       <text class="muted">x{{goods.count}}</text>
     </view>
   </view>
@@ -50,5 +56,35 @@
     flex:1;
     height: 100%;
     padding-left: 28rpx;
+  }
+
+  /*折扣信息*/
+
+  .discount-box{
+    border: 1px solid $color-major;
+    height: 15px;
+    max-width: 80px;
+    text {
+      font-size: $text-xxs;
+    }
+    view{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 15px;
+      padding: 0 3px;
+    }
+    .discount-rate{
+      background-color: $color-major;
+      text{
+        color: #FFF;
+      }
+    }
+    .discount-text {
+      flex: 1;
+      text{
+        color: $color-major;
+      }
+    }
   }
 </style>

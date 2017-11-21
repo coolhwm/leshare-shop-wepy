@@ -11,7 +11,10 @@
 
       <!--规格区域-->
       <view class="sku-list-box column">
-        <text class="weak sm">规格:</text>
+        <view class="row">
+          <text class="weak sm mr10">规格:</text>
+          <DisplayBadge :goods.sync="goods" />
+        </view>
         <view class="sku-item-box row">
           <block  wx:for-item="skuValue"  wx:for="{{sku}}" wx:key="index">
             <view class="sku-item label {{selected == skuValue.sku ? 'primary' : ''}} {{skuValue.max ? 'disabled' : ''}}" @tap="select({{skuValue}})">
@@ -23,7 +26,10 @@
 
       <!--操作区域-->
       <view class="sku-btn-box row-between">
-        <text class="major xxl">{{price ? '￥' + price : '请选择'}}</text>
+        <view>
+          <text class="major xxl">{{price ? '￥' + price : '请选择'}}</text>
+          <text class="cancel ml10" wx:if="{{originalPrice}}">￥{{originalPrice}}</text>
+        </view>
         <button class="weui-btn mini-btn" type="primary" size="mini" @tap="confirm">选好了</button>
       </view>
     </view>
@@ -35,6 +41,7 @@
   import CoverPanel from '../common/cover_panel';
   import Sku from '../../utils/Sku';
   import Tips from '../../utils/Tips';
+  import DisplayBadge from './discount_badge';
   let skuData;
   export default class SkuSelector extends wepy.component {
     props = {
@@ -46,7 +53,8 @@
     };
     data = {
       selected: null,
-      price: null
+      price: null,
+      originalPrice: null
     };
     methods = {
       close() {
@@ -59,7 +67,8 @@
         }
         skuData.select('规格', skuValue);
         this.selected = skuValue;
-        this.price = skuData.detail.price.toFixed(2);
+        this.price = skuData.detail.price;
+        this.originalPrice = skuData.detail.originalPrice;
         this.$apply();
       },
       confirm() {
@@ -71,12 +80,12 @@
           goodsId: this.goods.id,
           goodsSku: this.selected
         });
+        // 清理残留数据
         this.selected = null;
+        this.price = null;
+        this.originalPrice = null;
         this.display = 'false';
       }
-    };
-    components = {
-      CoverPanel: CoverPanel
     };
     computed = {
       sku() {
@@ -99,9 +108,10 @@
         }
       }
     };
-    events = {};
-    onLoad() {
-    }
+    components = {
+      DisplayBadge: DisplayBadge,
+      CoverPanel: CoverPanel
+    };
   }
 </script>
 

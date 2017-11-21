@@ -52,7 +52,8 @@ export default class shop extends base {
     if (data.status == 'CLOSE') {
       data.closeTips = '店铺已休息，请稍后再来';
     } else if (data.status == 'NORMAL' && !data.open) {
-      data.closeTips = `店铺已休息，营业时间：${data.beginTime} - ${data.endTime}`;
+      data.closeTips = '店铺已休息，请稍后再来';
+      // data.closeTips = `店铺已休息，营业时间：${data.beginTime} - ${data.endTime}`;
     }
     return data;
   }

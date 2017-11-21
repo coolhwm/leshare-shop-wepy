@@ -31,6 +31,10 @@ export default class Event {
   static ADDRESS_DETAIL_UPDATE = 'ADDRESS_DETAIL_UPDATE';
   // 地址列表更新
   static ADDRESS_LIST_UPDATE = 'ADDRESS_LIST_UPDATE';
+  // 注册会员卡
+  static REGISTE_MEMBER_UPDATE = 'REGISTE_MEMBER_UPDATE';
+  // 会员卡信息更新
+  static MEMBER_CARD_UPDATE = 'MEMBER_CARD_UPDATE';
   static listen(eventName, callback, observer) {
     WxNotificationCenter.addNotification(eventName, callback, observer);
   }

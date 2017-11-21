@@ -8,12 +8,15 @@ export default class goods extends base {
   /**
    * 返回分页对象
    */
-  static page (isRecommend = false) {
+  static page (isRecommend = false, discount) {
     let url = `${this.baseUrl}/goods`;
     if (isRecommend) {
       url += '/recommend';
     }
-    return new Page(url, this._processGoodsData.bind(this));
+    return new Page(url, item => {
+      this._processGoodsDiscount(item, discount);
+      this._processGoodsData(item);
+    });
   }
 
   /**
@@ -86,6 +89,41 @@ export default class goods extends base {
   }
 
   /**
+   * 处理折扣价格
+   */
+  static _processGoodsDiscount(goods, discount) {
+    const isDiscount = discount != null ? discount.categories.some(cid => cid == goods.innerCid) : false;
+    if (!isDiscount) {
+      return;
+    }
+    const rate = discount.rate / 100;
+    const isSku = goods.goodsSkuInfo;
+    if (isSku) {
+      // 多规格数据处理
+      const skuList = goods.goodsSkuInfo.goodsSkuDetails;
+      skuList.forEach(item => {
+        const detail = item.goodsSkuDetailBase;
+        const price = detail.price;
+        // 最低的价格作为原价
+        if (item.originalPrice == null || price < item.originalPrice) {
+          item.originalPrice = price;
+        }
+        // 设置原价和当前价格
+        detail.originalPrice = price;
+        detail.price = (price * rate).toFixed(2);
+      });
+    } else {
+      // 单规格数据处理
+      goods.originalPrice = goods.sellPrice;
+      goods.sellPrice = (goods.sellPrice * rate).toFixed(2);
+    }
+    // 折扣文本展现
+    goods.discountRate = discount.rate / 10 + '折';
+    goods.discountText = `会员折扣`;
+    goods.discount = true;
+  }
+
+  /**
    * 处理运费信息
    */
   static _processGoodsPostFeeText (detail) {
@@ -93,8 +131,7 @@ export default class goods extends base {
     let feeText = '';
     if (!fee || fee == 0) {
       feeText = '配送：免运费';
-    }
-    else {
+    } else {
       feeText = `同城配送：￥${fee} (支持自提)`;
     }
     detail.feeText = feeText;
@@ -116,22 +153,21 @@ export default class goods extends base {
       maxPrice = Math.max(detail.price, maxPrice);
       minPrice = Math.min(detail.price, minPrice);
     }
-    detail.maxPrice = maxPrice.toFixed(2);
-    detail.minPrice = minPrice.toFixed(2);
+    detail.maxPrice = maxPrice;
+    detail.minPrice = minPrice;
   }
 
   /**
    * 处理价格展现标签 / 需要先调用区间处理
    */
   static _processGoodsPriceLabel (detail) {
-    let priceLable = detail.sellPrice.toFixed(2);
+    let priceLable = detail.sellPrice;
 
     if (detail.maxPrice && detail.minPrice) {
       // priceLable = `${detail.minPrice}~${detail.maxPrice}`;
       priceLable = detail.minPrice;
     }
-
-    detail.priceLable = priceLable;
+    detail.priceLable = isNaN(detail.priceLable) ? priceLable : priceLable.toFixed.toFixed(2);
   }
 
   /**
@@ -154,8 +190,7 @@ export default class goods extends base {
           value: skuValues
         };
         skuLabels.push(sku);
-      }
-      else {
+      } else {
         break;
       }
     }
@@ -212,5 +247,4 @@ export default class goods extends base {
       item.imageUrl = images[0].url + '/medium';
     }
   }
-
 }

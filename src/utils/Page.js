@@ -52,7 +52,7 @@ export default class Pagination {
       }
       this.empty = false;
       // 处理数据
-      this._processData(data)
+      this._processData(data);
       // 设置数据
       if (this.toClear) {
         this.list = data;

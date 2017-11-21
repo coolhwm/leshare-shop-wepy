@@ -30,45 +30,19 @@ export default class CouponService extends base {
     } else {
       pickList = [];
     }
-
+    const coupons = [...ownList, ...pickList];
+    const size = coupons.length;
+    let preview = coupons.map(item => `满${item.limitPrice}减${item.price}`);
+    if (preview.length > 3) {
+      preview = preview.slice(0, 3);
+      preview.push('...');
+    }
     return {
+      size,
+      preview,
       ownList,
       pickList
     };
-    // let coupons = [];
-    // return this.list().then(data => {
-    //   if (data == null) {
-    //     // return Promise.reject('无卡券')
-    //     return;
-    //   }
-    //   coupons = data.map(this._processPickItem.bind(this));
-    //   return this.own('NEVER_USED');
-    // }).then(own => {
-    //   const pickList = [];
-    //   const ownList = [];
-    //   // 卡券分类
-    //   coupons.forEach(coupon => {
-    //     const isOwn = own ? own.some(item => item.couponId == coupon.id) : false;
-    //     if (isOwn) {
-    //       coupon.own = true;
-    //       ownList.push(coupon);
-    //     } else {
-    //       pickList.push(coupon);
-    //     }
-    //   });
-    //
-    //   let preview = coupons.map(item => `满${item.limitPrice}减${item.price}`);
-    //   if (preview.length > 3) {
-    //     preview = preview.slice(0, 3);
-    //     preview.push('...');
-    //   }
-    //   return {
-    //     pickList: pickList,
-    //     ownList: ownList,
-    //     preview: preview,
-    //     size: coupons.length
-    //   };
-    // });
   }
 
   static list () {
