@@ -64,6 +64,7 @@
   import VCode from '../../components/weui/vcode';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
+  import WxUtils from '../../utils/WxUtils';
 
   export default class RegisteMember extends wepy.page {
     def = {
@@ -77,7 +78,7 @@
     data = {...this.def};
 
     onLoad () {
-      this.init = true;
+      this.loaded();
     };
 
     methods = {
@@ -121,7 +122,7 @@
           await member.create(this.registeInfo, this.input.code);
           await Tips.success('注册成功');
           Event.emit(Event.REGISTE_MEMBER_UPDATE);
-          wepy.navigateBack();
+          WxUtils.backOrRedirect('/pages/customer/index');
         } catch (error) {
           this.tips(error.message);
           Tips.loaded();

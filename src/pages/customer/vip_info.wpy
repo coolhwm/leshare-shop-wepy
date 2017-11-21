@@ -26,11 +26,14 @@
 </template>
 <script>
   import wepy from 'wepy';
+  import auth from '../../api/auth';
   import base from '../../mixins/base';
-  import shopInfo from '../../api/shop'
-  import member from '../../api/member'
-  import Tips from '../../utils/Tips'
-  import Event from '../../utils/Event'
+  import vip from '../../api/member_card';
+  import shopInfo from '../../api/shop';
+  import member from '../../api/member';
+  import Tips from '../../utils/Tips';
+  import Event from '../../utils/Event';
+  import WxUtils from '../../utils/WxUtils';
   let interval = null;
   export default class VipInfo extends wepy.page {
     def = {
@@ -46,11 +49,30 @@
     data = {...this.def};
 
     async onLoad (options, {preload}) {
+      // 要求会员授权
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
       this.shopInfo = await shopInfo.info();
-      const param = preload.param;
-      this.userInfo = param.userInfo;
-      this.cardInfo = param.vipCard;
-      this.member = param.member;
+      // 加载数据
+      if (preload && preload.param) {
+        // preload 情况
+        const param = preload.param;
+        this.userInfo = param.userInfo;
+        this.cardInfo = param.vipCard;
+        this.member = param.member;
+      } else {
+        // 直接进入页面的情况
+        this.member = await member.info();
+        this.vipCard = await vip.info();
+        this.userInfo = this.loadUserInfo();
+      }
+      // 没注册的会员引导注册
+      if (this.member == null) {
+        await Tips.alert('请先注册会员');
+        this.$redirect('/pages/customer/registe_member');
+        return;
+      }
+      // 增加定时器扫描
       interval = setInterval(async () => {
         Tips.setLoading();
         await this.getTotalCost();
@@ -64,6 +86,16 @@
     onUnload() {
       // 清理定时器
       clearInterval(interval);
+    }
+    loadUserInfo() {
+      try {
+        const value = wepy.getStorageSync('user');
+        if (value) {
+          return value;
+        }
+      } catch (e) {
+        console.log(e)
+      }
     }
     async getTotalCost() {
       const memberInfo = await member.info();
@@ -84,7 +116,7 @@
         Event.emit(Event.MEMBER_CARD_UPDATE, memberInfo);
         clearInterval(interval);
         this.$apply();
-        setTimeout(async () => wepy.navigateBack(), 3000);
+        setTimeout(async () => WxUtils.backOrRedirect('/pages/customer/index'), 3000);
       }
     };
     computed = {
