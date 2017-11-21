@@ -34,6 +34,7 @@
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
+  import Cache from '../../utils/Cache';
   let interval = null;
   export default class VipInfo extends wepy.page {
     def = {
@@ -52,7 +53,7 @@
       // 要求会员授权
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;
-      this.shopInfo = await shopInfo.info();
+      this.shopInfo = await Cache.shop();
       // 加载数据
       if (preload && preload.param) {
         // preload 情况
@@ -62,8 +63,9 @@
         this.member = param.member;
       } else {
         // 直接进入页面的情况
-        this.member = await member.info();
-        this.vipCard = await vip.info();
+        const {card, member} = await Cache.vip();
+        this.member = member;
+        this.vipCard = card;
         this.userInfo = this.loadUserInfo();
       }
       // 没注册的会员引导注册
@@ -113,9 +115,10 @@
         }
         this.scanning = true;
         Tips.success('扫描成功！');
-        Event.emit(Event.MEMBER_CARD_UPDATE, memberInfo);
+        await Cache.vip(true);
+        Event.emit(Event.MEMBER_CARD_UPDATE);
         clearInterval(interval);
-        this.$apply();
+        this.loaded();
         setTimeout(async () => WxUtils.backOrRedirect('/pages/customer/index'), 3000);
       }
     };
