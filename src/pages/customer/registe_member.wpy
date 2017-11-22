@@ -8,7 +8,7 @@
           <view class="weui-label">手机号码</view>
         </view>
         <view class="weui-cell__bd">
-          <input class="weui-input" id="phone" type="number" value="{{input.phone}}" @input="input" maxlength="11" placeholder="请输入手机号" />
+          <input class="weui-input" id="phone" type="number"  @input="input" maxlength="11" placeholder="请输入手机号" />
         </view>
         <view class="weui-cell__ft">
           <VCode  @tap.user="code" />
