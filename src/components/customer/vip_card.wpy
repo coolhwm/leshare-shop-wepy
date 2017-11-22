@@ -22,13 +22,11 @@
 
         <!--用户信息-->
         <view class="info-box column">
-          <view class="row">
-            <text class="xxl">{{userInfo.nickName ? userInfo.nickName : '微信用户'}}</text>
-            <text class="ml10 xs">{{levelName}}</text>
-          </view>
+          <text class="user-name">{{userInfo.nickName ? userInfo.nickName : '微信用户'}}</text>
+          <text class="sm">{{levelName}}</text>
           <view class="cost-box row">
-            <text class="xs">累计消费: {{member.totalCost}}元</text>
-            <text class="ml20 xs" wx:if="{{vipCard.supplyBonus == 1}}">积分: {{member.bonus}}</text>
+            <text class="sm">累计消费: {{member.totalCost}}元</text>
+            <text class="ml20 sm" wx:if="{{vipCard.supplyBonus == 1}}">积分: {{member.bonus}}</text>
           </view>
         </view>
       </view>
@@ -146,6 +144,10 @@
     }
     .info-box {
       margin-left: 30rpx;
+
+      .user-name{
+        font-size: 36rpx;
+      }
     }
     .cost-box{
       margin-top: 10rpx;

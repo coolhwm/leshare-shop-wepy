@@ -30,7 +30,7 @@ export default class auth extends base {
         return true;
       }
       // 重新登录
-      await this.login();
+      await this.doLogin();
       // 获取用户信息
       const rawUser = userInfo != null ? userInfo : await wepy.getUserInfo();
       // 检查是否通过

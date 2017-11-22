@@ -73,7 +73,6 @@
   import base from '../../mixins/base';
   import order from '../../api/order';
   import auth from '../../api/auth';
-  import vip from '../../api/member_card';
   import member from '../../api/member';
   import pagination from '../../mixins/pagination';
   import Placeholder from '../../components/common/placeholder';
@@ -111,8 +110,9 @@
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;
       this.loadUserInfo();
-      this.member = await member.info();
-      this.vipCard = await vip.info();
+      const {card, member} = await Cache.vip();
+      this.member = member;
+      this.vipCard = card;
       // 加载店铺信息
       this.shop = await Cache.shop();
       this.shop.notices = await Cache.notices();
@@ -124,6 +124,12 @@
       Event.listen(Event.REGISTE_MEMBER_UPDATE, this.updataCustomerInfo.bind(this), this);
       Event.listen(Event.MEMBER_CARD_UPDATE, this.updateMemberCard.bind(this), this);
     };
+    async onPullDownRefresh() {
+      const {card, member} = await Cache.vip(true);
+      this.member = member;
+      this.vipCard = card;
+      this.loaded();
+    }
     loadUserInfo() {
       try {
         const value = wepy.getStorageSync('user');
@@ -134,8 +140,10 @@
         console.log(e)
       }
     }
-    async updateMemberCard (memberInfo) {
-      this.member = memberInfo;
+    async updateMemberCard () {
+      const {card, member} = await Cache.vip();
+      this.member = member;
+      this.vipCard = card;
       this.$apply();
     }
     async updateOrderList() {

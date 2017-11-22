@@ -51,7 +51,7 @@
           await auth.user({block: false, redirect: false}, detail);
           Tips.success('授权成功');
           if (this.redirect == 'true') {
-            this.$redirect('/pages/shop/index');
+            this.$redirect('/pages/customer/index');
           } else {
             wepy.navigateBack();
           }
