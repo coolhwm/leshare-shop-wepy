@@ -96,7 +96,9 @@
             describe += `注册绑定手机开卡即送 ${rule.initIncreaseBonus} 积分\n`;
           }
           describe += `每消费 ${rule.costMoneyUnit} 元可获得 ${rule.increaseBonus} 积分\n`;
-          describe += `每使用 ${rule.costBonusUnit} 积分，抵扣 ${rule.reduceMoney} 元现金，每笔订单最多使用 ${rule.maxReduceBonus} 积分，订单需满 ${rule.limitMoney} 元\n`;
+          if (rule.isCost == 1) {
+            describe += `每使用 ${rule.costBonusUnit} 积分，抵扣 ${rule.reduceMoney} 元现金，每笔订单最多使用 ${rule.maxReduceBonus} 积分，订单需满 ${rule.limitMoney} 元\n`;
+          }
         }
         // 特权为空的情况
         if (describe == '') {

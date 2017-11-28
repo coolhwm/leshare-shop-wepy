@@ -49,7 +49,7 @@
       </view>
 
       <!--店铺开始积分且会员已注册的情况下才显示-->
-      <view class="weui-cell weui-cell_access" wx:if="{{vip.card.supplyBonus == 1 && vip.member}}">
+      <view class="weui-cell weui-cell_access" wx:if="{{isBonus}}">
         <view class="weui-cell__bd">会员积分
           <view class="label small primary pain">共{{vip.member.bonus}}分</view>
         </view>
@@ -475,6 +475,14 @@
       // 优惠券标签
       couponLabel () {
         return this.selectedCoupon ? '已选择' : this.coupons.length + '张可用';
+      },
+      isBonus () {
+        if (this.vip == null || this.vip.card == null) {
+          return false;
+        } else {
+          const {supplyBonus, bonusRule} = this.vip.card;
+          return supplyBonus == 1 && bonusRule.isCost == 1 && this.vip.member;
+        }
       },
       // 积分使用文字
       bonusText() {
