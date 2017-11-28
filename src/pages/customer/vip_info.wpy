@@ -2,24 +2,24 @@
   <view class="container" wx:if="{{init}}">
     <view class="column-center">
       <view class="avatar-box">
-        <image class="icon-xxl logo-image mb20" src="{{shopInfo.avatar}}"/>
-        <text class="muted mt10">{{shopInfo.name}}</text>
+        <image class="icon-xxl logo-image mb20" src="{{shop.avatar}}"/>
+        <text class="muted mt10">{{shop.name}}</text>
       </view>
 
       <view class="dash-line"/>
       <view class="column-center member-box">
-        <image class="avatar-image" src="{{userInfo.avatarUrl}}"/>
+        <image class="avatar-image" src="{{user.avatarUrl}}"/>
         <image class="qrcode-image" src="{{member.codeUrl}}"/>
       </view>
     </view>
     <view class="column-center number-box">
       <view class="column-center mt20 mb20">
         <text class="number-text mb20">{{numberText}}</text>
-        <text class="muted mt10 mb20">使用时向服务员出示此页面</text>
+        <text class="muted mt10 mb20">{{card.description}}</text>
       </view>
       <view class="dash-line"/>
-      <view wx:if="{{scanning}}">
-        <text class="muted mt10">扫描成功：已新增消费{{costPrice}}元</text><text class="muted mt10" wx:if="{{bonus}}">，获得{{bonus}}积分</text>
+      <view wx:if="{{success}}">
+        <text class="muted mt10">{{scanText}}</text>
       </view>
     </view>
   </view>
@@ -28,8 +28,6 @@
   import wepy from 'wepy';
   import auth from '../../api/auth';
   import base from '../../mixins/base';
-  import vip from '../../api/member_card';
-  import shopInfo from '../../api/shop';
   import member from '../../api/member';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
@@ -39,13 +37,12 @@
   export default class VipInfo extends wepy.page {
     def = {
       init: false,
-      userInfo: null,
-      shopInfo: null,
-      cardInfo: null,
+      user: null,
+      shop: null,
+      card: null,
       member: null,
-      scanning: false,
-      bonus: 0,
-      costPrice: 0
+      success: false,
+      scanText: ''
     };
     data = {...this.def};
 
@@ -53,20 +50,20 @@
       // 要求会员授权
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;
-      this.shopInfo = await Cache.shop();
+      this.shop = await Cache.shop();
       // 加载数据
       if (preload && preload.param) {
         // preload 情况
         const param = preload.param;
-        this.userInfo = param.userInfo;
-        this.cardInfo = param.vipCard;
+        this.user = param.userInfo;
+        this.card = param.vipCard;
         this.member = param.member;
       } else {
         // 直接进入页面的情况
         const {card, member} = await Cache.vip();
         this.member = member;
-        this.vipCard = card;
-        this.userInfo = this.loadUserInfo();
+        this.card = card;
+        this.user = this.loadUserInfo();
       }
       // 没注册的会员引导注册
       if (this.member == null) {
@@ -77,7 +74,7 @@
       // 增加定时器扫描
       interval = setInterval(async () => {
         Tips.setLoading();
-        await this.getTotalCost();
+        await this.checkScan();
         Tips.loaded();
       }, 5000);
       this.loaded();
@@ -99,27 +96,28 @@
         console.log(e)
       }
     }
-    async getTotalCost() {
-      const memberInfo = await member.info();
-      if (this.member.totalCost != memberInfo.totalCost) {
-        // 新增消费金额
-        this.costPrice = memberInfo.totalCost - this.member.totalCost;
-        // 新增积分
-        const bonusRule = this.cardInfo.bonusRule;
-        if (bonusRule != null) {
-          if ((this.costPrice % bonusRule.costMoneyUnit) == 0) {
-            this.bonus = (bonusRule.increaseBonus / bonusRule.costMoneyUnit) * this.costPrice;
-          } else {
-            this.bonus = (bonusRule.increaseBonus / bonusRule.costMoneyUnit) * (this.costPrice - (this.costPrice % bonusRule.costMoneyUnit));
-          }
+    async checkScan() {
+      const {totalCost, bonus} = await member.info();
+      const isUpdate = totalCost != this.member.totalCost || bonus != this.member.bonus;
+      if (isUpdate) {
+        // 计算金额与积分差值
+        const priceDiff = (totalCost - this.member.totalCost).toFixed(2);
+        const bonusDiff = (bonus - this.member.bonus).toFixed(0);
+        // 拼接显示文本
+        let text = `扫描成功：已新增消费${priceDiff}元`;
+        if (bonusDiff > 0) {
+          text += `，获得${bonusDiff}积分`;
         }
-        this.scanning = true;
-        Tips.success('扫描成功！');
+        // 扫描成功
+        this.scanText = text;
+        this.success = true;
+        await Tips.success('扫描成功！');
+        // 刷新缓存
         await Cache.vip(true);
         Event.emit(Event.MEMBER_CARD_UPDATE);
         clearInterval(interval);
         this.loaded();
-        setTimeout(async () => WxUtils.backOrRedirect('/pages/customer/index'), 3000);
+        setTimeout(async () => WxUtils.backOrRedirect('/pages/customer/index'), 2000);
       }
     };
     computed = {

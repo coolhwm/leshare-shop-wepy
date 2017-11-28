@@ -12,27 +12,23 @@ export default class Cache {
    * 折扣信息
    */
   static async discount(reload = false) {
-    const KEY = 'VIP_DISCOUNT';
-    if (reload || this.isExpired(KEY)) {
-      const {member, card} = await this.vip();
-      if (member == null || card == null) {
-        return null;
-      }
-      if (card.supplyDiscount != 1) {
-        return null;
-      }
-      const rule = member.discountRule;
-      if (rule == null) {
-        return null;
-      }
-      const categories = rule.discountCategoryLists.map(item => item.categoryId);
-      this.set(KEY, {
-        level: rule.levelName,
-        categories,
-        rate: rule.discount
-      });
+    const {member, card} = await this.vip(reload);
+    if (member == null || card == null) {
+      return null;
     }
-    return this.cache.get(KEY);
+    if (card.supplyDiscount != 1) {
+      return null;
+    }
+    const rule = member.discountRule;
+    if (rule == null) {
+      return null;
+    }
+    const categories = rule.discountCategoryLists.map(item => item.categoryId);
+    return {
+      level: rule.levelName,
+      categories,
+      rate: rule.discount
+    };
   }
 
   /**
