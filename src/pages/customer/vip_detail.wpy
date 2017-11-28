@@ -115,7 +115,7 @@
         const currentLevel = this.member.level;
         const lastLevel = rules[rules.length - 1].level;
         // 判断最高级会员
-        if (currentLevel == lastLevel) {
+        if (currentLevel >= lastLevel) {
           return '您已经是最高级别会员';
         } else {
           const currentCost = this.member.totalCost;
