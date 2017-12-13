@@ -108,7 +108,7 @@
       },
       discountLevel () {
         // 校验是否初始化完毕
-        if (this.member == null || this.vipCard.discountRules == null) {
+        if (this.member == null || this.vipCard.discountRules == null || this.vipCard.discountRules.length == 0) {
           return;
         }
         const rules = this.vipCard.discountRules;
