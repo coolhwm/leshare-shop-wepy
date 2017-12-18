@@ -8,7 +8,7 @@
 
       <view class="dash-line"/>
       <view class="column-center member-box">
-        <image class="avatar-image" src="{{user.avatarUrl}}"/>
+        <!--<image class="avatar-image" src="{{user.avatarUrl}}"/>-->
         <image class="qrcode-image" src="{{member.codeUrl}}"/>
       </view>
     </view>
@@ -159,15 +159,16 @@
       border-bottom: 1px dashed #EDEDED;
     }
     .member-box{
-      position: relative;
-      top: 110px;
+      margin-top: 30rpx;
+      /*position: relative;*/
+      /*top: 110px;*/
       .qrcode-image {
-      position: absolute;
+      /*position: absolute;*/
       width: 200px;
       height: 200px;
       }
       .avatar-image {
-        position: absolute;
+        /*position: absolute;*/
         z-index: 1;
         border-radius: 50%;
         width: 90px;
@@ -182,8 +183,8 @@
       height: 150px;
     }
     .number-box{
-      position: relative;
-      top: 210px;
+      /*position: relative;*/
+      /*top: 210px;*/
     }
     .number-text{
       font-size: 40rpx;
