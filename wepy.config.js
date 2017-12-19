@@ -18,7 +18,8 @@ module.exports = {
       ],
       plugins: [
         'transform-export-extensions',
-        'syntax-export-extensions'
+        'syntax-export-extensions',
+        'transform-decorators-legacy'
       ]
     }
   },

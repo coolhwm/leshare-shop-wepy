@@ -3,7 +3,6 @@ import base from './base';
 import wepy from 'wepy';
 
 export default class shop extends base {
-
   static TYPE = {
     '1': {
       name: '在线商城',
@@ -31,7 +30,10 @@ export default class shop extends base {
    */
   static async info() {
     const url = `${this.baseUrl}/shops`;
-    return await this.get(url);
+    return await this.get(url).then(data => {
+      data.type = this.type();
+      return data;
+    });
   }
 
   /**

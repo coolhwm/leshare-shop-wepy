@@ -65,37 +65,42 @@
 
 <script>
   import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
   import Cache from '../../utils/Cache';
   import SilderPanel from '../../components/common/slider_panel';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
 
+  @connect({
+    status: store.get('status'),
+    ownCoupons: store.get('ownCoupons')
+  })
   export default class ShopCart extends wepy.component {
     props = {
       carts: {
         default: []
       },
-      status: {},
       buyStatus: 0
     };
     data = {
       isCartDisplay: 'false',
-      reduce: null,
-      coupons: null
+      reduce: null
     };
     async onLoad() {
+      await store.use('status', 'ownCoupons');
       this.reduce = await Cache.reduce();
-      const {ownList} = await Cache.coupon();
-      this.coupons = ownList;
+      // const {ownList} = await Cache.coupon();
+      // this.coupons = ownList;
       this.$apply();
-      Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
+      // Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
     }
-    loadCoupon() {
-      Cache.coupon().then(({ownList}) => {
-        this.coupons = ownList;
-        this.$apply();
-      });
-    }
+    // loadCoupon() {
+    //   Cache.coupon().then(({ownList}) => {
+    //     this.coupons = ownList;
+    //     this.$apply();
+    //   });
+    // }
     methods = {
       plus(cart) {
         this.updateNum('plus', cart);
@@ -104,7 +109,7 @@
         this.updateNum('minus', cart);
       },
       cart() {
-        if (!this.status.open) {
+        if (!this.status || !this.status.open) {
           Tips.modal(this.status.closeTips);
         } else if (this.totalCount < 1) {
           Tips.alert('请选择商品');
@@ -116,7 +121,7 @@
         this.$emit('clear');
       },
       buy({detail}) {
-        if (!this.status.open) {
+        if (!this.status || !this.status.open) {
           Tips.modal(this.status.closeTips);
         } else if (this.totalCount < 1) {
           Tips.alert('请选择商品');
@@ -153,7 +158,7 @@
         return count;
       },
       buyText() {
-        if (!this.status.open) {
+        if (!this.status || !this.status.open) {
           this.buyStatus = 0;
           return '休息中';
         } else if (this.totalCount < 1) {
@@ -205,9 +210,9 @@
         }
       },
       couponText() {
-        if (!this.coupons || this.coupons.length < 1) {
+        if (!this.ownCoupons || this.ownCoupons.length < 1) {
         } else {
-          return `${this.coupons.length}张券可用`;
+          return `${this.ownCoupons.length}张券可用`;
         }
       }
     };
