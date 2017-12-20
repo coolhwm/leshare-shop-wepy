@@ -145,7 +145,6 @@
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
-  import Cache from '../../utils/Cache';
   import Loading from '../../components/common/loading';
 
   @connect({
@@ -155,7 +154,7 @@
     card: store.get('card')
   })
   export default class OrderTrade extends wepy.page {
-    def = {
+    data = {
       init: false,
       trade: {
         orderGoodsInfos: []
@@ -172,7 +171,6 @@
       bonusPicker: null,
       selectedBonus: null
     };
-    data = {...this.def};
 
     async onLoad (params, {preload}) {
       const isOpen = await this.checkShopStatus();
@@ -319,7 +317,7 @@
         Event.emit(Event.CART_LIST_CLEAR);
         // 卡券领取更新
         if (trade.couponUsedId) {
-          await store.reflesh('ownCoupons', 'pickCoupons');
+          await store.reflesh('ownCoupons', 'pickCoupons', 'member');
         }
         WxUtils.backOrRedirect('/pages/customer/index');
       }
