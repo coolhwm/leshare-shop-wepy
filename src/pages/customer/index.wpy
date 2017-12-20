@@ -89,14 +89,13 @@
 
   @connect({
     shop: store.get('shop'),
-    reduce: store.get('reduce'),
     member: store.get('member'),
-    card: store.get('card')
+    card: store.get('card'),
+    user: store.get('user')
   })
   export default class CustomerIndex extends wepy.page {
     data = {
       init: false,
-      user: {},
       page: {
         list: [
           {orderGoodsInfos: []}
@@ -104,11 +103,10 @@
       }
     };
     async onLoad() {
-      // 校验
+      // 校验是否登录成功
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;
       await store.init();
-      this.loadUser();
       this.page = order.page();
       // 分页加载
       await this.next();
@@ -118,16 +116,7 @@
     async onPullDownRefresh() {
       await store.reflesh('card', 'member');
       this.loaded();
-    }
-    loadUser() {
-      try {
-        const value = wepy.getStorageSync('user');
-        if (value) {
-          this.user = value;
-        }
-      } catch (e) {
-        console.log(e)
-      }
+      wepy.stopPullDownRefresh();
     }
     methods = {
       gotoAddress() {
