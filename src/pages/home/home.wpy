@@ -26,7 +26,7 @@
       <view class="reduce-item row" wx:if="{{reduce.list.length > 0}}">
         <image class="icon" src="/images/icons/reduce.png"></image><text class="reduce-content inline" >{{reduce.showText}}</text>
       </view>
-      <view class="reduce-item row" wx:for="{{notices}}" wx:key="index">
+      <view class="reduce-item row" wx:for="{{homeNotices}}" wx:key="index">
         <image class="icon" src="/images/icons/sale.png"></image><text class="reduce-content">{{item.content}}</text>
       </view>
     </view>
@@ -115,6 +115,7 @@
   import auth from '../../api/auth';
   import coupon from '../../api/coupon';
   import shop from '../../api/shop';
+  import goods from '../../api/goods';
   import base from '../../mixins/base';
   import Tips from '../../utils/Tips';
   import WxUtils from '../../utils/WxUtils';
@@ -126,14 +127,7 @@
     status: store.get('status'),
     ownCoupons: store.get('ownCoupons'),
     reduce: store.get('reduce'),
-    goods({shop}) {
-      if (shop.recommend == null) return [];
-      const {list} = shop.recommend;
-      return list.lenght > 9 ? list.slice(0, 5) : list;
-    },
-    notices({shop}) {
-      return shop.notices ? shop.notices.filter(item => item.isHome) : [];
-    }
+    notices: store.get('notices')
   })
   export default class ShopHome extends wepy.page {
     def = {
@@ -147,6 +141,9 @@
       await auth.login();
       // 初始化全局存储
       await store.init();
+      // 加载推荐商品
+      const {list} = await goods.page(true).next();
+      this.goods = list.length > 5 ? list.slice(0, 5) : list;
       // 视图渲染
       this.loaded();
       // 访问记录
@@ -243,6 +240,12 @@
        */
       share () {
         Tips.modal('当前版本过低，请更新微信或点击右上角进行分享');
+      }
+    };
+    computed = {
+      homeNotices() {
+        if (!this.notices || !this.notices.filter) return [];
+        return this.notices.filter(item => item.isHome == 1);
       }
     };
     components = {

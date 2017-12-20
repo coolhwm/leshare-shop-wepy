@@ -1,6 +1,6 @@
 <template>
   <Tips/>
-
+  <Loading :init.sync="init"/>
   <!--地址浮动层-->
   <AddressList :goodsList.sync="goodsList" :display.sync="isAddressListDisplay"/>
 
@@ -144,6 +144,7 @@
   import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
   import Cache from '../../utils/Cache';
+  import Loading from '../../components/common/loading';
 
   export default class OrderTrade extends wepy.page {
     def = {
@@ -561,7 +562,8 @@
       AddressSelector: AddressSelector,
       OrderItem: OrderItem,
       AddressList: AddressList,
-      InShopTab: InShopTab
+      InShopTab: InShopTab,
+      Loading: Loading
     };
     mixins = [base];
     config = {

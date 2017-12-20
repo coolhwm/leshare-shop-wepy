@@ -42,8 +42,7 @@ const init = async () => {
     'pickCoupons',
     'card',
     'member',
-    'reduce',
-    'recommend'
+    'reduce'
   );
 };
 
@@ -54,6 +53,8 @@ const use = async (...fields) => {
   console.info(`use store: fields=${fields}`);
   fields.forEach(async field => {
     if (exists(field)) return;
+    // 防止重复加载
+    save(field, {});
     // 异步保存
     fetch(field).then(data => {
       save(field, data);

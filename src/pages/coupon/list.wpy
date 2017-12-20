@@ -37,12 +37,9 @@
   import WxUtils from '../../utils/WxUtils';
 
   export default class CouponList extends wepy.page {
-    def = {
+    data = {
       init: false,
-      page: {
-        list: [
-        ]
-      },
+      page: {},
       tab: {
         list: [{
           id: 'NEVER_USED',
@@ -58,7 +55,6 @@
         scroll: false
       }
     };
-    data = {...this.def};
     async onLoad () {
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;

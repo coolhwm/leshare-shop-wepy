@@ -1,11 +1,15 @@
 <template>
-  <view class="spinner" wx:if="{{!init}}">
-    <view class="rect1"></view>
-    <view class="rect2"></view>
-    <view class="rect3"></view>
-    <view class="rect4"></view>
-    <view class="rect5"></view>
+  <view class="column-center spinner-wrap" wx:if="{{!init}}">
+    <view class="spinner" >
+      <view class="rect1"></view>
+      <view class="rect2"></view>
+      <view class="rect3"></view>
+      <view class="rect4"></view>
+      <view class="rect5"></view>
+    </view>
+    <text class="muted mt20 lg">加载中</text>
   </view>
+
 </template>
 
 <script>
@@ -19,10 +23,13 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .spinner-wrap{
+    height: 80%;
+    width: 100%;
+  }
   .spinner {
     display: flex;
     justify-content: center;
-    margin: 100px auto;
     width: 50px;
     height: 40px;
     text-align: center;

@@ -74,7 +74,8 @@
 
   @connect({
     status: store.get('status'),
-    ownCoupons: store.get('ownCoupons')
+    ownCoupons: store.get('ownCoupons'),
+    reduce: store.get('reduce')
   })
   export default class ShopCart extends wepy.component {
     props = {
@@ -89,18 +90,8 @@
     };
     async onLoad() {
       await store.use('status', 'ownCoupons');
-      this.reduce = await Cache.reduce();
-      // const {ownList} = await Cache.coupon();
-      // this.coupons = ownList;
       this.$apply();
-      // Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
     }
-    // loadCoupon() {
-    //   Cache.coupon().then(({ownList}) => {
-    //     this.coupons = ownList;
-    //     this.$apply();
-    //   });
-    // }
     methods = {
       plus(cart) {
         this.updateNum('plus', cart);
