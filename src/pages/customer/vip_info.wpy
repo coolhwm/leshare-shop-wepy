@@ -1,4 +1,5 @@
 <template>
+  <Loading :init.sync="init"/>
   <view class="container" wx:if="{{init}}">
     <view class="column-center">
       <view class="avatar-box">
@@ -26,45 +27,37 @@
 </template>
 <script>
   import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
   import auth from '../../api/auth';
+  import store from '../../store/utils';
   import base from '../../mixins/base';
   import member from '../../api/member';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
   import Cache from '../../utils/Cache';
+  import Loading from '../../components/common/loading';
   let interval = null;
+
+  @connect({
+    member: store.get('member'),
+    card: store.get('card'),
+    user: store.get('user'),
+    shop: store.get('shop')
+  })
   export default class VipInfo extends wepy.page {
     def = {
       init: false,
-      user: null,
-      shop: null,
-      card: null,
-      member: null,
       success: false,
       scanText: ''
     };
     data = {...this.def};
 
-    async onLoad (options, {preload}) {
+    async onLoad () {
+      await store.init();
       // 要求会员授权
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;
-      this.shop = await Cache.shop();
-      // 加载数据
-      if (preload && preload.param) {
-        // preload 情况
-        const param = preload.param;
-        this.user = param.userInfo;
-        this.card = param.vipCard;
-        this.member = param.member;
-      } else {
-        // 直接进入页面的情况
-        const {card, member} = await Cache.vip();
-        this.member = member;
-        this.card = card;
-        this.user = this.loadUserInfo();
-      }
       // 没注册的会员引导注册
       if (this.member == null) {
         await Tips.alert('请先注册会员');
@@ -122,7 +115,7 @@
     };
     computed = {
       numberText() {
-        if (this.member == null) return;
+        if (this.member == null || this.member.memberNumber == null) return;
         const number = this.member.memberNumber;
         let text = '';
         for (let i = 0; i < number.length; i++) {
@@ -136,6 +129,9 @@
     };
     config = {
       navigationBarTitleText: '会员卡号'
+    };
+    components = {
+      Loading: Loading
     };
     mixins = [base];
   }

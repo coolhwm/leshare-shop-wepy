@@ -47,13 +47,13 @@ const init = async () => {
 };
 
 /**
- * 声明使用数据
+ * 声明使用数据 TODO 使用promise all 加载方法
  */
 const use = async (...fields) => {
   console.info(`use store: fields=${fields}`);
   fields.forEach(async field => {
     if (exists(field)) return;
-    // 防止重复加载
+    // 防止重复加载 TODO 要用另一个标志位进行标记
     save(field, {});
     // 异步保存
     fetch(field).then(data => {
