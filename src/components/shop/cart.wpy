@@ -15,6 +15,7 @@
       <text class="muted xs" wx:else>请选择商品加入购物车</text>
     </view>
 
+    <!--TODO 状态提取-->
     <form class="cart-btn column-center {{buyStatus != 1 ? 'cart-btn-disable' : ''}}" report-submit="true"  @submit.stop="buy">
       <button plain  form-type="submit"><text>{{buyText}}</text></button>
     </form>
@@ -161,7 +162,7 @@
         }
       },
       matchReduce() {
-        if (!this.reduce || this.reduce.list < 1) {
+        if (!this.reduce || !this.reduce.list || this.reduce.list.length < 1) {
           return {};
         }
         if (this.totalPrice == 0) {
@@ -187,7 +188,7 @@
         });
         if (match.fee == 0) {
           // 不满足最低扣减金额
-          const diff = lowest.limitPrice - this.totalPrice;
+          const diff = (lowest.limitPrice - this.totalPrice).toFixed(2);
           return {
             showText: `满${lowest.limitPrice}减${lowest.fee}，还差${diff}元`,
             lowest: lowest

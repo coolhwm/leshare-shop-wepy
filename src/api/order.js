@@ -1,6 +1,5 @@
 import base from './base';
 import Page from '../utils/Page';
-import wepy from 'wepy'
 import {ACTIONS, ACTION_MAP} from './order_dict';
 import WxUtils from '../utils/WxUtils';
 
@@ -8,6 +7,10 @@ import WxUtils from '../utils/WxUtils';
  * 订单服务类
  */
 export default class order extends base {
+  static PAYMENT_OFFLINE = 0;
+  static TYPE_TAKEAWAY = 20;
+  static TYPE_FORHERE = 30;
+  static TYPE_PACK = 33;
   // 交易状态字典
   static statusDict = {
     '0': '全部',
@@ -196,6 +199,7 @@ export default class order extends base {
       return data;
     });
   }
+  /** ********************* 工具方法 ***********************/
 
   /** ********************* 生成方法 ***********************/
 

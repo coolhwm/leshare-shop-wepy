@@ -77,14 +77,15 @@
     ownCoupons: store.get('ownCoupons'),
     pickCoupons: store.get('pickCoupons'),
     member: store.get('member'),
-    card: store.get('card')
+    card: store.get('card'),
+    categories: store.get('categories')
   })
   export default class ShopIndex extends wepy.page {
     data = {
       init: false,
       page: {},
       pages: {},
-      categories: {},
+      categoryTab: {},
       carts: [],
       skuDisplay: 'false',
       detailDisplay: false,
@@ -92,12 +93,13 @@
       mode: 1
     };
     async onLoad ({goodsId, mode}, {preload}) {
-      // -- 用户信息
-      await auth.user();
-      await store.init();
       this.mode = mode;
+      // 用户信息
+      await auth.user();
+      // 初始化Store
+      await store.init();
       // 加载商品分类
-      this.categories = await goods.categories();
+      this.categoryTab = {...this.categories};
       // 购物车
       const carts = wepy.getStorageSync('carts');
       this.carts = carts == '' ? [] : carts;
@@ -112,7 +114,7 @@
       if (preload && preload.cart) {
         await this.doResetCart(preload.cart)
       }
-      // -- 监听事件
+      // 监听事件
       Event.listen(Event.CART_LIST_CLEAR, this.doClearCart.bind(this), this);
       Event.listen(Event.CART_LIST_RESET, this.doResetCart.bind(this), this);
       Event.listen(Event.CART_LIST_ADD, this.doAddCart.bind(this), this);
