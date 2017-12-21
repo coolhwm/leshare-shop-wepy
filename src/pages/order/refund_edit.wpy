@@ -91,7 +91,7 @@
         await order.refundOrder(refund.orderId, refund);
         await Tips.success('退款申请成功');
         Event.emit(Event.ORDER_LIST_UPDATE);
-        Route.backOrRedirect('/pages/order/list');
+        Route.backOrRedirect('/pages/customer/index');
       }
     };
     validate() {

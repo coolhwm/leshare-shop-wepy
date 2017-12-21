@@ -64,7 +64,6 @@
       const {latitude, longitude} = await wepy.getLocation({type: 'gcj02'});
       this.latitude = latitude;
       this.longitude = longitude;
-      console.info(this.latitude, longitude);
       // 逆向解析
       const reverse = await address.reverse(latitude, longitude);
       this.currentLocation = reverse.current;

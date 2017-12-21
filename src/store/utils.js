@@ -117,16 +117,4 @@ const exists = key => {
   return state.shop[key] != null && meta[key] != null;
 };
 
-/**
- * 取出数据
- */
-// const get = (key, promise) => {
-//   if (!exists(key)) {
-//     promise.then(data => {
-//       save(key, data);
-//     });
-//   }
-//   return createGetter(key);
-// };
-
 export default {get, save, use, reflesh, init}

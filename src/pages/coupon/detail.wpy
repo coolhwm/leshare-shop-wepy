@@ -32,7 +32,6 @@
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
   import FormTips from '../../components/weui/tips';
-  import Cache from '../../utils/Cache';
   let interval = null;
   export default class CouponDetail extends wepy.page {
     def = {

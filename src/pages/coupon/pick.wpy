@@ -1,3 +1,4 @@
+<!--废弃页面-->
 <template>
   <view class="container" wx:if="{{init}}">
     <!-- 店铺信息区域 -->

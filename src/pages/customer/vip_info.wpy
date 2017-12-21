@@ -33,9 +33,7 @@
   import base from '../../mixins/base';
   import member from '../../api/member';
   import Tips from '../../utils/Tips';
-  import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
-  import Cache from '../../utils/Cache';
   import Loading from '../../components/common/loading';
   let interval = null;
 
@@ -106,8 +104,7 @@
         this.success = true;
         await Tips.success('扫描成功！');
         // 刷新缓存
-        await Cache.vip(true);
-        Event.emit(Event.MEMBER_CARD_UPDATE);
+        await store.reflesh('member');
         clearInterval(interval);
         this.loaded();
         setTimeout(async () => WxUtils.backOrRedirect('/pages/customer/index'), 2000);

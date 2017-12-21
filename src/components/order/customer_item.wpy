@@ -82,6 +82,7 @@
     async close({orderId}) {
       await Tips.confirm('确定关闭该订单？');
       try {
+        Tips.loading();
         await order.closeOrder(orderId);
         await Tips.success('关闭成功');
       } catch (e) {
@@ -95,6 +96,7 @@
      */
     async pay({orderId}) {
       try {
+        Tips.loading();
         const payment = await order.prepayOrder(orderId);
         Tips.loaded();
         await order.wxpayOrder(payment);
@@ -111,6 +113,7 @@
     async receive({orderId}) {
       await Tips.confirm('是否已收到外卖？');
       try {
+        Tips.loading();
         await order.confirmOrder(orderId);
         await Tips.success('订单已完成');
       } catch (e) {

@@ -66,6 +66,7 @@
           }
         });
         await Tips.confirm('确认评价？');
+        Tips.loading();
         await comment.add(data);
         await Tips.success('评价成功');
         Event.emit(Event.ORDER_LIST_UPDATE);

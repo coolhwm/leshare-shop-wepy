@@ -1,7 +1,5 @@
 <template>
-
   <Loading :init.sync="init"/>
-
   <!--全局表单/收集FORMID-->
   <form class="container" report-submit="true" @submit="reportFormId" wx:if="{{init}}">
 
@@ -182,6 +180,14 @@
     onShareAppMessage () {
       return {};
     }
+    /**
+     * 下拉刷新
+     */
+    async onPullDownRefresh() {
+      await store.reflesh('shop', 'notices', 'reduce', 'ownCoupons', 'status');
+      this.loaded();
+      wepy.stopPullDownRefresh();
+    }
     methods = {
       /**
        *  表单上报 TODO 可以抽取出来
@@ -254,7 +260,8 @@
     };
     mixins = [base];
     config = {
-      navigationBarTitleText: '首页'
+      navigationBarTitleText: '首页',
+      enablePullDownRefresh: true
     };
   }
 </script>

@@ -1,4 +1,5 @@
 <template>
+  <Loading :init.sync="init"/>
   <Tips />
    <view class="container" wx:if="{{init}}">
      <view class="mt20"></view>
@@ -85,14 +86,14 @@
   import ActionBar from '../../components/common/action_bar';
   import address from '../../api/address';
   import Tips from '../../utils/Tips';
+  import Loading from '../../components/common/loading';
 
   export default class AddressEdit extends wepy.page {
-    def = {
+    data = {
       init: false,
       location: null,
       mode: 'create'
     };
-    data = {...this.def};
     async onLoad ({mode, id}) {
       if (mode == 'edit') {
         this.input = await address.info(id);
@@ -122,6 +123,7 @@
         if (!this.validate()) {
           return;
         }
+        Tips.loading();
         if (this.mode == 'edit') {
           let param = this.input;
           // 地址被重新选择了
@@ -191,7 +193,8 @@
     }
     components = {
       Tips: FormTips,
-      ActionBar: ActionBar
+      ActionBar: ActionBar,
+      Loading: Loading
     };
     mixins = [base, input];
     config = {
