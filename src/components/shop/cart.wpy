@@ -68,10 +68,8 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
-  import Cache from '../../utils/Cache';
   import SilderPanel from '../../components/common/slider_panel';
   import Tips from '../../utils/Tips';
-  import Event from '../../utils/Event';
 
   @connect({
     status: store.get('status'),

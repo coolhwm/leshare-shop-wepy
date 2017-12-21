@@ -26,7 +26,6 @@
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import auth from '../../api/auth';
-  import Cache from '../../utils/Cache';
   import base from '../../mixins/base';
   import Tips from '../../utils/Tips';
   import WxUtils from '../../utils/WxUtils';
