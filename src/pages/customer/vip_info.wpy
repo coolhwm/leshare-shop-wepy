@@ -64,7 +64,6 @@
       }
       // 增加定时器扫描
       interval = setInterval(async () => {
-        Tips.setLoading();
         await this.checkScan();
         Tips.loaded();
       }, 5000);

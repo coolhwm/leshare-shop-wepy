@@ -23,32 +23,6 @@
           <input class="weui-input" type="number"  id="code" maxlength="4"  @input="input" placeholder="请输入验证码" />
         </view>
       </view>
-      <view class="weui-cell weui-cells_after-title">
-        <view class="weui-cell__hd">
-          <view class="weui-label">性别</view>
-        </view>
-        <view class="weui-cell__bd">
-          <radio-group class="radio-group row" @change="input" id="sex">
-            <label class="radio row mr20" wx:key="item" wx:for="{{item}}">
-              <radio value="{{item.value}}" checked="{{item.checked}}"/>
-              {{item.value}}
-            </label>
-          </radio-group>
-        </view>
-      </view>
-      <view class="weui-cell weui-cell_input">
-        <view class="weui-cell__hd">
-          <view class="weui-label">生日</view>
-        </view>
-        <view class="weui-cell__bd">
-          <picker mode="date" id="birthday" @change="input" value="{{input.birthday}}"
-                  disabled="{{mode == 'edit'}}">
-            <view class="weui-input muted">
-              {{input.birthday ? input.birthday : '请选择生日'}}
-            </view>
-          </picker>
-        </view>
-      </view>
     </view>
 
     <view class="tips-box column">
@@ -208,18 +182,6 @@
           value: this.input.code,
           method: 'required',
           message: '请输入手机验证码'
-        }, {
-          value: this.input.sex,
-          method: 'required',
-          message: '请选择您的性别'
-        }, {
-          value: this.input.sex,
-          method: 'required',
-          message: '请选择您的性别'
-        }, {
-          value: this.input.birthday,
-          method: 'required',
-          message: '请选择您的生日'
         }
       ];
       return this.check(rules);

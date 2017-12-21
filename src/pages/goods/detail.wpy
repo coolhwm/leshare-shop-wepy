@@ -129,7 +129,6 @@
        */
       async switchTab({selectedId}) {
         if (selectedId == 'COMMENT' && !this.commentInit) {
-          Tips.setLoading();
           await this.next();
           this.loaded();
         }

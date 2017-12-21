@@ -43,7 +43,6 @@
     onLoad (options, {preload}) {
       this.coupon = preload.coupon;
       const id = preload.coupon.id;
-      Tips.setLoading();
       interval = setInterval(async () => {
         const ownList = await coupon.own();
         const target = ownList ? ownList.find(item => item.id == id) : null;

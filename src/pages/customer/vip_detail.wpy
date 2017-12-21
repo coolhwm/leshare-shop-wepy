@@ -75,9 +75,14 @@
     data = {...this.def};
 
     async onLoad () {
+      await store.init();
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;
-      await store.init();
+      // 没注册的会员引导注册
+      if (this.member == null) {
+        this.$redirect('/pages/customer/registe_member');
+        return;
+      }
       this.loaded();
     }
     async onPullDownRefresh() {
