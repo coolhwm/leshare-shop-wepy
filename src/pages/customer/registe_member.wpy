@@ -2,13 +2,14 @@
   <Tips/>
   <view class="mt20"></view>
   <view class="container " wx:if="{{init}}">
+    <form @submit="add">
     <view class="weui-cells weui-cells-form registe-box">
       <view class="weui-cell weui-cell_input weui-cell_vcode">
         <view class="weui-cell__hd">
           <view class="weui-label">手机号码</view>
         </view>
         <view class="weui-cell__bd">
-          <input class="weui-input" id="phone" type="number"  @input="input" maxlength="11" placeholder="请输入手机号" />
+          <input class="weui-input" id="phone" @blur="input" type="number" maxlength="11" placeholder="请输入手机号" />
         </view>
         <view class="weui-cell__ft">
           <VCode  @tap.user="code" />
@@ -20,7 +21,7 @@
           <view class="weui-label">验证码</view>
         </view>
         <view class="weui-cell__bd">
-          <input class="weui-input" type="number"  id="code" maxlength="4"  @input="input" placeholder="请输入短信验证码" />
+          <input class="weui-input" type="number"  name="code" maxlength="4"  @input="input" placeholder="请输入短信验证码" />
         </view>
       </view>
     </view>
@@ -38,17 +39,17 @@
     </view>
 
     <!--操作栏-->
-    <ActionBar @tap.user="add" okText="注册" cancelText="返回"/>
-
+    <ActionPanel submitText="注册"/>
+    </form>
   </view>
 
 </template>
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
+  import ActionPanel from '../../components/common/action_panel';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
-  import ActionBar from '../../components/common/action_bar';
   import input from '../../mixins/input';
   import FormTips from '../../components/weui/tips';
   import member from '../../api/member';
@@ -103,12 +104,13 @@
           this.loaded();
         }
       },
-      async add () {
-        if (!this.validate()) return;
+      async add ({detail}) {
+        console.log(detail.value.code);
+        if (!this.validate(detail.value.code)) return;
         this.registeInfo = this.input;
         try {
           Tips.loading();
-          await member.create(this.registeInfo, this.input.code);
+          await member.create(this.registeInfo, detail.value.code);
           await Tips.success('注册成功');
           await store.reflesh('member');
           WxUtils.backOrRedirect('/pages/customer/index');
@@ -152,7 +154,7 @@
       }
     };
     components = {
-      ActionBar: ActionBar,
+      ActionPanel: ActionPanel,
       Tips: FormTips,
       VCode: VCode
     };
@@ -161,7 +163,7 @@
     };
     mixins = [input, base];
 
-    validate () {
+    validate (code) {
       const rules = [
         {
           value: this.input.phone,
@@ -176,7 +178,7 @@
           method: 'tel',
           message: '请输入正确的手机格式'
         }, {
-          value: this.input.code,
+          value: code,
           method: 'required',
           message: '请输入手机验证码'
         }
