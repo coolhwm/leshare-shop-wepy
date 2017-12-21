@@ -43,7 +43,6 @@
   import address from '../../api/address';
   import SearchBar from '../../components/weui/search_bar';
   import Event from '../../utils/Event';
-  // import Tips from '../../utils/Tips';
 
   export default class AddressSearch extends wepy.page {
     data = {
