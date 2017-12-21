@@ -110,7 +110,7 @@
   import InShopStatus from '../../components/order/inshop_status';
   import Loading from '../../components/common/loading';
   export default class OrderDetail extends wepy.page {
-    def = {
+    data = {
       order: {
         orderGoodsInfos: [],
         orderPriceHistory: []
@@ -119,7 +119,6 @@
       address: {},
       init: false
     };
-    data = {...this.def};
     async onLoad ({orderId}) {
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;

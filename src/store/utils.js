@@ -84,7 +84,9 @@ const reflesh = async (...fields) => {
  * 加载数据， 返回Promise
  */
 const fetch = (field) => {
-  meta[field] = true;
+  // 先更新元数据
+  updateMeta(field);
+  // 再获取Promise对象
   switch (field) {
     case 'shop':
       return shop.info();
@@ -110,11 +112,28 @@ const fetch = (field) => {
 };
 
 /**
+ * 更新元数据
+ */
+const updateMeta = (field) => {
+  if (meta[field] == null) {
+    meta[field] = {};
+    meta[field].init = true;
+  }
+  meta[field].updateTime = new Date().getTime();
+};
+
+/**
  * 判断是否存在
  */
 const exists = key => {
-  const state = store.getState();
-  return state.shop[key] != null && meta[key] != null;
+  // 判断是否初始化过
+  if (meta[key] == null || meta[key].init != true) {
+    return false;
+  }
+  // 判断是否过期
+  const updateTime = meta[key].updateTime;
+  const interval = new Date().getTime() - updateTime;
+  return interval < 5 * 60 * 1000;
 };
 
 export default {get, save, use, reflesh, init}

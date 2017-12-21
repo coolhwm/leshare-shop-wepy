@@ -21,33 +21,7 @@
           <view class="weui-label">验证码</view>
         </view>
         <view class="weui-cell__bd">
-          <input class="weui-input" type="number" name="code" maxlength="4" placeholder="请输入验证码" />
-        </view>
-      </view>
-      <view class="weui-cell weui-cells_after-title">
-        <view class="weui-cell__hd">
-          <view class="weui-label">性别</view>
-        </view>
-        <view class="weui-cell__bd">
-          <radio-group class="radio-group row" @change="input" id="sex">
-            <label class="radio row mr20" wx:key="item" wx:for="{{item}}">
-              <radio value="{{item.value}}" checked="{{item.checked}}"/>
-              {{item.value}}
-            </label>
-          </radio-group>
-        </view>
-      </view>
-      <view class="weui-cell weui-cell_input">
-        <view class="weui-cell__hd">
-          <view class="weui-label">生日</view>
-        </view>
-        <view class="weui-cell__bd">
-          <picker mode="date" id="birthday" @change="input" value="{{input.birthday}}"
-                  disabled="{{mode == 'edit'}}">
-            <view class="weui-input muted">
-              {{input.birthday ? input.birthday : '请选择生日'}}
-            </view>
-          </picker>
+          <input class="weui-input" type="number"  name="code" maxlength="4"  @input="input" placeholder="请输入短信验证码" />
         </view>
       </view>
     </view>
@@ -74,30 +48,27 @@
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import ActionPanel from '../../components/common/action_panel';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
   import input from '../../mixins/input';
   import FormTips from '../../components/weui/tips';
   import member from '../../api/member';
   import VCode from '../../components/weui/vcode';
   import Tips from '../../utils/Tips';
-  import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
-  import Cache from '../../utils/Cache';
 
+
+  @connect({
+    card: store.get('card')
+  })
   export default class RegisteMember extends wepy.page {
-    def = {
-      item: [
-        {id: 0, name: 'man', value: '男'},
-        {id: 1, name: 'wman', value: '女'}
-      ],
-      vipCard: null,
+    data = {
       registeInfo: {},
       init: false
     };
-    data = {...this.def};
 
     async onLoad () {
-      const {card} = await Cache.vip();
-      this.vipCard = card;
+      await store.init();
       this.loaded();
     };
 
@@ -138,10 +109,10 @@
         if (!this.validate(detail.value.code)) return;
         this.registeInfo = this.input;
         try {
+          Tips.loading();
           await member.create(this.registeInfo, detail.value.code);
           await Tips.success('注册成功');
-          await Cache.vip(true);
-          Event.emit(Event.REGISTE_MEMBER_UPDATE);
+          await store.reflesh('member');
           WxUtils.backOrRedirect('/pages/customer/index');
         } catch (error) {
           this.tips(error.message);
@@ -151,11 +122,11 @@
     };
     computed = {
       bonusRuleText() {
-        if (this.vipCard == null) return;
-        const rule = this.vipCard.bonusRule;
+        if (this.card == null) return;
+        const rule = this.card.bonusRule;
         let describes = [];
         // 开启积分规则
-        if (this.vipCard.supplyBonus == 1 && this.vipCard.bonusRule != null) {
+        if (this.card.supplyBonus == 1 && this.card.bonusRule != null) {
           // 有初始积分的情况
           if (rule.initIncreaseBonus > 0) {
             describes.push(`注册绑定手机开卡即送 ${rule.initIncreaseBonus} 积分`);
@@ -166,9 +137,9 @@
         return describes;
       },
       discountRuleText() {
-        if (this.vipCard == null) return;
-        const rules = this.vipCard.discountRules;
-        if (this.vipCard.supplyDiscount == 0 || rules == null) return;
+        if (this.card == null) return;
+        const rules = this.card.discountRules;
+        if (this.card.supplyDiscount == 0 || rules == null) return;
         const describes = [];
         // 有折扣的情况
         for (let rule of rules) {
@@ -210,18 +181,6 @@
           value: code,
           method: 'required',
           message: '请输入手机验证码'
-        }, {
-          value: this.input.sex,
-          method: 'required',
-          message: '请选择您的性别'
-        }, {
-          value: this.input.sex,
-          method: 'required',
-          message: '请选择您的性别'
-        }, {
-          value: this.input.birthday,
-          method: 'required',
-          message: '请选择您的生日'
         }
       ];
       return this.check(rules);

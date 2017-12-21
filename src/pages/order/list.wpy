@@ -1,4 +1,5 @@
 <template>
+  <!--废弃页面-->
   <view class="container" wx:if="{{init}}">
 
     <!-- 店铺信息区域 -->
@@ -38,7 +39,7 @@
   import Cache from '../../utils/Cache';
 
   export default class OrderList extends wepy.page {
-    def = {
+    data = {
       init: false,
       page: {
         list: [
@@ -50,7 +51,6 @@
       },
       couponsNum: '0张'
     };
-    data = {...this.def};
     async onLoad () {
       // 权限校验
       const result = await auth.user({block: true, redirect: true});

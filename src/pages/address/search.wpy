@@ -46,7 +46,7 @@
   // import Tips from '../../utils/Tips';
 
   export default class AddressSearch extends wepy.page {
-    def = {
+    data = {
       currentAddress: '正在定位中...',
       latitude: null,
       longitude: null,
@@ -55,7 +55,6 @@
       searchLocations: null,
       isSearch: false
     };
-    data = {...this.def};
     async onLoad () {
       await this.locate();
     };

@@ -44,12 +44,11 @@
     shop: store.get('shop')
   })
   export default class VipInfo extends wepy.page {
-    def = {
+    data = {
       init: false,
       success: false,
       scanText: ''
     };
-    data = {...this.def};
 
     async onLoad () {
       await store.init();
@@ -64,7 +63,6 @@
       }
       // 增加定时器扫描
       interval = setInterval(async () => {
-        Tips.setLoading();
         await this.checkScan();
         Tips.loaded();
       }, 5000);

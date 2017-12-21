@@ -128,12 +128,11 @@
     notices: store.get('notices')
   })
   export default class ShopHome extends wepy.page {
-    def = {
+    data = {
       init: false,
       goods: [],
       share: null
     };
-    data = {...this.def};
     async onLoad ({sence}) {
       // 登录检查
       await auth.login();
