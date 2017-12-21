@@ -1,21 +1,23 @@
 <template>
   <Tips />
-  <CouponItem :coupon.sync="coupon" />
+  <view wx:if="{{init}}">
+    <CouponItem :coupon.sync="coupon" />
 
-  <view class="success-box column-center"  wx:if="{{success}}">
-    <text>{{message}}</text>
-  </view>
+    <view class="success-box column-center"  wx:if="{{success}}">
+      <text>{{message}}</text>
+    </view>
 
-  <view class="qr-box column-center" wx:if="{{!success}}">
-    <text class="muted mb20 lg" wx:if="{{coupon.supportType !=1}}">线下店铺消费时出示</text>
-    <canvas  style="width: 200px; height: 200px;" canvas-id="qrcode" wx:if="{{coupon.supportType !=1}}"></canvas>
-    <text style="width: 200px; height: 200px;" class="muted lg column-center" wx:if="{{coupon.supportType ==1}}">暂不支持线下店铺消费</text>
-  </view>
+    <view class="qr-box column-center" wx:if="{{!success}}">
+      <text class="muted mb20 lg" wx:if="{{coupon.supportType !=1}}">线下店铺消费时出示</text>
+      <canvas  style="width: 200px; height: 200px;" canvas-id="qrcode" wx:if="{{coupon.supportType !=1}}"></canvas>
+      <text style="width: 200px; height: 200px;" class="muted lg column-center" wx:if="{{coupon.supportType ==1}}">暂不支持线下店铺消费</text>
+    </view>
 
-  <view class="zan-panel" wx:if="{{!success}}">
-    <view class="zan-btns">
-      <button class="zan-btn zan-btn--fill" @tap="check" wx:if="{{coupon.isSelfUse}}">自助核销</button>
-      <button class="zan-btn" @tap="delete">删除优惠券</button>
+    <view class="zan-panel" wx:if="{{!success}}">
+      <view class="zan-btns">
+        <button class="zan-btn zan-btn--fill" @tap="check" wx:if="{{coupon.isSelfUse}}">自助核销</button>
+        <button class="zan-btn" @tap="delete">删除优惠券</button>
+      </view>
     </view>
   </view>
 
@@ -35,6 +37,7 @@
   let interval = null;
   export default class CouponDetail extends wepy.page {
     data = {
+      init: false,
       coupon: null,
       success: false,
       message: ''
@@ -56,6 +59,7 @@
           this.$apply();
         }
       }, 3000);
+      this.loaded();
       Qrcode.init('qrcode', `${this.coupon.couponId}#${this.coupon.id}`);
     };
     onUnload () {
