@@ -303,7 +303,7 @@
         }
         // 检查是否为离线订单
         if (trade.paymentType == order.PAYMENT_OFFLINE) {
-          Tips.alert('下单成功');
+          Tips.success('下单成功');
         } else {
           // 发起支付
           const isPay = await this.requestWxPayment(trade);
