@@ -6,6 +6,7 @@ import coupon from '../api/coupon';
 import member from '../api/member';
 import card from '../api/member_card';
 const store = getStore();
+const meta = {};
 
 /**
  * 构造取值器
@@ -47,19 +48,28 @@ const init = async () => {
 };
 
 /**
- * 声明使用数据 TODO 使用promise all 加载方法
+ * 加载指定字段的数据，并发加载，一次性返回，已经加载的数据不会再次加载
  */
 const use = async (...fields) => {
-  console.info(`use store: fields=${fields}`);
-  fields.forEach(async field => {
-    if (exists(field)) return;
-    // 防止重复加载 TODO 要用另一个标志位进行标记
-    save(field, {});
-    // 异步保存
-    fetch(field).then(data => {
-      save(field, data);
-    })
-  });
+  // 过滤已加载完毕的字段
+  const fetchFileds = fields.filter(field => !exists(field));
+  console.info(`use store: fields=${fetchFileds}`);
+  // 加载未加载的数据
+  await load(fetchFileds);
+};
+
+/**
+ * 加载指定字段的数据
+ */
+const load = async (fields) => {
+  // 将字段构造Promise
+  const fetchPromises = fields.map(field => fetch(field));
+  // 获取所有数据，等待最后一个返回
+  const data = await Promise.all(fetchPromises);
+  // 保存结果
+  fields.forEach((field, index) => save(field, data[index]));
+  // 保存元数据
+  save('meta', meta);
 };
 
 /**
@@ -67,18 +77,14 @@ const use = async (...fields) => {
  */
 const reflesh = async (...fields) => {
   console.info(`reflesh store: fields=${fields}`);
-  fields.forEach(async field => {
-    // 异步保存
-    fetch(field).then(data => {
-      save(field, data);
-    })
-  });
+  await load(fields);
 };
 
 /**
  * 加载数据， 返回Promise
  */
 const fetch = (field) => {
+  meta[field] = true;
   switch (field) {
     case 'shop':
       return shop.info();
@@ -108,7 +114,7 @@ const fetch = (field) => {
  */
 const exists = key => {
   const state = store.getState();
-  return state.shop[key] != null;
+  return state.shop[key] != null && meta[key] != null;
 };
 
 /**
