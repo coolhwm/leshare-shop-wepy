@@ -1,5 +1,5 @@
 import { handleActions } from 'redux-actions'
-import { SAVE } from '../types/shop'
+import { SAVE } from '../types/cache'
 
 export default handleActions({
   [SAVE] (state, action) {

@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
-import shop from './shop';
+import cache from './cache';
 
 export default combineReducers({
-  shop
+  cache
 })

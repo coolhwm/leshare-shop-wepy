@@ -13,7 +13,6 @@
       <InShopTab @tap.user="switchInShopType" />
     </block>
 
-
     <view class="mt10"></view>
 
     <!--订单项目-->
@@ -547,7 +546,7 @@
         if (bonus < costBonusUnit) {
           this.bonusPicker = null;
           this.clearSelectedBonus();
-          return `积分不满${costBonusUnit}`;
+          return `积分不满${costBonusUnit}分`;
         }
         // 构造积分使用数组
         const list = [{

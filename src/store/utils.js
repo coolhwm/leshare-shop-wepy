@@ -1,5 +1,5 @@
 import { getStore } from 'wepy-redux';
-import { SAVE } from './types/shop';
+import { SAVE } from './types/cache';
 import shop from '../api/shop';
 import goods from '../api/goods';
 import coupon from '../api/coupon';
@@ -13,7 +13,7 @@ const meta = {};
  */
 const get = key => {
   return (state) => {
-    return state.shop[key]
+    return state.cache[key]
   }
 };
 

@@ -1,1 +1,1 @@
-export * from './shop';
+export * from './cache';
