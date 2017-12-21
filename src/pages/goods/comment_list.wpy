@@ -27,7 +27,7 @@
   import CommentItem from '../../components/goods/comment_item';
 
   export default class CommentList extends wepy.page {
-    def = {
+    data = {
       init: true,
       page: {
         list: [
@@ -36,7 +36,6 @@
       tab: null,
       goodsId: null
     };
-    data = {...this.def};
     async onLoad ({goodsId}) {
       this.goodsId = goodsId;
       this.page = comment.page();

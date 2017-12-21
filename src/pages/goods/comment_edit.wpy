@@ -30,12 +30,11 @@
   import comment from '../../api/comment';
 
   export default class CommentEdit extends wepy.page {
-    def = {
+    data = {
       init: false,
       orderId: '',
       scores: []
     };
-    data = {...this.def};
     onLoad ({orderId}, {preload}) {
       this.scores = preload.data;
       this.orderId = orderId;

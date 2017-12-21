@@ -34,12 +34,11 @@
   import FormTips from '../../components/weui/tips';
   let interval = null;
   export default class CouponDetail extends wepy.page {
-    def = {
+    data = {
       coupon: null,
       success: false,
       message: ''
     };
-    data = {...this.def};
     onLoad (options, {preload}) {
       this.coupon = preload.coupon;
       const id = preload.coupon.id;

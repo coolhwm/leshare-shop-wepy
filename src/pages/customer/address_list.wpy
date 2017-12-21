@@ -27,14 +27,13 @@
   import Event from '../../utils/Event'
 
   export default class AddressList extends wepy.page {
-    def = {
+    data = {
       init: false,
       page: {
         list: [
         ]
       }
     };
-    data = {...this.def};
     methods = {
       add() {
         this.$navigate('/pages/address/edit?mode=create');

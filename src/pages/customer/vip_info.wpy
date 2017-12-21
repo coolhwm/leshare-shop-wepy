@@ -44,12 +44,11 @@
     shop: store.get('shop')
   })
   export default class VipInfo extends wepy.page {
-    def = {
+    data = {
       init: false,
       success: false,
       scanText: ''
     };
-    data = {...this.def};
 
     async onLoad () {
       await store.init();

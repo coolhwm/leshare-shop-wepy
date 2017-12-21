@@ -68,11 +68,10 @@
     user: store.get('user')
   })
   export default class VipDetail extends wepy.page {
-    def = {
+    data = {
       init: false,
       type: 'detail'
     };
-    data = {...this.def};
 
     async onLoad () {
       await store.init();

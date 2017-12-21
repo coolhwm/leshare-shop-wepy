@@ -21,14 +21,13 @@
   import Loadmore from '../../components/weui/loadmore';
 
   export default class BonusList extends wepy.page {
-    def = {
+    data = {
       init: false,
       page: {
         list: [
         ]
       }
     };
-    data = {...this.def};
     async onLoad() {
       this.page = await member.bonusPage();
       await this.next();

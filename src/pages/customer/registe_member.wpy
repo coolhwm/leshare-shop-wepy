@@ -20,7 +20,7 @@
           <view class="weui-label">验证码</view>
         </view>
         <view class="weui-cell__bd">
-          <input class="weui-input" type="number"  id="code" maxlength="4"  @input="input" placeholder="请输入验证码" />
+          <input class="weui-input" type="number"  id="code" maxlength="4"  @input="input" placeholder="请输入短信验证码" />
         </view>
       </view>
     </view>
@@ -46,31 +46,28 @@
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
   import ActionBar from '../../components/common/action_bar';
   import input from '../../mixins/input';
   import FormTips from '../../components/weui/tips';
   import member from '../../api/member';
   import VCode from '../../components/weui/vcode';
   import Tips from '../../utils/Tips';
-  import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
-  import Cache from '../../utils/Cache';
 
+
+  @connect({
+    card: store.get('card')
+  })
   export default class RegisteMember extends wepy.page {
-    def = {
-      item: [
-        {id: 0, name: 'man', value: '男'},
-        {id: 1, name: 'wman', value: '女'}
-      ],
-      vipCard: null,
+    data = {
       registeInfo: {},
       init: false
     };
-    data = {...this.def};
 
     async onLoad () {
-      const {card} = await Cache.vip();
-      this.vipCard = card;
+      await store.init();
       this.loaded();
     };
 
@@ -110,10 +107,10 @@
         if (!this.validate()) return;
         this.registeInfo = this.input;
         try {
+          Tips.loading();
           await member.create(this.registeInfo, this.input.code);
           await Tips.success('注册成功');
-          await Cache.vip(true);
-          Event.emit(Event.REGISTE_MEMBER_UPDATE);
+          await store.reflesh('member');
           WxUtils.backOrRedirect('/pages/customer/index');
         } catch (error) {
           this.tips(error.message);
@@ -123,11 +120,11 @@
     };
     computed = {
       bonusRuleText() {
-        if (this.vipCard == null) return;
-        const rule = this.vipCard.bonusRule;
+        if (this.card == null) return;
+        const rule = this.card.bonusRule;
         let describes = [];
         // 开启积分规则
-        if (this.vipCard.supplyBonus == 1 && this.vipCard.bonusRule != null) {
+        if (this.card.supplyBonus == 1 && this.card.bonusRule != null) {
           // 有初始积分的情况
           if (rule.initIncreaseBonus > 0) {
             describes.push(`注册绑定手机开卡即送 ${rule.initIncreaseBonus} 积分`);
@@ -138,9 +135,9 @@
         return describes;
       },
       discountRuleText() {
-        if (this.vipCard == null) return;
-        const rules = this.vipCard.discountRules;
-        if (this.vipCard.supplyDiscount == 0 || rules == null) return;
+        if (this.card == null) return;
+        const rules = this.card.discountRules;
+        if (this.card.supplyDiscount == 0 || rules == null) return;
         const describes = [];
         // 有折扣的情况
         for (let rule of rules) {

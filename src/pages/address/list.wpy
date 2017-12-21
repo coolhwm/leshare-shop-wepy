@@ -34,14 +34,13 @@
   import Address from '../../components/address/manage';
 
   export default class AddressList extends wepy.page {
-    def = {
+    data = {
       init: false,
       goodsList: [],
       available: [],
       disable: [],
       isPageEmpty: false
     };
-    data = {...this.def};
     async onLoad (params, {preload}) {
       this.goodsList = preload.goodsList;
       await this.load();

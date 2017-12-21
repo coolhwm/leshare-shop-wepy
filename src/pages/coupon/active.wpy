@@ -25,12 +25,11 @@
   import Cache from '../../utils/Cache';
 
   export default class CouponActive extends wepy.page {
-    def = {
+    data = {
       init: false,
       reInfo: false,
       coupon: null
     };
-    data = {...this.def};
     onLoad (options, {preload}) {
       this.coupon = preload.coupon;
       this.reInfo = WxUtils.canIUse('button.open-type.getUserInfo');
