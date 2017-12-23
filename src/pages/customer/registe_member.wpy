@@ -30,11 +30,11 @@
       <text>加入会员可享受下列特权：</text>
       <block wx:if="{{discountRuleText.length > 0}}">
         <text>• 会员折扣</text>
-        <text wx:for="{{discountRuleText}}" class="ml20">- {{item}}</text>
+        <text wx:for="{{discountRuleText}}" class="ml20" wx:key="*this">- {{item}}</text>
       </block>
       <block wx:if="{{bonusRuleText.length > 0}}">
         <text>• 会员积分</text>
-        <text wx:for="{{bonusRuleText}}" class="ml20">- {{item}}</text>
+        <text wx:for="{{bonusRuleText}}" class="ml20" wx:key="*this">- {{item}}</text>
       </block>
     </view>
 

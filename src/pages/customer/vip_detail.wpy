@@ -3,7 +3,8 @@
   <view class="container" wx:if="{{init}}">
 
     <view class="list-panel">
-      <VipCard :member.sync="member" :userInfo.sync="user" :vipCard.sync="card" :type.sync="type"/>
+
+      <VipCard/>
       <text class="titel-box">会员特权</text>
 
       <view class="mt20"></view>
@@ -22,6 +23,12 @@
         <view class="weui-label muted">特权说明</view>
         <view class="column info-container">
           <text>{{vipDescribe}}</text>
+        </view>
+      </view>
+      <view class="weui-cell" wx:if="{{parsentTitle}}">
+        <view class="weui-label muted">{{parsentTitle}}</view>
+        <view class="column info-container">
+          <text>{{parsentText}}</text>
         </view>
       </view>
       <view class="weui-cell">
@@ -94,17 +101,25 @@
         if (this.card == null || this.member == null) {
           return;
         }
-        const rule = this.card.bonusRule;
         let describe = '';
         // 有折扣的情况
         if (this.card.supplyDiscount == 1) {
-          const rule = this.member.discountRule;
-          if (rule != null && rule.discount < 100) {
-            describe += `本会员卡享受部分商品 ${(rule.discount / 10).toFixed(1)} 折优惠\n`;
+          const {discountRule, customDiscount} = this.member;
+          let discount = 100;
+          if (customDiscount > 0 && customDiscount < 100) {
+            // 自定义折扣
+            discount = customDiscount;
+          } else if (discountRule != null && discountRule.discount < 100) {
+            // 等级折扣
+            discount = discountRule.discount;
+          }
+          if (discount < 100) {
+            describe += `本会员卡享受部分商品 ${(discount / 10).toFixed(1)} 折优惠\n`;
           }
         }
         // 开启积分规则
         if (this.card.supplyBonus == 1 && this.card.bonusRule != null) {
+          const rule = this.card.bonusRule;
           // 有初始积分的情况
           if (rule.initIncreaseBonus > 0) {
             describe += `注册绑定手机开卡即送 ${rule.initIncreaseBonus} 积分\n`;
@@ -146,8 +161,24 @@
         if (this.member && this.card && this.card.supplyDiscount == 1 && this.member.discountRule) {
           return this.member.discountRule.levelName;
         } else {
-          return '注册会员';
+          return '普通会员';
         }
+      },
+      parsentTitle () {
+        const isRule = this.card && this.card.memberPresentRules && this.card.memberPresentRules.length > 0;
+        return isRule ? this.card.memberPresentRules[0].ruleName : null;
+      },
+      parsentText () {
+        // 拼接规则
+        if (this.parsentTitle == null) return;
+        const {ruleName, limitCount, unit} = this.card.memberPresentRules[0];
+        const ruleText = `${ruleName},每满${limitCount}${unit}赠送1${unit},符合条件将发放兑换券至优惠券中，限线下使用`;
+        // 拼接当前会员情况
+        const isMember = this.member && this.member.memberPresentDetails && this.member.memberPresentDetails.length > 0;
+        if (!isMember) return ruleText;
+        const {currentCount, totalCount, presentCount} = this.member.memberPresentDetails[0];
+        const detailText = `\n• 现有累计${unit}数：${currentCount}\n• 已兑换累计${unit}数：${presentCount}\n• 总消费${unit}数：${totalCount}`;
+        return ruleText + detailText;
       }
     };
     components = {

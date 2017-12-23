@@ -6,7 +6,7 @@
       <block wx:if="{{supportMember}}">
         <!-- 会员卡 -->
         <view class="box-bg">
-          <VipCard :member.sync="member" :userInfo.sync="user" :vipCard.sync="card"/>
+          <VipCard @detail.user="gotoDetail"/>
         </view>
 
         <!--功能区域-->
@@ -141,12 +141,6 @@
           Tips.alert('请先注册');
           return;
         }
-        const params = {
-          member: this.member,
-          userInfo: this.userInfo,
-          vipCard: this.card
-        };
-        this.$preload('param', params);
         this.$root.$navigate('/pages/customer/vip_detail');
       }
     };

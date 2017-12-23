@@ -491,15 +491,24 @@
         if (this.card.supplyDiscount != 1) {
           return null;
         }
-        const rule = this.member.discountRule;
-        if (rule == null) {
+        // 计算折扣
+        const {discountRule, customDiscount} = this.member;
+        let discount = 100;
+        if (customDiscount > 0 && customDiscount < 100) {
+          // 自定义折扣
+          discount = customDiscount;
+        } else if (discountRule != null && discountRule.discount < 100) {
+          // 等级折扣
+          discount = discountRule.discount;
+        }
+        if (discount == 100) {
           return null;
         }
-        const categories = rule.discountCategoryLists.map(item => item.categoryId);
+        const categories = discountRule.discountCategoryLists.map(item => item.categoryId);
         return {
-          level: rule.levelName,
+          level: discountRule.levelName,
           categories,
-          rate: rule.discount
+          rate: discount
         };
       },
       selectedCategoryName() {

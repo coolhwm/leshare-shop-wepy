@@ -6,7 +6,10 @@ import coupon from '../api/coupon';
 import member from '../api/member';
 import card from '../api/member_card';
 const store = getStore();
+// 元数据
 const meta = {};
+// 超时时间
+const CACHE_TIMEOUT = 5 * 60 * 1000;
 
 /**
  * 构造取值器
@@ -133,7 +136,7 @@ const exists = key => {
   // 判断是否过期
   const updateTime = meta[key].updateTime;
   const interval = new Date().getTime() - updateTime;
-  return interval < 5 * 60 * 1000;
+  return interval < CACHE_TIMEOUT;
 };
 
 export default {get, save, use, reflesh, init}
