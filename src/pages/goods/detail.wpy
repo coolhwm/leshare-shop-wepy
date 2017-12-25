@@ -87,7 +87,6 @@
   import pagination from '../../mixins/pagination.wpy';
   import CommentItem from '../../components/goods/comment_item';
   import Placeholder from '../../components/common/placeholder';
-  import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
 
   export default class GoodsDetail extends wepy.page {

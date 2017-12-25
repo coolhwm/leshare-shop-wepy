@@ -178,7 +178,7 @@
       // 订单数据
       this.trade = preload.trade;
       this.goodsList = this.trade.orderGoodsInfos;
-      if (this.isTakeaway) {
+      if (this.trade.orderType == order.TYPE_TAKEAWAY) {
         // 默认地址
         this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
         // 处理配送方式
