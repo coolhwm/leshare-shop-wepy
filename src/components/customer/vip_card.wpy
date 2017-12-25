@@ -38,10 +38,9 @@
     </view>
     <view class="row-between" style="width: 100%">
       <text class="xxl">{{numberText}}</text>
-      <view>
-
+      <view class="column">
+        <text class="sm">{{parsentText}}</text>
       </view>
-      <text class="sm">{{parsentText}}</text>
     </view>
 
   </view>
@@ -74,14 +73,14 @@
     };
     computed = {
       avatarUrl () {
-        if (this.user == null || this.user.avatarUrl == null ) {
+        if (this.user == null || this.user.avatarUrl == null) {
           return '/images/icons/customer_white.png';
         } else {
           return this.user.avatarUrl;
         }
       },
       nickName () {
-        if (this.user == null || this.user.nickName == null ) {
+        if (this.user == null || this.user.nickName == null) {
           return '微信用户';
         } else {
           return this.user.nickName;
