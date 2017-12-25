@@ -85,28 +85,62 @@
         console.log(e)
       }
     }
+    isPresentUpdate(currentPresents) {
+      const isRuleExists = this.card.memberPresentRules != null && this.card.memberPresentRules.length > 0;
+      const isCurrentExists = currentPresents != null && currentPresents.length > 0;
+      const beforePresents = this.member.memberPresentDetails;
+      const isBeforeExists = beforePresents != null && beforePresents.length > 0;
+      if (!isCurrentExists || !isBeforeExists || !isRuleExists) return false;
+      const before = currentPresents[0];
+      const current = this.member.memberPresentDetails[0];
+      return current.totalCount != before.totalCount;
+    }
+    createParsentText(currentPresents) {
+      const current = currentPresents[0];
+      const before = this.member.memberPresentDetails[0];
+      const diffCount = current.totalCount - before.totalCount;
+      const diffPresent = current.presentCount - before.presentCount;
+      const {unit} = this.card.memberPresentRules[0];
+      let text = '';
+      if (diffCount > 0) {
+        text += `已累计${diffCount}${unit}`
+      }
+      if (diffPresent > 0) {
+        text += `，赠送${diffPresent}张兑换券`;
+      }
+      return text;
+    }
     async checkScan() {
-      const {totalCost, bonus} = await member.info();
-      const isUpdate = totalCost != this.member.totalCost || bonus != this.member.bonus;
-      if (isUpdate) {
+      const {totalCost, bonus, memberPresentDetails} = await member.info();
+      const isPresentUpdate = this.isPresentUpdate(memberPresentDetails);
+      const isCostUpdate = totalCost != this.member.totalCost || bonus != this.member.bonus;
+      console.info(isPresentUpdate, isCostUpdate)
+      if (!isPresentUpdate && !isCostUpdate) return;
+      let text = '';
+      if (isCostUpdate) {
         // 计算金额与积分差值
         const priceDiff = (totalCost - this.member.totalCost).toFixed(2);
         const bonusDiff = (bonus - this.member.bonus).toFixed(0);
-        // 拼接显示文本
-        let text = `扫描成功：已新增消费${priceDiff}元`;
+        // 拼接消费文本
+        text = `扫描成功：已新增消费${priceDiff}元`;
+        // 拼接积分文本
         if (bonusDiff > 0) {
           text += `，获得${bonusDiff}积分`;
         }
-        // 扫描成功
-        this.scanText = text;
-        this.success = true;
-        await Tips.success('扫描成功！');
-        // 刷新缓存
-        await store.reflesh('member');
-        clearInterval(interval);
-        this.loaded();
-        setTimeout(async () => WxUtils.backOrRedirect('/pages/customer/index'), 2000);
       }
+      // 拼接赠送文本
+      if (isPresentUpdate) {
+        text += '\n' + this.createParsentText(memberPresentDetails);
+      }
+      // 扫描成功
+      this.scanText = text;
+      this.success = true;
+      await Tips.success('扫描成功！');
+      // 刷新缓存
+      await store.reflesh('member');
+      clearInterval(interval);
+      this.loaded();
+      setTimeout(async () => WxUtils.backOrRedirect('/pages/customer/index'), 2000);
     };
     computed = {
       numberText() {
