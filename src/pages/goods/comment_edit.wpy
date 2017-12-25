@@ -30,12 +30,11 @@
   import comment from '../../api/comment';
 
   export default class CommentEdit extends wepy.page {
-    def = {
+    data = {
       init: false,
       orderId: '',
       scores: []
     };
-    data = {...this.def};
     onLoad ({orderId}, {preload}) {
       this.scores = preload.data;
       this.orderId = orderId;
@@ -66,10 +65,11 @@
           }
         });
         await Tips.confirm('确认评价？');
+        Tips.loading();
         await comment.add(data);
         await Tips.success('评价成功');
         Event.emit(Event.ORDER_LIST_UPDATE);
-        Route.backOrRedirect('/pages/order/list');
+        Route.backOrRedirect('/pages/customer/index');
       }
     };
     components = {};

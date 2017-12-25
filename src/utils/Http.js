@@ -10,7 +10,7 @@ export default class http {
       data: data
     };
     if (loading) {
-      Tips.loading();
+      // Tips.loading();
     }
     const res = await wepy.request(param);
     if (this.isSuccess(res)) {

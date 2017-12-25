@@ -1,11 +1,12 @@
 <template>
+  <Loading :init.sync="init"/>
   <view wx:if="{{init}}">
     <view class="container user-box">
 
-      <block wx:if="{{shop.supportMember == 1}}">
+      <block wx:if="{{supportMember}}">
         <!-- 会员卡 -->
         <view class="box-bg">
-          <VipCard :member.sync="member" :userInfo.sync="userInfo" :vipCard.sync="vipCard"/>
+          <VipCard @detail.user="gotoDetail"/>
         </view>
 
         <!--功能区域-->
@@ -37,7 +38,7 @@
 
       <!-- 原始用户信息 -->
       <block wx:else>
-        <ShopHeader :shop.sync="shop" navType="navigateBack" />
+        <ShopHeader navType="navigateBack" />
         <HomeNav badegText="我的" title="我的订单"  navText="返回" navUrl="/pages/shop/index" />
         <CouponNav title="优惠券"  navText="查看" navUrl="/pages/coupon/list" last="true" />
       </block>
@@ -46,7 +47,7 @@
 
     <!--订单区域-->
     <view class="order-box">
-      <view class="bg-white" wx:if="{{shop.supportMember == 1}}">
+      <view class="bg-white" wx:if="{{supportMember}}">
         <view class="weui-cell">我的订单</view>
       </view>
 
@@ -70,10 +71,11 @@
 
 <script>
   import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
   import base from '../../mixins/base';
   import order from '../../api/order';
   import auth from '../../api/auth';
-  import member from '../../api/member';
   import pagination from '../../mixins/pagination';
   import Placeholder from '../../components/common/placeholder';
   import VipCard from '../../components/customer/vip_card';
@@ -82,79 +84,39 @@
   import Loadmore from '../../components/weui/loadmore';
   import OrderItem from '../../components/order/customer_item';
   import Event from '../../utils/Event';
-  import Cache from '../../utils/Cache';
   import Tips from '../../utils/Tips';
+  import Loading from '../../components/common/loading';
 
+  @connect({
+    shop: store.get('shop'),
+    member: store.get('member'),
+    card: store.get('card'),
+    user: store.get('user')
+  })
   export default class CustomerIndex extends wepy.page {
-    def = {
-      vipCard: {},
-      card: false,
+    data = {
       init: false,
-      userInfo: {},
       page: {
         list: [
           {orderGoodsInfos: []}
         ]
-      },
-      shop: {
-        notices: []
-      },
-      couponsNum: '0张',
-      member: {},
-      memberEmpty: false
+      }
     };
-    data = {...this.def};
-
     async onLoad() {
-      // 校验
+      // 校验是否登录成功
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;
-      this.loadUserInfo();
-      const {card, member} = await Cache.vip();
-      this.member = member;
-      this.vipCard = card;
-      // 加载店铺信息
-      this.shop = await Cache.shop();
-      this.shop.notices = await Cache.notices();
+      await store.init();
       this.page = order.page();
       // 分页加载
       await this.next();
       // 监听更新事件
-      Event.listen(Event.ORDER_LIST_UPDATE, this.updateOrderList.bind(this), this);
-      Event.listen(Event.REGISTE_MEMBER_UPDATE, this.updataCustomerInfo.bind(this), this);
-      Event.listen(Event.MEMBER_CARD_UPDATE, this.updateMemberCard.bind(this), this);
+      Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
     };
     async onPullDownRefresh() {
-      const {card, member} = await Cache.vip(true);
-      this.member = member;
-      this.vipCard = card;
+      await store.reflesh('card', 'member');
       this.loaded();
-    }
-    loadUserInfo() {
-      try {
-        const value = wepy.getStorageSync('user');
-        if (value) {
-          this.userInfo = value;
-        }
-      } catch (e) {
-        console.log(e)
-      }
-    }
-    async updateMemberCard () {
-      const {card, member} = await Cache.vip();
-      this.member = member;
-      this.vipCard = card;
-      this.$apply();
-    }
-    async updateOrderList() {
-      await this.updataCustomerInfo();
-      await this.update();
-    }
-    async updataCustomerInfo() {
-      if (this.shop.supportMember == 1) {
-        this.member = await member.info();
-      }
-      this.$apply();
+      wepy.stopPullDownRefresh();
     }
     methods = {
       gotoAddress() {
@@ -168,7 +130,7 @@
           Tips.alert('请先注册');
           return;
         }
-        if (this.vipCard.supplyBonus != 1) {
+        if (this.card.supplyBonus != 1) {
           Tips.alert('尚未开放');
           return;
         }
@@ -179,16 +141,14 @@
           Tips.alert('请先注册');
           return;
         }
-        const params = {
-          member: this.member,
-          userInfo: this.userInfo,
-          vipCard: this.vipCard
-        };
-        this.$preload('param', params);
         this.$root.$navigate('/pages/customer/vip_detail');
       }
     };
-    events = {};
+    computed = {
+      supportMember() {
+        return this.shop && this.shop.supportMember == 1;
+      }
+    };
     components = {
       Placeholder: Placeholder,
       Loadmore: Loadmore,
@@ -196,7 +156,8 @@
       HomeNav: ShopNav,
       CouponNav: ShopNav,
       OrderItem: OrderItem,
-      ShopHeader: ShopHeader
+      ShopHeader: ShopHeader,
+      Loading: Loading
     };
     mixins = [base, pagination];
     config = {

@@ -15,6 +15,7 @@
       <text class="muted xs" wx:else>请选择商品加入购物车</text>
     </view>
 
+    <!--TODO 状态提取-->
     <form class="cart-btn column-center {{buyStatus != 1 ? 'cart-btn-disable' : ''}}" report-submit="true"  @submit.stop="buy">
       <button plain  form-type="submit"><text>{{buyText}}</text></button>
     </form>
@@ -65,36 +66,30 @@
 
 <script>
   import wepy from 'wepy';
-  import Cache from '../../utils/Cache';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
   import SilderPanel from '../../components/common/slider_panel';
   import Tips from '../../utils/Tips';
-  import Event from '../../utils/Event';
 
+  @connect({
+    status: store.get('status'),
+    ownCoupons: store.get('ownCoupons'),
+    reduce: store.get('reduce')
+  })
   export default class ShopCart extends wepy.component {
     props = {
       carts: {
         default: []
       },
-      status: {},
       buyStatus: 0
     };
     data = {
       isCartDisplay: 'false',
-      reduce: null,
-      coupons: null
+      reduce: null
     };
     async onLoad() {
-      this.reduce = await Cache.reduce();
-      const {ownList} = await Cache.coupon();
-      this.coupons = ownList;
+      await store.use('status', 'ownCoupons');
       this.$apply();
-      Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupon.bind(this), this);
-    }
-    loadCoupon() {
-      Cache.coupon().then(({ownList}) => {
-        this.coupons = ownList;
-        this.$apply();
-      });
     }
     methods = {
       plus(cart) {
@@ -104,7 +99,7 @@
         this.updateNum('minus', cart);
       },
       cart() {
-        if (!this.status.open) {
+        if (!this.status || !this.status.open) {
           Tips.modal(this.status.closeTips);
         } else if (this.totalCount < 1) {
           Tips.alert('请选择商品');
@@ -116,7 +111,7 @@
         this.$emit('clear');
       },
       buy({detail}) {
-        if (!this.status.open) {
+        if (!this.status || !this.status.open) {
           Tips.modal(this.status.closeTips);
         } else if (this.totalCount < 1) {
           Tips.alert('请选择商品');
@@ -153,7 +148,7 @@
         return count;
       },
       buyText() {
-        if (!this.status.open) {
+        if (!this.status || !this.status.open) {
           this.buyStatus = 0;
           return '休息中';
         } else if (this.totalCount < 1) {
@@ -165,7 +160,7 @@
         }
       },
       matchReduce() {
-        if (!this.reduce || this.reduce.list < 1) {
+        if (!this.reduce || !this.reduce.list || this.reduce.list.length < 1) {
           return {};
         }
         if (this.totalPrice == 0) {
@@ -191,7 +186,7 @@
         });
         if (match.fee == 0) {
           // 不满足最低扣减金额
-          const diff = lowest.limitPrice - this.totalPrice;
+          const diff = (lowest.limitPrice - this.totalPrice).toFixed(2);
           return {
             showText: `满${lowest.limitPrice}减${lowest.fee}，还差${diff}元`,
             lowest: lowest
@@ -205,9 +200,9 @@
         }
       },
       couponText() {
-        if (!this.coupons || this.coupons.length < 1) {
+        if (!this.ownCoupons || this.ownCoupons.length < 1) {
         } else {
-          return `${this.coupons.length}张券可用`;
+          return `${this.ownCoupons.length}张券可用`;
         }
       }
     };

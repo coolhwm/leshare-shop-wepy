@@ -23,25 +23,25 @@
 
 <script>
   import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
   import auth from '../../api/auth';
-  import Cache from '../../utils/Cache';
   import base from '../../mixins/base';
   import Tips from '../../utils/Tips';
   import WxUtils from '../../utils/WxUtils';
 
+  @connect({
+    shop: store.get('shop')
+  })
   export default class UserLogin extends wepy.page {
-    def = {
+    data = {
       redirect: 'false',
       init: false,
-      shop: {},
       reInfo: null,
       reAuth: null
-
     };
-    data = {...this.def};
     async onLoad ({redirect}) {
       this.redirect = redirect;
-      this.shop = await Cache.shop();
       this.reInfo = WxUtils.canIUse('button.open-type.getUserInfo');
       this.loaded();
     };

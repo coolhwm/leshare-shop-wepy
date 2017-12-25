@@ -68,11 +68,10 @@
   import Event from '../../utils/Event';
 
   export default class RefundEdit extends wepy.page {
-    def = {
+    data = {
       init: false,
       resons: ['重复下单/误下单', '操作有误', '其他渠道价格更低', '不想买了', '其他原因']
     };
-    data = {...this.def};
     async onLoad ({refund}) {
       this.input = JSON.parse(refund);
       this.input.cause = 0;
@@ -91,7 +90,7 @@
         await order.refundOrder(refund.orderId, refund);
         await Tips.success('退款申请成功');
         Event.emit(Event.ORDER_LIST_UPDATE);
-        Route.backOrRedirect('/pages/order/list');
+        Route.backOrRedirect('/pages/customer/index');
       }
     };
     validate() {

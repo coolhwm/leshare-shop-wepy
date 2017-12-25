@@ -26,11 +26,10 @@
   import Event from '../../utils/Event';
 
   export default class CouponUse extends wepy.page {
-    def = {
+    data = {
       init: false,
       coupons: []
     };
-    data = {...this.def};
     async onLoad ({coupons}) {
       this.coupons = JSON.parse(coupons);
       this.loaded();

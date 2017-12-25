@@ -58,12 +58,14 @@
         this.$root.$navigate('/pages/address/edit', param);
       },
       async setDefault(id) {
+        Tips.loading();
         await address.setDefault(id);
         await Tips.success('操作成功');
         Event.emit(Event.ADDRESS_LIST_UPDATE);
       },
       async delete(id) {
         await Tips.confirm('确定删除该地址？');
+        Tips.loading();
         await address.remove(id);
         await Tips.success('操作成功');
         Event.emit(Event.ADDRESS_LIST_UPDATE);

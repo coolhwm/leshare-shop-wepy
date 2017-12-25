@@ -2,8 +2,8 @@
   <!-- 会员卡注册区域 -->
   <view class="vip-box column-between" wx:if="{{member == null}}">
     <view class="column-center">
-      <image class="avatar"  src="{{userInfo.avatarUrl ? userInfo.avatarUrl : '/images/icons/customer_white.png'}}"/>
-      <text>{{userInfo.nickName ? userInfo.nickName : '微信用户'}}</text>
+      <image class="avatar"  src="{{avatarUrl}}"/>
+      <text>{{nickName}}</text>
 
     </view>
     <view class="column-center">
@@ -13,35 +13,35 @@
   </view>
 
   <!-- 会员卡区域 -->
-  <view class="vip-box column-between flex-start" @tap="vipDetail({{member}},{{userInfo}},{{vipCard}})" wx:if="{{member != null}}">
+  <view class="vip-box column-between flex-start" @tap="detail" wx:if="{{member != null}}">
 
     <view class="row-between" style="width: 100%">
       <view class="row">
         <!--头像-->
-        <image class="avatar" src="{{userInfo.avatarUrl ? userInfo.avatarUrl : '/images/icons/customer_white.png'}}"/>
+        <image class="avatar" src="{{avatarUrl}}"/>
 
         <!--用户信息-->
         <view class="info-box column">
-          <text class="user-name">{{userInfo.nickName ? userInfo.nickName : '微信用户'}}</text>
+          <text class="user-name">{{nickName}}</text>
           <text class="sm">{{levelName}}</text>
           <view class="cost-box row">
             <text class="sm">累计消费: {{member.totalCost}}元</text>
-            <text class="ml20 sm" wx:if="{{vipCard.supplyBonus == 1}}">积分: {{member.bonus}}</text>
+            <text class="ml20 sm" wx:if="{{card.supplyBonus == 1}}">积分: {{member.bonus}}</text>
           </view>
+          <!--<view class="cost-box">-->
+            <!--<text class="sm">{{parsentText}}</text>-->
+          <!--</view>-->
         </view>
       </view>
       <image class="icon-qrcode" src="/images/icons/qrcode.png"
-             @tap.stop="canvas({{member}},{{userInfo}},{{vipCard}})"/>
+             @tap.stop="info"/>
     </view>
-    <view class="row" style="width: 100%">
+    <view class="row-between" style="width: 100%">
       <text class="xxl">{{numberText}}</text>
+      <view>
 
-      <!--<view class="row-between">-->
-        <!---->
-      <!--</view>-->
-      <!--<view class="card-title">-->
-        <!--<text>{{vipCard.title}}</text>-->
-      <!--</view>-->
+      </view>
+      <text class="sm">{{parsentText}}</text>
     </view>
 
   </view>
@@ -49,48 +49,59 @@
 
 <script>
   import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
   import base from '../../mixins/base'
 
+  @connect({
+    member: store.get('member'),
+    card: store.get('card'),
+    user: store.get('user')
+  })
   export default class VipCard extends wepy.component {
     props = {
-      member: {},
-      vipCard: {},
-      userInfo: {},
-      type: {}
     };
     methods = {
       regist () {
         this.$root.$navigate('/pages/customer/registe_member');
       },
-      vipDetail(member, userInfo, vipCard) {
-        if (this.type == 'detail') {
-          return;
-        }
-        const params = {
-          member: member,
-          userInfo: userInfo,
-          vipCard: vipCard
-        };
-        this.$root.$preload('param', params);
-        this.$root.$navigate('/pages/customer/vip_detail');
+      detail() {
+        this.$emit('detail');
       },
-      canvas(member, userInfo, vipCard) {
-        const params = {
-          member: member,
-          userInfo: userInfo,
-          vipCard: vipCard
-        };
-        this.$root.$preload('param', params);
+      info() {
         this.$root.$navigate('/pages/customer/vip_info');
       }
     };
     computed = {
+      avatarUrl () {
+        if (this.user == null || this.user.avatarUrl == null ) {
+          return '/images/icons/customer_white.png';
+        } else {
+          return this.user.avatarUrl;
+        }
+      },
+      nickName () {
+        if (this.user == null || this.user.nickName == null ) {
+          return '微信用户';
+        } else {
+          return this.user.nickName;
+        }
+      },
       levelName () {
-        if (this.member && this.vipCard && this.vipCard.supplyDiscount == 1 && this.member.discountRule) {
+        if (this.member && this.card && this.card.supplyDiscount == 1 && this.member.discountRule) {
           return this.member.discountRule.levelName;
         } else {
-          return '注册会员';
+          return '普通会员';
         }
+      },
+      parsentText () {
+        // 对合法性进行检查
+        const isRule = this.card && this.card.memberPresentRules && this.card.memberPresentRules.length > 0;
+        const isMember = this.member && this.member.memberPresentDetails && this.member.memberPresentDetails.length > 0;
+        if (!isRule || !isMember) return '';
+        const {currentCount} = this.member.memberPresentDetails[0];
+        const {unit} = this.card.memberPresentRules[0];
+        return `当前已累计${currentCount}${unit}`;
       },
       numberText() {
         if (this.member == null || this.member.memberNumber == null) return;

@@ -1,16 +1,17 @@
 <template>
+  <Loading :init.sync="init"/>
   <Tips />
-   <view class="container" wx:if="{{init}}">
-     <view class="mt20"></view>
+  <view class="container" wx:if="{{init}}">
+    <form @submit="confirm">
+      <view class="mt20"></view>
       <view class="weui-cells-form">
-
         <!--联系人-->
         <view class="weui-cell weui-cell_input">
           <view class="weui-cell__hd">
             <view class="weui-label">联系人</view>
           </view>
           <view class="weui-cell__bd">
-            <input class="weui-input" id="name" placeholder="收货人姓名" maxlength="5" @input="input" value="{{input.name}}"/>
+            <input class="weui-input" name="name" placeholder="收货人姓名" maxlength="5" value="{{address.name}}"/>
           </view>
         </view>
 
@@ -23,10 +24,12 @@
             <view class="row">
               <radio-group class="radio-group row" @change="radio" id="sex">
                 <label class="radio row">
-                  <radio value="1" checked="{{input.sex == 1}}"/>先生
+                  <radio value="1" checked="{{input.sex == 1}}"/>
+                  先生
                 </label>
-                <label class="radio ml20 row" >
-                  <radio value="2" checked="{{input.sex == 2}}"/>女士
+                <label class="radio ml20 row">
+                  <radio value="2" checked="{{input.sex == 2}}"/>
+                  女士
                 </label>
               </radio-group>
             </view>
@@ -40,7 +43,8 @@
             <view class="weui-label">联系电话</view>
           </view>
           <view class="weui-cell__bd">
-            <input class="weui-input" id="phone" placeholder="收货人电话" type="number" maxlength="11" @input="input" value="{{input.phone}}"/>
+            <input class="weui-input" name="phone" placeholder="收货人电话" type="number" maxlength="11"
+                   value="{{address.phone}}"/>
           </view>
         </view>
 
@@ -61,14 +65,15 @@
             <view class="weui-label">详细地址</view>
           </view>
           <view class="weui-cell__bd">
-            <input class="weui-input" id="detail" placeholder="如楼栋、门牌号等" @input="input" value="{{input.detail}}"/>
+            <input class="weui-input" name="detail" placeholder="如楼栋、门牌号等" value="{{address.detail}}"/>
           </view>
         </view>
 
       </view>
 
-     <!--操作栏-->
-     <ActionBar @tap.user="confirm" okText="确定" cancelText="返回" />
+      <!--操作栏-->
+      <ActionPanel submitText="确定"/>
+    </form>
    </view>
 </template>
 
@@ -82,20 +87,22 @@
   import input from '../../mixins/input';
   import Event from '../../utils/Event';
   import FormTips from '../../components/weui/tips';
-  import ActionBar from '../../components/common/action_bar';
+  import ActionPanel from '../../components/common/action_panel';
   import address from '../../api/address';
   import Tips from '../../utils/Tips';
+  import Loading from '../../components/common/loading';
 
   export default class AddressEdit extends wepy.page {
-    def = {
+    data = {
       init: false,
       location: null,
-      mode: 'create'
+      mode: 'create',
+      address: {}
     };
-    data = {...this.def};
     async onLoad ({mode, id}) {
       if (mode == 'edit') {
         this.input = await address.info(id);
+        this.address = this.input;
         this.mode = mode;
         this.location = {
           detail: this.input.location
@@ -118,21 +125,25 @@
       /**
        * 确认更新
        */
-      async confirm() {
+      async confirm({detail}) {
+        // 覆盖对象
+        Object.assign(this.address, detail.value);
         if (!this.validate()) {
           return;
         }
+        Tips.loading();
         if (this.mode == 'edit') {
-          let param = this.input;
+          let param = this.address;
           // 地址被重新选择了
           if (this.location.latitude) {
-            param = this.copyLocationParam(this.input);
+            param = this.copyLocationParam(this.address);
           } else {
             param.fullAddress = param.location + param.detail;
           }
-          await address.update(this.input.id, param);
+          await address.update(this.address.id, param);
         } else {
-          const param = this.copyLocationParam(this.input);
+          const param = this.copyLocationParam(this.address);
+          param.sex = this.input.sex;
           await address.save(param);
         }
         await Tips.success('保存成功');
@@ -157,7 +168,7 @@
     validate() {
       const rules = [
         {
-          value: this.input.name,
+          value: this.address.name,
           method: 'required',
           message: '请输入联系人'
         },
@@ -167,12 +178,12 @@
           message: '请选择您的称呼'
         },
         {
-          value: this.input.phone,
+          value: this.address.phone,
           method: 'required',
           message: '请输入联系电话'
         },
         {
-          value: this.input.phone,
+          value: this.address.phone,
           method: 'tel',
           message: '请输入合法手机号码'
         },
@@ -182,7 +193,7 @@
           message: '请选择送餐地址'
         },
         {
-          value: this.input.detail,
+          value: this.address.detail,
           method: 'required',
           message: '请输入详细地址'
         }
@@ -191,7 +202,8 @@
     }
     components = {
       Tips: FormTips,
-      ActionBar: ActionBar
+      ActionPanel: ActionPanel,
+      Loading: Loading
     };
     mixins = [base, input];
     config = {

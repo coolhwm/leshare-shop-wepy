@@ -1,12 +1,20 @@
 <template>
   <view class="coupon-item-container {{coupon.status == 'NEVER_USED' ? '' : 'coupon-item-disable'}}"  @tap.stop="select({{coupon}})">
     <!--左侧区域-->
-    <view class="coupon-main-container">
+    <view class="coupon-main-container" wx:if="{{coupon.type == 'CASH'}}">
       <view class="coupon-value-container">
         <text class="coupon-value-unit">￥</text>
         <text class="coupon-value-text">{{coupon.price}}</text>
       </view>
       <text class="coupon-limit-text">满{{coupon.limitPrice}}元可用</text>
+    </view>
+    <!--左侧区域-->
+    <view class="coupon-main-container" wx:if="{{coupon.type == 'EXCHANGE'}}">
+      <view class="coupon-value-container">
+        <text class="coupon-value-exchange">兑换券</text>
+      </view>
+      <text class="coupon-limit-text" wx:if="{{coupon.limitPrice > 0}}">满{{coupon.limitPrice}}元可用</text>
+      <text class="coupon-limit-text" wx:if="{{coupon.limitPrice == 0}}">无门槛</text>
     </view>
 
     <!--右侧区域-->
@@ -95,6 +103,12 @@
   .coupon-value-text{
     color:#FFF;
     font-size: 75rpx;
+  }
+
+  /*兑换券*/
+  .coupon-value-exchange{
+    color:#FFF;
+    font-size: 50rpx;
   }
 
   /*限制条件*/

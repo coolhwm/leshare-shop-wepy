@@ -6,12 +6,6 @@ module.exports = {
     }
   },
   eslint: true,
-  'autoprefixer': {
-    filter: /\.(wxss|css)$/,
-    config: {
-      browsers: ['last 11 iOS versions']
-    }
-  },
   compilers: {
     sass: {
       outputStyle: 'expanded'
@@ -24,11 +18,18 @@ module.exports = {
       ],
       plugins: [
         'transform-export-extensions',
-        'syntax-export-extensions'
+        'syntax-export-extensions',
+        'transform-decorators-legacy'
       ]
     }
   },
   plugins: {
+    'autoprefixer': {
+      filter: /\.(wxss|css)$/,
+      config: {
+        browsers: ['last 11 iOS versions']
+      }
+    }
   }
 };
 

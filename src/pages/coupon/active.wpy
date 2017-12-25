@@ -15,22 +15,20 @@
 
 <script>
   import wepy from 'wepy';
+  import store from '../../store/utils';
   import coupon from '../../api/coupon';
   import auth from '../../api/auth';
   import shop from '../../api/shop';
   import base from '../../mixins/base';
   import Tips from '../../utils/Tips';
-  import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
-  import Cache from '../../utils/Cache';
 
   export default class CouponActive extends wepy.page {
-    def = {
+    data = {
       init: false,
       reInfo: false,
       coupon: null
     };
-    data = {...this.def};
     onLoad (options, {preload}) {
       this.coupon = preload.coupon;
       this.reInfo = WxUtils.canIUse('button.open-type.getUserInfo');
@@ -60,9 +58,8 @@
     async pickCoupon() {
       try {
         await coupon.pick(this.coupon.id);
-        await Cache.coupon(true);
         await Tips.success('领取成功');
-        Event.emit(Event.COUPON_LIST_UPDATE);
+        await store.reflesh('pickCoupon', 'ownCoupon');
         this.$redirect('/pages/coupon/list');
       } catch (e) {
         if (e.serverCode == '50001') {

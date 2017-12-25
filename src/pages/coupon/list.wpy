@@ -1,4 +1,5 @@
 <template>
+  <Loading :init.sync="init"/>
   <view class="container" wx:if="{{init}}">
     <!--TAB 页-->
     <ZanTab :tab.sync="tab" @change.user="switchTab" />
@@ -35,14 +36,12 @@
   import Loadmore from '../../components/weui/loadmore';
   import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
+  import Loading from '../../components/common/loading';
 
   export default class CouponList extends wepy.page {
-    def = {
+    data = {
       init: false,
-      page: {
-        list: [
-        ]
-      },
+      page: {},
       tab: {
         list: [{
           id: 'NEVER_USED',
@@ -58,7 +57,6 @@
         scroll: false
       }
     };
-    data = {...this.def};
     async onLoad () {
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;
@@ -90,7 +88,8 @@
       Placeholder: Placeholder,
       ZanTab: ZanTab,
       Loadmore: Loadmore,
-      CouponItem: CouponItem
+      CouponItem: CouponItem,
+      Loading: Loading
     };
     mixins = [base, pagination];
     config = {

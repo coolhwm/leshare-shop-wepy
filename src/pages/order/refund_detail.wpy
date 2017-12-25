@@ -40,11 +40,10 @@
   import base from '../../mixins/base';
 
   export default class OrderIndex extends wepy.page {
-    def = {
+    data = {
       refund: {},
       steps: {}
     };
-    data = {...this.def};
     onLoad ({refund}) {
       this.refund = JSON.parse(refund);
       this.steps = order.createOrderRefundSetps(this.refund);

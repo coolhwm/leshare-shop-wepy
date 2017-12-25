@@ -1,4 +1,5 @@
 <template>
+  <Loading :init.sync="init"/>
   <view class="container" wx:if="{{init}}">
     <!--状态栏-->
     <view class="order-status-bar row">
@@ -107,8 +108,9 @@
   import Route from '../../utils/WxUtils';
   import OrderItem from '../../components/order/customer_item';
   import InShopStatus from '../../components/order/inshop_status';
+  import Loading from '../../components/common/loading';
   export default class OrderDetail extends wepy.page {
-    def = {
+    data = {
       order: {
         orderGoodsInfos: [],
         orderPriceHistory: []
@@ -117,7 +119,6 @@
       address: {},
       init: false
     };
-    data = {...this.def};
     async onLoad ({orderId}) {
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;
@@ -165,6 +166,7 @@
     async close({orderId}) {
       await Tips.confirm('确定关闭该订单？');
       try {
+        Tips.loading();
         await order.closeOrder(orderId);
         await Tips.success('关闭成功');
         wepy.navigateBack();
@@ -179,6 +181,7 @@
      */
     async pay({orderId}) {
       try {
+        Tips.loading();
         const payment = await order.prepayOrder(orderId);
         Tips.loaded();
         await order.wxpayOrder(payment);
@@ -196,6 +199,7 @@
     async receive({orderId}) {
       await Tips.confirm('是否已收到外卖？');
       try {
+        Tips.loading();
         await order.confirmOrder(orderId);
         await Tips.success('订单已完成');
         wepy.navigateBack();
@@ -225,10 +229,11 @@
       const orderId = refundOrder.orderId;
       const refundUuid = refundOrder.curRefund.refundUuid;
       await Tips.confirm('您确认取消退款申请吗？');
+      Tips.loading();
       await order.cancelRefund(orderId, refundUuid);
       await Tips.success('取消成功');
       Event.emit(Event.ORDER_LIST_UPDATE);
-      Route.backOrRedirect('/pages/order/list');
+      Route.backOrRedirect('/pages/customer/index');
     }
     /**
      * 退款详情
@@ -266,7 +271,8 @@
     components = {
       Address: Address,
       OrderItem: OrderItem,
-      InShopStatus: InShopStatus
+      InShopStatus: InShopStatus,
+      Loading: Loading
     };
 
     mixins = [base];

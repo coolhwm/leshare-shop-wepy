@@ -23,9 +23,6 @@
         if (this.page.reachBottom) {
           return;
         }
-        if (this.page.start != 0) {
-          Tips.setLoading();
-        }
         this.isPageLoading = true;
         const param = this.params ? this.params() : {};
         await this.page.next(param);
