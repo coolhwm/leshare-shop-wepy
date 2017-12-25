@@ -177,7 +177,7 @@
         const isMember = this.member && this.member.memberPresentDetails && this.member.memberPresentDetails.length > 0;
         if (!isMember) return ruleText;
         const {currentCount, totalCount, presentCount} = this.member.memberPresentDetails[0];
-        const detailText = `\n• 现有累计${unit}数：${currentCount}\n• 已兑换累计${unit}数：${presentCount}\n• 总消费${unit}数：${totalCount}`;
+        const detailText = `\n• 现有累计${unit}数：${currentCount}\n• 已赠送兑换券：${presentCount}\n• 总消费${unit}数：${totalCount}`;
         return ruleText + detailText;
       }
     };
