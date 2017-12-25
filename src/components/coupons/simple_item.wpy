@@ -1,10 +1,17 @@
 <template>
   <view class="coupon-item">
-    <view class="coupon-main column">
+    <view class="coupon-main column" wx:if="CASH">
       <view>
         <text class="xs">￥</text> <text class="xxl">{{coupon.price}}</text>
       </view>
       <text class="xs">满{{coupon.limitPrice}}元使用</text>
+    </view>
+    <view class="coupon-main column" wx:if="EXCHANGE">
+      <view>
+        <text class="xxl">兑换券</text>
+      </view>
+      <text class="xs" wx:if="{{coupon.limitPrice > 0}}">满{{coupon.limitPrice}}元使用</text>
+      <text class="xs" wx:else>无门槛</text>
     </view>
     <image class="coupon-hr"  src="/images/icons/coupon-hr.png"/>
     <form class="coupon-pick column-center" report-submit="true" @submit="pick({{coupon}})">
