@@ -36,10 +36,11 @@
       <image class="icon-qrcode" src="/images/icons/qrcode.png"
              @tap.stop="info"/>
     </view>
-    <view class="row-between" style="width: 100%">
+    <view class="footer-box row-between" style="width: 100%">
       <text class="xxl">{{numberText}}</text>
-      <view class="column">
-        <text class="sm">{{parsentText}}</text>
+      <view class="desc-box column">
+        <text class="sm" wx:if="{{parsentText}}">{{parsentText}}</text>
+        <text class="sm" wx:if="{{discountText}}">{{discountText}}</text>
       </view>
     </view>
 
@@ -97,9 +98,13 @@
         // 对合法性进行检查
         const isRule = this.card && this.card.memberPresentRules && this.card.memberPresentRules.length > 0;
         const isMember = this.member && this.member.memberPresentDetails && this.member.memberPresentDetails.length > 0;
+        // 没有规则的情况
         if (!isRule || !isMember) return '';
-        const {currentCount} = this.member.memberPresentDetails[0];
         const {unit} = this.card.memberPresentRules[0];
+        // 没有初始化的情况
+        if (!isRule || isMember) return `当前已累计0${unit}`;
+        // 正常的情况
+        const {currentCount} = this.member.memberPresentDetails[0];
         return `当前已累计${currentCount}${unit}`;
       },
       numberText() {
@@ -113,6 +118,15 @@
           }
         }
         return text;
+      },
+      discountText() {
+        if (this.member == null || this.member.discountRule == null) return;
+        const {discountRule, customDiscount} = this.member;
+        const discount = customDiscount != null ? customDiscount : discountRule.discount;
+        if (discount < 100) {
+          const discountText = (discount / 10).toFixed(1);
+          return `持卡享受${discountText}折优惠`;
+        }
       }
     };
     mixins = [base]
@@ -170,6 +184,12 @@
         font-size: $text-xxl;
         font-weight: bold;
       }
+    }
+  }
+  .footer-box{
+    align-items: flex-end;
+    .desc-box {
+      align-items: flex-end;
     }
   }
 </style>
