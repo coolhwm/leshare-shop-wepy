@@ -40,7 +40,7 @@
           <text class="major xxl">￥{{detail.priceLable}}</text>
           <!--数量选择器-->
           <view class="quantity row mr20">
-            <view class="quantity-cart-btn" @tap.stop="buy({{detail}})" >
+            <view class="quantity-cart-btn" @tap.stop="buy({{detail}})" wx:if="{{version.isOrder}}" >
               加入购物车
             </view>
           </view>
@@ -88,7 +88,11 @@
   import CommentItem from '../../components/goods/comment_item';
   import Placeholder from '../../components/common/placeholder';
   import Event from '../../utils/Event';
-
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  @connect({
+    version: store.get('version')
+  })
   export default class GoodsDetail extends wepy.page {
     data = {
       init: false,

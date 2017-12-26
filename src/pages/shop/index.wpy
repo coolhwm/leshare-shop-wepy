@@ -9,7 +9,7 @@
     <!--功能区域-->
     <ShopNav :mode.sync="mode"/>
     <!--主内容区域-->
-    <view class="main-box row">
+    <view class="main-box row {{version.isOrder ? 'main-box-pad' : 'main-box-full' }}">
       <!--分类侧边栏-->
       <SideTab :tab.sync="categories" @change.user="switchTab" />
 
@@ -30,7 +30,8 @@
         <!--商品列表-->
         <view class="goods-list">
           <repeat for="{{page.list}}" key="index" index="index" item="item">
-            <GoodsItem :goods.sync="item" @plus.user="plus" @minus.user="minus" @detail.user="detail"/>
+            <GoodsItem :goods.sync="item" :quantity.sync="version.isOrder"
+                       @plus.user="plus" @minus.user="minus" @detail.user="detail"/>
           </repeat>
         </view>
 
@@ -38,8 +39,9 @@
       </scroll-view>
     </view>
     <!-- 购物车 -->
-    <ShopCart :carts.sync="carts"  @plus.user="plus" @minus.user="minus" @clear.user="clear" @buy.user="buy"/>
-
+    <block wx:if="{{version.isOrder}}">
+      <ShopCart :carts.sync="carts"  @plus.user="plus" @minus.user="minus" @clear.user="clear" @buy.user="buy"/>
+    </block>
     <!--SKU选择器-->
     <SkuSelector :display.sync="skuDisplay" :goods.sync="skuGoods" :carts.sync="carts" @select.user="selectSku" />
 
@@ -78,7 +80,8 @@
     pickCoupons: store.get('pickCoupons'),
     member: store.get('member'),
     card: store.get('card'),
-    categories: store.get('categories')
+    categories: store.get('categories'),
+    version: store.get('version')
   })
   export default class ShopIndex extends wepy.page {
     data = {
@@ -453,6 +456,9 @@
       this.carts.splice(index, 1);
     }
     computed = {
+      /**
+       * 折扣对象
+       */
       discount() {
         if (this.member == null || this.card == null) {
           return null;
@@ -480,6 +486,9 @@
           rate: discount
         };
       },
+      /**
+       * 被选择的分类名称
+       */
       selectedCategoryName() {
         if (this.init && this.categories && this.categories.list) {
           const selectedId = this.categories.selectedId;
@@ -507,12 +516,16 @@
 
 <style lang="scss">
   @import "../../styles/variable";
-
+  .main-box-full {
+    bottom: 0;
+  }
+  .main-box-pad {
+    bottom: 55px;
+  }
   .main-box{
     width: 100%;
     position: absolute;
     top: 145px;
-    bottom: 55px;
 
     .goods-box{
       flex: 1;

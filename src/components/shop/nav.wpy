@@ -20,7 +20,8 @@
 
   @connect({
     shop: store.get('shop'),
-    status: store.get('status')
+    status: store.get('status'),
+    version: store.get('version')
   })
   export default class ShopNav extends wepy.component {
     props = {
@@ -32,30 +33,38 @@
       }
     };
     computed = {
+      // 需要进行优化
       title() {
-        if (this.shop == null || this.shop.type == null) return;
+        if (this.shop == null || this.shop.type == null || this.version == null) return;
         const type = this.shop.type;
+        // 状态加载失败
         if (this.status == null) {
           return '休息中';
         }
+        // 关门的情况
         if (this.status.open == false) {
           if (!this.init) {
             Tips.modal(this.status.closeTips);
           }
           return this.status.closeTips;
         }
-        // 标题处理
+        // 在线商城/在线点餐
+        if (this.mode == '1') {
+          const name = this.version.isOrder ? type.name : type.basicName;
+          wepy.setNavigationBarTitle({ title: name });
+          return name;
+        }
+        // 外卖
         if (this.mode == '2') {
           wepy.setNavigationBarTitle({ title: '堂食点餐' });
           return '点堂食/外带';
-        } else {
-          wepy.setNavigationBarTitle({ title: type.name });
-          return type.name;
         }
       },
       badgeText() {
-        if (this.shop == null || this.shop.type == null) return;
-        return this.mode == 2 ? '堂食' : this.shop.type.badgeText;
+        if (this.shop == null || this.shop.type == null || this.version == null) return;
+        const type = this.shop.type;
+        const text = this.version.isOrder ? type.badgeText : type.basicBadgeText;
+        return this.mode == 2 ? '堂食' : text;
       }
     }
   }

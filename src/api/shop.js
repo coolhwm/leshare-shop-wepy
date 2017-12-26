@@ -5,12 +5,18 @@ import wepy from 'wepy';
 export default class shop extends base {
   static TYPE = {
     '1': {
+      key: '1',
       name: '在线商城',
-      badgeText: '商城'
+      badgeText: '商城',
+      basicName: '商品展示',
+      basicBadgeText: '商城'
     },
     '2': {
+      key: '2',
       name: '点外卖',
-      badgeText: '外卖'
+      badgeText: '外卖',
+      basicName: '在线菜单',
+      basicBadgeText: '菜单'
     }
   };
 
@@ -90,6 +96,19 @@ export default class shop extends base {
       return {
         list: data, showText
       }
+    });
+  }
+
+  /**
+   * 查询版本及配额信息
+   */
+  static chargeLimit () {
+    const url = `${this.baseUrl}/shop_charge_limit`;
+    return this.get(url).then(data => {
+      const version = data.chargeVersion;
+      data.isMember = [2, 3, 6, 7].some(value => value == version);
+      data.isOrder = [4, 5, 6, 7].some(value => value == version);
+      return data;
     });
   }
 

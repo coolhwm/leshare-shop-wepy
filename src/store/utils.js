@@ -46,7 +46,8 @@ const init = async () => {
     'pickCoupons',
     'card',
     'member',
-    'reduce'
+    'reduce',
+    'version'
   );
 };
 
@@ -111,6 +112,8 @@ const fetch = (field) => {
       return shop.reduces();
     case 'recommend' :
       return goods.page(true).next();
+    case 'version' :
+      return shop.chargeLimit();
   }
 };
 
