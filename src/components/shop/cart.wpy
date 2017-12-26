@@ -88,7 +88,6 @@
       reduce: null
     };
     async onLoad() {
-      await store.use('status', 'ownCoupons');
       this.$apply();
     }
     methods = {

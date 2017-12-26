@@ -1,11 +1,11 @@
 <template>
   <view class="nav-box row-between {{last == 'true' ? 'nav-box-last' : ''}}">
     <view class="header row">
-      <view class="label primary small" wx:if="{{badegText}}">{{badegText}}</view>
+      <view class="label primary small" wx:if="{{badgeText}}">{{badgeText}}</view>
       <text>{{title}}</text>
     </view>
-    <view class="footer row" wx:if="{{navText}}" @tap="goto">
-      <text class="muted">{{navText}}</text>
+    <view class="footer row" @tap="goto">
+      <text class="muted">个人中心</text>
       <image class="icon" src="/images/icons/more-gray.png" />
     </view>
   </view>
@@ -13,20 +13,51 @@
 
 <script>
   import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
   import WxUtils from '../../utils/WxUtils';
+  import Tips from '../../utils/Tips';
+
+  @connect({
+    shop: store.get('shop'),
+    status: store.get('status')
+  })
   export default class ShopNav extends wepy.component {
     props = {
-      badegText: {},
-      navText: {},
-      navUrl: {},
-      title: {},
-      last: 'false'
+      mode: {}
     };
     methods = {
       goto() {
-        WxUtils.backOrNavigate(this.navUrl);
+        WxUtils.backOrNavigate('/pages/customer/index');
       }
     };
+    computed = {
+      title() {
+        if (this.shop == null || this.shop.type == null) return;
+        const type = this.shop.type;
+        if (this.status == null) {
+          return '休息中';
+        }
+        if (this.status.open == false) {
+          if (!this.init) {
+            Tips.modal(this.status.closeTips);
+          }
+          return this.status.closeTips;
+        }
+        // 标题处理
+        if (this.mode == '2') {
+          wepy.setNavigationBarTitle({ title: '堂食点餐' });
+          return '点堂食/外带';
+        } else {
+          wepy.setNavigationBarTitle({ title: type.name });
+          return type.name;
+        }
+      },
+      badgeText() {
+        if (this.shop == null || this.shop.type == null) return;
+        return this.mode == 2 ? '堂食' : this.shop.type.badgeText;
+      }
+    }
   }
 </script>
 

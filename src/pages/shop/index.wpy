@@ -7,7 +7,7 @@
     <ShopHeader />
 
     <!--功能区域-->
-    <ShopNav :badegText.sync="badgeText" :title.sync="title"  navText="个人中心" navUrl="/pages/customer/index" />
+    <ShopNav :mode.sync="mode"/>
     <!--主内容区域-->
     <view class="main-box row">
       <!--分类侧边栏-->
@@ -120,15 +120,6 @@
       Event.listen(Event.CART_LIST_ADD, this.doAddCart.bind(this), this);
       this.loaded();
     };
-    // TODO 店铺状态判断需要重构
-    // async onShow () {
-    //   if (this.init) {
-    //     // 重新判断店铺状态
-    //     Tips.setLoading();
-    //     await this.setShopTitle();
-    //     this.loaded();
-    //   }
-    // }
     /**
      * 页面分享
      */
@@ -462,28 +453,6 @@
       this.carts.splice(index, 1);
     }
     computed = {
-      title() {
-        if (this.shop == null || this.shop.type == null) return;
-        const type = this.shop.type;
-        if (!this.status || !this.status.open) {
-          if (!this.init) {
-            Tips.modal(this.status.closeTips);
-          }
-          return this.status.closeTips;
-        }
-        // 标题处理
-        if (this.mode == 2) {
-          wepy.setNavigationBarTitle({ title: '堂食点餐' });
-          return '点堂食/外带';
-        } else {
-          wepy.setNavigationBarTitle({ title: type.name });
-          return type.name;
-        }
-      },
-      badgeText() {
-        if (this.shop == null || this.shop.type == null) return;
-        return this.mode == 2 ? '堂食' : this.shop.type.badgeText;
-      },
       discount() {
         if (this.member == null || this.card == null) {
           return null;
@@ -523,7 +492,6 @@
       SideTab: SideTab,
       CouponItem: CouponItem,
       GoodsItem: GoodsItem,
-      CommentNav: ShopNav,
       ShopNav: ShopNav,
       Loadmore: Loadmore,
       ShopCart: ShopCart,
