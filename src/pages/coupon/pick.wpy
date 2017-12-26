@@ -1,0 +1,84 @@
+<!--废弃页面-->
+<template>
+  <view class="container" wx:if="{{init}}">
+    <!--列表展现-->
+    <repeat for="{{pickCoupons}}" key="index" index="index" item="item">
+      <CouponItem :coupon.sync="item" @pick.user="pick" />
+    </repeat>
+
+    <!--占位符-->
+    <Placeholder :show.sync="isEmpty" message="目前没有可以领取的优惠券"/>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import coupon from '../../api/coupon';
+  import base from '../../mixins/base';
+  import store from '../../store/utils';
+  import auth from '../../api/auth';
+  import ShopHeader from '../../components/shop/header';
+  import ShopNav from '../../components/shop/nav';
+  import Placeholder from '../../components/common/placeholder';
+  import CouponItem from '../../components/coupons/pick_item';
+  import Tips from '../../utils/Tips';
+
+  @connect({
+    pickCoupons: store.get('pickCoupons')
+  })
+  export default class CouponPick extends wepy.page {
+    data = {
+      init: false,
+      isEmpty: true
+    };
+    async onLoad () {
+      // 权限校验
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
+      await store.init();
+      this.loaded();
+    };
+    async onPullDownRefresh () {
+      await store.reflesh('pickCoupons', 'ownCoupons');
+      wepy.stopPullDownRefresh();
+    }
+    methods = {
+      async pick(couponId) {
+        try {
+          Tips.loading();
+          await coupon.pick(couponId);
+          await store.reflesh('pickCoupons', 'ownCoupons');
+          await Tips.success('领取成功');
+        } catch (e) {
+          if (e.serverCode == '50001') {
+            await Tips.alert('已经领过了');
+          }
+          this.loaded();
+        }
+      }
+    };
+    computed = {
+      isEmpty () {
+        if (this.pickCoupons == null) return;
+        return this.pickCoupons.length < 1;
+      }
+    };
+    components = {
+      Placeholder: Placeholder,
+      CouponItem: CouponItem,
+      HomeNav: ShopNav,
+      CouponNav: ShopNav,
+      ShopHeader: ShopHeader
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '领取优惠券',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

@@ -1,0 +1,111 @@
+<template>
+  <view class="user-conatiner">
+
+    <!-- 头图区域 -->
+    <view class="user-info-container">
+      <image class="user-avatar" src="{{user.avatarUrl}}" />
+      <text class="user-nickname">{{user.nickName}}</text>
+    </view>
+
+    <view class="mt20"></view>
+
+    <view class="weui-cells-form">
+      <navigator url="/pages/customer/address_list" class="weui-cell weui-cell_access" hover-class="weui-cell_active" >
+        <view class="weui-cell__bd">我的地址</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+      </navigator>
+
+      <navigator url="/pages/coupon/pick" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__bd">领取优惠券</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">{{pickCoupons.length}}张</view>
+      </navigator>
+
+      <navigator url="/pages/coupon/list" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__bd">我的优惠券</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">{{ownCoupons.length}}张</view>
+      </navigator>
+    </view>
+    <Copyright buttom="true"/>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import auth from '../../api/auth';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import base from '../../mixins/base';
+  import Copyright from '../../components/common/copyright';
+
+  @connect({
+    user: store.get('user'),
+    ownCoupons: store.get('ownCoupons'),
+    pickCoupons: store.get('pickCoupons')
+  })
+  export default class CustomerIndex extends wepy.page {
+    data = {
+    };
+    async onLoad () {
+      // 校验是否登录成功
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
+      await store.init();
+    };
+    events = {};
+    components = {
+      Copyright: Copyright
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '个人中心'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  page{
+    height: 100%;
+    background-color: #f2f2f2;
+  }
+
+  /*用户信息*/
+  .user-info-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 300rpx;
+    background-color: #1296db;
+  }
+  .user-avatar{
+    height:160rpx;
+    width: 160rpx;
+    border-radius: 50%;
+  }
+
+  .user-nickname{
+    color: white;
+    font-size: 40rpx;
+  }
+  .user-func-container{
+    display: flex;
+    flex-direction: column;
+    background-color: #FFF;
+    margin-top: 20rpx;
+    padding: 10rpx;
+  }
+
+  .user-func-item{
+    display: flex;
+    font-size: 30rpx;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 20rpx;
+  }
+  .func-text{
+    font-size: 30rpx;
+    line-height: 60rpx;
+  }
+</style>
