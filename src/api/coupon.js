@@ -20,16 +20,6 @@ export default class CouponService extends base {
    */
   static async shelf () {
     let [ownList, pickList] = await Promise.all([this.own('NEVER_USED'), this.list()]);
-    if (ownList && ownList.length > 0) {
-      ownList = ownList.map(this._processCouponItem.bind(this));
-    } else {
-      ownList = [];
-    }
-    if (pickList && pickList.length > 0) {
-      pickList = pickList.map(this._processPickItem.bind(this));
-    } else {
-      pickList = [];
-    }
     const coupons = [...ownList, ...pickList];
     const size = coupons.length;
     let preview = coupons.map(item => `满${item.limitPrice}减${item.price}`);
@@ -47,7 +37,13 @@ export default class CouponService extends base {
 
   static list () {
     const url = `${this.baseUrl}/coupons/show`;
-    return this.get(url);
+    return this.get(url).then(pickList => {
+      if (pickList && pickList.length > 0) {
+        return pickList.map(this._processPickItem.bind(this));
+      } else {
+        return [];
+      }
+    });
   }
 
   /**
@@ -55,7 +51,13 @@ export default class CouponService extends base {
    */
   static own (status = 'NEVER_USED') {
     const url = `${this.baseUrl}/coupons/list?status=${status}`;
-    return this.get(url);
+    return this.get(url).then(ownList => {
+      if (ownList && ownList.length > 0) {
+        return ownList.map(this._processCouponItem.bind(this));
+      } else {
+        return [];
+      }
+    });
   }
 
   /**

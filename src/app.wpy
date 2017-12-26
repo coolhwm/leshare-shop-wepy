@@ -8,6 +8,11 @@
 import wepy from 'wepy';
 import WxUtils from './utils/WxUtils';
 import 'wepy-async-function';
+import { setStore } from 'wepy-redux'
+import configStore from './store'
+
+const store = configStore();
+setStore(store);
 
 export default class extends wepy.app {
   constructor () {
@@ -81,12 +86,10 @@ export default class extends wepy.app {
       'pages/goods/comment_edit',
       'pages/address/edit',
       'pages/order/trade',
-      'pages/order/list',
       'pages/order/detail',
       'pages/order/refund_edit',
       'pages/order/refund_detail',
       'pages/coupon/active',
-      'pages/coupon/pick',
       'pages/coupon/list',
       'pages/coupon/detail',
       'pages/customer/index',
@@ -110,11 +113,12 @@ export default class extends wepy.app {
     auth: {
     },
     scene: '',
-    shopType: null,
+    shopType: 1,
     app_code: null,
-    baseUrl: 'https://api.leshare.shop/v2/customer'
+    version: 'v2.0.0',
+    // baseUrl: 'https://api.leshare.shop/v2/customer'
     // baseUrl: 'http://192.168.31.124:9999/v2/customer',
-    // baseUrl: 'http://106.14.195.68:9999/v2/customer'
+    baseUrl: 'http://106.14.195.68:9999/v2/customer'
   }
 }
 </script>

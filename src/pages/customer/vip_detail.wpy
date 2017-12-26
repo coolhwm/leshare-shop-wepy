@@ -1,12 +1,14 @@
 <template>
+  <Loading :init.sync="init"/>
   <view class="container" wx:if="{{init}}">
 
     <view class="list-panel">
-      <VipCard :member.sync="member" :userInfo.sync="userInfo" :vipCard.sync="vipCard" :type.sync="detail"/>
+
+      <VipCard/>
       <text class="titel-box">会员特权</text>
 
       <view class="mt20"></view>
-      <view class="weui-cell" wx:if="{{vipCard.supplyDiscount == 1}}">
+      <view class="weui-cell" wx:if="{{card.supplyDiscount == 1}}">
         <view class="weui-label muted">会员等级</view>
         <view class="column info-container">
           <view>
@@ -23,23 +25,29 @@
           <text>{{vipDescribe}}</text>
         </view>
       </view>
+      <view class="weui-cell" wx:if="{{parsentTitle}}">
+        <view class="weui-label muted">{{parsentTitle}}</view>
+        <view class="column info-container">
+          <text>{{parsentText}}</text>
+        </view>
+      </view>
       <view class="weui-cell">
         <view class="weui-label muted">客服电话</view>
-        <text class="info-container">{{vipCard.servicePhone}}</text>
+        <text class="info-container">{{card.servicePhone}}</text>
       </view>
       <view class="weui-cell">
         <view class="weui-label muted">会员须知</view>
-        <text class="info-container">{{vipCard.description ? vipCard.description : '无'}}</text>
+        <text class="info-container">{{card.description ? card.description : '无'}}</text>
       </view>
       <view class="weui-cell">
         <view class="weui-label muted">会员提醒</view>
-        <text class="info-container">{{vipCard.notice ? vipCard.notice : '无'}}</text>
+        <text class="info-container">{{card.notice ? card.notice : '无'}}</text>
       </view>
     </view>
 
-    <view class="list-panel" wx:if="{{vipCard.supplyDiscount == 1}}">
+    <view class="list-panel" wx:if="{{card.supplyDiscount == 1}}">
       <view class="titel-box">会员级别</view>
-      <repeat for="{{vipCard.discountRules}}" key="index" index="index" item="item">
+      <repeat for="{{card.discountRules}}" key="index" index="index" item="item">
         <view class="weui-cell">
           <view class="weui-label muted">{{item.levelName}}</view>
           <view class="column info-container">
@@ -54,49 +62,72 @@
 </template>
 <script>
   import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import auth from '../../api/auth';
+  import store from '../../store/utils';
   import base from '../../mixins/base';
   import VipCard from '../../components/customer/vip_card';
+  import Loading from '../../components/common/loading';
 
+  @connect({
+    member: store.get('member'),
+    card: store.get('card'),
+    user: store.get('user')
+  })
   export default class VipDetail extends wepy.page {
-    def = {
+    data = {
       init: false,
-      member: {},
-      userInfo: {},
-      vipCard: {},
-      detail: 'detail'
+      type: 'detail'
     };
-    data = {...this.def};
 
-    async onLoad (options, {preload}) {
-      const param = preload.param;
-      this.member = param.member;
-      this.userInfo = param.userInfo;
-      this.vipCard = param.vipCard;
+    async onLoad () {
+      await store.init();
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
+      // 没注册的会员引导注册
+      if (this.member == null) {
+        this.$redirect('/pages/customer/registe_member');
+        return;
+      }
       this.loaded();
     }
-
+    async onPullDownRefresh() {
+      await store.reflesh('card', 'member');
+      this.loaded();
+      wepy.stopPullDownRefresh();
+    }
     computed = {
       vipDescribe() {
-        if (this.vipCard == null || this.member == null) {
+        if (this.card == null || this.member == null) {
           return;
         }
-        const rule = this.vipCard.bonusRule;
         let describe = '';
         // 有折扣的情况
-        if (this.vipCard.supplyDiscount == 1) {
-          const rule = this.member.discountRule;
-          if (rule != null && rule.discount < 100) {
-            describe += `本会员卡享受部分商品 ${(rule.discount / 10).toFixed(1)} 折优惠\n`;
+        if (this.card.supplyDiscount == 1) {
+          const {discountRule, customDiscount} = this.member;
+          let discount = 100;
+          if (customDiscount > 0 && customDiscount < 100) {
+            // 自定义折扣
+            discount = customDiscount;
+          } else if (discountRule != null && discountRule.discount < 100) {
+            // 等级折扣
+            discount = discountRule.discount;
+          }
+          if (discount < 100) {
+            describe += `本会员卡享受部分商品 ${(discount / 10).toFixed(1)} 折优惠\n`;
           }
         }
         // 开启积分规则
-        if (this.vipCard.supplyBonus == 1 && this.vipCard.bonusRule != null) {
+        if (this.card.supplyBonus == 1 && this.card.bonusRule != null) {
+          const rule = this.card.bonusRule;
           // 有初始积分的情况
           if (rule.initIncreaseBonus > 0) {
             describe += `注册绑定手机开卡即送 ${rule.initIncreaseBonus} 积分\n`;
           }
           describe += `每消费 ${rule.costMoneyUnit} 元可获得 ${rule.increaseBonus} 积分\n`;
-          describe += `每使用 ${rule.costBonusUnit} 积分，抵扣 ${rule.reduceMoney} 元现金，每笔订单最多使用 ${rule.maxReduceBonus} 积分，订单需满 ${rule.limitMoney} 元\n`;
+          if (rule.isCost == 1) {
+            describe += `每使用 ${rule.costBonusUnit} 积分，抵扣 ${rule.reduceMoney} 元现金，每笔订单最多使用 ${rule.maxReduceBonus} 积分，订单需满 ${rule.limitMoney} 元\n`;
+          }
         }
         // 特权为空的情况
         if (describe == '') {
@@ -106,14 +137,17 @@
       },
       discountLevel () {
         // 校验是否初始化完毕
-        if (this.member == null || this.vipCard.discountRules == null || this.member.levelName == null) {
+        if (this.member == null || this.card.discountRules == null || this.card.discountRules.length == 0) {
           return;
         }
-        const rules = this.vipCard.discountRules;
+        const rules = this.card.discountRules;
         const currentLevel = this.member.level;
+        if (currentLevel == null) {
+          return '';
+        }
         const lastLevel = rules[rules.length - 1].level;
         // 判断最高级会员
-        if (currentLevel == lastLevel) {
+        if (currentLevel >= lastLevel) {
           return '您已经是最高级别会员';
         } else {
           const currentCost = this.member.totalCost;
@@ -124,19 +158,37 @@
         }
       },
       levelName () {
-        if (this.member && this.vipCard && this.vipCard.supplyDiscount == 1 && this.member.discountRule) {
+        if (this.member && this.card && this.card.supplyDiscount == 1 && this.member.discountRule) {
           return this.member.discountRule.levelName;
         } else {
-          return '注册会员';
+          return '普通会员';
         }
+      },
+      parsentTitle () {
+        const isRule = this.card && this.card.memberPresentRules && this.card.memberPresentRules.length > 0;
+        return isRule ? this.card.memberPresentRules[0].ruleName : null;
+      },
+      parsentText () {
+        // 拼接规则
+        if (this.parsentTitle == null) return;
+        const {ruleName, limitCount, unit} = this.card.memberPresentRules[0];
+        const ruleText = `${ruleName},每满${limitCount}${unit}赠送1${unit},符合条件将发放兑换券至优惠券中，限线下使用`;
+        // 拼接当前会员情况
+        const isMember = this.member && this.member.memberPresentDetails && this.member.memberPresentDetails.length > 0;
+        if (!isMember) return ruleText;
+        const {currentCount, totalCount, presentCount} = this.member.memberPresentDetails[0];
+        const detailText = `\n• 现有累计${unit}数：${currentCount}\n• 已兑换累计${unit}数：${presentCount}\n• 总消费${unit}数：${totalCount}`;
+        return ruleText + detailText;
       }
     };
     components = {
-      VipCard: VipCard
+      VipCard: VipCard,
+      Loading: Loading
     };
     mixins = [base];
     config = {
-      navigationBarTitleText: '会员卡详情'
+      navigationBarTitleText: '会员卡详情',
+      enablePullDownRefresh: true
     };
   }
 </script>

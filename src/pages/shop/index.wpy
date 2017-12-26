@@ -1,11 +1,13 @@
 <template>
+  <Loading :init.sync="init"/>
+
   <view class="container column" wx:if="{{init}}">
 
     <!-- 店铺信息区域 -->
-    <ShopHeader :shop.sync="shop" />
+    <ShopHeader />
 
     <!--功能区域-->
-    <ShopNav :badegText.sync="badegText" :title.sync="title"  navText="个人中心" navUrl="/pages/customer/index" />
+    <ShopNav :badegText.sync="badgeText" :title.sync="title"  navText="个人中心" navUrl="/pages/customer/index" />
     <!--主内容区域-->
     <view class="main-box row">
       <!--分类侧边栏-->
@@ -14,8 +16,8 @@
       <!--右侧滚动-->
       <scroll-view scroll-y class="goods-box" bindscrolltolower="onReachBottom">
         <!--卡券区域（只在推荐的时候展现）-->
-        <scroll-view scroll-x	class="coupon-box" wx:if="{{categories.selectedId==-1 && coupons.length > 0}}">
-          <repeat for="{{coupons}}" key="index" index="index" item="item">
+        <scroll-view scroll-x	class="coupon-box" wx:if="{{categories.selectedId==-1 && pickCoupons.length > 0}}">
+          <repeat for="{{pickCoupons}}" key="index" index="index" item="item">
             <CouponItem :coupon.sync="item" @pick.user="pickCoupon" />
           </repeat>
         </scroll-view>
@@ -36,7 +38,7 @@
       </scroll-view>
     </view>
     <!-- 购物车 -->
-    <ShopCart :carts.sync="carts" :status.sync="status" @plus.user="plus" @minus.user="minus" @clear.user="clear" @buy.user="buy"/>
+    <ShopCart :carts.sync="carts"  @plus.user="plus" @minus.user="minus" @clear.user="clear" @buy.user="buy"/>
 
     <!--SKU选择器-->
     <SkuSelector :display.sync="skuDisplay" :goods.sync="skuGoods" :carts.sync="carts" @select.user="selectSku" />
@@ -46,6 +48,8 @@
 
 <script>
   import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
   import auth from '../../api/auth';
   import shop from '../../api/shop';
   import goods from '../../api/goods';
@@ -63,56 +67,44 @@
   import ShopCart from '../../components/shop/cart';
   import Navigator from '../../components/weui/navigator';
   import Tips from '../../utils/Tips';
+  import Loading from '../../components/common/loading';
   import Event from '../../utils/Event';
-  import Cache from '../../utils/Cache';
 
+  @connect({
+    shop: store.get('shop'),
+    notices: store.get('notices'),
+    status: store.get('status'),
+    ownCoupons: store.get('ownCoupons'),
+    pickCoupons: store.get('pickCoupons'),
+    member: store.get('member'),
+    card: store.get('card'),
+    categories: store.get('categories')
+  })
   export default class ShopIndex extends wepy.page {
-    def = {
+    data = {
       init: false,
-      page: {
-        list: []
-      },
+      page: {},
       pages: {},
-      shop: {
-        notices: []
-      },
-      discount: null,
-      status: {},
-      notices: [],
-      categories: {},
-      coupons: [],
+      categoryTab: {},
       carts: [],
       skuDisplay: 'false',
       detailDisplay: false,
       skuGoods: {},
-      title: '在线商城',
-      badegText: '商城',
       mode: 1
     };
-    data = {...this.def};
     async onLoad ({goodsId, mode}, {preload}) {
-      // -- 用户信息
-      await auth.user();
-      // 会员卡信息
-      this.discount = await Cache.discount();
-      // -- 缓存信息
-      // 加载店铺信息
       this.mode = mode;
-      this.shop = await Cache.shop();
-      this.shop.notices = await Cache.notices();
-      // 设置页面标题
-      await this.setShopTitle(mode);
+      // 用户信息
+      await auth.user();
+      // 初始化Store
+      await store.init();
       // 加载商品分类
-      this.categories = await Cache.categories();
-      // -- 需要实时加载的信息
+      this.categoryTab = {...this.categories};
       // 购物车
       const carts = wepy.getStorageSync('carts');
       this.carts = carts == '' ? [] : carts;
-      // 加载商品
-      this.page = goods.page(true, this.discount);
-      await this.next();
-      // 检查是否没有推荐商品
-      await this.checkOrRloadGoodsList();
+      // 加载商品列表
+      await this.loadGoodsList();
       // 处理推荐跳转
       if (goodsId) {
         const detail = this.methods.detail.bind(this);
@@ -122,45 +114,47 @@
       if (preload && preload.cart) {
         await this.doResetCart(preload.cart)
       }
-      // -- 监听事件
-      Event.listen(Event.COUPON_LIST_UPDATE, this.loadCoupons.bind(this), this);
+      // 监听事件
       Event.listen(Event.CART_LIST_CLEAR, this.doClearCart.bind(this), this);
       Event.listen(Event.CART_LIST_RESET, this.doResetCart.bind(this), this);
       Event.listen(Event.CART_LIST_ADD, this.doAddCart.bind(this), this);
       this.loaded();
-
-      // -- 异步加载的信息
-      // 加载优惠券
-      Tips.setLoading();
-      Cache.coupon().then(({pickList}) => {
-        this.coupons = pickList;
-        this.loaded();
-      });
     };
-    async onShow () {
-      if (this.init) {
-        // 重新判断店铺状态
-        Tips.setLoading();
-        await this.setShopTitle();
-        this.loaded();
-      }
-    }
-    // 页面风险
+    // TODO 店铺状态判断需要重构
+    // async onShow () {
+    //   if (this.init) {
+    //     // 重新判断店铺状态
+    //     Tips.setLoading();
+    //     await this.setShopTitle();
+    //     this.loaded();
+    //   }
+    // }
+    /**
+     * 页面分享
+     */
     onShareAppMessage () {
       return {};
     }
-    // 分页加载完毕
+    /**
+     * 分页加载完毕, 缓存，处理分类数量
+     */
     onPageLoad() {
       this.pages[this.categories.selectedId] = this.page;
       this.setGoodsNum();
       this.setCategoryNum();
     }
-    // 分页参数
+    /**
+     * 分页参数
+     */
     params() {
       return {category_id: this.categories.selectedId};
     }
-    // 检查是否没有推荐商品
-    async checkOrRloadGoodsList() {
+    /**
+     * 加载商品列表
+     */
+    async loadGoodsList() {
+      this.page = goods.page(true, this.discount);
+      await this.next();
       if (this.page.list.length == 0) {
         // 删掉推荐分类
         if (this.categories.list[0].id == -1) {
@@ -175,29 +169,9 @@
         this.categories.selectedId = -1;
       }
     }
-    // 设置页面标题
-    async setShopTitle() {
-      // 标题处理
-      if (this.mode == 2) {
-        this.title = '点堂食/外带';
-        this.badegText = '堂食';
-        wepy.setNavigationBarTitle({ title: '堂食点餐' });
-      } else {
-        const type = shop.type();
-        this.title = type.name;
-        this.badegText = type.badgeText;
-        wepy.setNavigationBarTitle({ title: type.name });
-      }
-      // 状态处理
-      this.status = await Cache.status();
-      if (!this.status.open) {
-        this.title = this.status.closeTips;
-        if (!this.init) {
-          Tips.modal(this.status.closeTips);
-        }
-      }
-    }
-    // 设置商品分类的数量
+    /**
+     * 设置商品分类数量
+     */
     setCategoryNum() {
       if (!this.categories.list) {
         return;
@@ -211,7 +185,9 @@
         });
       });
     }
-    // 设置商品列表的数量
+    /**
+     * 设置商列表数量
+     */
     setGoodsNum() {
       // 处理商品列表
       this.page.list.forEach(goods => {
@@ -222,7 +198,9 @@
         this.detail.num = this.countCartGoodNum(this.detail.id);
       }
     }
-    // 同步数量
+    /**
+     * 同步购物车数量
+     */
     countCartGoodNum(goodsId) {
       let num = 0;
       this.carts.forEach(cart => {
@@ -232,15 +210,8 @@
       });
       return num;
     }
-    // 更新卡券
-    async loadCoupons() {
-      const {pickList} = await Cache.coupon();
-      this.coupons = pickList;
-      this.$apply();
-    }
     methods = {
       switchTab() {
-        Tips.setLoading();
         const selectedId = this.categories.selectedId;
         // 先判断缓存中是否存在商品列表
         if (this.pages[selectedId] && this.pages[selectedId].list.length > 0) {
@@ -261,11 +232,11 @@
        */
       async pickCoupon({id}, formId) {
         try {
+          Tips.loading();
           await coupon.pick(id);
           shop.reportFormId(formId, 0);
           await Tips.success('领取成功');
-          await Cache.coupon(true);
-          Event.emit('COUPON_LIST_UPDATE');
+          await store.reflesh('ownCoupons', 'pickCoupons');
           this.loaded();
         } catch (e) {
           if (e.serverCode == '50001') {
@@ -277,7 +248,7 @@
         }
       },
       /**
-       * 增加商品
+       * 增加商品到购物车
        */
       async plus({goodsId, goodsSku, count = 1}) {
         // 商品里列表
@@ -337,7 +308,7 @@
         this.loaded();
       },
       /**
-       * 减少商品
+       * 减少购物车商品
        */
       async minus({goodsId, goodsSku}) {
         // 商品对象
@@ -404,6 +375,9 @@
         this.$navigate(`/pages/goods/detail?goodsId=${id}`);
       }
     };
+    /**
+     * 清空购物车
+     */
     async doClearCart() {
       this.carts = [];
       this.setCategoryNum();
@@ -414,6 +388,9 @@
       });
       this.loaded();
     }
+    /**
+     * 再来一单
+     */
     async doResetCart(goodsList) {
       this.carts = [];
       // TODO 需要检验商品是否能够再来一单
@@ -436,23 +413,35 @@
       this.loaded();
       this.loaded();
     }
+    /**
+     * 增加购物车商品
+     */
     doAddCart(goods) {
       const plus = this.methods.plus.bind(this);
       plus({
         goodsId: goods.id
       });
     }
+    /**
+     * SKU选择器
+     */
     async skuSelector(goodsId) {
       this.skuGoods = this.findGoods(goodsId);
       this.skuDisplay = 'true';
       this.loaded();
     }
+    /**
+     * 保存购物车数据
+     */
     saveCartStore() {
       wepy.setStorage({
         key: 'carts',
         data: this.carts
       });
     }
+    /**
+     * 寻找购物车商品
+     */
     findGoods(goodsId) {
       return this.page.list.find(item => item.id == goodsId);
     }
@@ -473,6 +462,55 @@
       this.carts.splice(index, 1);
     }
     computed = {
+      title() {
+        if (this.shop == null || this.shop.type == null) return;
+        const type = this.shop.type;
+        if (!this.status || !this.status.open) {
+          if (!this.init) {
+            Tips.modal(this.status.closeTips);
+          }
+          return this.status.closeTips;
+        }
+        // 标题处理
+        if (this.mode == 2) {
+          wepy.setNavigationBarTitle({ title: '堂食点餐' });
+          return '点堂食/外带';
+        } else {
+          wepy.setNavigationBarTitle({ title: type.name });
+          return type.name;
+        }
+      },
+      badgeText() {
+        if (this.shop == null || this.shop.type == null) return;
+        return this.mode == 2 ? '堂食' : this.shop.type.badgeText;
+      },
+      discount() {
+        if (this.member == null || this.card == null) {
+          return null;
+        }
+        if (this.card.supplyDiscount != 1) {
+          return null;
+        }
+        // 计算折扣
+        const {discountRule, customDiscount} = this.member;
+        let discount = 100;
+        if (customDiscount > 0 && customDiscount < 100) {
+          // 自定义折扣
+          discount = customDiscount;
+        } else if (discountRule != null && discountRule.discount < 100) {
+          // 等级折扣
+          discount = discountRule.discount;
+        }
+        if (discount == 100) {
+          return null;
+        }
+        const categories = discountRule.discountCategoryLists.map(item => item.categoryId);
+        return {
+          level: discountRule.levelName,
+          categories,
+          rate: discount
+        };
+      },
       selectedCategoryName() {
         if (this.init && this.categories && this.categories.list) {
           const selectedId = this.categories.selectedId;
@@ -490,7 +528,8 @@
       Loadmore: Loadmore,
       ShopCart: ShopCart,
       SkuSelector: SkuSelector,
-      Navigator: Navigator
+      Navigator: Navigator,
+      Loading: Loading
     };
     mixins = [base, pagination];
     config = {

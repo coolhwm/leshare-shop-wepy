@@ -91,7 +91,7 @@
   import Event from '../../utils/Event';
 
   export default class GoodsDetail extends wepy.page {
-    def = {
+    data = {
       init: false,
       detail: {},
       count: {},
@@ -102,7 +102,6 @@
       commentInit: false,
       tab: {}
     };
-    data = {...this.def};
     async onLoad ({goodsId}) {
       this.goodsId = goodsId;
       this.detail = await goods.getInfo(goodsId);
@@ -129,7 +128,6 @@
        */
       async switchTab({selectedId}) {
         if (selectedId == 'COMMENT' && !this.commentInit) {
-          Tips.setLoading();
           await this.next();
           this.loaded();
         }

@@ -1,30 +1,31 @@
 <template>
   <Tips />
-  <CouponItem :coupon.sync="coupon" />
+  <view wx:if="{{init}}">
+    <CouponItem :coupon.sync="coupon" />
 
-  <view class="success-box column-center"  wx:if="{{success}}">
-    <text>{{message}}</text>
-  </view>
+    <view class="success-box column-center"  wx:if="{{success}}">
+      <text>{{message}}</text>
+    </view>
 
-  <view class="qr-box column-center" wx:if="{{!success}}">
-    <text class="muted mb20 lg" wx:if="{{coupon.supportType !=1}}">线下店铺消费时出示</text>
-    <canvas  style="width: 200px; height: 200px;" canvas-id="qrcode" wx:if="{{coupon.supportType !=1}}"></canvas>
-    <text style="width: 200px; height: 200px;" class="muted lg column-center" wx:if="{{coupon.supportType ==1}}">暂不支持线下店铺消费</text>
-  </view>
+    <view class="qr-box column-center" wx:if="{{!success}}">
+      <text class="muted mb20 lg" wx:if="{{coupon.supportType !=1}}">线下店铺消费时出示</text>
+      <canvas  style="width: 200px; height: 200px;" canvas-id="qrcode" wx:if="{{coupon.supportType !=1}}"></canvas>
+      <text style="width: 200px; height: 200px;" class="muted lg column-center" wx:if="{{coupon.supportType ==1}}">暂不支持线下店铺消费</text>
+    </view>
 
-  <view class="zan-panel" wx:if="{{!success}}">
-    <view class="zan-btns">
-      <button class="zan-btn zan-btn--fill" @tap="check" wx:if="{{coupon.isSelfUse}}">自助核销</button>
-      <button class="zan-btn" @tap="delete">删除优惠券</button>
+    <view class="zan-panel" wx:if="{{!success}}">
+      <view class="zan-btns">
+        <button class="zan-btn zan-btn--fill" @tap="check" wx:if="{{coupon.isSelfUse}}">自助核销</button>
+        <button class="zan-btn" @tap="delete">删除优惠券</button>
+      </view>
     </view>
   </view>
 
 </template>
 
-
-
 <script>
   import wepy from 'wepy';
+  import store from '../../store/utils';
   import base from '../../mixins/base';
   import input from '../../mixins/input';
   import coupon from '../../api/coupon';
@@ -33,19 +34,17 @@
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
   import FormTips from '../../components/weui/tips';
-  import Cache from '../../utils/Cache';
   let interval = null;
   export default class CouponDetail extends wepy.page {
-    def = {
+    data = {
+      init: false,
       coupon: null,
       success: false,
       message: ''
     };
-    data = {...this.def};
     onLoad (options, {preload}) {
       this.coupon = preload.coupon;
       const id = preload.coupon.id;
-      Tips.setLoading();
       interval = setInterval(async () => {
         const ownList = await coupon.own();
         const target = ownList ? ownList.find(item => item.id == id) : null;
@@ -55,10 +54,12 @@
           this.success = true;
           clearInterval(interval);
           Event.emit(Event.COUPON_LIST_UPDATE);
+          await store.reflesh('ownCoupons', 'pickCoupons');
           await Tips.success('已核销', 1000);
           this.$apply();
         }
       }, 3000);
+      this.loaded();
       Qrcode.init('qrcode', `${this.coupon.couponId}#${this.coupon.id}`);
     };
     onUnload () {
@@ -68,16 +69,16 @@
       async check() {
         await Tips.confirm('确认自助核销？该优惠券将被使用，操作后请将结果给店家展示');
         try {
+          Tips.loading('核销中');
           await coupon.use(this.coupon.id);
           this.coupon.status = 'USED';
           this.message = '已自助核销';
           this.success = true;
           clearInterval(interval);
           await Tips.success('操作成功', 1000);
-          clearInterval(interval);
           this.$apply();
-          await Cache.coupon(true);
           Event.emit(Event.COUPON_LIST_UPDATE);
+          await store.reflesh('ownCoupons', 'pickCoupons');
         } catch (e) {
           console.warn(e);
           this.tips('核销失败:' + e.message);
@@ -86,11 +87,12 @@
       },
       async delete() {
         await Tips.confirm('确认删除该优惠券?');
+        Tips.loading('删除中');
         await coupon.remove(this.coupon.id);
-        await Cache.coupon(true);
         clearInterval(interval);
         await Tips.success('操作成功');
         Event.emit(Event.COUPON_LIST_UPDATE);
+        await store.reflesh('ownCoupons', 'pickCoupons');
         wepy.navigateBack();
       }
     };

@@ -8,7 +8,7 @@
                 <text class="xxs inline">{{shop.address}}</text>
             </view>
             <swiper class="notice-swiper" vertical autoplay circular interval="3000">
-                <swiper-item wx:for="{{shop.notices}}" wx:key="index">
+                <swiper-item wx:for="{{notices}}" wx:key="index">
                     <view class="notice-content">公告：{{item.content}}</view>
                 </swiper-item>
             </swiper>
@@ -21,9 +21,14 @@
   import wepy from 'wepy';
   import WxUtils from '../../utils/WxUtils';
 
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  @connect({
+    shop: store.get('shop'),
+    notices: store.get('notices')
+  })
   export default class ShopHeader extends wepy.component {
     props = {
-      shop: {}
     };
     methods = {
       home () {

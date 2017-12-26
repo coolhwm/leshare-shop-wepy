@@ -1,5 +1,5 @@
 <template>
-
+  <Loading :init.sync="init"/>
   <!--全局表单/收集FORMID-->
   <form class="container" report-submit="true" @submit="reportFormId" wx:if="{{init}}">
 
@@ -24,7 +24,7 @@
       <view class="reduce-item row" wx:if="{{reduce.list.length > 0}}">
         <image class="icon" src="/images/icons/reduce.png"></image><text class="reduce-content inline" >{{reduce.showText}}</text>
       </view>
-      <view class="reduce-item row" wx:for="{{notices}}" wx:key="index">
+      <view class="reduce-item row" wx:for="{{homeNotices}}" wx:key="index">
         <image class="icon" src="/images/icons/sale.png"></image><text class="reduce-content">{{item.content}}</text>
       </view>
     </view>
@@ -34,7 +34,7 @@
       <view class="row-between">
         <button class="shop-btn" plain form-type="submit" @tap="goto" data-url="/pages/shop/index?mode=1">
           <image class="icon-xl" src="/images/home/food.png"></image>
-          <text class="weak">{{shopTitle}}</text>
+          <text class="weak">{{shop.type.name}}</text>
         </button>
 
         <!--堂食模式-->
@@ -68,7 +68,7 @@
         </button>
         <button class="shop-btn" plain form-type="submit" @tap="goto" data-url="/pages/coupon/list">
           <image class="icon-xl" src="/images/home/coupon.png"></image>
-          <view class="weui-badge" style="position: absolute;top: 0;right: 0;" wx:if="{{coupon > 0}}">{{coupon}}张</view>
+          <view class="weui-badge" style="position: absolute;top: 0;right: 0;" wx:if="{{ownCoupons.length > 0}}">{{ownCoupons.length}}张</view>
           <text class="weak">我的优惠券</text>
         </button>
 
@@ -108,41 +108,51 @@
 
 <script>
   import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
   import auth from '../../api/auth';
   import coupon from '../../api/coupon';
   import shop from '../../api/shop';
   import goods from '../../api/goods';
   import base from '../../mixins/base';
-  import Cache from '../../utils/Cache';
   import Tips from '../../utils/Tips';
   import WxUtils from '../../utils/WxUtils';
-  import Event from '../../utils/Event';
+  import Loading from '../../components/common/loading';
   import Copyright from '../../components/common/copyright';
 
+  @connect({
+    shop: store.get('shop'),
+    status: store.get('status'),
+    ownCoupons: store.get('ownCoupons'),
+    reduce: store.get('reduce'),
+    notices: store.get('notices')
+  })
   export default class ShopHome extends wepy.page {
-    def = {
+    data = {
       init: false,
-      shop: {},
-      status: null,
       goods: [],
-      shopTitle: '在线商城',
-      reduce: null,
-      share: null,
-      coupon: null,
-      notices: null
+      share: null
     };
-    data = {...this.def};
     async onLoad ({sence}) {
+      // 登录检查
       await auth.login();
-      this.shop = await Cache.shop();
-      this.shopTitle = shop.type().name;
+      // 初始化全局存储
+      await store.init();
+      // 加载推荐商品
+      const {list} = await goods.page(true).next();
+      this.goods = list.length > 5 ? list.slice(0, 5) : list;
+      // 视图渲染
       this.loaded();
+      // 访问记录
       this.visit(sence);
+      // 获取弹出
       this.campaign(sence);
+      // 兼容性检查
       this.share = WxUtils.canIUse('button.open-type.share');
-      this.preload();
-      Event.listen(Event.COUPON_LIST_UPDATE, this.updateCoupon.bind(this), this);
     };
+    /**
+     * 活动跳转
+     */
     campaign(sence) {
       coupon.campaign({
         sence: sence,
@@ -155,58 +165,51 @@
         }
       });
     }
+    /**
+     * 访问记录
+     */
     visit(sence) {
-      // 记录访问信息
       shop.visit(sence, wepy.$instance.globalData.scene);
       wepy.$instance.globalData.scene = '';
     }
-    preload() {
-      Tips.setLoading();
-      // 状态信息/推荐商品异步加载
-      Cache.status().then(status => {
-        this.status = status;
-        return goods.page(true).next();
-      }).then(({list}) => {
-        if (list.length > 5) {
-          this.goods = list.slice(0, 5);
-        } else {
-          this.goods = list;
-        }
-        return Cache.reduce();
-      }).then(data => {
-        this.reduce = data;
-        return Cache.notices();
-      }).then(data => {
-        this.notices = data.filter(item => item.isHome == 1);
-        this.loaded();
-      });
-      // 页面缓存预加载
-      Cache.categories().then();
-      Cache.coupon().then(({ownList}) => {
-        this.coupon = ownList.length;
-        this.$apply();
-      });
-    }
-    updateCoupon() {
-      Cache.coupon().then(({ownList}) => {
-        this.coupon = ownList.length;
-        this.loaded();
-      });
-    }
+
+    /**
+     * 分享
+     */
     onShareAppMessage () {
       return {};
     }
+    /**
+     * 下拉刷新
+     */
+    async onPullDownRefresh() {
+      await store.reflesh('shop', 'notices', 'reduce', 'ownCoupons', 'status');
+      this.loaded();
+      wepy.stopPullDownRefresh();
+    }
     methods = {
+      /**
+       *  表单上报 TODO 可以抽取出来
+       */
       reportFormId({detail}) {
         shop.reportFormId(detail.formId);
       },
+      /**
+       * 跳转
+       */
       goto(event) {
         const url = event.currentTarget.dataset.url;
         this.$navigate(url);
       },
+      /**
+       * 打电话
+       */
       phone() {
         wepy.makePhoneCall({phoneNumber: this.shop.phone});
       },
+      /**
+       * 导航
+       */
       nav () {
         const longitude = this.shop.longitude;
         const latitude = this.shop.latitude;
@@ -217,6 +220,9 @@
           address: this.data.shop.describe
         });
       },
+      /**
+       * 商品图片
+       */
       previewGoodsImages(url) {
         const urls = this.goods.map(item => item.imageUrl);
         wepy.previewImage({
@@ -224,6 +230,9 @@
           urls: urls
         });
       },
+      /**
+       * 店铺图片
+       */
       previewShopImages (url) {
         const urls = this.shop.images.map(item => item.url);
         wepy.previewImage({
@@ -231,16 +240,27 @@
           urls: urls
         });
       },
+      /**
+       * 分享兼容提示
+       */
       share () {
         Tips.modal('当前版本过低，请更新微信或点击右上角进行分享');
       }
     };
+    computed = {
+      homeNotices() {
+        if (!this.notices || !this.notices.filter) return [];
+        return this.notices.filter(item => item.isHome == 1);
+      }
+    };
     components = {
-      Copyright: Copyright
+      Copyright: Copyright,
+      Loading: Loading
     };
     mixins = [base];
     config = {
-      navigationBarTitleText: '首页'
+      navigationBarTitleText: '首页',
+      enablePullDownRefresh: true
     };
   }
 </script>

@@ -43,10 +43,9 @@
   import address from '../../api/address';
   import SearchBar from '../../components/weui/search_bar';
   import Event from '../../utils/Event';
-  // import Tips from '../../utils/Tips';
 
   export default class AddressSearch extends wepy.page {
-    def = {
+    data = {
       currentAddress: '正在定位中...',
       latitude: null,
       longitude: null,
@@ -55,7 +54,6 @@
       searchLocations: null,
       isSearch: false
     };
-    data = {...this.def};
     async onLoad () {
       await this.locate();
     };
@@ -64,7 +62,6 @@
       const {latitude, longitude} = await wepy.getLocation({type: 'gcj02'});
       this.latitude = latitude;
       this.longitude = longitude;
-      console.info(this.latitude, longitude);
       // 逆向解析
       const reverse = await address.reverse(latitude, longitude);
       this.currentLocation = reverse.current;
