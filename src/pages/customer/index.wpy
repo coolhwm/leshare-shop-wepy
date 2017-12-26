@@ -91,7 +91,8 @@
     shop: store.get('shop'),
     member: store.get('member'),
     card: store.get('card'),
-    user: store.get('user')
+    user: store.get('user'),
+    version: store.get('version')
   })
   export default class CustomerIndex extends wepy.page {
     data = {
@@ -107,11 +108,15 @@
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;
       await store.init();
-      this.page = order.page();
-      // 分页加载
-      await this.next();
-      // 监听更新事件
-      Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
+      if (!this.version.isMember) {
+        this.$redirect('index_basic');
+      } else {
+        this.page = order.page();
+        // 分页加载
+        await this.next();
+        // 监听更新事件
+        Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
+      }
     };
     async onPullDownRefresh() {
       await store.reflesh('card', 'member');

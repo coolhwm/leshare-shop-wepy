@@ -74,7 +74,7 @@
           <text class="weak">我的优惠券</text>
         </button>
 
-        <button class="shop-btn" plain @tap="goto" data-url="/pages/customer/index" >
+        <button class="shop-btn" plain @tap="goto" data-url="{{version.isMember ? '/pages/customer/index' : '/pages/customer/index_basic'}}" >
           <image class="icon-xl" src="/images/home/my.png"></image>
           <text class="weak">个人中心</text>
         </button>
