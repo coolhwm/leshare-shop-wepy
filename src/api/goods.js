@@ -240,9 +240,9 @@ export default class goods extends base {
     const images = item.images;
     // 图片处理
     if (images == null || images.length < 1) {
-      item.imageUrl = '/images/goods/broken.png';
+      item.imageUrl = '/images/icons/broken.png';
     } else if (images[0].url == null) {
-      item.imageUrl = '/images/goods/broken.png';
+      item.imageUrl = '/images/icons/broken.png';
     } else {
       item.imageUrl = images[0].url + '/medium';
     }
