@@ -1,12 +1,12 @@
 <template>
   <view class="coupon-item">
-    <view class="coupon-main column" wx:if="CASH">
+    <view class="coupon-main column"  wx:if="{{coupon.type == 'CASH'}}">
       <view>
         <text class="xs">￥</text> <text class="xxl">{{coupon.price}}</text>
       </view>
       <text class="xs">满{{coupon.limitPrice}}元使用</text>
     </view>
-    <view class="coupon-main column" wx:if="EXCHANGE">
+    <view class="coupon-main column" wx:if="{{coupon.type == 'EXCHANGE'}}">
       <view>
         <text class="xxl">兑换券</text>
       </view>
