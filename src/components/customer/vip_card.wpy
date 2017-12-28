@@ -102,7 +102,7 @@
         if (!isRule || !isMember) return '';
         const {unit} = this.card.memberPresentRules[0];
         // 没有初始化的情况
-        if (!isRule || isMember) return `当前已累计0${unit}`;
+        if (!isRule || !isMember) return `当前已累计0${unit}`;
         // 正常的情况
         const {currentCount} = this.member.memberPresentDetails[0];
         return `当前已累计${currentCount}${unit}`;

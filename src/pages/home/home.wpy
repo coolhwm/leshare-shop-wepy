@@ -20,7 +20,7 @@
     </view>
 
     <!--优惠信息-->
-    <view class="reduce-box column" wx:if="{{reduce.list.length > 0 || notices.length > 0}}" @tap="shop">
+    <view class="reduce-box column" wx:if="{{reduce.list.length > 0 || homeNotices.length > 0}}" @tap="shop">
       <view class="reduce-item row" wx:if="{{reduce.list.length > 0}}">
         <image class="icon" src="/images/icons/reduce.png"></image><text class="reduce-content inline" >{{reduce.showText}}</text>
       </view>

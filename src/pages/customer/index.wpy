@@ -39,8 +39,16 @@
       <!-- 原始用户信息 -->
       <block wx:else>
         <ShopHeader navType="navigateBack" />
-        <HomeNav badegText="我的" title="我的订单"  navText="返回" navUrl="/pages/shop/index" />
-        <CouponNav title="优惠券"  navText="查看" navUrl="/pages/coupon/list" last="true" />
+        <view class="nav-box row-between {{last == 'true' ? 'nav-box-last' : ''}}">
+          <view class="header row">
+            <view class="label primary small">订单</view>
+            <text>我的订单</text>
+          </view>
+          <navigator class="footer row" open-type="navigateBack">
+            <text class="muted">返回</text>
+            <image class="icon" src="/images/icons/more-gray.png" />
+          </navigator>
+        </view>
       </block>
 
     </view>
@@ -158,8 +166,6 @@
       Placeholder: Placeholder,
       Loadmore: Loadmore,
       VipCard: VipCard,
-      HomeNav: ShopNav,
-      CouponNav: ShopNav,
       OrderItem: OrderItem,
       ShopHeader: ShopHeader,
       Loading: Loading
@@ -209,5 +215,12 @@
       width: 1px;
       height: 50rpx;
     }
+  }
+  .nav-box {
+    height: 27px;
+    position: relative;
+    background-color: #FFFFFF;
+    padding:8px 13px;
+    border-top: $border;
   }
 </style>
