@@ -122,8 +122,9 @@
       discountText() {
         if (this.member == null || this.member.discountRule == null) return;
         const {discountRule, customDiscount} = this.member;
-        const discount = customDiscount != null ? customDiscount : discountRule.discount;
-        if (discount < 100) {
+        const isCustomDiscount = customDiscount != null && customDiscount > 0 && customDiscount <= 100;
+        const discount = isCustomDiscount ? customDiscount : discountRule.discount;
+        if (discount < 100 && discount > 0) {
           const discountText = (discount / 10).toFixed(1);
           return `持卡享受${discountText}折优惠`;
         }
