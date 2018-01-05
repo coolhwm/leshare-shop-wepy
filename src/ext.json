@@ -5,5 +5,37 @@
     "shopType": "2",
     "shopName": "77漫品连江店",
     "app_code": "AsyQrJJ2A3JeaPs4a2M8rs9fi4AzgRcg"
+  },
+  "tabBar": {
+    "color": "#666666",
+    "selectedColor": "#1296db",
+    "borderStyle": "white",
+    "backgroundColor": "#FAFAFA",
+    "list": [
+      {
+        "iconPath": "images/tab/home.png",
+        "selectedIconPath": "images/tab/home-active.png",
+        "pagePath": "pages/home/home",
+        "text": "首页"
+      },
+      {
+        "iconPath": "images/tab/cart.png",
+        "selectedIconPath": "images/tab/cart-active.png",
+        "pagePath": "pages/home/home",
+        "text": "购物车"
+      },
+      {
+        "iconPath": "images/tab/order.png",
+        "selectedIconPath": "images/tab/order-active.png",
+        "pagePath": "pages/home/home",
+        "text": "订单"
+      },
+      {
+        "iconPath": "images/tab/user.png",
+        "selectedIconPath": "images/tab/user-active.png",
+        "pagePath": "pages/home/home",
+        "text": "我的"
+      }
+    ]
   }
 }
