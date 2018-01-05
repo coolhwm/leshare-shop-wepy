@@ -30,6 +30,7 @@
     "pages/customer/address_list",
     "pages/customer/bonus_list",
     "pages/customer/vip_info",
+    "pages/customer/sign_in",
     "pages/address/list",
     "pages/address/search",
     "pages/coupon/use",
