@@ -91,6 +91,7 @@
 
     async onLoad () {
       await this.getUserSign();
+      this.loaded();
     }
     methods = {
       async sign () {
@@ -105,6 +106,9 @@
       // 是否签到
       signs () {
         const myDate = new Date();
+        if (!this.signIn) {
+          return;
+        }
         if (this.signIn.lastDate == this.dateChange(myDate)) {
           this.signed = true;
         }
