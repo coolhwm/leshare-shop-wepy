@@ -1,6 +1,7 @@
 
 import base from './base';
 import wepy from 'wepy';
+import Page from '../utils/Page';
 
 export default class shop extends base {
   static TYPE = {
@@ -131,5 +132,42 @@ export default class shop extends base {
     } catch (e) {
       console.warn('formid上报错误', e);
     }
+  }
+  /**
+   * 签到记录信息
+   */
+  static signList(memberId) {
+    const url = `${this.baseUrl}/member_sign?member_id=${memberId}`;
+    return this.get(url);
+  }
+  /**
+   * 签到
+   */
+  static sign(memberId) {
+    const url = `${this.baseUrl}/member_sign?member_id=${memberId}`;
+    return this.post(url);
+  }
+  /**
+   * 签到历史记录
+   */
+  static signHistory() {
+    const url = `${this.baseUrl}/member_sign/history`;
+    return new Page(url, this._processSignData.bind(this));
+  }
+  /**
+   * 处理签到历史记录数据
+   */
+  static _processSignData(item) {
+    const sign = {};
+    sign.createTime = item.createTime;
+    if (item.bonusType == 0) {
+      sign.typeDesc = '积分';
+      sign.addBonus = item.bonusResult;
+    } else {
+      sign.typeDesc = '优惠券';
+      sign.couponName = item.coupon.name;
+    }
+    sign.orderId = 0;
+    return sign;
   }
 }

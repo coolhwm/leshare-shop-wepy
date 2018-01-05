@@ -29,9 +29,15 @@
           </view>
 
           <view class="v-line"/>
-          <view class="btn" @tap="gotoDetail" url="/pages/customer/vip_detail">
+          <view class="btn" @tap="gotoDetail">
             <image class="icon" src="/images/icons/privilege.png"/>
             <text class="xs">我的特权</text>
+          </view>
+
+          <view class="v-line"/>
+          <view class="btn" @tap="gotoSign">
+            <image class="icon" src="/images/icons/sign.png"/>
+            <text class="xs">签到</text>
           </view>
         </view>
       </block>
@@ -88,7 +94,6 @@
   import Placeholder from '../../components/common/placeholder';
   import VipCard from '../../components/customer/vip_card';
   import ShopHeader from '../../components/shop/header';
-  import ShopNav from '../../components/shop/nav';
   import Loadmore from '../../components/weui/loadmore';
   import OrderItem from '../../components/order/customer_item';
   import Event from '../../utils/Event';
@@ -155,6 +160,9 @@
           return;
         }
         this.$root.$navigate('/pages/customer/vip_detail');
+      },
+      gotoSign() {
+        this.$root.$navigate(`/pages/customer/sign_in`);
       }
     };
     computed = {

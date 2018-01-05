@@ -186,7 +186,7 @@ export default class order extends base {
    */
   static queryPostPrice (address, goodsList) {
     const url = `${this.baseUrl}/delivery`;
-    const param = {
+      const param = {
       address: address,
       goodsList: goodsList
     };
