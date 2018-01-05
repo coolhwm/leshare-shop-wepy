@@ -78,9 +78,11 @@
     };
     async getUserSign () {
       this.signIn = await shop.signList(this.member.memberId);
-      this.page = await shop.signHistory();
-      this.dateAdd();
-      this.next();
+      if (this.signIn) {
+        this.page = await shop.signHistory();
+        this.dateAdd();
+        this.next();
+      }
     }
 
     async doSign () {
