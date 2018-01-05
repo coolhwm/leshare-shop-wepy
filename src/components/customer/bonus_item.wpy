@@ -5,20 +5,23 @@
       <text class="xs">{{bonusInfo.createTime}}</text>
     </view>
     <view class="row-between">
-      <view class="row bonus">
-        <view class="money-box">
+      <view class="row bonus" wx:if="{{bonusInfo.couponName == null}}">
+        <view class="money-box" wx:if="{{bonusInfo.costMoney}}">
           <text class="xs muted">{{bonusInfo.costMoney}}</text>
         </view>
 
-        <view class="v-line"/>
-        <view class="ml10" wx:if="{{bonusInfo.addBonus >= 0}}">
+        <view class="v-line mr10" wx:if="{{bonusInfo.costMoney}}"/>
+        <view wx:if="{{bonusInfo.addBonus >= 0}}">
           <text class="xs muted">积分：</text>
           <text class="xs danger">+{{bonusInfo.addBonus}}</text>
         </view>
-        <view class="ml10" wx:if="{{bonusInfo.addBonus < 0}}">
+        <view wx:if="{{bonusInfo.addBonus < 0}}">
           <text class="xs muted">积分：</text>
           <text class="xs text-color">{{bonusInfo.addBonus}}</text>
         </view>
+      </view>
+      <view wx:else>
+        <text class="xs muted">{{bonusInfo.couponName}}</text>
       </view>
       <view class="row bonus" wx:if="{{bonusInfo.orderId != 0}}">
         <text class="xs muted" @tap="toOrderDetail({{bonusInfo.orderId}})">查看订单 ></text>
