@@ -71,6 +71,7 @@
   import Tips from '../../utils/Tips';
   import Loading from '../../components/common/loading';
   import Event from '../../utils/Event';
+  import Cart from '../../utils/Cart';
 
   @connect({
     shop: store.get('shop'),
@@ -88,13 +89,14 @@
       init: false,
       page: {},
       pages: {},
-      categoryTab: {},
       carts: [],
+      categoryTab: {},
       skuDisplay: 'false',
       detailDisplay: false,
       skuGoods: {},
       mode: 1
     };
+    cartManager = Cart.create();
     async onLoad ({goodsId, mode}, {preload}) {
       this.mode = mode;
       // 用户信息
@@ -103,9 +105,6 @@
       await store.init();
       // 加载商品分类
       this.categoryTab = {...this.categories};
-      // 购物车
-      const carts = wepy.getStorageSync('carts');
-      this.carts = carts == '' ? [] : carts;
       // 加载商品列表
       await this.loadGoodsList();
       // 处理推荐跳转
@@ -113,13 +112,8 @@
         const detail = this.methods.detail.bind(this);
         detail({id: goodsId});
       }
-      // 处理购物车初始化
-      if (preload && preload.cart) {
-        await this.doResetCart(preload.cart)
-      }
       // 监听事件
       Event.listen(Event.CART_LIST_CLEAR, this.doClearCart.bind(this), this);
-      Event.listen(Event.CART_LIST_RESET, this.doResetCart.bind(this), this);
       Event.listen(Event.CART_LIST_ADD, this.doAddCart.bind(this), this);
       this.loaded();
     };
@@ -134,8 +128,6 @@
      */
     onPageLoad() {
       this.pages[this.categories.selectedId] = this.page;
-      this.setGoodsNum();
-      this.setCategoryNum();
     }
     /**
      * 分页参数
@@ -242,16 +234,18 @@
         }
       },
       /**
-       * 增加商品到购物车
+       * 增加商品到购物车 TODO
        */
       async plus({goodsId, goodsSku, count = 1}) {
         // 商品里列表
         const goods = this.findGoods(goodsId);
         if (goods) {
+          // 没有选择SKU的情况
           if (goods.goodsSkuInfo && goodsSku == null) {
             await this.skuSelector(goodsId);
             return;
           }
+          // 不存在SKU的情况
           if (goods.goodsSkuInfo == null) {
             const isMax = goods.goodsStocks[0].stock == 0 || goods.num >= goods.goodsStocks[0].stock;
             if (isMax) {
@@ -259,45 +253,8 @@
             }
           }
         }
-        // 购物车
-        const target = this.findCart(goodsId, goodsSku);
-        if (target) {
-          // 购物车中已存在
-          target.goodsNum = target.goodsNum + count;
-          target.totalPrice = (target.goodsNum * target.goodsPrice).toFixed(2);
-        } else {
-          // 购物车中不存在
-          let goodsPrice, originalPrice;
-          if (goodsSku) {
-            const skuInfo = goods.goodsSkuInfo.goodsSkuDetails.find(item => item.sku == goodsSku);
-            goodsPrice = skuInfo.goodsSkuDetailBase.price;
-            originalPrice = skuInfo.goodsSkuDetailBase.originalPrice;
-          } else if (goods) {
-            goodsPrice = goods.sellPrice;
-            originalPrice = goods.originalPrice;
-          } else if (this.detail && this.detail.id == goodsId) {
-            goodsPrice = this.detail.sellPrice;
-          }
-          // goodsPrice = goodsPrice.toFixed(2);
-          this.carts.push({
-            goodsId: goodsId,
-            goodsSku: goodsSku,
-            goodsName: goods.name,
-            innerCid: goods.innerCid,
-            goodsImage: goods.imageUrl,
-            goodsPrice: goodsPrice,
-            goodsNum: 1,
-            totalPrice: goodsPrice,
-            originalPrice: originalPrice,
-            discount: goods.discount,
-            discountRate: goods.discountRate,
-            discountText: goods.discountText
-          });
-        }
-        // 重置数据
-        this.setGoodsNum();
-        this.setCategoryNum();
-        this.saveCartStore();
+        // 加入购物车
+        this.cartManager.plus(goods, goodsSku);
         this.skuGoods = {};
         this.loaded();
       },
@@ -312,23 +269,18 @@
           return;
         }
         // 若果购物车有多个对象，但是goodsSku 为空，那么则无法操作
-        const count = this.countCart(goodsId);
-        if (count > 1 && goodsSku == null) {
+        const cartGoodsList = this.cartManager.findByGoodsId(goodsId);
+        if (cartGoodsList.length > 1 && goodsSku == null) {
           Tips.alert('请在购物车操作');
           return;
         }
-        // 购物车对象
-        const target = this.findCart(goodsId, goodsSku);
-        if (target.goodsNum == 1) {
-          this.removeCart(goodsId, target.goodsSku);
-        } else {
-          target.goodsNum -= 1;
-          target.totalPrice = (target.goodsNum * target.goodsPrice).toFixed(2);
+        // 处理多规格商品，但是购物车只有一个的情况
+        const cartGoods = cartGoodsList[0];
+        if (goodsSku == null && cartGoods.goodsSku != null) {
+          goodsSku = cartGoods.goodsSku
         }
-        // 重置数据
-        this.setGoodsNum();
-        this.setCategoryNum();
-        this.saveCartStore();
+        // 购物车对象
+        this.cartManager.minus(goodsId, goodsSku);
         this.loaded();
       },
       /**
@@ -373,38 +325,7 @@
      * 清空购物车
      */
     async doClearCart() {
-      this.carts = [];
-      this.setCategoryNum();
-      this.setGoodsNum();
-      wepy.setStorage({
-        key: 'carts',
-        data: []
-      });
-      this.loaded();
-    }
-    /**
-     * 再来一单
-     */
-    async doResetCart(goodsList) {
-      this.carts = [];
-      // TODO 需要检验商品是否能够再来一单
-      goodsList.forEach(goods => {
-        this.carts.push({
-          goodsId: goods.goodsId,
-          goodsSku: goods.goodsSku,
-          goodsName: goods.goodsName,
-          innerCid: goods.innerCid,
-          goodsImage: goods.imageUrl,
-          goodsPrice: goods.goodsPrice,
-          goodsNum: goods.count,
-          totalPrice: (goods.goodsPrice * goods.count).toFixed(2)
-        });
-      });
-      // 重置数据
-      this.setGoodsNum();
-      this.setCategoryNum();
-      this.saveCartStore();
-      this.loaded();
+      this.cartManager.clear();
       this.loaded();
     }
     /**
@@ -425,39 +346,14 @@
       this.loaded();
     }
     /**
-     * 保存购物车数据
-     */
-    saveCartStore() {
-      wepy.setStorage({
-        key: 'carts',
-        data: this.carts
-      });
-    }
-    /**
      * 寻找购物车商品
      */
     findGoods(goodsId) {
       return this.page.list.find(item => item.id == goodsId);
     }
-    findCart(goodsId, goodsSku) {
-      return this.carts.find(item => item.goodsId == goodsId && (goodsSku == null || item.goodsSku == goodsSku));
-    }
-    countCart(goodsId) {
-      let count = 0;
-      this.carts.forEach(item => {
-        if (item.goodsId == goodsId) {
-          count += 1;
-        }
-      });
-      return count;
-    }
-    removeCart(goodsId, goodsSku) {
-      const index = this.carts.findIndex(item => item.goodsId == goodsId && item.goodsSku == goodsSku);
-      this.carts.splice(index, 1);
-    }
     computed = {
       /**
-       * 折扣对象
+       * 计算折扣对象
        */
       discount() {
         if (this.member == null || this.card == null) {
@@ -495,6 +391,22 @@
           const selectedId = this.categories.selectedId;
           return this.categories.list.find(item => item.id == selectedId).title;
         }
+      },
+      /**
+       * 导出购物车对象
+       */
+      cart() {
+        if (this.cartManager == null || this.page.list == null) {
+          return;
+        }
+        const cart = this.cartManager.export();
+        // 同步购物车商品
+        this.carts = cart.carts;
+        // 同步商品列表的计数器
+        this.setGoodsNum();
+        // 同步左侧列表
+        this.setCategoryNum();
+        return this.cartManager.export();
       }
     };
     components = {
