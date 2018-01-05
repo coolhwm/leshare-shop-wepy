@@ -234,7 +234,7 @@
         }
       },
       /**
-       * 增加商品到购物车 TODO
+       * 增加商品到购物车
        */
       async plus({goodsId, goodsSku, count = 1}) {
         // 商品里列表

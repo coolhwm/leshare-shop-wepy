@@ -1,0 +1,300 @@
+<template>
+  <view class="container" wx:if="{{init}}">
+    <view class="cart-header-container" wx:if="{{cart.carts.length > 0}}">
+
+      <view class="cart-shop-info-container">
+        <view class="cart-check-container" @tap="checkAll">
+          <view class="zan-icon zan-icon-{{cart.all ? 'checked' : 'check'}}" />
+        </view>
+        <image class="shop-info-icon" src="/images/icons/shop-gray.png" />
+        <text class="shop-info-name">{{shop.name}}</text>
+      </view>
+      <text class="cart-batch-edit" catchtap="batch"> {{cart.batch ? '完成' : '编辑'}}</text>
+    </view>
+
+    <!--占位提示-->
+    <view class="cart-empty-tips" wx:if="{{cart.carts.length == 0}}">
+      <image src="/images/icons/cart-empty.png" />
+      <text>购物车是空的</text>
+    </view>
+
+    <!--购物车内容-->
+    <view class="item-list-container">
+      <repeat for="{{cart.carts}}"  key="index" index="index" item="item">
+        <CartItem :cart.sync="item" :index.sync="index"
+                  @num.user="num" @check.user="check" @remove.user="remove"/>
+      </repeat>
+
+    </view>
+
+    <!--底栏-->
+    <view class="cart-bar-container">
+
+      <view class="cart-check-all-container" @tap="checkAll">
+        <view class="zan-icon zan-icon-{{cart.all ? 'checked' : 'check'}}" />
+        <text>全选</text>
+      </view>
+
+      <block wx:if="{{cart.batch}}">
+        <view class="cart-batch-btn-container">
+          <button class="zan-btn zan-btn--small" catchtap="onBatchFav">加入收藏</button>
+          <button class="zan-btn zan-btn--small zan-btn--danger" @tap="batchRemove">删除商品</button>
+        </view>
+      </block>
+      <block wx:else>
+        <view class="cart-check-info-container">
+          <view class="cart-check-price-container">
+            <text>总计：</text>
+            <text class="goods-price">￥{{cart.price}}</text>
+          </view>
+          <text class="cart-check-tips-text">不含运费，已优惠￥0.00</text>
+        </view>
+
+        <view class="bar-buy-container {{cart.buy ? '' : 'bar-buy-empty'}}" @tap="buy">
+          <text class="text-btn" wx:if="{{cart.buy}}">去结算</text>
+          <text class="text-btn" wx:elif="{{!status.open}}">未营业</text>
+          <text class="text-btn" wx:else>请选购</text>
+          <text class="text-small" wx:if="{{cart.buy}}">({{cart.num}})</text>
+        </view>
+      </block>
+
+    </view>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import base from '../../mixins/base';
+  import order from '../../api/order';
+  import auth from '../../api/auth';
+  import Cart from '../../utils/Cart';
+  import CartItem from '../../components/goods/cart';
+  // import Cache from '../../utils/Cache';
+  import Tips from '../../utils/Tips';
+
+  @connect({
+    shop: store.get('shop'),
+    status: store.get('status')
+  })
+  export default class GoodsCart extends wepy.page {
+    def = {
+      init: false
+    };
+    data = {...this.def};
+    cartManager = Cart.create();
+    async onLoad (options) {
+      this.loaded();
+    };
+    methods = {
+      // 修改商品数量
+      num({componentId, quantity}) {
+        this.cartManager.updateNum(componentId, quantity);
+      },
+      // 选择商品
+      check(index) {
+        this.cartManager.toggleCartCheck(index);
+      },
+      // 全部选择
+      checkAll() {
+        this.cartManager.toggleAllCheck();
+      },
+      // 批量模式
+      batch() {
+        this.cartManager.toggleBatch();
+      },
+      async remove(index) {
+        await Tips.confirm('确认删除该商品？');
+        this.cartManager.remove(index);
+        await Tips.success('删除成功');
+        this.$apply();
+      },
+      // 批量删除
+      async batchRemove() {
+        await Tips.confirm('确认删除选中商品？');
+        this.cartManager.removeChecked();
+        await Tips.success('删除成功');
+        this.$apply();
+      },
+      // 购物车结算
+      async buy (param = {}) {
+        // 权限校验
+        const result = await auth.user({block: true, redirect: false});
+        if (!result) return;
+        // 订单类型
+        param.orderType = 10;
+        const trade = order.createCartTrade(this.cartManager.carts, param);
+        // shop.reportFormId(param.formId);
+        this.$preload('trade', trade);
+        this.$navigate(`../order/trade`);
+      }
+    };
+    computed = {
+      cart() {
+        if (this.cartManager === null) {
+          return;
+        }
+        return this.cartManager.export();
+      }
+    };
+    components = {
+      CartItem: CartItem
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '订单详情'
+    };
+  }
+</script>
+
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .container{
+    padding-bottom: 120rpx;
+    width: 750rpx;
+    overflow-x: hidden;
+  }
+
+  /*占位*/
+  .cart-empty-tips{
+    position: fixed;
+    top: 300rpx;
+    width: 100%;
+    height: 300rpx;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+  .cart-empty-tips image{
+    width:200rpx;
+    height: 200rpx;
+  }
+  .cart-empty-tips text{
+    color: #656565;
+    font-size: 40rpx;
+    margin-left: 30rpx;
+  }
+
+  /*
+  * 底部购买栏样式
+  */
+  .cart-bar-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    height: 100rpx;
+    width: 100%;
+    background: #FEFEFE;
+    border-top: 1px solid #DCDCDC;
+    border-bottom: 1px solid #EEEEEE;
+    z-index: 100;
+  }
+
+  /*选择框容器*/
+  .cart-check-all-container{
+    display: flex;
+    flex-direction: column;
+    width: 80rpx;
+    margin-right: 20rpx;
+    text-align: center;
+  }
+
+
+  /*购买框容器*/
+  .bar-buy-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 250rpx;
+    background-color: #1296db;
+    color: #FFF;
+  }
+  /*购买按钮*/
+  .bar-buy-container text{
+    color: #FFF;
+  }
+  .bar-buy-container .text-btn{
+    font-size: 40rpx;
+  }
+
+  /*汇总信息*/
+  .cart-check-info-container{
+    display: flex;
+    flex:1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    padding-right: 30rpx;
+  }
+  /*汇总信息文字*/
+  .cart-check-price-container text{
+    font-size: 35rpx;
+  }
+  .cart-check-tips-text{
+    font-size: 26rpx;
+    color: #A6A6A6;
+  }
+  .goods-price{
+    color:#ff6200;
+  }
+
+  /*没有购买物品的情况*/
+  .bar-buy-empty{
+    background-color: #B0B0B0;
+  }
+
+  /*顶栏*/
+  .cart-header-container{
+    padding-right: 25rpx;
+    padding-left: 20rpx;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 85rpx;
+    background-color: #FBFBFB;
+    margin-top: 20rpx;
+  }
+
+  .cart-shop-info-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  /*顶栏图片*/
+  .shop-info-icon{
+    height: 40rpx;
+    width: 40rpx;
+    vertical-align: middle;
+  }
+
+  /*顶栏店铺名称*/
+  .shop-info-name{
+    margin-left: 10rpx;
+    margin-right: 20rpx;
+    font-size: 28rpx;
+    color:#262626;
+  }
+
+
+  /*批量编辑*/
+  .cart-batch-edit{
+    font-size: 28rpx;
+    color: #A3A3A3;
+  }
+
+  /*批量编辑栏样式*/
+  .cart-batch-btn-container{
+    padding-right: 10rpx;
+  }
+</style>
