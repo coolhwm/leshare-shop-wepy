@@ -66,7 +66,8 @@
       },
       signed: false,
       signDay: [],
-      signIn: {}
+      signIn: {},
+      type: ''
     };
     data = {...this.def};
     params () {
@@ -80,32 +81,41 @@
       this.signIn = await shop.signList(this.member.memberId);
       if (this.signIn) {
         this.page = await shop.signHistory();
-        this.dateAdd();
         this.next();
       }
+      this.dateAdd();
     }
-
+    // 点击签到
     async doSign () {
       await shop.sign(this.member.memberId);
       Tips.success('签到成功');
       await this.getUserSign();
     }
 
-    async onLoad () {
+    async onLoad (option) {
+      if (option.param != null) {
+        this.type = option.param;
+      }
       await this.getUserSign();
       this.loaded();
     }
     methods = {
+      // 点击签到事件
       async sign () {
         if (this.signed) {
           Tips.alert('你今天已签过了!');
         } else {
           await this.doSign();
         }
+        if (this.type == 'home') {
+          setTimeout(() => {
+            wepy.navigateBack();
+          }, 1000);
+        }
       }
     };
     computed = {
-      // 是否签到
+      // 判断当天是否签到
       signs () {
         const myDate = new Date();
         if (!this.signIn) {
@@ -116,7 +126,7 @@
         }
       }
     };
-    // 日期数组填充7天
+    // 日期数组填充7天区分是否签到
     dateAdd () {
       for (let i = 6; i >= 0; i--) {
         let date = new Date();
@@ -127,23 +137,6 @@
           this.signDay.push({signTime: date.getDate(), signed: 0});
         }
       }
-    };
-    // 日期截取
-    dateChange (date) {
-      const year = `${date.getFullYear()}`;
-      let month = `${date.getMonth() + 1}`;
-      if (month.length == 1) {
-        month = `0${date.getMonth() + 1}`
-      } else {
-        month = `${date.getMonth() + 1}`
-      }
-      let day = `${date.getDate()}`;
-      if (day.length == 1) {
-        day = `0${date.getDate()}`
-      } else {
-        day = `${date.getDate()}`
-      }
-      return year + month + day
     };
     config = {
       navigationBarTitleText: '签到有礼'

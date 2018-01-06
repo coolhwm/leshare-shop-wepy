@@ -15,6 +15,23 @@
       nopen() {
         Tips.alert('尚未开放');
       }
-    }
+    };
+    // 日期截取
+    dateChange (date) {
+      const year = `${date.getFullYear()}`;
+      let month = `${date.getMonth() + 1}`;
+      if (month.length == 1) {
+        month = `0${date.getMonth() + 1}`
+      } else {
+        month = `${date.getMonth() + 1}`
+      }
+      let day = `${date.getDate()}`;
+      if (day.length == 1) {
+        day = `0${date.getDate()}`
+      } else {
+        day = `${date.getDate()}`
+      }
+      return year + month + day
+    };
   }
 </script>

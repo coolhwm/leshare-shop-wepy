@@ -128,13 +128,15 @@
     ownCoupons: store.get('ownCoupons'),
     reduce: store.get('reduce'),
     notices: store.get('notices'),
-    version: store.get('version')
+    version: store.get('version'),
+    member: store.get('member')
   })
   export default class ShopHome extends wepy.page {
     data = {
       init: false,
       goods: [],
-      share: null
+      share: null,
+      isFirst: true
     };
     async onLoad ({sence}) {
       // 登录检查
@@ -150,6 +152,8 @@
       this.visit(sence);
       // 获取弹出
       this.campaign(sence);
+      // 获取签到
+      this.goSign();
       // 兼容性检查
       this.share = WxUtils.canIUse('button.open-type.share');
     };
@@ -167,6 +171,19 @@
           this.$navigate('/pages/coupon/active');
         }
       });
+    }
+    /**
+     * 签到跳转
+     */
+    async goSign() {
+      const signIn = await shop.signList(this.member.memberId);
+      let date = new Date();
+      const tody = this.dateChange(date);
+      if (this.member != null && this.isFirst == true &&
+        signIn.lastDate != tody && this.shop.supportMember == 1) {
+        this.isFirst = false;
+        this.$navigate('/pages/customer/sign_in?param=home');
+      }
     }
     /**
      * 访问记录
