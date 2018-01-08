@@ -26,7 +26,7 @@
       </view>
     </view>
 
-    <view class="tips-box column">
+    <view class="tips-box column" wx:if="{{discountRuleText.length > 0 || bonusRuleText.length > 0}}">
       <text>加入会员可享受下列特权：</text>
       <block wx:if="{{discountRuleText.length > 0}}">
         <text>• 会员折扣</text>

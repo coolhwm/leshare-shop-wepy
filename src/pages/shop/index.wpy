@@ -139,6 +139,7 @@
      * 加载商品列表
      */
     async loadGoodsList() {
+      this.categories.selectedId = -1;
       this.page = goods.page(true, this.discount);
       await this.next();
       if (this.page.list.length == 0) {
@@ -199,6 +200,7 @@
     methods = {
       switchTab() {
         const selectedId = this.categories.selectedId;
+        console.info(selectedId);
         // 先判断缓存中是否存在商品列表
         if (this.pages[selectedId] && this.pages[selectedId].list.length > 0) {
           this.page = this.pages[selectedId];
