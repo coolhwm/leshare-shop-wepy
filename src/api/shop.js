@@ -55,6 +55,9 @@ export default class shop extends base {
   static async getStatus() {
     const url = `${this.baseUrl}/shops/status`;
     const data = await this.get(url);
+    if (data.beginTime == null || data.endTime == null) {
+      return;
+    }
     // 文本转换
     data.timeText = `周一至周日 ${data.beginTime}至${data.endTime}`;
     if (data.status == 'CLOSE') {
@@ -105,10 +108,18 @@ export default class shop extends base {
   static chargeLimit () {
     const url = `${this.baseUrl}/shop_charge_limit`;
     return this.get(url).then(data => {
-      const version = data.chargeVersion;
-      data.isMember = [2, 3, 6, 7].some(value => value == version);
-      data.isOrder = [4, 5, 6, 7].some(value => value == version);
-      return data;
+      if (data == null) {
+        // 没有初始化收费配置的情况下，开启所有权限
+        return {
+          isMember: true,
+          isOrder: true
+        }
+      } else {
+        const version = data.chargeVersion;
+        data.isMember = [2, 3, 6, 7].some(value => value == version);
+        data.isOrder = [4, 5, 6, 7].some(value => value == version);
+        return data;
+      }
     });
   }
 

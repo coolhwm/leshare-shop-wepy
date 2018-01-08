@@ -31,7 +31,7 @@
           <text>{{parsentText}}</text>
         </view>
       </view>
-      <view class="weui-cell">
+      <view class="weui-cell" wx:if="{{card.servicePhone}}">
         <view class="weui-label muted">客服电话</view>
         <text class="info-container">{{card.servicePhone}}</text>
       </view>
