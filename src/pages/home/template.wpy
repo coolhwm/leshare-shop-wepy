@@ -1,0 +1,28 @@
+<template>
+  测试首页
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import data from '../../data/home';
+
+  export default class IndexTemplate extends wepy.page {
+    data = {
+    };
+    onLoad (options) {
+      console.info(data);
+    };
+    methods = {};
+    components = {};
+    computed = {};
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '订单详情'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

@@ -7,6 +7,7 @@
     "app_code": "AsyQrJJ2A3JeaPs4a2M8rs9fi4AzgRcg"
   },
   "pages": [
+    "pages/home/template",
     "pages/home/home",
     "pages/shop/index",
     "pages/home/login",
@@ -45,7 +46,7 @@
         {
           "iconPath": "images/tab/home.png",
           "selectedIconPath": "images/tab/home-active.png",
-          "pagePath": "pages/home/home",
+          "pagePath": "pages/home/template",
           "text": "首页"
         },
         {
