@@ -5,12 +5,19 @@
       <SearchBar :logoText="item.logoText"/>
     </block>
 
+    <!--轮播图-->
     <block wx:if="{{item.type == 'SWIPER'}}">
       <SwiperBar :param="item" />
     </block>
 
+    <!--图片橱窗-->
     <block wx:if="{{item.type == 'IMAGE_BOX'}}">
       <ImageBox :param="item" />
+    </block>
+
+    <!--商品橱窗-->
+    <block wx:if="{{item.type == 'GOODS_BOX'}}">
+      <GoodsBox :param="item" />
     </block>
   </repeat>
 </template>
@@ -22,6 +29,7 @@
   import SearchBar from '../../components/template/search_bar';
   import SwiperBar from '../../components/template/swiper_bar';
   import ImageBox from '../../components/template/image_box';
+  import GoodsBox from '../../components/template/goods_box';
 
   export default class IndexTemplate extends wepy.page {
     data = {
@@ -34,7 +42,8 @@
     components = {
       SearchBar: SearchBar,
       SwiperBar: SwiperBar,
-      ImageBox: ImageBox
+      ImageBox: ImageBox,
+      GoodsBox: GoodsBox
     };
     computed = {};
     mixins = [base];

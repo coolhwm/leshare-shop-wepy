@@ -1,18 +1,79 @@
 <template>
-</template>
+  <view class="goods-box">
+    <view class="box-title row-center">
+      <text class="title-line">────────</text><text class="title-text">{{param.title}}</text><text class="title-line">────────</text>
+    </view>
+    <!--横向单个布局-->
+    <view class="row-box column" wx:if="{{param.layout == 'ROW'}}">
+      <repeat for="{{param.data}}" key="index" index="index" item="item">
+        <!--限制数量-->
+        <block wx:if="{{index < param.count}}">
+          <RowItem :goods.sync="item" />
+        </block>
+      </repeat>
+    </view>
+    <!--横向单个布局-->
+    <view class="tight-box row" wx:if="{{param.layout == 'TIGHT'}}">
+      <repeat for="{{param.data}}" key="index" index="index" item="item">
+        <!--限制数量-->
+        <block wx:if="{{index < param.count}}">
+          <TightItem :goods.sync="item" />
+        </block>
+      </repeat>
+    </view>
 
+    <!--横向两个布局-->
+    <view class="grid-box row" wx:if="{{param.layout == 'GRID'}}">
+      <repeat for="{{param.data}}" key="index" index="index" item="item">
+        <!--限制数量-->
+        <block wx:if="{{index < param.count}}">
+          <GridItem :goods.sync="item" />
+        </block>
+      </repeat>
+    </view>
+  </view>
+</template>
 <script>
   import wepy from 'wepy';
+  import RowItem from './goods/goods_row';
+  import TightItem from './goods/goods_tight';
+  import GridItem from './goods/goods_grid';
   export default class GoodsBox extends wepy.component {
     props = {
       param: {}
     };
     methods = {
     };
+    components = {
+      RowItem: RowItem,
+      TightItem: TightItem,
+      GridItem: GridItem
+    };
   }
 </script>
 
 <style lang="scss">
   @import "../../styles/variable";
-
+  .goods-box {
+    border-top: $border;
+    .box-title{
+      height: 80rpx;
+      border-bottom: $border;
+      .title-text{
+        color: $color-primary;
+        margin-left: 20px;
+        margin-right: 20px;
+        font-size: $text-lg;
+      }
+      .title-line{
+        color: #E2E2E2;
+      }
+    }
+  }
+  .tight-box{
+    flex-wrap: wrap;
+  }
+  .grid-box{
+    flex-wrap: wrap;
+  }
 </style>

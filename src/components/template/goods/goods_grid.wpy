@@ -1,0 +1,43 @@
+<template>
+  <view class="column goods-grid-box">
+    <!--图片-->
+    <view>
+      <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="detail({{goods}})"></image>
+    </view>
+    <view class="content-box column">
+      <!--文字-->
+      <text class="inline lg">{{goods.name}}</text>
+      <text class="major lg">￥{{goods.priceLable}}</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class GoodGridItem extends wepy.component {
+    props = {
+      goods: {}
+    };
+    methods = {
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+  .goods-grid-box{
+    $size: 373rpx;
+    background-color: white;
+    width: $size;
+    border-right: $border;
+    border-bottom: $border;
+    .goods-image{
+      width: $size;
+      height: $size;
+    }
+
+    .content-box{
+      padding: 5rpx 10rpx;
+    }
+  }
+</style>
