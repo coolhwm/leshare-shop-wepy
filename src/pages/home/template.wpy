@@ -1,24 +1,39 @@
 <template>
-  测试首页
+  <repeat for="{{components}}" key="index" index="index" item="item">
+    <!--搜索栏-->
+    <block wx:if="{{item.type == 'SEARCH_BAR'}}">
+      <SearchBar :logoText="item.logoText"/>
+    </block>
+
+    <block wx:if="{{item.type == 'SWIPER'}}">
+      <SwiperBar :param="item" />
+    </block>
+  </repeat>
 </template>
 
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import data from '../../data/home';
+  import SearchBar from '../../components/template/search_bar';
+  import SwiperBar from '../../components/template/swiper_bar';
 
   export default class IndexTemplate extends wepy.page {
     data = {
+      components: null
     };
     onLoad (options) {
-      console.info(data);
+      this.components = data.components;
     };
     methods = {};
-    components = {};
+    components = {
+      SearchBar: SearchBar,
+      SwiperBar: SwiperBar
+    };
     computed = {};
     mixins = [base];
     config = {
-      navigationBarTitleText: '订单详情'
+      navigationBarTitleText: '首页'
     };
   }
 </script>

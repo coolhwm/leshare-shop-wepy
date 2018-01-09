@@ -5,26 +5,29 @@ export default {
     // 1. 顶部搜索栏
     {
       id: 1,
-      type: 1 // 1-搜索栏
+      type: 'SEARCH_BAR', // SEARCH_BAR-搜索栏
+      logoText: '蔬菜侠',  // 商家名称，展现在搜索栏前面，二选一
+      logoUrl: null // 商家LOGO，展现在搜索栏前面，二选一
     },
     // 2. 轮播图
     {
       id: 2,
       name: '轮播图',  // 橱窗名称
-      type: 2, // 轮播图
-      count: 5, // 一共有几个图片
+      type: 'SWIPER', // SWIPER-轮播图
+      heigth: '250px',
+      count: 2, // 一共有几个图片
       data: [
         {
           seq: 1, // 排序号
-          url: 'http://ostb6zm4z.bkt.clouddn.com/FrqEyVf52LcOyqFI80Vo6On82DKH', // 图片
-          action: 1, // 0-无动作，1-跳转商品，2-跳转分类，3-跳转页面
-          targetId: ''  // 对应商品ID/分类ID/页面ID
+          url: 'http://img.leshare.shop/shop-demo/swiper-1.jpg', // 图片
+          action: 'GOODS', // NONE-无动作，GOODS-跳转商品，GATEGORY-跳转分类，FUNCTION-跳转页面
+          targetId: '240'  // 对应商品ID/分类ID/页面ID
         },
         {
-          seq: 1, // 排序号
-          url: 'http://ostb6zm4z.bkt.clouddn.com/FrqEyVf52LcOyqFI80Vo6On82DKH', // 图片
-          action: 1, // 0-无动作，1-跳转商品，2-跳转分类，3-跳转页面
-          targetId: ''  // 对应商品ID/分类ID/页面ID
+          seq: 2, // 排序号
+          url: 'http://img.leshare.shop/shop-demo/swiper-2.jpg', // 图片
+          action: 'GOODS', //  NONE-无动作，GOODS-跳转商品，GATEGORY-跳转分类，FUNCTION-跳转页面
+          targetId: '266'  // 对应商品ID/分类ID/页面ID
         }
       ]
     },
