@@ -1,15 +1,16 @@
 <template>
-  <!--TODO 自定义高度处理-->
-  <swiper indicator-dots="true" indicator-active-color="#EEE" interval="3000" autoplay>
-    <swiper-item class="swiper-box" wx:for="{{param.data}}" wx:key="index" wx:index="index" >
-      <image mode="aspectFill" src="{{item.url}}" @tap="tap({{item}})"></image>
-    </swiper-item>
-  </swiper>
+  <view class="image-box row-around">
+    <view class="column-around" wx:for="{{param.data}}" wx:for-item="image" wx:key="seq">
+      <image style="width:{{param.width}};height:{{param.heigth}} " mode="aspectFill" src="{{image.url}}" @tap="tap({{image}})"></image>
+      <text wx:if="{{param.isTitle}}" class="image-title">{{image.title}}</text>
+    </view>
+  </view>
+
 </template>
 
 <script>
   import wepy from 'wepy';
-  export default class SwiperBar extends wepy.component {
+  export default class ImageBox extends wepy.component {
     props = {
       param: {}
     };
@@ -34,12 +35,12 @@
 
 <style lang="scss">
   @import "../../styles/variable";
-  .swiper-box{
-    height: 300px;
-    width: 100%;
-    image{
-      height: 100%;
-      width: 100%;
+  .image-box{
+    background-color: white;
+    padding-top: 10rpx;
+    padding-bottom: 10rpx;
+    .image-title{
+      margin-top: 3px;
     }
   }
 </style>

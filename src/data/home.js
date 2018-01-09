@@ -35,32 +35,39 @@ export default {
     {
       id: 3,
       name: '首页菜单',
-      type: 3,  // 图片橱窗
+      type: 'IMAGE_BOX',  // 图片橱窗
       count: 4, // 一共几个图片
+      heigth: '66px',
+      width: '66px',
+      isTitle: true,
       data: [
         {
           seq: 1, // 排序号
-          url: 'http://ostb6zm4z.bkt.clouddn.com/FrqEyVf52LcOyqFI80Vo6On82DKH', // 图片
-          action: 1, // 0-无动作，1-跳转商品，2-跳转分类，3-跳转页面
-          targetId: ''  // 对应商品ID/分类ID/页面ID
+          title: '分类购买',
+          url: 'http://img.leshare.shop/index-1.png', // 图片
+          action: 'FUNCTION', // 0-无动作，1-跳转商品，2-跳转分类，3-跳转页面
+          targetId: 'ALL_GOODS'  // 对应商品ID/分类ID/页面ID
         },
         {
           seq: 2, // 排序号
-          url: 'http://ostb6zm4z.bkt.clouddn.com/FrqEyVf52LcOyqFI80Vo6On82DKH', // 图片
-          action: 1, // 0-无动作，1-跳转商品，2-跳转分类，3-跳转页面
-          targetId: ''  // 对应商品ID/分类ID/页面ID
+          title: '签到有礼',
+          url: 'http://img.leshare.shop/index-2.png', // 图片
+          action: 'FUNCTION', // 0-无动作，1-跳转商品，2-跳转分类，3-跳转页面
+          targetId: 'SIGN_IN'  // 对应商品ID/分类ID/页面ID
         },
         {
           seq: 3, // 排序号
-          url: 'http://ostb6zm4z.bkt.clouddn.com/FrqEyVf52LcOyqFI80Vo6On82DKH', // 图片
-          action: 1, // 0-无动作，1-跳转商品，2-跳转分类，3-跳转页面
-          targetId: ''  // 对应商品ID/分类ID/页面ID
+          title: '优惠券',
+          url: 'http://img.leshare.shop/index-3.png', // 图片
+          action: 'FUNCTION', // 0-无动作，1-跳转商品，2-跳转分类，3-跳转页面
+          targetId: 'MY_COUPONS'  // 对应商品ID/分类ID/页面ID
         },
         {
           seq: 4, // 排序号
-          url: 'http://ostb6zm4z.bkt.clouddn.com/FrqEyVf52LcOyqFI80Vo6On82DKH', // 图片
-          action: 1, // 0-无动作，1-跳转商品，2-跳转分类，3-跳转页面
-          targetId: ''  // 对应商品ID/分类ID/页面ID
+          title: '特价商品',
+          url: 'http://img.leshare.shop/index-4.png', // 图片
+          action: 'GOODS', // 0-无动作，1-跳转商品，2-跳转分类，3-跳转页面
+          targetId: '266'  // 对应商品ID/分类ID/页面ID
         }
       ]
     },

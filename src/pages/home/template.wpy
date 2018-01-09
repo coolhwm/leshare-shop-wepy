@@ -8,6 +8,10 @@
     <block wx:if="{{item.type == 'SWIPER'}}">
       <SwiperBar :param="item" />
     </block>
+
+    <block wx:if="{{item.type == 'IMAGE_BOX'}}">
+      <ImageBox :param="item" />
+    </block>
   </repeat>
 </template>
 
@@ -17,6 +21,7 @@
   import data from '../../data/home';
   import SearchBar from '../../components/template/search_bar';
   import SwiperBar from '../../components/template/swiper_bar';
+  import ImageBox from '../../components/template/image_box';
 
   export default class IndexTemplate extends wepy.page {
     data = {
@@ -28,7 +33,8 @@
     methods = {};
     components = {
       SearchBar: SearchBar,
-      SwiperBar: SwiperBar
+      SwiperBar: SwiperBar,
+      ImageBox: ImageBox
     };
     computed = {};
     mixins = [base];

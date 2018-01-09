@@ -1,0 +1,18 @@
+<template>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class GoodsBox extends wepy.component {
+    props = {
+      param: {}
+    };
+    methods = {
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+</style>
