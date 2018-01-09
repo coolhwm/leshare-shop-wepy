@@ -1,0 +1,135 @@
+<template>
+  <view class="container" wx:if="{{init}}">
+    <view class="index">
+      <view class="index-hd">
+        <view class="index-desc">以下是小程序九宫格翻纸牌组件，组件样式仅供参考，开发者可根据自身需求自定义组件样式，具体属性参数详见开发文档。</view>
+      </view>
+      <Card :card.sync="card" @change.user="change"/>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import Card from '../../components/customer/card';
+  import Tips from '../../utils/Tips';
+  import game from '../../api/game';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  @connect({
+    member: store.get('member')
+  })
+  export default class GridCard extends wepy.page {
+    def = {
+      init: false,
+      card: [],
+      games: {},
+      game: {},
+      isChange: true
+    };
+    data = {...this.def};
+    async onLoad () {
+      await store.init();
+      this.games = await game.games();
+      this.game = await game.gameInfo(this.games[0].id);
+      const arry = this.game[0].awardRules;
+      for (let i = arry.length; i < 9; i++) {
+        arry.push({})
+      }
+      arry.forEach((item, index) => {
+        item.isBack = false;
+        item.id = index;
+        if (!item.result) {
+          item.result = index;
+        }
+      });
+      this.randomSort(arry, this.card);
+      this.gameTime = await game.gameTime(this.games[0].awardRules[0].ruleId);
+      this.loaded();
+    };
+    // 数组随机排序
+    randomSort(arr, newArr) {
+      if (arr.length == 1) {
+        newArr.push(arr[0]);
+        return newArr;
+      }
+      const random = Math.ceil(Math.random() * arr.length) - 1;
+      newArr.push(arr[random]);
+      arr.splice(random, 1);
+      return this.randomSort(arr, newArr);
+    }
+    methods = {
+      async change (info) {
+        const rule = {
+          id: this.game[0].id
+        };
+        if (this.isChange == false) {
+          return;
+        }
+        if (this.member.bonus == 0) {
+          Tips.alert('您的积分不足');
+          return;
+        }
+        if (this.gameTime == 0) {
+          Tips.alert('无可用次数');
+          return;
+        }
+        const gameAction = await game.gameAction(rule);
+        this.listTranformation(gameAction.awardResult, info.idx);
+        this.card[info.idx].isBack = true;
+        this.isChange = false;
+        this.$apply();
+        Tips.success(`获得${gameAction.awardResult}积分`);
+        setTimeout(() => {
+          this.card.forEach(item => {
+            item.isBack = true;
+            this.$apply();
+          });
+        }, 1000);
+        setTimeout(() => {
+          for (let i = 0; i < 9; i++) {
+            this.card[i].isBack = false;
+            this.isChange = true;
+            this.$apply();
+          }
+        }, 2000);
+      }
+    };
+    // 数组中调换位置
+    listTranformation(awardResult, idx) {
+      this.card.forEach((item, index) => {
+        if (item.result == awardResult) {
+          const clickItem = this.card[idx];
+          this.card.splice(idx, 1, item);
+          this.card.splice(index, 1, clickItem);
+        }
+      });
+      console.log(this.card);
+    }
+    config = {
+      navigationBarTitleText: '翻牌子'
+    };
+    mixins = [base];
+    components = {
+      Card: Card
+    };
+  }
+</script>
+<style lang="scss">
+  @import "../../styles/variable";
+  .index-hd {
+    text-align: center;
+    padding: 20rpx 30rpx 40rpx;
+  }
+
+  .index-desc {
+    margin-top: 20rpx;
+    color: #888888;
+    font-size: 28rpx;
+  }
+
+  button{
+    margin: 0 auto;
+    width: 400rpx;
+  }
+</style>
