@@ -1,31 +1,37 @@
 <template>
-  <repeat for="{{components}}" key="index" index="index" item="item">
-    <!--搜索栏-->
-    <block wx:if="{{item.type == 'SEARCH_BAR'}}">
-      <SearchBar :logoText="item.logoText"/>
-    </block>
+  <Loading :init.sync="init"/>
+  <view wx:if="{{init}}">
+    <repeat for="{{components}}" key="index" index="index" item="item">
+      <!--搜索栏-->
+      <block wx:if="{{item.type == 'SEARCH_BAR'}}">
+        <SearchBar :logoText="item.logoText"/>
+      </block>
 
-    <!--轮播图-->
-    <block wx:if="{{item.type == 'SWIPER'}}">
-      <SwiperBar :param="item" />
-    </block>
+      <!--轮播图-->
+      <block wx:if="{{item.type == 'SWIPER'}}">
+        <SwiperBar :param="item" />
+      </block>
 
-    <!--图片橱窗-->
-    <block wx:if="{{item.type == 'IMAGE_BOX'}}">
-      <ImageBox :param="item" />
-    </block>
+      <!--图片橱窗-->
+      <block wx:if="{{item.type == 'IMAGE_BOX'}}">
+        <ImageBox :param="item" />
+      </block>
 
-    <!--商品橱窗-->
-    <block wx:if="{{item.type == 'GOODS_BOX'}}">
-      <GoodsBox :param="item" />
-    </block>
-  </repeat>
+      <!--商品橱窗-->
+      <block wx:if="{{item.type == 'GOODS_BOX'}}">
+        <GoodsBox :param="item" />
+      </block>
+    </repeat>
+  </view>
+
 </template>
 
 <script>
+  import store from '../../store/utils';
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import data from '../../data/home';
+  import Loading from '../../components/common/loading';
   import SearchBar from '../../components/template/search_bar';
   import SwiperBar from '../../components/template/swiper_bar';
   import ImageBox from '../../components/template/image_box';
@@ -33,13 +39,17 @@
 
   export default class IndexTemplate extends wepy.page {
     data = {
+      init: false,
       components: null
     };
-    onLoad (options) {
+    async onLoad (options) {
+      await store.init();
       this.components = data.components;
+      this.loaded();
     };
     methods = {};
     components = {
+      Loading: Loading,
       SearchBar: SearchBar,
       SwiperBar: SwiperBar,
       ImageBox: ImageBox,

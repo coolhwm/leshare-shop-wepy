@@ -90,6 +90,7 @@
     }
 
     async onLoad () {
+      await store.init();
       await this.getUserSign();
     }
     methods = {

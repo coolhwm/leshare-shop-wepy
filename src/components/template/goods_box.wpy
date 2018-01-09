@@ -12,6 +12,7 @@
         </block>
       </repeat>
     </view>
+
     <!--横向单个布局-->
     <view class="tight-box row" wx:if="{{param.layout == 'TIGHT'}}">
       <repeat for="{{param.data}}" key="index" index="index" item="item">
@@ -32,6 +33,7 @@
       </repeat>
     </view>
   </view>
+
 </template>
 <script>
   import wepy from 'wepy';

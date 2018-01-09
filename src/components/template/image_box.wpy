@@ -1,7 +1,7 @@
 <template>
   <view class="image-box row-around">
     <view class="column-around" wx:for="{{param.data}}" wx:for-item="image" wx:key="seq">
-      <image style="width:{{param.width}};height:{{param.heigth}} " mode="aspectFill" src="{{image.url}}" @tap="tap({{image}})"></image>
+      <image style="width:{{param.width}};height:{{param.heigth}} " mode="aspectFill" src="{{image.url}}" @tap="routeByAction({{image}})"></image>
       <text wx:if="{{param.isTitle}}" class="image-title">{{image.title}}</text>
     </view>
   </view>
@@ -10,26 +10,12 @@
 
 <script>
   import wepy from 'wepy';
+  import router from '../../mixins/router';
   export default class ImageBox extends wepy.component {
     props = {
       param: {}
     };
-    methods = {
-      tap(item) {
-        const {action, targetId} = item;
-        switch (action) {
-          case 'GOODS':
-            this.$root.$navigate(`/pages/goods/detail?goodsId=${targetId}`);
-            break;
-          case 'CATEGORY':
-            console.info(`跳转到商品分类：${targetId}`);
-            break;
-          case 'FUNCTION':
-            console.info(`跳转到功能：${targetId}`);
-            break;
-        }
-      }
-    };
+    mixins = [router]
   }
 </script>
 

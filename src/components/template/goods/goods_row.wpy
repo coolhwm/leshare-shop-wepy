@@ -1,7 +1,7 @@
 <template>
   <view class="row goods-row-box">
     <view>
-      <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="detail({{goods}})"></image>
+      <image class="goods-image" lazy-load src="{{goods.imageUrl}}"  @tap="routeToGoods({{goods.id}})"></image>
     </view>
 
     <view class="main-box column">
@@ -25,12 +25,14 @@
 
 <script>
   import wepy from 'wepy';
+  import router from '../../../mixins/router';
   export default class GoodRowItem extends wepy.component {
     props = {
       goods: {}
     };
     methods = {
     };
+    mixins = [router]
   }
 </script>
 

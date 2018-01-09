@@ -1,0 +1,52 @@
+<script>
+  import wepy from 'wepy';
+  import Tips from '../utils/Tips';
+
+  /**
+   * 分页通用方法
+   */
+  export default class router extends wepy.mixin {
+    config = {};
+    components = {};
+    goto(url, switchTo) {
+      if (switchTo) {
+        this.$root.$switch(url);
+      } else {
+        this.$root.$navigate(url);
+      }
+    }
+    methods = {
+      routeToGoods(goodsId) {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${goodsId}`);
+      },
+      routeByAction(event) {
+        const {action, targetId, switchTo} = event;
+        // 根据动作进行路由
+        switch (action) {
+          case 'GOODS':
+            this.$root.$navigate(`/pages/goods/detail?goodsId=${targetId}`);
+            break;
+          case 'CATEGORY':
+            console.info(`跳转到商品分类：${targetId}`);
+            break;
+          case 'USER':
+            this.goto('/pages/customer/index', switchTo);
+            break;
+          case 'GOODS_ALL':
+            this.goto('/pages/shop/index', switchTo);
+            break;
+          case 'MEMBER_SIGN':
+            this.goto('/pages/customer/sign_in', switchTo);
+            break;
+          case 'COUPON_OWN':
+            this.goto('/pages/coupon/list', switchTo);
+            break;
+          case 'MEMBER_DETAIL':
+            this.goto('/pages/customer/vip_detail', switchTo);
+            break;
+        }
+      }
+    };
+    events = {};
+  }
+</script>

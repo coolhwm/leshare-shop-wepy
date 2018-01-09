@@ -45,29 +45,30 @@ export default {
           seq: 1, // 排序号
           title: '分类购买',
           url: 'http://img.leshare.shop/index-1.png',
-          action: 'FUNCTION',
-          targetId: 'ALL_GOODS' // 全部商品
+          action: 'GOODS_ALL',  // 全部商品
+          switchTo: true,
+          targetId: null
         },
         {
           seq: 2, // 排序号
           title: '签到有礼',
           url: 'http://img.leshare.shop/index-2.png',
-          action: 'FUNCTION', // 功能
-          targetId: 'SIGN_IN' // 打卡
+          action: 'MEMBER_SIGN', // 打卡
+          targetId: null
         },
         {
           seq: 3, // 排序号
           title: '优惠券',
           url: 'http://img.leshare.shop/index-3.png', // 图片
-          action: 'FUNCTION',
-          targetId: 'MY_COUPONS'  // 我的优惠券
+          action: 'COUPON_OWN',
+          targetId: null  // 我的优惠券
         },
         {
           seq: 4, // 排序号
-          title: '特价商品',
+          title: '会员特权',
           url: 'http://img.leshare.shop/index-4.png', // 图片
-          action: 'GOODS',
-          targetId: '266' // 商品ID
+          action: 'MEMBER_DETAIL',  // 会员详情
+          targetId: null //
         }
       ]
     },

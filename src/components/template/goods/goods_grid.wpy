@@ -2,7 +2,7 @@
   <view class="column goods-grid-box">
     <!--图片-->
     <view>
-      <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="detail({{goods}})"></image>
+      <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="routeToGoods({{goods.id}})"></image>
     </view>
     <view class="content-box column">
       <!--文字-->
@@ -14,12 +14,14 @@
 
 <script>
   import wepy from 'wepy';
+  import router from '../../../mixins/router';
   export default class GoodGridItem extends wepy.component {
     props = {
       goods: {}
     };
     methods = {
     };
+    mixins = [router]
   }
 </script>
 

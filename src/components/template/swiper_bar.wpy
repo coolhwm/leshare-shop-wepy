@@ -2,33 +2,19 @@
   <!--TODO 自定义高度处理-->
   <swiper indicator-dots="true" indicator-active-color="#EEE" interval="3000" autoplay>
     <swiper-item class="swiper-box" wx:for="{{param.data}}" wx:key="index" wx:index="index" >
-      <image mode="aspectFill" src="{{item.url}}" @tap="tap({{item}})"></image>
+      <image mode="aspectFill" src="{{item.url}}" @tap="routeByAction({{item}})"></image>
     </swiper-item>
   </swiper>
 </template>
 
 <script>
   import wepy from 'wepy';
+  import router from '../../mixins/router';
   export default class SwiperBar extends wepy.component {
     props = {
       param: {}
     };
-    methods = {
-      tap(item) {
-        const {action, targetId} = item;
-        switch (action) {
-          case 'GOODS':
-            this.$root.$navigate(`/pages/goods/detail?goodsId=${targetId}`);
-            break;
-          case 'CATEGORY':
-            console.info(`跳转到商品分类：${targetId}`);
-            break;
-          case 'FUNCTION':
-            console.info(`跳转到功能：${targetId}`);
-            break;
-        }
-      }
-    };
+    mixins = [router]
   }
 </script>
 
