@@ -81,6 +81,7 @@ export default {
       source: 'GOODS',  // 数据来源，GOODS-商品；CATEGORY-分类ID；
       layout: 'TIGHT', // ROW-横向单个商品；BIG-方形单个商品；GRID-一行2个方形商品；TIGHT-一行3个方形商品；
       categoryId: null, // 分类ID
+      isSales: true,  // 是否展现销量
       isTitle: true, // 是否展现分类标题
       isMore: true, // 是否展现更多按钮
       isCart: true, // 是否展现加入购物车

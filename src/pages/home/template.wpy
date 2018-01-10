@@ -44,7 +44,7 @@
       fieldsToCopy: {
         SWIPER: ['height'],
         IMAGE_BOX: ['heigth', 'width', 'isTitle'],
-        GOODS_BOX: ['isCart', 'isPrice', 'isName']
+        GOODS_BOX: ['isCart', 'isPrice', 'isName', 'isSales']
       }
     };
     async onLoad () {
