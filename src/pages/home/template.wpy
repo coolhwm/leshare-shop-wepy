@@ -40,13 +40,34 @@
   export default class IndexTemplate extends wepy.page {
     data = {
       init: false,
-      components: null
+      components: null,
+      fieldsToCopy: {
+        SWIPER: ['heigth'],
+        IMAGE_BOX: ['heigth', 'width', 'isTitle'],
+        GOODS_BOX: ['isTitle', 'isMore', 'isCart', 'isPrice', 'isName']
+      }
     };
-    async onLoad (options) {
+    async onLoad () {
       await store.init();
-      this.components = data.components;
+      this.components = this.processComponentsData(data.components);
       this.loaded();
     };
+    processComponentsData (components) {
+      return components.map(component => this.copyParamToData(component));
+    }
+    copyParamToData(component) {
+      const {data, type} = component;
+      const fields = this.fieldsToCopy[type];
+      if (fields != null) {
+        fields.forEach(field => {
+          const value = component[field];
+          data.forEach(item => {
+            item[field] = value;
+          });
+        });
+      }
+      return component;
+    }
     methods = {};
     components = {
       Loading: Loading,

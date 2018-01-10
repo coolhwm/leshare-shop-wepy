@@ -6,8 +6,8 @@
     </view>
     <view class="content-box column">
       <!--文字-->
-      <text class="inline lg">{{goods.name}}</text>
-      <text class="major lg">￥{{goods.priceLable}}</text>
+      <text class="inline lg" wx:if="{{goods.isName}}">{{goods.name}}</text>
+      <text class="major lg" wx:if="{{goods.isPrice}}">￥{{goods.priceLable}}</text>
     </view>
   </view>
 </template>

@@ -8,7 +8,7 @@
       <repeat for="{{param.data}}" key="index" index="index" item="item">
         <!--限制数量-->
         <block wx:if="{{index < param.count}}">
-          <RowItem :goods.sync="item" />
+          <RowItem :goods.sync="item" :param.sync="param"/>
         </block>
       </repeat>
     </view>
