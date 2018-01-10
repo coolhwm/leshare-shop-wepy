@@ -34,14 +34,10 @@
       this.game = await game.gameInfo(this.games[0].id);
       const arry = this.game[0].awardRules;
       for (let i = arry.length; i < 9; i++) {
-        arry.push({})
+        arry.push({id: 0, result: 0})
       }
-      arry.forEach((item, index) => {
+      arry.forEach(item => {
         item.isBack = false;
-        item.id = index;
-        if (!item.result) {
-          item.result = index;
-        }
       });
       this.randomSort(arry, this.card);
       this.gameTime = await game.gameTime(this.games[0].awardRules[0].ruleId);
@@ -104,7 +100,6 @@
           this.card.splice(index, 1, clickItem);
         }
       });
-      console.log(this.card);
     }
     config = {
       navigationBarTitleText: '翻牌子'

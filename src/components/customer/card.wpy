@@ -6,7 +6,7 @@
           <image src = "../../images/icons/card_front.png"/>
         </view>
         <view class="gridcard_back">
-          <image src = "{{item.imgUrl}}"/>
+          <text class="result_text">{{item.result == 0 ? '再接再厉' : item.result}}</text>
         </view>
       </view>
     </block>
@@ -148,5 +148,10 @@
   .gridcard .gridcard_item:nth-child(9).move{
     -webkit-transform: translate3d(-240rpx,-240rpx,0);
     transform: translate3d(-240rpx,-240rpx,0);
+  }
+  .result_text{
+    font-size: 50rpx;
+    font-weight: 700;
+    color: white;
   }
 </style>
