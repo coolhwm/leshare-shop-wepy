@@ -7,14 +7,15 @@ export default {
       id: 1,
       type: 'SEARCH_BAR', // SEARCH_BAR-搜索栏
       logoText: '蔬菜侠',  // 商家名称，展现在搜索栏前面，二选一
-      logoUrl: null // 商家LOGO，展现在搜索栏前面，二选一
+      logoUrl: null,  // 商家LOGO，展现在搜索栏前面，二选一,
+      placeholder: '请输入搜索内容...'
     },
     // 2. 轮播图
     {
       id: 2,
       name: '轮播图',  // 橱窗名称
       type: 'SWIPER', // SWIPER-轮播图
-      heigth: '250px',
+      height: '250px',
       count: 2, // 一共有几个图片
       data: [
         {

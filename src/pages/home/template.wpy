@@ -4,22 +4,22 @@
     <repeat for="{{components}}" key="index" index="index" item="item">
       <!--搜索栏-->
       <block wx:if="{{item.type == 'SEARCH_BAR'}}">
-        <SearchBar :logoText="item.logoText"/>
+        <SearchBar :param.sync="item"/>
       </block>
 
       <!--轮播图-->
       <block wx:if="{{item.type == 'SWIPER'}}">
-        <SwiperBar :param="item" />
+        <SwiperBar :param.sync="item" />
       </block>
 
       <!--图片橱窗-->
       <block wx:if="{{item.type == 'IMAGE_BOX'}}">
-        <ImageBox :param="item" />
+        <ImageBox :param.sync="item" />
       </block>
 
       <!--商品橱窗-->
       <block wx:if="{{item.type == 'GOODS_BOX'}}">
-        <GoodsBox :param="item" />
+        <GoodsBox :param.sync="item" />
       </block>
     </repeat>
   </view>
@@ -42,9 +42,9 @@
       init: false,
       components: null,
       fieldsToCopy: {
-        SWIPER: ['heigth'],
+        SWIPER: ['height'],
         IMAGE_BOX: ['heigth', 'width', 'isTitle'],
-        GOODS_BOX: ['isTitle', 'isMore', 'isCart', 'isPrice', 'isName']
+        GOODS_BOX: ['isCart', 'isPrice', 'isName']
       }
     };
     async onLoad () {
@@ -59,10 +59,9 @@
       const {data, type} = component;
       const fields = this.fieldsToCopy[type];
       if (fields != null) {
-        fields.forEach(field => {
-          const value = component[field];
-          data.forEach(item => {
-            item[field] = value;
+        data.forEach(item => {
+          fields.forEach(field => {
+            item[field] = component[field];
           });
         });
       }

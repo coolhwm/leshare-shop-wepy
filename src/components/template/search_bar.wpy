@@ -1,13 +1,13 @@
 <template>
   <view class="row search-bar-box">
-    <view wx:if="{{logoUrl != null}}">
+    <view wx:if="{{param.logoUrl != null}}">
       <image ></image>
     </view>
-    <view class="logo-text" wx:if="{{logoText}}">
-      <text>{{logoText}}</text>
+    <view class="logo-text" wx:if="{{param.logoText}}">
+      <text>{{param.logoText}}</text>
     </view>
     <view class="content">
-      <text>{{placeholder}}</text>
+      <text>{{param.placeholder}}</text>
     </view>
   </view>
 </template>
@@ -16,11 +16,7 @@
   import wepy from 'wepy';
   export default class SearchBar extends wepy.component {
     props = {
-      logoText: {},
-      logoUrl: {},
-      placeholder: {
-        default: '请输入搜索内容...'
-      }
+      param: {}
     };
     data = {};
     methods = {};
