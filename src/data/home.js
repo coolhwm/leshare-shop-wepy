@@ -85,7 +85,7 @@ export default {
       isTitle: true, // 是否展现分类标题
       isMore: true, // 是否展现更多按钮
       isCart: true, // 是否展现加入购物车
-      isPrice: true, // 是否展现价格
+      isPrice: true, // 是否展现价格3
       isName: true, // 是否展现商品名称
       data: [
         {

@@ -22,6 +22,9 @@
         <GoodsBox :param.sync="item" />
       </block>
     </repeat>
+
+    <!--购物规格面板 -->
+    <GoodsPanel />
   </view>
 
 </template>
@@ -36,6 +39,7 @@
   import SwiperBar from '../../components/template/swiper_bar';
   import ImageBox from '../../components/template/image_box';
   import GoodsBox from '../../components/template/goods_box';
+  import GoodsPanel from '../../components/goods/buy-panel';
 
   export default class IndexTemplate extends wepy.page {
     data = {
@@ -45,11 +49,13 @@
         SWIPER: ['height'],
         IMAGE_BOX: ['heigth', 'width', 'isTitle'],
         GOODS_BOX: ['isCart', 'isPrice', 'isName', 'isSales']
-      }
+      },
+      goods: null
     };
     async onLoad () {
       await store.init();
       this.components = this.processComponentsData(data.components);
+
       this.loaded();
     };
     processComponentsData (components) {
@@ -67,15 +73,18 @@
       }
       return component;
     }
-    methods = {};
+    methods = {
+    };
     components = {
       Loading: Loading,
       SearchBar: SearchBar,
       SwiperBar: SwiperBar,
       ImageBox: ImageBox,
-      GoodsBox: GoodsBox
+      GoodsBox: GoodsBox,
+      GoodsPanel: GoodsPanel
     };
-    computed = {};
+    computed = {
+    };
     mixins = [base];
     config = {
       navigationBarTitleText: '首页'

@@ -107,7 +107,7 @@
       },
       async remove(index) {
         await Tips.confirm('确认删除该商品？');
-        this.cartManager.remove(index);
+        this.cartManager.removeByIndex(index);
         await Tips.success('删除成功');
         this.$apply();
       },
