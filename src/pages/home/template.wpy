@@ -17,6 +17,11 @@
         <ImageBox :param.sync="item" />
       </block>
 
+      <!--优惠券橱窗-->
+      <block wx:if="{{item.type == 'COUPON_BOX'}}">
+        <CouponBox :param.sync="item" />
+      </block>
+
       <!--商品橱窗-->
       <block wx:if="{{item.type == 'GOODS_BOX'}}">
         <GoodsBox :param.sync="item" />
@@ -48,6 +53,7 @@
   import SwiperBar from '../../components/template/swiper_bar';
   import ImageBox from '../../components/template/image_box';
   import GoodsBox from '../../components/template/goods_box';
+  import CouponBox from '../../components/template/coupon_box';
   import GoodsPanel from '../../components/goods/buy-panel';
   import SkuSelector from '../../components/goods/sku_selector';
 
@@ -91,6 +97,7 @@
       SwiperBar: SwiperBar,
       ImageBox: ImageBox,
       GoodsBox: GoodsBox,
+      CouponBox: CouponBox,
       SilderPanel: GoodsPanel,
       PopupPanel: SkuSelector
     };

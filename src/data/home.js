@@ -83,6 +83,14 @@ export default {
         }
       ]
     },
+    // 优惠券橱窗
+    {
+      title: '领券优惠',
+      isTitle: false,    // 是否展现标题
+      type: 'COUPON_BOX',
+      layout: 'ROW',  // ROW-横向布局
+      source: 'COUPONS_ALL' // COUPONS_ALL-全部优惠券， COUPONS_LIST指定优惠券
+    },
     {
       id: 5,
       title: '当季热销',
