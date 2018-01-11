@@ -15,23 +15,31 @@
         this.$root.$navigate(url);
       }
     }
+    plusCart(goods, goodsSku) {
+      const source = this.$root.$wxpage.route;
+      const mode = goods.skuMode;
+      switch (mode) {
+        case 'SLIDER':
+          Event.emit(Event.GOODS_PANEL_OPEN, goods);
+          break;
+        case 'POPUP':
+          Event.emit(Event.GOODS_PANEL_PLUS, {goods, goodsSku, source});
+          break;
+        default:
+          // 默认用简化版
+          Event.emit(Event.GOODS_PANEL_PLUS, {goods, goodsSku, source});
+      }
+    }
+    minusCart(goodsId, goodsSku) {
+      const source = this.$root.$wxpage.route;
+      Event.emit(Event.GOODS_PANEL_MINUS, {goodsId, goodsSku, source});
+    }
     methods = {
       /**
        * 处理加入购物车事件
        */
       handlePlusCart(goods) {
-        const mode = goods.skuMode;
-        switch (mode) {
-          case 'SLIDER':
-            Event.emit(Event.GOODS_PANEL_OPEN, goods);
-            break;
-          case 'POPUP':
-            Event.emit(Event.GOODS_PANEL_PLUS, {goods});
-            break;
-          default:
-            // 默认用简化版
-            Event.emit(Event.GOODS_PANEL_PLUS, {goods});
-        }
+        this.plusCart(goods);
       },
       /**
        * 处理跳转到商品详情

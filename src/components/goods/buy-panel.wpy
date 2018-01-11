@@ -130,6 +130,7 @@
         }
         // 关闭面板
         this.skuManager.display = false;
+        this.$root.$apply();
       }
     };
     computed = {

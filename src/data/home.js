@@ -98,7 +98,7 @@ export default {
       isPrice: true, // 是否展现价格
       isName: true, // 是否展现商品名称
       isTips: true, // 操作是否弹出提示
-      skuMode: 'SILDER', // 选择器样式
+      skuMode: 'POPUP', // 选择器样式
       moreText: '查看更多商品 >',
       data: [
         {

@@ -53,16 +53,21 @@
       selected: null,
       price: null,
       originalPrice: null,
-      display: false
+      display: false,
+      source: null
     };
     cartManager = Cart.create();
     onLoad () {
       // 加一个到购物车的监听
+      this.source = this.$root.$wxpage.route;
       Event.listen(Event.GOODS_PANEL_PLUS, this.plus.bind(this), this);
       // 减少一个购物车监听
-      Event.listen(Event.GOODS_PANEL_MINUS, this.plus.bind(this), this);
+      Event.listen(Event.GOODS_PANEL_MINUS, this.minus.bind(this), this);
     }
-    plus({goods, goodsSku}) {
+    plus({goods, goodsSku, source}) {
+      if (source != this.source) {
+        return;
+      }
       // TODO 库存校验
       // 初始化商品对象
       this.goods = goods;
@@ -79,8 +84,28 @@
       }
       this.$apply();
     }
-    minus ({goods, goodsSku}) {
-      console.info('MINUS');
+    minus ({goodsId, goodsSku, source}) {
+      if (source != this.source) {
+        return;
+      }
+      // 根据商品ID查找购物车
+      const cartGoodsList = this.cartManager.findByGoodsId(goodsId);
+      if (cartGoodsList.length < 1) {
+        console.warn('移除购物车的商品不存在');
+        return;
+      }
+      if (cartGoodsList.length > 1 && goodsSku == null) {
+        Tips.alert('请在购物车操作');
+        return;
+      }
+      // 处理多规格商品，但是购物车只有一个的情况
+      const cartGoods = cartGoodsList[0];
+      if (goodsSku == null && cartGoods.goodsSku != null) {
+        goodsSku = cartGoods.goodsSku
+      }
+      // 购物车对象
+      this.cartManager.minus(goodsId, goodsSku);
+      this.$apply();
     }
     clear () {
       skuData = null;
@@ -116,6 +141,7 @@
         }
         // 清理残留数据
         this.clear();
+        this.$root.$apply();
       }
     };
     computed = {
