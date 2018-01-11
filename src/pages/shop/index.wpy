@@ -482,6 +482,10 @@
         if (discount >= 100 || discount <= 0) {
           return null;
         }
+        const {discountCategoryLists} = discountRule;
+        if (discountCategoryLists == null || discountCategoryLists.length < 1) {
+          return null;
+        }
         const categories = discountRule.discountCategoryLists.map(item => item.categoryId);
         return {
           level: discountRule.levelName,
