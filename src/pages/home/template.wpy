@@ -23,14 +23,19 @@
       </block>
     </repeat>
 
-    <!--购物面板-->
-    <block wx:if="{{false}}" >
-      <SilderPanel />
-    </block>
-    
-    <PopupPanel />
-  </view>
+    <!--插件-->
+    <repeat for="{{plugins}}" key="index" index="index" item="item">
+      <!--滑出购物面板-->
+      <block wx:if="{{item.type == 'SKU_SLIDE_PANEL'}}" >
+        <SilderPanel />
+      </block>
 
+      <!--弹出购物面板-->
+      <block wx:if="{{item.type == 'SKU_POPUP_PANEL'}}" >
+        <PopupPanel />
+      </block>
+    </repeat>
+  </view>
 </template>
 
 <script>
@@ -50,17 +55,17 @@
     data = {
       init: false,
       components: null,
+      plugins: null,
       fieldsToCopy: {
         SWIPER: ['height'],
         IMAGE_BOX: ['heigth', 'width', 'isTitle'],
-        GOODS_BOX: ['isCart', 'isPrice', 'isName', 'isSales']
-      },
-      goods: null
+        GOODS_BOX: ['isCart', 'isPrice', 'isName', 'isSales', 'skuMode', 'isTips']
+      }
     };
     async onLoad () {
       await store.init();
       this.components = this.processComponentsData(data.components);
-
+      this.plugins = data.plugins;
       this.loaded();
     };
     processComponentsData (components) {

@@ -1,6 +1,6 @@
 <template>
   <view class="goods-box">
-    <view class="box-title row-center">
+    <view class="box-title row-center" wx:if="{{param.isTitle}}">
       <text class="title-line">────────</text><text class="title-text">{{param.title}}</text><text class="title-line">────────</text>
     </view>
     <!--横向单个布局-->

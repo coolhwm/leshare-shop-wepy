@@ -1,11 +1,16 @@
 export default {
   id: 1,
   name: '店铺首页',
+  // 页面插件，不参与布局
   plugins: [
     {
-      type: 'SKU_SLIDE_PANEL'
+      type: 'SKU_POPUP_PANEL'  // 弹出SKU选择器
+    },
+    {
+      type: 'SKU_SLIDE_PANEL'   // 滑出SKU选择器
     }
   ],
+  // 页面布局组件
   components: [
     // 1. 顶部搜索栏
     {
@@ -90,8 +95,10 @@ export default {
       isTitle: true, // 是否展现分类标题
       isMore: true, // 是否展现更多按钮
       isCart: true, // 是否展现加入购物车
-      isPrice: true, // 是否展现价格3
+      isPrice: true, // 是否展现价格
       isName: true, // 是否展现商品名称
+      isTips: true, // 操作是否弹出提示
+      skuMode: 'SILDER', // 选择器样式
       data: [
         {
           'id': 239,

@@ -117,11 +117,16 @@
       },
       // 确认选择
       confirm(type) {
+        if (!this.sku.next) {
+          return;
+        }
         // 增加到购物车
         if (type == 'cart') {
           const {skuText, num} = this.sku;
           this.cartManager.plus(this.goods, skuText, num);
-          Tips.success('添加成功');
+          if (this.goods.isTips) {
+            Tips.success('已加入购物车');
+          }
         }
         // 关闭面板
         this.skuManager.display = false;

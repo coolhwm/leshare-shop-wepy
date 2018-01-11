@@ -1,7 +1,7 @@
 <template>
   <CoverPanel :display.sync="display" zIndex="1000000"/>
   <!--弹出窗口-->
-  <view class="wrap" wx:if="{{display == 'true'}}">
+  <view class="wrap" wx:if="{{display}}">
     <view class="modal-panel column">
       <!--标题区域-->
       <view class="sku-title column-center">
@@ -68,10 +68,13 @@
       this.goods = goods;
       if (goods.goodsSkuInfo && goodsSku == null) {
         // 有SKU，且没有选择SKU的情况，展现面板
-        this.display = 'true';
+        this.display = true;
       } else {
         // 没有SKU，直接加入购物车
         this.cartManager.plus(goods, goodsSku);
+        if (goods.isTips) {
+          Tips.success('已加入购物车');
+        }
         this.clear();
       }
       this.$apply();
@@ -85,7 +88,7 @@
       this.originalPrice = null;
       this.price = null;
       this.goods = null;
-      this.display = 'false';
+      this.display = false;
     }
     methods = {
       close() {
@@ -102,12 +105,15 @@
         this.originalPrice = skuData.detail.originalPrice;
         this.$apply();
       },
-      confirm() {
+      async confirm() {
         if (this.selected == null) {
           Tips.alert('请选择');
           return;
         }
         this.cartManager.plus(this.goods, this.selected);
+        if (this.goods.isTips) {
+          Tips.success('已加入购物车');
+        }
         // 清理残留数据
         this.clear();
       }

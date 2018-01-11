@@ -1,6 +1,6 @@
 <script>
   import wepy from 'wepy';
-  import Tips from '../utils/Tips';
+  import Event from '../utils/Event';
 
   /**
    * 分页通用方法
@@ -16,9 +16,32 @@
       }
     }
     methods = {
+      /**
+       * 处理加入购物车事件
+       */
+      handlePlusCart(goods) {
+        const mode = goods.skuMode;
+        switch (mode) {
+          case 'SLIDER':
+            Event.emit(Event.GOODS_PANEL_OPEN, goods);
+            break;
+          case 'POPUP':
+            Event.emit(Event.GOODS_PANEL_PLUS, {goods});
+            break;
+          default:
+            // 默认用简化版
+            Event.emit(Event.GOODS_PANEL_PLUS, {goods});
+        }
+      },
+      /**
+       * 处理跳转到商品详情
+       */
       routeToGoods(goodsId) {
         this.$root.$navigate(`/pages/goods/detail?goodsId=${goodsId}`);
       },
+      /**
+       * 处理图片点击事件
+       */
       routeByAction(event) {
         const {action, targetId, switchTo} = event;
         // 根据动作进行路由
