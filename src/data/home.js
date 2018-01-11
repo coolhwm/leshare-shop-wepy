@@ -24,7 +24,7 @@ export default {
     // 店铺信息
     {
       type: 'SHOP_BAR',  // SHOP_BAR-店铺信息栏
-      display: false
+      display: false  // 隐藏不展现
     },
     // 轮播图
     {
@@ -113,7 +113,7 @@ export default {
       isPrice: true, // 是否展现价格
       isName: true, // 是否展现商品名称
       isTips: true, // 操作是否弹出提示
-      skuMode: 'POPUP', // 选择器样式
+      skuMode: 'SLIDER', // 选择器样式
       moreText: '查看更多商品 >',
       data: [
         {

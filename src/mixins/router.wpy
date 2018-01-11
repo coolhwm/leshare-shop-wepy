@@ -15,7 +15,7 @@
         this.$root.$navigate(url);
       }
     }
-    plusCart(goods, goodsSku) {
+    plusCart(goods, goodsSku = '') {
       const source = this.$root.$wxpage.route;
       const mode = goods.skuMode;
       switch (mode) {
@@ -30,7 +30,7 @@
           Event.emit(Event.GOODS_PANEL_PLUS, {goods, goodsSku, source});
       }
     }
-    minusCart(goodsId, goodsSku) {
+    minusCart(goodsId, goodsSku = '') {
       const source = this.$root.$wxpage.route;
       Event.emit(Event.GOODS_PANEL_MINUS, {goodsId, goodsSku, source});
     }
