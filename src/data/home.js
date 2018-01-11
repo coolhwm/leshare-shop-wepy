@@ -3,8 +3,7 @@ export default {
   name: '店铺首页',
   plugins: [
     {
-      type: 'SKU_PANEL',
-      style: 'SLIDE'  // SLIDER-滑出， POPUP-弹出（简易）
+      type: 'SKU_SLIDE_PANEL'
     }
   ],
   components: [
