@@ -29,7 +29,8 @@
     };
     methods = {
       cart(goods) {
-        Event.emit(Event.GOODS_PANEL_OPEN, goods);
+        // Event.emit(Event.GOODS_PANEL_OPEN, goods);
+        Event.emit(Event.GOODS_PANEL_PLUS, {goods});
       }
     };
     mixins = [router]

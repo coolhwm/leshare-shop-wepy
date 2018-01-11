@@ -23,8 +23,12 @@
       </block>
     </repeat>
 
-    <!--购物规格面板 -->
-    <GoodsPanel />
+    <!--购物面板-->
+    <block wx:if="{{false}}" >
+      <SilderPanel />
+    </block>
+    
+    <PopupPanel />
   </view>
 
 </template>
@@ -40,6 +44,7 @@
   import ImageBox from '../../components/template/image_box';
   import GoodsBox from '../../components/template/goods_box';
   import GoodsPanel from '../../components/goods/buy-panel';
+  import SkuSelector from '../../components/goods/sku_selector';
 
   export default class IndexTemplate extends wepy.page {
     data = {
@@ -81,7 +86,8 @@
       SwiperBar: SwiperBar,
       ImageBox: ImageBox,
       GoodsBox: GoodsBox,
-      GoodsPanel: GoodsPanel
+      SilderPanel: GoodsPanel,
+      PopupPanel: SkuSelector
     };
     computed = {
     };

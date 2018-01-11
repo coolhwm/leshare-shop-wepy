@@ -42,23 +42,54 @@
   import Sku from '../../utils/Sku';
   import Tips from '../../utils/Tips';
   import DisplayBadge from './discount_badge';
+  import Event from '../../utils/Event';
+  import Cart from '../../utils/Cart';
   let skuData;
   export default class SkuSelector extends wepy.component {
     props = {
-      goods: {},
-      carts: {},
-      display: {
-        twoWay: true
-      }
     };
     data = {
+      goods: null,
       selected: null,
       price: null,
-      originalPrice: null
+      originalPrice: null,
+      display: false
     };
+    cartManager = Cart.create();
+    onLoad () {
+      // 加一个到购物车的监听
+      Event.listen(Event.GOODS_PANEL_PLUS, this.plus.bind(this), this);
+      // 减少一个购物车监听
+      Event.listen(Event.GOODS_PANEL_MINUS, this.plus.bind(this), this);
+    }
+    plus({goods, goodsSku}) {
+      // TODO 库存校验
+      // 初始化商品对象
+      this.goods = goods;
+      if (goods.goodsSkuInfo && goodsSku == null) {
+        // 有SKU，且没有选择SKU的情况，展现面板
+        this.display = 'true';
+      } else {
+        // 没有SKU，直接加入购物车
+        this.cartManager.plus(goods, goodsSku);
+        this.clear();
+      }
+      this.$apply();
+    }
+    minus ({goods, goodsSku}) {
+      console.info('MINUS');
+    }
+    clear () {
+      skuData = null;
+      this.selected = null;
+      this.originalPrice = null;
+      this.price = null;
+      this.goods = null;
+      this.display = 'false';
+    }
     methods = {
       close() {
-        this.display = 'false';
+        this.clear();
       },
       select(sku) {
         const skuValue = sku.sku;
@@ -76,36 +107,37 @@
           Tips.alert('请选择');
           return;
         }
-        this.$emit('select', {
-          goodsId: this.goods.id,
-          goodsSku: this.selected
-        });
+        this.cartManager.plus(this.goods, this.selected);
         // 清理残留数据
-        this.selected = null;
-        this.price = null;
-        this.originalPrice = null;
-        this.display = 'false';
+        this.clear();
       }
     };
     computed = {
-      sku() {
-        if (this.goods && this.goods.id) {
-          skuData = new Sku(this.goods);
-          const stocks = skuData.skuStocks;
-          stocks.forEach(stock => {
-            if (stock.stock == 0) {
-              stock.max = true;
-              return;
-            }
-            const cart = this.carts.find(item => item.goodsId == this.goods.id && item.goodsSku == stock.sku);
-            if (cart == null) {
-              stock.max = false;
-            } else {
-              stock.max = cart.goodsNum >= stock.stock;
-            }
-          });
-          return stocks;
+      carts() {
+        if (this.cartManager == null) {
+          return;
         }
+        return this.cartManager.export().carts;
+      },
+      sku() {
+        if (this.goods == null || this.carts == null) {
+          return;
+        }
+        skuData = new Sku(this.goods);
+        const stocks = skuData.skuStocks;
+        stocks.forEach(stock => {
+          if (stock.stock == 0) {
+            stock.max = true;
+            return;
+          }
+          const cart = this.carts.find(item => item.goodsId == this.goods.id && item.goodsSku == stock.sku);
+          if (cart == null) {
+            stock.max = false;
+          } else {
+            stock.max = cart.goodsNum >= stock.stock;
+          }
+        });
+        return stocks;
       }
     };
     components = {
