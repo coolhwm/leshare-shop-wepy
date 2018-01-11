@@ -7,6 +7,11 @@
         <SearchBar :param.sync="item"/>
       </block>
 
+      <!--店铺信息-->
+      <block wx:if="{{item.type == 'SHOP_BAR'}}">
+        <ShopBar :param.sync="item"/>
+      </block>
+
       <!--轮播图-->
       <block wx:if="{{item.type == 'SWIPER'}}">
         <SwiperBar :param.sync="item" />
@@ -51,6 +56,7 @@
   import Loading from '../../components/common/loading';
   import SearchBar from '../../components/template/search_bar';
   import SwiperBar from '../../components/template/swiper_bar';
+  import ShopBar from '../../components/shop/header';
   import ImageBox from '../../components/template/image_box';
   import GoodsBox from '../../components/template/goods_box';
   import CouponBox from '../../components/template/coupon_box';
@@ -75,7 +81,9 @@
       this.loaded();
     };
     processComponentsData (components) {
-      return components.map(component => this.copyParamToData(component));
+      return components
+        .filter(component => component.display !== false)
+        .map(component => this.copyParamToData(component));
     }
     copyParamToData(component) {
       const {data, type} = component;
@@ -95,6 +103,7 @@
       Loading: Loading,
       SearchBar: SearchBar,
       SwiperBar: SwiperBar,
+      ShopBar: ShopBar,
       ImageBox: ImageBox,
       GoodsBox: GoodsBox,
       CouponBox: CouponBox,

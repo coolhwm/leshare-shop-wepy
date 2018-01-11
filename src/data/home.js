@@ -12,21 +12,28 @@ export default {
   ],
   // 页面布局组件
   components: [
-    // 1. 顶部搜索栏
+    // 顶部搜索栏
     {
       id: 1,
       type: 'SEARCH_BAR', // SEARCH_BAR-搜索栏
       logoText: '蔬菜侠',  // 商家名称，展现在搜索栏前面，二选一
       logoUrl: null,  // 商家LOGO，展现在搜索栏前面，二选一,
-      placeholder: '请输入搜索内容...'
+      placeholder: '请输入搜索内容...',
+      display: true
     },
-    // 2. 轮播图
+    // 店铺信息
+    {
+      type: 'SHOP_BAR',  // SHOP_BAR-店铺信息栏
+      display: false
+    },
+    // 轮播图
     {
       id: 2,
       name: '轮播图',  // 橱窗名称
       type: 'SWIPER', // SWIPER-轮播图
       height: '250px',
       count: 2, // 一共有几个图片
+      display: true,
       data: [
         {
           seq: 1, // 排序号
@@ -42,7 +49,7 @@ export default {
         }
       ]
     },
-    // 3. 导航菜单
+    // 导航菜单
     {
       id: 3,
       name: '首页菜单',
