@@ -1,8 +1,10 @@
 <template>
   <view class="goods-box">
+    <!--顶部标题-->
     <view class="box-title row-center" wx:if="{{param.isTitle}}">
       <text class="title-line">────────</text><text class="title-text">{{param.title}}</text><text class="title-line">────────</text>
     </view>
+
     <!--横向单个布局-->
     <view class="row-box column" wx:if="{{param.layout == 'ROW'}}">
       <repeat for="{{param.data}}" key="index" index="index" item="item">
@@ -32,6 +34,11 @@
         </block>
       </repeat>
     </view>
+
+    <!--更多商品-->
+    <view class="box-footer row-center" wx:if="{{param.isMore}}">
+      <text class="weak">{{param.moreText}}</text>
+    </view>
   </view>
 
 </template>
@@ -58,9 +65,11 @@
   @import "../../styles/variable";
   .goods-box {
     border-top: $border;
+    background-color: white;
     .box-title{
       height: 80rpx;
       border-bottom: $border;
+      background-color: $color-bg-body;
       .title-text{
         color: $color-primary;
         margin-left: 20px;
@@ -71,7 +80,11 @@
         color: #E2E2E2;
       }
     }
+    .box-footer{
+      padding: 15rpx;
+    }
   }
+
   .tight-box{
     flex-wrap: wrap;
   }

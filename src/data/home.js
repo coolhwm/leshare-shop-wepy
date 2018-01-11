@@ -93,12 +93,13 @@ export default {
       categoryId: null, // 分类ID
       isSales: true,  // 是否展现销量
       isTitle: true, // 是否展现分类标题
-      isMore: true, // 是否展现更多按钮
+      isMore: true, // 是否展现更多按钮，只有在categoryId存在时才能配置
       isCart: true, // 是否展现加入购物车
       isPrice: true, // 是否展现价格
       isName: true, // 是否展现商品名称
       isTips: true, // 操作是否弹出提示
       skuMode: 'SILDER', // 选择器样式
+      moreText: '查看更多商品 >',
       data: [
         {
           'id': 239,
@@ -854,7 +855,7 @@ export default {
       layout: 'ROW', // ROW-横向单个商品；BIG-方形单个商品；GRID-一行2个方形商品；TIGHT-一行3个方形商品；
       categoryId: null, // 分类ID
       isTitle: true, // 是否展现分类标题
-      isMore: true, // 是否展现更多按钮
+      isMore: false, // 是否展现更多按钮
       isCart: true, // 是否展现加入购物车
       isPrice: true, // 是否展现价格
       isName: true, // 是否展现商品名称
@@ -1242,7 +1243,7 @@ export default {
       layout: 'GRID', // ROW-横向单个商品；BIG-方形单个商品；GRID-一行2个方形商品；TIGHT-一行3个方形商品；
       categoryId: null, // 分类ID
       isTitle: true, // 是否展现分类标题
-      isMore: true, // 是否展现更多按钮
+      isMore: false, // 是否展现更多按钮
       isCart: true, // 是否展现加入购物车
       isPrice: true, // 是否展现价格
       isName: true, // 是否展现商品名称
