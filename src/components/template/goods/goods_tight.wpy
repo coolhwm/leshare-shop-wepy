@@ -4,7 +4,7 @@
     <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="routeToGoods({{goods.id}})"></image>
     <view class="content-box column" wx:if="{{goods.isName || goods.isPrice}}">
       <!--文字-->
-      <text class="inline" wx:if="{{goods.isName}}">{{goods.name}}</text>
+      <text class="inline" wx:if="{{goods.isName}}" @tap="routeToGoods({{goods.id}})">{{goods.name}}</text>
 
       <!--销量-->
       <text class="xs muted" wx:if="{{goods.isSales}}">已售{{goods.salesVolume}}件</text>
@@ -12,6 +12,8 @@
       <!--购物车与价格标签-->
       <view class="row-between" wx:if="{{goods.isPrice || goods.isCart}}">
         <text class=" lg major" wx:if="{{goods.isPrice}}">￥{{goods.priceLable}}</text>
+
+        <!--加入购物车按钮-->
         <image class="cart-icon" wx:if="{{goods.isCart}}"  src="/images/icons/plus.png" @tap="handlePlusCart({{goods}})"></image>
       </view>
     </view>

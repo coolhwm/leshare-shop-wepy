@@ -1,7 +1,7 @@
 <template>
-  <CoverPanel :display.sync="display" zIndex="1000000"/>
+  <CoverPanel :display.sync="display" zIndex="1000000" @tap.user="close"/>
   <!--弹出窗口-->
-  <view class="wrap" wx:if="{{display}}">
+  <view class="wrap" wx:if="{{display}}" >
     <view class="modal-panel column">
       <!--标题区域-->
       <view class="sku-title column-center">
@@ -71,7 +71,8 @@
       // TODO 库存校验
       // 初始化商品对象
       this.goods = goods;
-      if (goods.goodsSkuInfo && goodsSku == null) {
+      const hasSku = goods.goodsSkuInfo && (goodsSku == null || goodsSku == '');
+      if (hasSku) {
         // 有SKU，且没有选择SKU的情况，展现面板
         this.display = true;
       } else {
@@ -201,6 +202,9 @@
 
   .sku-title{
     height: 120rpx;
+    padding: 10rpx 30rpx;
+    max-width: 550rpx;
+    text{text-align: center}
 
     .close{
       position: absolute;
