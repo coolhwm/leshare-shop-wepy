@@ -4,10 +4,17 @@
     <view>
       <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="routeToGoods({{goods.id}})"></image>
     </view>
-    <view class="content-box column">
-      <!--文字-->
+    <view class="goods-title" @tap="routeToGoods({{goods.id}})">
       <text class="inline lg" wx:if="{{goods.isName}}">{{goods.name}}</text>
-      <text class="major lg" wx:if="{{goods.isPrice}}">￥{{goods.priceLable}}</text>
+    </view>
+
+    <view class="row-between" wx:if="{{goods.isSales || goods.isPrice || goods.isCart}}">
+      <view class="content-box column" wx:if="{{goods.isSales || goods.isPrice}}">
+        <text class="xs muted" wx:if="{{goods.isSales}}">已售{{goods.salesVolume}}件</text>
+        <text class="major lg" wx:if="{{goods.isPrice}}">￥{{goods.priceLable}}</text>
+      </view>
+      <!--加入购物车按钮-->
+      <image class="cart-icon" wx:if="{{goods.isCart}}"  src="/images/icons/plus.png" @tap="handlePlusCart({{goods}})"></image>
     </view>
   </view>
 </template>
@@ -33,13 +40,21 @@
     width: $size;
     border-right: $border;
     border-bottom: $border;
+    padding-bottom: 5rpx;
     .goods-image{
       width: $size;
       height: $size;
     }
-
+    .goods-title{
+      padding: 0 10rpx;
+    }
     .content-box{
       padding: 5rpx 10rpx;
+    }
+    .cart-icon{
+      width: 45rpx;
+      height: 45rpx;
+      margin-right: 10px;
     }
   }
 </style>
