@@ -78,7 +78,7 @@
       } else {
         // 没有SKU，直接加入购物车
         this.cartManager.plus(goods, goodsSku);
-        if (goods.isTips) {
+        if (goods.isTips || goods.isTips == null) {
           Tips.success('已加入购物车');
         }
         this.clear();
@@ -137,7 +137,7 @@
           return;
         }
         this.cartManager.plus(this.goods, this.selected);
-        if (this.goods.isTips) {
+        if (this.goods.isTips || this.goods.isTips == null) {
           Tips.success('已加入购物车');
         }
         // 清理残留数据

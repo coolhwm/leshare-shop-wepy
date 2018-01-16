@@ -13,6 +13,7 @@
     "pages/home/login",
     "pages/goods/cart",
     "pages/goods/search",
+    "pages/goods/search_list",
     "pages/goods/detail",
     "pages/goods/comment_list",
     "pages/goods/comment_edit",

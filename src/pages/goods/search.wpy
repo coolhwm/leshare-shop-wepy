@@ -6,13 +6,13 @@
       <view class="weui-search-bar__form">
         <view class="weui-search-bar__box">
           <icon class="weui-icon-search_in-box" type="search" size="14"></icon>
-          <input type="text" name="keyword" class="weui-search-bar__input" placeholder="请输入搜索内容..." @input="input"/>
-          <view class="weui-icon-clear" wx:if="{{keyword.length > 0}}">
+          <input type="text" name="keyword" value="{{keyword}}" class="weui-search-bar__input" placeholder="请输入搜索内容..." @input="input"/>
+          <view class="weui-icon-clear" wx:if="{{keyword.length > 0}}" @tap="clear">
             <icon type="clear" size="14"></icon>
           </view>
         </view>
       </view>
-      <view class="weui-search-bar__cancel-btn" @tap="confirm">确定</view>
+      <view class="weui-search-bar__cancel-btn" @tap="confirm({{keyword}})">确定</view>
     </view>
     <view class="search-placeholder"></view>
 
@@ -21,7 +21,7 @@
       <text class="title">热门搜索</text>
       <view class="hot-main row">
         <block wx:for="{{hotKeywords}}" wx:key="*this">
-          <view class="label mt10">{{item}}</view>
+          <view class="label mt10" @tap="confirm({{item}})">{{item}}</view>
         </block>
       </view>
     </view>
@@ -33,7 +33,7 @@
         <view class="weui-panel__bd">
           <view class="weui-media-box weui-media-box_small-appmsg">
             <view class="weui-cells weui-cells_in-small-appmsg">
-              <view url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active" wx:for="{{historyKeyWords}}" wx:key="*this">
+              <view url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active" wx:for="{{historyKeyWords}}" wx:key="*this" @tap="confirm({{item}})">
                 <view class="weui-cell__hd"></view>
                 <view class="weui-cell__bd weui-cell_primary">
                   <view>{{item}}</view>
@@ -45,29 +45,67 @@
         </view>
       </view>
       <view class="zan-btns">
-        <button class="zan-btn" >清空历史搜索记录</button>
+        <button class="zan-btn" @tap="clearHistory" >清空历史搜索记录</button>
       </view>
     </view>
   </view>
+  <!--购物选择框-->
+  <PopupPanel />
 </template>
 
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import SearchBar from '../../components/weui/search_bar';
+  import Tips from '../../utils/Tips';
+
   export default class GoodsSearch extends wepy.page {
     data = {
       init: false,
       keyword: '',
-      hotKeywords: ['大白菜', '小白菜', '猪肉', '车厘子', '紫菜', '海蜇', '西红柿'],
-      historyKeyWords: ['八宝粥', '干贝', '咸蛋黄', '紫菜']
+      hotKeywords: null,
+      historyKeyWords: null
     };
-    onLoad (options) {
+    onLoad ({param}) {
+      // 热门搜索初始化
+      if (param != null) {
+        const {hotKeywords} = JSON.parse(param);
+        this.hotKeywords = hotKeywords;
+      }
+      // 初始化历史搜索
+      const historyKeyWords = wepy.getStorageSync('historyKeyWords');
+      if (historyKeyWords != null && historyKeyWords != '') {
+        this.historyKeyWords = historyKeyWords;
+      } else {
+        this.historyKeyWords = [];
+      }
       this.loaded();
     };
     methods = {
       input(event) {
         this.keyword = event.detail.value;
+      },
+      confirm(keyword) {
+        if (keyword == null || keyword == '') {
+          Tips.alert('请输入搜索内容');
+          return;
+        }
+        // 保存历史存储
+        if (this.historyKeyWords.every(item => item != keyword)) {
+          this.historyKeyWords.push(keyword);
+        }
+        wepy.setStorageSync('historyKeyWords', this.historyKeyWords);
+        // 跳转
+        this.$navigate(`search_list?keyword=${keyword}`);
+      },
+      clear() {
+        this.keyword = '';
+      },
+      async clearHistory() {
+        await Tips.confirm('确定清空历史记录？');
+        wepy.setStorageSync('historyKeyWords', []);
+        this.historyKeyWords = [];
+        this.$apply();
       }
     };
     components = {
@@ -102,9 +140,11 @@
   }
 
   .hot-box{
+    margin-top: 10px;
     padding:10px;
     background-color: white;
     border-bottom: $border;
+    border-top: $border;
     .hot-main{
       margin-top: 10rpx;
       flex-wrap: wrap;

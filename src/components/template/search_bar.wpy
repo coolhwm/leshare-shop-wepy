@@ -6,7 +6,7 @@
     <view class="logo-text" wx:if="{{param.logoText}}">
       <text>{{param.logoText}}</text>
     </view>
-    <view class="content">
+    <view class="content" @tap="search">
       <text>{{param.placeholder}}</text>
     </view>
   </view>
@@ -19,7 +19,12 @@
       param: {}
     };
     data = {};
-    methods = {};
+    methods = {
+      search() {
+        const param = JSON.stringify(this.param);
+        this.$root.$navigate(`/pages/goods/search?param=${param}`);
+      }
+    };
     events = {};
     onLoad() {
     }

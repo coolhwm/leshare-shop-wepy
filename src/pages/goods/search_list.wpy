@@ -1,0 +1,94 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view wx:if="{{init}}">
+    <!--TAB-->
+    <ZanTab :tab.sync="tab" @change.user="switchTab" />
+
+    <!--列表展现-->
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <GoodsRow :goods.sync="item"/>
+    </repeat>
+
+    <Loadmore :page.sync="page"/>
+
+    <!--占位符-->
+    <Placeholder :show.sync="isPageEmpty" message="没有符合条件的商品"/>
+
+    <!--购物面板 TODO 兼容两种风格-->
+    <PopupPanel />
+
+    <!--悬浮购物车-->
+    <FloatCart />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import goods from '../../api/goods';
+  import pagination from '../../mixins/pagination.wpy';
+  import base from '../../mixins/base';
+  import GoodsRow from '../../components/template/goods/goods_row';
+  import ZanTab from '../../components/zanui/tab';
+  import PopupPanel from '../../components/goods/sku_selector';
+  import FloatCart from '../../components/template/float-cart';
+  import Placeholder from '../../components/common/placeholder';
+  import Loadmore from '../../components/weui/loadmore';
+  import Loading from '../../components/common/loading';
+
+  export default class GoodsSearchList extends wepy.page {
+    data = {
+      init: false,
+      keyword: null,
+      page: {
+        list: []
+      },
+      tab: {
+        list: [
+          {id: 'sales_volume', title: '商品销量'},
+          {id: 'sell_price', title: '商品价格'},
+          {id: 'create_time', title: '上架时间'}
+        ],
+        selectedId: 'sales_volume',
+        order: true,
+        sord: 'desc',
+        scroll: false
+      }
+    };
+    async onLoad ({keyword}) {
+      this.keyword = keyword;
+      this.page = goods.list();
+      await this.next();
+    };
+    params() {
+      return {
+        content: this.keyword,
+        by: this.tab.selectedId,
+        sort: this.tab.sord
+      }
+    }
+    methods = {
+      async switchTab() {
+        await this.reload();
+      }
+    };
+    components = {
+      GoodsRow: GoodsRow,
+      ZanTab: ZanTab,
+      PopupPanel: PopupPanel,
+      FloatCart: FloatCart,
+      Placeholder: Placeholder,
+      Loadmore: Loadmore,
+      Loading: Loading
+    };
+    computed = {};
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '搜索结果'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

@@ -16,7 +16,7 @@ export default {
       enable: true
     }
   ],
-// 页面布局组件
+  // 页面布局组件
   components: [
     // 顶部搜索栏
     {
@@ -26,7 +26,7 @@ export default {
       logoUrl: null,  // 商家LOGO，展现在搜索栏前面，二选一,
       placeholder: '请输入搜索内容...',
       display: true,
-      hotKeyword: ['大白菜', '小白菜', '猪肉', '车厘子', '紫菜', '海蜇', '西红柿']
+      hotKeywords: ['水', '奶', '茶', '车厘子', '紫菜', '海蜇', '西红柿']
     },
     // 店铺信息
     {

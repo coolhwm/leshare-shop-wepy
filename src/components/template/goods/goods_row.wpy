@@ -10,12 +10,12 @@
         <text class="xl">{{goods.name}}</text>
       </view>
       <!--销量展示-->
-      <view wx:if="{{goods.isSales}}">
+      <view wx:if="{{goods.isSales || goods.isSales == null}}">
         <text class="xs muted">已售{{goods.salesVolume}}件</text>
       </view>
       <!--价格-->
-      <view class="row-between" wx:if="{{goods.isPrice || goods.isCart}}">
-        <view class="price-box" wx:if="{{goods.isPrice}}">
+      <view class="row-between" wx:if="{{(goods.isPrice || goods.isPrice == null) || (goods.isCart || goods.isCart == null)}}">
+        <view class="price-box" wx:if="{{goods.isPrice || goods.isPrice == null}}">
           <view class="goods-unit">￥</view>
           <text class="goods-price">{{goods.priceLable}}</text>
           <text class="original-price" wx:if="{{goods.discount}}">￥{{goods.originalPrice}}</text>
@@ -23,7 +23,7 @@
 
         <!--加入购物车按钮-->
         <view>
-          <image class="cart-icon" wx:if="{{goods.isCart}}"  src="/images/icons/plus.png" @tap.stop="handlePlusCart({{goods}})"></image>
+          <image class="cart-icon" wx:if="{{goods.isCart || goods.isCart == null}}"  src="/images/icons/plus.png" @tap.stop="handlePlusCart({{goods}})"></image>
         </view>
       </view>
     </view>
