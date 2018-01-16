@@ -4,13 +4,19 @@ export default {
   // 页面插件，不参与布局
   plugins: [
     {
-      type: 'SKU_POPUP_PANEL'  // 弹出SKU选择器
+      type: 'SKU_POPUP_PANEL',  // 弹出SKU选择器,
+      enable: true
     },
     {
-      type: 'SKU_SLIDE_PANEL'   // 滑出SKU选择器
+      type: 'SKU_SLIDE_PANEL',   // 滑出SKU选择器
+      enable: true
+    },
+    {
+      type: 'CART_FLOAT',   // 浮动购物车
+      enable: true
     }
   ],
-  // 页面布局组件
+// 页面布局组件
   components: [
     // 顶部搜索栏
     {
@@ -19,7 +25,8 @@ export default {
       logoText: '蔬菜侠',  // 商家名称，展现在搜索栏前面，二选一
       logoUrl: null,  // 商家LOGO，展现在搜索栏前面，二选一,
       placeholder: '请输入搜索内容...',
-      display: true
+      display: true,
+      hotKeyword: ['大白菜', '小白菜', '猪肉', '车厘子', '紫菜', '海蜇', '西红柿']
     },
     // 店铺信息
     {

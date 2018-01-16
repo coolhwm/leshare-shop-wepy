@@ -44,6 +44,11 @@
       <block wx:if="{{item.type == 'SKU_POPUP_PANEL'}}" >
         <PopupPanel />
       </block>
+
+      <!--浮动购物车-->
+      <block wx:if="{{item.type == 'CART_FLOAT'}}" >
+        <FloatCart />
+      </block>
     </repeat>
   </view>
 </template>
@@ -62,6 +67,7 @@
   import CouponBox from '../../components/template/coupon_box';
   import GoodsPanel from '../../components/goods/buy-panel';
   import SkuSelector from '../../components/goods/sku_selector';
+  import FloatCart from '../../components/template/float-cart';
 
   export default class IndexTemplate extends wepy.page {
     data = {
@@ -76,11 +82,15 @@
     };
     async onLoad () {
       await store.init();
-      this.components = this.processComponentsData(data.components);
-      this.plugins = data.plugins;
+      this.components = this.processComponents(data.components);
+      this.plugins = this.processPlugins(data.plugins);
       this.loaded();
     };
-    processComponentsData (components) {
+    processPlugins (plugins) {
+      return plugins
+        .filter(plugin => plugin.enable !== false);
+    }
+    processComponents (components) {
       return components
         .filter(component => component.display !== false)
         .map(component => this.copyParamToData(component));
@@ -108,7 +118,8 @@
       GoodsBox: GoodsBox,
       CouponBox: CouponBox,
       SilderPanel: GoodsPanel,
-      PopupPanel: SkuSelector
+      PopupPanel: SkuSelector,
+      FloatCart: FloatCart
     };
     computed = {
     };

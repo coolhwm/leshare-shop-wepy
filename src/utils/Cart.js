@@ -1,4 +1,5 @@
 import wepy from 'wepy';
+import store from '../store/utils';
 
 /**
  * 购物车视图类
@@ -20,14 +21,17 @@ export default class Cart {
   }
 
   /**
-   * 保存数据
+   * 保存数据 / 同时需要保存到Store
    */
   save() {
     this.computeCart();
+    // 保存到存储
     wepy.setStorage({
       key: 'carts',
       data: this
     });
+    // 保存到Store
+    store.save('cart', this.export());
   }
 
   /**
@@ -88,6 +92,8 @@ export default class Cart {
       // this.carts = carts;
       Object.assign(this, carts);
     }
+    // 加载到Store
+    store.save('cart', this.export());
   }
 
   /**

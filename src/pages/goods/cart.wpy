@@ -72,10 +72,10 @@
   import auth from '../../api/auth';
   import Cart from '../../utils/Cart';
   import CartItem from '../../components/goods/cart';
-  // import Cache from '../../utils/Cache';
   import Tips from '../../utils/Tips';
 
   @connect({
+    cart: store.get('cart'),
     shop: store.get('shop'),
     status: store.get('status')
   })
@@ -129,14 +129,6 @@
         // shop.reportFormId(param.formId);
         this.$preload('trade', trade);
         this.$navigate(`../order/trade`);
-      }
-    };
-    computed = {
-      cart() {
-        if (this.cartManager === null) {
-          return;
-        }
-        return this.cartManager.export();
       }
     };
     components = {

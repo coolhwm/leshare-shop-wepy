@@ -84,6 +84,7 @@ export default class extends wepy.app {
       'pages/goods/cart',
       'pages/goods/detail',
       'pages/goods/comment_list',
+      'pages/goods/search',
       'pages/goods/comment_edit',
       'pages/address/edit',
       'pages/order/trade',

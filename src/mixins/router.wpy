@@ -42,10 +42,16 @@
         this.plusCart(goods);
       },
       /**
-       * 处理跳转到商品详情
+       * 处理跳转到购物车页面
        */
       routeToGoods(goodsId) {
         this.$root.$navigate(`/pages/goods/detail?goodsId=${goodsId}`);
+      },
+      /**
+       * 处理跳转到商品详情
+       */
+      routeToCart() {
+        this.$root.$switch(`/pages/goods/cart`);
       },
       /**
        * 处理图片点击事件
