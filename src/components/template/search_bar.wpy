@@ -7,7 +7,7 @@
       <text>{{param.logoText}}</text>
     </view>
     <view class="content" @tap="search">
-      <text>{{param.placeholder}}</text>
+      <text>{{param.placeholder == null  ? '请输入搜索内容...' : param.placeholder }}</text>
     </view>
   </view>
 </template>
@@ -36,7 +36,8 @@
   .search-bar-box{
     background-color: $color-primary;
     align-items: center;
-    padding: 10rpx 100rpx 10rpx 20rpx;
+    height: 80rpx;
+    padding: 0 100rpx 0 20rpx;
 
     .logo-text{
       text{

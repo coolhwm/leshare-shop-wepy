@@ -15,6 +15,7 @@
     "pages/goods/search",
     "pages/goods/search_list",
     "pages/goods/detail",
+    "pages/goods/category",
     "pages/goods/comment_list",
     "pages/goods/comment_edit",
     "pages/address/edit",
@@ -54,7 +55,7 @@
         {
           "iconPath": "images/tab/order.png",
           "selectedIconPath": "images/tab/order-active.png",
-          "pagePath": "pages/shop/index",
+          "pagePath": "pages/goods/category",
           "text": "分类"
         },
         {
