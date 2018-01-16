@@ -40,6 +40,7 @@
     data = {
       init: false,
       keyword: null,
+      categoryId: null,
       page: {
         list: []
       },
@@ -55,17 +56,24 @@
         scroll: false
       }
     };
-    async onLoad ({keyword}) {
+    async onLoad ({keyword, categoryId}) {
+      this.categoryId = categoryId;
       this.keyword = keyword;
       this.page = goods.list();
       await this.next();
     };
     params() {
-      return {
-        content: this.keyword,
+      const param = {
         by: this.tab.selectedId,
         sort: this.tab.sord
+      };
+      if (this.keyword) {
+        param.content = this.keyword;
       }
+      if (this.categoryId) {
+        param.category_id = this.categoryId;
+      }
+      return param;
     }
     methods = {
       async switchTab() {

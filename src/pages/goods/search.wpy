@@ -2,7 +2,7 @@
   <view wx:if="{{init}}">
     <!--搜索面板-->
     <view class="weui-search-bar">
-      <image class="icon mr20" src="/images/icons/back-gray.png"></image>
+      <image class="icon mr20" src="/images/icons/back-gray.png" @tap="back"></image>
       <view class="weui-search-bar__form">
         <view class="weui-search-bar__box">
           <icon class="weui-icon-search_in-box" type="search" size="14"></icon>
@@ -106,6 +106,9 @@
         wepy.setStorageSync('historyKeyWords', []);
         this.historyKeyWords = [];
         this.$apply();
+      },
+      back () {
+        wepy.navigateBack();
       }
     };
     components = {

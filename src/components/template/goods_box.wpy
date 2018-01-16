@@ -36,7 +36,7 @@
     </view>
 
     <!--更多商品-->
-    <view class="box-footer row-center" wx:if="{{param.isMore}}">
+    <view class="box-footer row-center" wx:if="{{param.isMore}}" @tap="more">
       <text class="weak">{{param.moreText}}</text>
     </view>
   </view>
@@ -52,6 +52,9 @@
       param: {}
     };
     methods = {
+      more() {
+        this.$root.$navigate(`/pages/goods/search_list?categoryId=${this.param.categoryId}`);
+      }
     };
     components = {
       RowItem: RowItem,

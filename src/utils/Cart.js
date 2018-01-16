@@ -152,6 +152,7 @@ export default class Cart {
     if (index == -1) {
       // 购物车里没有，异常情况
       console.warn(`商品在购物车中不存在 id=${goodsId}, sku=${skuText}`);
+      return;
     }
     const cart = this.carts[index];
     if (cart.goodsNum <= 1) {
@@ -299,7 +300,11 @@ export default class Cart {
    * 根据商品信息查找商品的下标
    */
   findIndex (goodsId, sku) {
-    return this.carts.findIndex(item => item.goodsId == goodsId && item.goodsSku == sku);
+    if (sku != null && sku != '') {
+      return this.carts.findIndex(item => item.goodsId == goodsId && item.goodsSku == sku);
+    } else {
+      return this.carts.findIndex(item => item.goodsId == goodsId);
+    }
   }
 
   /**
