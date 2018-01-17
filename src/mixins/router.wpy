@@ -1,0 +1,89 @@
+<script>
+  import wepy from 'wepy';
+  import Event from '../utils/Event';
+
+  /**
+   * 分页通用方法
+   */
+  export default class router extends wepy.mixin {
+    config = {};
+    components = {};
+    goto(url, switchTo) {
+      if (switchTo) {
+        this.$root.$switch(url);
+      } else {
+        this.$root.$navigate(url);
+      }
+    }
+    plusCart(goods, goodsSku = '') {
+      const source = this.$root.$wxpage.route;
+      const mode = goods.skuMode;
+      switch (mode) {
+        case 'SLIDER':
+          Event.emit(Event.GOODS_PANEL_OPEN, goods);
+          break;
+        case 'POPUP':
+          Event.emit(Event.GOODS_PANEL_PLUS, {goods, goodsSku, source});
+          break;
+        default:
+          // 默认用简化版
+          Event.emit(Event.GOODS_PANEL_PLUS, {goods, goodsSku, source});
+      }
+    }
+    minusCart(goodsId, goodsSku = '') {
+      const source = this.$root.$wxpage.route;
+      Event.emit(Event.GOODS_PANEL_MINUS, {goodsId, goodsSku, source});
+    }
+    methods = {
+      /**
+       * 处理加入购物车事件
+       */
+      handlePlusCart(goods) {
+        this.plusCart(goods);
+      },
+      /**
+       * 处理跳转到购物车页面
+       */
+      routeToGoods(goodsId) {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${goodsId}`);
+      },
+      /**
+       * 处理跳转到商品详情
+       */
+      routeToCart() {
+        this.$root.$switch(`/pages/goods/cart`);
+      },
+      /**
+       * 处理图片点击事件
+       */
+      routeByAction(event) {
+        const {action, targetId, switchTo} = event;
+        // 根据动作进行路由
+        switch (action) {
+          case 'GOODS':
+            this.$root.$navigate(`/pages/goods/detail?goodsId=${targetId}`);
+            break;
+          case 'CATEGORY':
+            console.info(`跳转到商品分类：${targetId}`);
+            break;
+          case 'USER':
+            this.goto('/pages/customer/index', switchTo);
+            break;
+          case 'GOODS_ALL':
+            this.goto('/pages/shop/index', switchTo);
+            break;
+          case 'MEMBER_SIGN':
+            this.goto('/pages/customer/sign_in', switchTo);
+            break;
+          case 'COUPON_OWN':
+            this.goto('/pages/coupon/list', switchTo);
+            break;
+          case 'MEMBER_DETAIL':
+            this.goto('/pages/customer/vip_detail', switchTo);
+            break;
+        }
+      }
+    };
+    events = {};
+  }
+</script>

@@ -1,0 +1,135 @@
+<template>
+  <Loading :init.sync="init"/>
+  <view wx:if="{{init}}">
+    <repeat for="{{components}}" key="index" index="index" item="item">
+      <!--搜索栏-->
+      <block wx:if="{{item.type == 'SEARCH_BAR'}}">
+        <SearchBar :param.sync="item"/>
+      </block>
+
+      <!--店铺信息-->
+      <block wx:if="{{item.type == 'SHOP_BAR'}}">
+        <ShopBar :param.sync="item"/>
+      </block>
+
+      <!--轮播图-->
+      <block wx:if="{{item.type == 'SWIPER'}}">
+        <SwiperBar :param.sync="item" />
+      </block>
+
+      <!--图片橱窗-->
+      <block wx:if="{{item.type == 'IMAGE_BOX'}}">
+        <ImageBox :param.sync="item" />
+      </block>
+
+      <!--优惠券橱窗-->
+      <block wx:if="{{item.type == 'COUPON_BOX'}}">
+        <CouponBox :param.sync="item" />
+      </block>
+
+      <!--商品橱窗-->
+      <block wx:if="{{item.type == 'GOODS_BOX'}}">
+        <GoodsBox :param.sync="item" />
+      </block>
+    </repeat>
+
+    <!--插件-->
+    <repeat for="{{plugins}}" key="index" index="index" item="item">
+      <!--滑出购物面板-->
+      <block wx:if="{{item.type == 'SKU_SLIDE_PANEL'}}" >
+        <SilderPanel />
+      </block>
+
+      <!--弹出购物面板-->
+      <block wx:if="{{item.type == 'SKU_POPUP_PANEL'}}" >
+        <PopupPanel />
+      </block>
+
+      <!--浮动购物车-->
+      <block wx:if="{{item.type == 'CART_FLOAT'}}" >
+        <FloatCart />
+      </block>
+    </repeat>
+  </view>
+</template>
+
+<script>
+  import store from '../../store/utils';
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import data from '../../data/home';
+  import Loading from '../../components/common/loading';
+  import SearchBar from '../../components/template/search_bar';
+  import SwiperBar from '../../components/template/swiper_bar';
+  import ShopBar from '../../components/shop/header';
+  import ImageBox from '../../components/template/image_box';
+  import GoodsBox from '../../components/template/goods_box';
+  import CouponBox from '../../components/template/coupon_box';
+  import GoodsPanel from '../../components/goods/buy-panel';
+  import SkuSelector from '../../components/goods/sku_selector';
+  import FloatCart from '../../components/template/float-cart';
+
+  export default class IndexTemplate extends wepy.page {
+    data = {
+      init: false,
+      components: null,
+      plugins: null,
+      fieldsToCopy: {
+        SWIPER: ['height'],
+        IMAGE_BOX: ['heigth', 'width', 'isTitle'],
+        GOODS_BOX: ['isCart', 'isPrice', 'isName', 'isSales', 'skuMode', 'isTips']
+      }
+    };
+    async onLoad () {
+      await store.init();
+      this.components = this.processComponents(data.components);
+      this.plugins = this.processPlugins(data.plugins);
+      this.loaded();
+    };
+    processPlugins (plugins) {
+      return plugins
+        .filter(plugin => plugin.enable !== false);
+    }
+    processComponents (components) {
+      return components
+        .filter(component => component.display !== false)
+        .map(component => this.copyParamToData(component));
+    }
+    copyParamToData(component) {
+      const {data, type} = component;
+      const fields = this.fieldsToCopy[type];
+      if (fields != null) {
+        data.forEach(item => {
+          fields.forEach(field => {
+            item[field] = component[field];
+          });
+        });
+      }
+      return component;
+    }
+    methods = {
+    };
+    components = {
+      Loading: Loading,
+      SearchBar: SearchBar,
+      SwiperBar: SwiperBar,
+      ShopBar: ShopBar,
+      ImageBox: ImageBox,
+      GoodsBox: GoodsBox,
+      CouponBox: CouponBox,
+      SilderPanel: GoodsPanel,
+      PopupPanel: SkuSelector,
+      FloatCart: FloatCart
+    };
+    computed = {
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '首页'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

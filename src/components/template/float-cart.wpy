@@ -1,0 +1,44 @@
+<template>
+  <view class="float-cart-box">
+    <view class="weui-badge" style="position: absolute;top: 0;right: 0;" >{{cart.num}}</view>
+    <image class="cart-icon"  src="/images/icons/cart-round.png" @tap="routeToCart"></image>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import Cart from '../../utils/Cart';
+  import router from '../../mixins/router';
+
+  @connect({
+    cart: store.get('cart')
+  })
+  export default class FloatCart extends wepy.component {
+    props = {
+    };
+    cartManager = Cart.create();
+    async onLoad () {
+    }
+    methods = {
+    };
+    mixins = [router];
+  }
+</script>
+
+<style lang="scss">
+  .float-cart-box{
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    .cart-icon {
+      background-color: white;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      border: 2px solid #FFF;
+      box-shadow: 0 0 5px gray;
+    }
+  }
+
+</style>

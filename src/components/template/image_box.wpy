@@ -1,0 +1,32 @@
+<template>
+  <view class="image-box row-around">
+    <view class="column-around" wx:for="{{param.data}}" wx:for-item="image" wx:key="seq">
+      <image style="width:{{param.width}};height:{{param.heigth}} " mode="aspectFill" src="{{image.url}}" @tap="routeByAction({{image}})"></image>
+      <text wx:if="{{image.isTitle}}" class="image-title">{{image.title}}</text>
+    </view>
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import router from '../../mixins/router';
+  export default class ImageBox extends wepy.component {
+    props = {
+      param: {}
+    };
+    mixins = [router]
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .image-box{
+    background-color: white;
+    padding-top: 10rpx;
+    padding-bottom: 10rpx;
+    .image-title{
+      margin-top: 3px;
+    }
+  }
+</style>

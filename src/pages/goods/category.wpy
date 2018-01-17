@@ -2,12 +2,8 @@
   <Loading :init.sync="init"/>
 
   <view class="container column" wx:if="{{init}}">
+    <SearchBar :param.sync="searchParam"/>
 
-    <!-- 店铺信息区域 -->
-    <ShopHeader />
-
-    <!--功能区域-->
-    <ShopNav :mode.sync="mode"/>
     <!--主内容区域-->
     <view class="main-box row {{version.isOrder ? 'main-box-pad' : 'main-box-full' }}">
       <!--分类侧边栏-->
@@ -15,12 +11,6 @@
 
       <!--右侧滚动-->
       <scroll-view scroll-y class="goods-box" bindscrolltolower="onReachBottom">
-        <!--卡券区域（只在推荐的时候展现）-->
-        <scroll-view scroll-x	class="coupon-box" wx:if="{{categories.selectedId==-1 && pickCoupons.length > 0}}">
-          <repeat for="{{pickCoupons}}" key="index" index="index" item="item">
-            <CouponItem :coupon.sync="item" @pick.user="pickCoupon" />
-          </repeat>
-        </scroll-view>
 
         <!--分类名称-->
         <view class="goods-title row">
@@ -38,13 +28,12 @@
         <Loadmore :page.sync="page" emptyText="暂无商品"/>
       </scroll-view>
     </view>
-    <!-- 购物车 -->
-    <block wx:if="{{version.isOrder}}">
-      <ShopCart :carts.sync="carts"  @plus.user="plus" @minus.user="minus" @clear.user="clear" @buy.user="buy"/>
-    </block>
+
     <!--SKU选择器-->
     <SkuSelector/>
 
+    <!--悬浮购物车-->
+    <FloatCart />
   </view>
 </template>
 
@@ -61,18 +50,15 @@
   import router from '../../mixins/router';
   import pagination from '../../mixins/pagination.wpy';
   import SideTab from '../../components/common/side_tab';
-  import ShopHeader from '../../components/shop/header';
-  import ShopNav from '../../components/shop/nav';
-  import CouponItem from '../../components/coupons/simple_item';
   import GoodsItem from '../../components/goods/simple_item';
   import SkuSelector from '../../components/goods/sku_selector';
   import Loadmore from '../../components/weui/loadmore';
-  import ShopCart from '../../components/shop/cart';
-  import Navigator from '../../components/weui/navigator';
   import Tips from '../../utils/Tips';
   import Loading from '../../components/common/loading';
-  import Event from '../../utils/Event';
+  import FloatCart from '../../components/template/float-cart';
   import Cart from '../../utils/Cart';
+  import SearchBar from '../../components/template/search_bar';
+  import data from '../../data/home';
 
   @connect({
     shop: store.get('shop'),
@@ -95,7 +81,8 @@
       skuDisplay: 'false',
       detailDisplay: false,
       skuGoods: {},
-      mode: 1
+      mode: 1,
+      searchParam: null
     };
     cartManager = Cart.create();
     async onLoad ({goodsId, mode}, {preload}) {
@@ -108,14 +95,8 @@
       this.categoryTab = {...this.categories};
       // 加载商品列表
       await this.loadGoodsList();
-      // 处理推荐跳转
-      if (goodsId) {
-        const detail = this.methods.detail.bind(this);
-        detail({id: goodsId});
-      }
-      // 监听事件
-      Event.listen(Event.CART_LIST_CLEAR, this.doClearCart.bind(this), this);
-      Event.listen(Event.CART_LIST_ADD, this.doAddCart.bind(this), this);
+      // 处理加载搜索栏
+      this.searchParam = data.components.find(item => item.type == 'SEARCH_BAR');
       this.loaded();
     };
     /**
@@ -333,9 +314,6 @@
         }
         // 计算折扣
         const {discountRule, customDiscount} = this.member;
-        if (discountRule == null) {
-          return null;
-        }
         let discount = 100;
         if (customDiscount > 0 && customDiscount < 100) {
           // 自定义折扣
@@ -345,11 +323,7 @@
           discount = discountRule.discount;
         }
         // 判断异常情况
-        if (discount == null || discount >= 100 || discount <= 0) {
-          return null;
-        }
-        const {discountCategoryLists} = discountRule;
-        if (discountCategoryLists == null || discountCategoryLists.length < 1) {
+        if (discount >= 100 || discount <= 0) {
           return null;
         }
         const categories = discountRule.discountCategoryLists.map(item => item.categoryId);
@@ -386,16 +360,13 @@
       }
     };
     components = {
-      ShopHeader: ShopHeader,
       SideTab: SideTab,
-      CouponItem: CouponItem,
       GoodsItem: GoodsItem,
-      ShopNav: ShopNav,
       Loadmore: Loadmore,
-      ShopCart: ShopCart,
       SkuSelector: SkuSelector,
-      Navigator: Navigator,
-      Loading: Loading
+      Loading: Loading,
+      SearchBar: SearchBar,
+      FloatCart: FloatCart
     };
     mixins = [base, pagination, router];
     config = {
@@ -405,16 +376,13 @@
 
 <style lang="scss">
   @import "../../styles/variable";
-  .main-box-full {
-    bottom: 0;
-  }
-  .main-box-pad {
-    bottom: 55px;
-  }
+
   .main-box{
     width: 100%;
+    border-top: $border;
     position: absolute;
-    top: 145px;
+    top: 80rpx;
+    bottom: 0;
 
     .goods-box{
       flex: 1;

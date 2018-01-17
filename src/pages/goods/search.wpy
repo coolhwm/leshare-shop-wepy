@@ -1,0 +1,162 @@
+<template>
+  <view wx:if="{{init}}">
+    <!--搜索面板-->
+    <view class="weui-search-bar">
+      <image class="icon mr20" src="/images/icons/back-gray.png" @tap="back"></image>
+      <view class="weui-search-bar__form">
+        <view class="weui-search-bar__box">
+          <icon class="weui-icon-search_in-box" type="search" size="14"></icon>
+          <input type="text" name="keyword" value="{{keyword}}" class="weui-search-bar__input" placeholder="请输入搜索内容..." @input="input"/>
+          <view class="weui-icon-clear" wx:if="{{keyword.length > 0}}" @tap="clear">
+            <icon type="clear" size="14"></icon>
+          </view>
+        </view>
+      </view>
+      <view class="weui-search-bar__cancel-btn" @tap="confirm({{keyword}})">确定</view>
+    </view>
+    <view class="search-placeholder"></view>
+
+    <!--热门搜索-->
+    <view class="hot-box column" wx:if="{{hotKeywords && hotKeywords.length > 0}}">
+      <text class="title">热门搜索</text>
+      <view class="hot-main row">
+        <block wx:for="{{hotKeywords}}" wx:key="*this">
+          <view class="label mt10" @tap="confirm({{item}})">{{item}}</view>
+        </block>
+      </view>
+    </view>
+
+    <!--历史搜索-->
+    <view class="hostiry-box" wx:if="{{historyKeyWords && historyKeyWords.length > 0}}">
+      <view class="weui-panel">
+        <view class="weui-panel__hd"><text class="title">历史搜索</text></view>
+        <view class="weui-panel__bd">
+          <view class="weui-media-box weui-media-box_small-appmsg">
+            <view class="weui-cells weui-cells_in-small-appmsg">
+              <view url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active" wx:for="{{historyKeyWords}}" wx:key="*this" @tap="confirm({{item}})">
+                <view class="weui-cell__hd"></view>
+                <view class="weui-cell__bd weui-cell_primary">
+                  <view>{{item}}</view>
+                </view>
+                <view class="weui-cell__ft "></view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="zan-btns">
+        <button class="zan-btn" @tap="clearHistory" >清空历史搜索记录</button>
+      </view>
+    </view>
+  </view>
+  <!--购物选择框-->
+  <PopupPanel />
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import SearchBar from '../../components/weui/search_bar';
+  import Tips from '../../utils/Tips';
+
+  export default class GoodsSearch extends wepy.page {
+    data = {
+      init: false,
+      keyword: '',
+      hotKeywords: null,
+      historyKeyWords: null
+    };
+    onLoad ({param}) {
+      // 热门搜索初始化
+      if (param != null) {
+        const {hotKeywords} = JSON.parse(param);
+        this.hotKeywords = hotKeywords;
+      }
+      // 初始化历史搜索
+      const historyKeyWords = wepy.getStorageSync('historyKeyWords');
+      if (historyKeyWords != null && historyKeyWords != '') {
+        this.historyKeyWords = historyKeyWords;
+      } else {
+        this.historyKeyWords = [];
+      }
+      this.loaded();
+    };
+    methods = {
+      input(event) {
+        this.keyword = event.detail.value;
+      },
+      confirm(keyword) {
+        if (keyword == null || keyword == '') {
+          Tips.alert('请输入搜索内容');
+          return;
+        }
+        // 保存历史存储
+        if (this.historyKeyWords.every(item => item != keyword)) {
+          this.historyKeyWords.push(keyword);
+        }
+        wepy.setStorageSync('historyKeyWords', this.historyKeyWords);
+        // 跳转
+        this.$navigate(`search_list?keyword=${keyword}`);
+      },
+      clear() {
+        this.keyword = '';
+      },
+      async clearHistory() {
+        await Tips.confirm('确定清空历史记录？');
+        wepy.setStorageSync('historyKeyWords', []);
+        this.historyKeyWords = [];
+        this.$apply();
+      },
+      back () {
+        wepy.navigateBack();
+      }
+    };
+    components = {
+      SearchBar: SearchBar
+    };
+    computed = {};
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '商品搜索'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .weui-search-bar{
+    position: fixed;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    z-index: 100;
+    top: 0;
+  }
+  .search-placeholder{
+    height: 48px;
+    width: 100%;
+  }
+  .title{
+    font-weight: bold;
+    font-size: $text-lg;
+  }
+
+  .hot-box{
+    margin-top: 10px;
+    padding:10px;
+    background-color: white;
+    border-bottom: $border;
+    border-top: $border;
+    .hot-main{
+      margin-top: 10rpx;
+      flex-wrap: wrap;
+    }
+  }
+  .hostiry-box{
+    background-color: white;
+    margin-top: 10px;
+    border-bottom: $border;
+  }
+
+</style>
