@@ -470,6 +470,9 @@
         }
         // 计算折扣
         const {discountRule, customDiscount} = this.member;
+        if (discountRule == null) {
+          return null;
+        }
         let discount = 100;
         if (customDiscount > 0 && customDiscount < 100) {
           // 自定义折扣
@@ -479,7 +482,7 @@
           discount = discountRule.discount;
         }
         // 判断异常情况
-        if (discount >= 100 || discount <= 0) {
+        if (discount == null || discount >= 100 || discount <= 0) {
           return null;
         }
         const {discountCategoryLists} = discountRule;
