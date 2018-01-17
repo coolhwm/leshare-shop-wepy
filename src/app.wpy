@@ -117,7 +117,7 @@ export default class extends wepy.app {
     scene: '',
     shopType: 1,
     app_code: null,
-    version: 'v2.0.3',
+    version: 'v2.0.4',
     // baseUrl: 'https://api.leshare.shop/v2/customer'
     // baseUrl: 'http://192.168.31.124:9999/v2/customer',
     baseUrl: 'http://106.14.195.68:9999/v2/customer'
