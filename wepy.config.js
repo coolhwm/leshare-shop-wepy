@@ -8,7 +8,7 @@ module.exports = {
   eslint: true,
   compilers: {
     sass: {
-      outputStyle: 'expanded'
+      outputStyle: 'compact'
     },
     babel: {
       sourceMap: true,

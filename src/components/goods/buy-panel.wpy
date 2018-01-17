@@ -87,7 +87,6 @@
     skuManager = null;
     cartManager = Cart.create();
     async onLoad() {
-      await store.init();
       // 监听购物面板打开的事件
       Event.listen(Event.GOODS_PANEL_OPEN, this.open.bind(this), this);
     }

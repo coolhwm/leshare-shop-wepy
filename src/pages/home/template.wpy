@@ -55,6 +55,7 @@
 
 <script>
   import store from '../../store/utils';
+  import auth from '../../api/auth';
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import data from '../../data/home';
@@ -81,6 +82,8 @@
       }
     };
     async onLoad () {
+      // 登录检查
+      await auth.login();
       await store.init();
       this.components = this.processComponents(data.components);
       this.plugins = this.processPlugins(data.plugins);

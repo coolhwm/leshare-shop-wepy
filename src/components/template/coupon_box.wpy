@@ -29,8 +29,6 @@
       param: {}
     };
     async onLoad () {
-      // 初始化Store
-      await store.init();
     }
     methods = {
       /**
