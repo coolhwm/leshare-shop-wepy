@@ -54,6 +54,11 @@
       <block wx:if="{{item.type == 'CART_FLOAT'}}" >
         <FloatCart />
       </block>
+
+      <!--状态提示-->
+      <block wx:if="{{item.type == 'STATUS_TIPS'}}" >
+        <StatusTips />
+      </block>
     </repeat>
   </view>
 </template>
@@ -75,6 +80,7 @@
   import SkuSelector from '../../components/goods/sku_selector';
   import FloatCart from '../../components/template/float-cart';
   import NoticeBar from '../../components/template/notice_bar';
+  import StatusTips from '../../components/template/status-tips';
 
   export default class IndexTemplate extends wepy.page {
     data = {
@@ -129,7 +135,8 @@
       SilderPanel: GoodsPanel,
       PopupPanel: SkuSelector,
       FloatCart: FloatCart,
-      NoticeBar: NoticeBar
+      NoticeBar: NoticeBar,
+      StatusTips: StatusTips
     };
     computed = {
     };

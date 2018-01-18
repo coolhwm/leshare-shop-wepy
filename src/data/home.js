@@ -14,6 +14,10 @@ export default {
     {
       type: 'CART_FLOAT',   // 浮动购物车
       enable: true
+    },
+    {
+      type: 'STATUS_TIPS',   // 店铺状态
+      enable: false
     }
   ],
   // 页面布局组件
