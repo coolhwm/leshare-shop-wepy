@@ -6,11 +6,12 @@
 
   <view class="container" wx:if="{{init}}">
     <!--地址栏/外卖情况才展现-->
-    <block wx:if="{{isTakeaway}}">
-      <AddressSelector :address.sync="selectedAddress" @select.user="address" />
+
+    <block wx:if="{{isInShop}}">
+      <InShopTab @tap.user="switchInShopType" />
     </block>
     <block wx:else>
-      <InShopTab @tap.user="switchInShopType" />
+      <AddressSelector :address.sync="selectedAddress" @select.user="address" />
     </block>
 
     <view class="mt10"></view>
@@ -318,6 +319,7 @@
         if (trade.couponUsedId) {
           await store.reflesh('ownCoupons', 'pickCoupons', 'member');
         }
+        // TODO 这个可能在TAB里
         WxUtils.backOrRedirect('/pages/customer/index');
       }
     };
@@ -454,6 +456,9 @@
     computed = {
       isTakeaway() {
         return this.trade.orderType == order.TYPE_TAKEAWAY;
+      },
+      isInShop() {
+        return this.trade.orderType == order.TYPE_FORHERE || this.trade.orderType == order.TYPE_PACK;
       },
       isForhearOrPack() {
         const type = this.trade.orderType;

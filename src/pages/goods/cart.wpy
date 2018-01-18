@@ -123,9 +123,9 @@
         // 权限校验
         const result = await auth.user({block: true, redirect: false});
         if (!result) return;
-        // 订单类型
+        // 订单类型 TODO 订单类型
         param.orderType = 10;
-        const trade = order.createCartTrade(this.cartManager.carts, param);
+        const trade = order.createCartTrade(this.cartManager.getCheckedCarts(), param);
         // shop.reportFormId(param.formId);
         this.$preload('trade', trade);
         this.$navigate(`../order/trade`);

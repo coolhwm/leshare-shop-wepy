@@ -28,7 +28,7 @@
     <block wx:if="{{order.orderType == '20'}}">
       <Address :address.sync="address" />
     </block>
-    <block wx:else>
+    <block wx:if="{{order.orderType == '30' || order.orderType == '33'}}">
       <InShopStatus :order.sync="order" />
     </block>
 
