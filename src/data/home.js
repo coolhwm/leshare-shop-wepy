@@ -56,6 +56,11 @@ export default {
         }
       ]
     },
+    // 店铺信息
+    {
+      type: 'NOTICE_BAR',  // NOTICE_BAR-公告信息栏
+      display: true  // 隐藏不展现
+    },
     // 导航菜单
     {
       id: 3,

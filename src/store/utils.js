@@ -38,16 +38,10 @@ const save = (key, data) => {
  */
 const init = async () => {
   await use(
-    'shop',
-    'notices',
-    'status',
-    'categories',
+    'config',
     'ownCoupons',
     'pickCoupons',
-    'card',
-    'member',
-    'reduce',
-    'version'
+    'member'
   );
 };
 
@@ -71,7 +65,14 @@ const load = async (fields) => {
   // 获取所有数据，等待最后一个返回
   const data = await Promise.all(fetchPromises);
   // 保存结果
-  fields.forEach((field, index) => save(field, data[index]));
+  fields.forEach((field, index) => {
+    if (field == 'config') {
+      // conifg 为整合接口，需要内嵌保存
+      data[index].forEach(item => save(item.key, item.value));
+    } else {
+      save(field, data[index]);
+    }
+  });
   // 保存元数据
   save('meta', meta);
 };
@@ -92,8 +93,8 @@ const fetch = (field) => {
   updateMeta(field);
   // 再获取Promise对象
   switch (field) {
-    case 'shop':
-      return shop.info();
+    case 'config':
+      return shop.config();
     case 'notices':
       return shop.notices();
     case 'status' :

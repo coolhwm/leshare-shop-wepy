@@ -1,0 +1,68 @@
+<template>
+  <view class="notice-bar-box row">
+    <!--<view class="notice-bar-title">公告：</view>-->
+    <image class="notice-bar-icon" src="/images/icons/notice.png"></image>
+    <swiper class="notice-bar-swiper" vertical autoplay circular interval="3000">
+      <swiper-item wx:for="{{notices}}" wx:key="index">
+        <text class="notice-content inline">{{item.content}}</text>
+      </swiper-item>
+    </swiper>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  @connect({
+    notices: store.get('notices')
+  })
+  export default class NoticeBar extends wepy.component {
+    props = {
+      order: {}
+    };
+    data = {};
+    methods = {};
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .notice-bar-box{
+    border-top: $border;
+    border-bottom: $border;
+    align-items: center;
+    background-color: white;
+    padding: 5rpx 10rpx;
+    .notice-bar-title{
+      font-size: $text-sm;
+    }
+
+    .notice-bar-icon{
+      width: 30rpx;
+      height: 30rpx;
+      margin-right: 10rpx;
+      vertical-align: middle;
+    }
+
+    .notice-bar-swiper {
+      width: 650rpx;
+      height: 24px;
+
+      swiper-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+        height: 24px;
+      }
+      .notice-content {
+        font-size: $text-sm;
+        line-height: 12px;
+      }
+    }
+  }
+</style>
