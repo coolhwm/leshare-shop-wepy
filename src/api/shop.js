@@ -1,5 +1,6 @@
 
 import base from './base';
+import goods from './goods';
 import wepy from 'wepy';
 import Page from '../utils/Page';
 
@@ -174,7 +175,55 @@ export default class shop extends base {
    * 处理页面
    */
   static _processPage(data) {
-    return JSON.parse(data);
+    const config = JSON.parse(data);
+    const components = this.processComponents(config.components);
+    const plugins = this.processPlugins(config.plugins);
+    return {
+      components, plugins
+    }
+  }
+
+  /**
+   * 处理页面的插件
+   */
+  static processPlugins (plugins) {
+    return plugins;
+  }
+
+  /**
+   * 处理页面的组件
+   */
+  static processComponents (components) {
+    return components
+      .filter(component => component.display !== false)
+      .map(component => {
+        // 需要处理商品信息
+        if (component.type == 'GOODS_BOX') {
+          component.data = component.data.map(item => goods._processGoodsDetail(item));
+        }
+        return this.copyParamToData(component);
+      });
+  }
+
+  /**
+   * 拷贝配置参数
+   */
+  static copyParamToData(component) {
+    const fieldsToCopy = {
+      SWIPER: ['height'],
+      IMAGE_BOX: ['heigth', 'width', 'isTitle'],
+      GOODS_BOX: ['isCart', 'isPrice', 'isName', 'isSales', 'skuMode', 'isTips']
+    };
+    const {data, type} = component;
+    const fields = fieldsToCopy[type];
+    if (fields != null) {
+      data.forEach(item => {
+        fields.forEach(field => {
+          item[field] = component[field];
+        });
+      });
+    }
+    return component;
   }
   /**
    * 处理基本信息
