@@ -1,6 +1,6 @@
 <template>
   <Loading :init.sync="init"/>
-  <view wx:if="{{init}}">
+  <view class="template-box" wx:if="{{init}}">
     <repeat for="{{components}}" key="index" index="index" item="item">
       <!--搜索栏-->
       <block wx:if="{{item.type == 'SEARCH_BAR'}}">
@@ -152,4 +152,8 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .template-box{
+    width: 100%;
+    overflow-x: hidden;
+  }
 </style>
