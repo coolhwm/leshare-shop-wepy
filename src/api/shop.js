@@ -40,6 +40,10 @@ export default class shop extends base {
     const url = `${this.baseUrl}/shops/full`;
     return this.get(url).then(data => {
       return [{
+        key: 'page',
+        value: this._processPage(data.globalConfig)
+      },
+      {
         key: 'categories',
         value: this._createGoodsCategories(data.goodsInnerCategories)
       },
@@ -166,6 +170,12 @@ export default class shop extends base {
   }
 
   // *** 数据处理方法
+  /**
+   * 处理页面
+   */
+  static _processPage(data) {
+    return JSON.parse(data);
+  }
   /**
    * 处理基本信息
    */

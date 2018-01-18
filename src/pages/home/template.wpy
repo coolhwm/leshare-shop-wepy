@@ -65,10 +65,10 @@
 
 <script>
   import store from '../../store/utils';
+  import { connect } from 'wepy-redux';
   import auth from '../../api/auth';
   import wepy from 'wepy';
   import base from '../../mixins/base';
-  import data from '../../data/home';
   import Loading from '../../components/common/loading';
   import SearchBar from '../../components/template/search_bar';
   import SwiperBar from '../../components/template/swiper_bar';
@@ -82,6 +82,9 @@
   import NoticeBar from '../../components/template/notice_bar';
   import StatusTips from '../../components/template/status-tips';
 
+  @connect({
+    page: store.get('page')
+  })
   export default class IndexTemplate extends wepy.page {
     data = {
       init: false,
@@ -97,8 +100,8 @@
       // 登录检查
       await auth.login();
       await store.init();
-      this.components = this.processComponents(data.components);
-      this.plugins = this.processPlugins(data.plugins);
+      this.components = this.processComponents(this.page.components);
+      this.plugins = this.processPlugins(this.page.plugins);
       this.loaded();
     };
     processPlugins (plugins) {
