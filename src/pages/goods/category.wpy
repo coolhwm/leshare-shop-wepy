@@ -94,8 +94,8 @@
       this.categoryTab = {...this.categories};
       // 加载商品列表
       await this.loadGoodsList();
-      // 处理加载搜索栏
-      this.searchParam = data.components.find(item => item.type == 'SEARCH_BAR');
+      // 处理加载搜索栏 TODO 搜索处理
+      // this.searchParam = data.components.find(item => item.type == 'SEARCH_BAR');
       this.loaded();
     };
     /**

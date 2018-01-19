@@ -22,9 +22,10 @@ export default class goods extends base {
   /**
    * 新的分页方法
    */
-  static list () {
+  static list (discount) {
     let url = `${this.baseUrl}/goods/list`;
     return new Page(url, item => {
+      this._processGoodsDiscount(item, discount);
       this._processGoodsData(item);
     });
   }
@@ -57,11 +58,6 @@ export default class goods extends base {
 
   static _createGoodsCategories (data) {
     const list = [];
-    list.push({
-      id: '-1',
-      title: '推荐'
-    });
-
     if (data != null) {
       list.push(...data.map(item => {
         return {
@@ -72,7 +68,7 @@ export default class goods extends base {
     }
     return {
       list: list,
-      selectedId: '-1',
+      selectedId: list[0].id,
       scroll: false
     };
   }

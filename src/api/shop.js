@@ -304,11 +304,6 @@ export default class shop extends base {
   // *** 整合数据的外部处理方法
   static _createGoodsCategories (data) {
     const list = [];
-    list.push({
-      id: '-1',
-      title: '推荐'
-    });
-
     if (data != null) {
       list.push(...data.map(item => {
         return {
@@ -319,7 +314,7 @@ export default class shop extends base {
     }
     return {
       list: list,
-      selectedId: '-1',
+      selectedId: list[0].id,
       scroll: false
     };
   }

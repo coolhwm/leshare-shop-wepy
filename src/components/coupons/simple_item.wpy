@@ -21,15 +21,27 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
+  import wepy from 'wepy';
+  import Tips from '../../utils/Tips';
+  import store from '../../store/utils';
+  import coupon from '../../api/coupon';
   export default class CouponItem extends wepy.component {
     props = {
       coupon: {}
     };
     data = {};
     methods = {
-      pick(coupon, {detail}) {
-        this.$emit('pick', coupon, detail.formId);
+      async pick(item, {detail}) {
+        try {
+          Tips.loading();
+          await coupon.pick(item.id);
+          await Tips.success('领取成功');
+          await store.reflesh('ownCoupons', 'pickCoupons');
+          this.$root.$apply();
+        } catch (e) {
+          await Tips.alert('已达领取上限');
+        }
+        this.$emit('pick', item, detail.formId);
       }
     };
     events = {};

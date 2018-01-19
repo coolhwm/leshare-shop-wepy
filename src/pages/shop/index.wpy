@@ -11,12 +11,12 @@
     <!--主内容区域-->
     <view class="main-box row {{version.isOrder ? 'main-box-pad' : 'main-box-full' }}">
       <!--分类侧边栏-->
-      <SideTab :tab.sync="categories" @change.user="switchTab" />
+      <SideTab :tab.sync="categoryTab" @change.user="switchTab" />
 
       <!--右侧滚动-->
       <scroll-view scroll-y class="goods-box" bindscrolltolower="onReachBottom">
         <!--卡券区域（只在推荐的时候展现）-->
-        <scroll-view scroll-x	class="coupon-box" wx:if="{{categories.selectedId==-1 && pickCoupons.length > 0}}">
+        <scroll-view scroll-x	class="coupon-box" wx:if="{{pickCoupons.length > 0}}">
           <repeat for="{{pickCoupons}}" key="index" index="index" item="item">
             <CouponItem :coupon.sync="item" @pick.user="pickCoupon" />
           </repeat>
@@ -90,14 +90,14 @@
       page: {},
       pages: {},
       carts: [],
-      categoryTab: {},
+      categoryTab: null,
       skuDisplay: 'false',
       detailDisplay: false,
       skuGoods: {},
       mode: 1
     };
     cartManager = Cart.create();
-    async onLoad ({goodsId, mode}, {preload}) {
+    async onLoad ({mode}) {
       this.mode = mode;
       // 用户信息
       await auth.user();
@@ -106,12 +106,8 @@
       // 加载商品分类
       this.categoryTab = {...this.categories};
       // 加载商品列表
-      await this.loadGoodsList();
-      // 处理推荐跳转
-      if (goodsId) {
-        const detail = this.methods.detail.bind(this);
-        detail({id: goodsId});
-      }
+      this.page = goods.list(this.discount);
+      await this.next();
       // 监听事件
       Event.listen(Event.CART_LIST_CLEAR, this.doClearCart.bind(this), this);
       Event.listen(Event.CART_LIST_ADD, this.doAddCart.bind(this), this);
@@ -127,43 +123,22 @@
      * 分页加载完毕, 缓存，处理分类数量
      */
     onPageLoad() {
-      this.pages[this.categories.selectedId] = this.page;
+      this.pages[this.categoryTab.selectedId] = this.page;
     }
     /**
      * 分页参数
      */
     params() {
-      return {category_id: this.categories.selectedId};
-    }
-    /**
-     * 加载商品列表
-     */
-    async loadGoodsList() {
-      this.categories.selectedId = -1;
-      this.page = goods.page(true, this.discount);
-      await this.next();
-      if (this.page.list.length == 0) {
-        // 删掉推荐分类
-        if (this.categories.list[0].id == -1) {
-          this.categories.list.splice(0, 1);
-        }
-        // 重新请求第一个分类
-        this.categories.selectedId = this.categories.list[0].id;
-        this.page = goods.page(false, this.discount);
-        await this.next();
-      } else {
-        // 默认需要选择第一个分类
-        this.categories.selectedId = -1;
-      }
+      return {category_id: this.categoryTab.selectedId};
     }
     /**
      * 设置商品分类数量
      */
     setCategoryNum() {
-      if (!this.categories.list) {
+      if (!this.categoryTab.list) {
         return;
       }
-      this.categories.list.forEach(item => {
+      this.categoryTab.list.forEach(item => {
         item.count = 0;
         this.carts.forEach(cart => {
           if (cart.innerCid && item.id == cart.innerCid) {
@@ -199,7 +174,7 @@
     }
     methods = {
       switchTab() {
-        const selectedId = this.categories.selectedId;
+        const selectedId = this.categoryTab.selectedId;
         console.info(selectedId);
         // 先判断缓存中是否存在商品列表
         if (this.pages[selectedId] && this.pages[selectedId].list.length > 0) {
@@ -207,7 +182,7 @@
           this.setGoodsNum();
           this.loaded();
         } else {
-          this.page = goods.page(selectedId == -1, this.discount);
+          this.page = goods.list(this.discount);
           this.reload();
         }
       },
@@ -219,21 +194,21 @@
        * 领取优惠券
        */
       async pickCoupon({id}, formId) {
-        try {
-          Tips.loading();
-          await coupon.pick(id);
-          shop.reportFormId(formId, 0);
-          await Tips.success('领取成功');
-          await store.reflesh('ownCoupons', 'pickCoupons');
-          this.loaded();
-        } catch (e) {
-          if (e.serverCode == '50001') {
-            await Tips.alert('已达领取上限');
-            const index = this.coupons.findIndex(item => item.id == id);
-            this.coupons.splice(index, 1);
-            this.loaded();
-          }
-        }
+        // try {
+        //   Tips.loading();
+        //   await coupon.pick(id);
+        //   shop.reportFormId(formId, 0);
+        //   await Tips.success('领取成功');
+        //   await store.reflesh('ownCoupons', 'pickCoupons');
+        //   this.loaded();
+        // } catch (e) {
+        //   if (e.serverCode == '50001') {
+        //     await Tips.alert('已达领取上限');
+        //     const index = this.coupons.findIndex(item => item.id == id);
+        //     this.coupons.splice(index, 1);
+        //     this.loaded();
+        //   }
+        // }
       },
       /**
        * 增加商品到购物车
@@ -362,9 +337,12 @@
        * 被选择的分类名称
        */
       selectedCategoryName() {
-        if (this.init && this.categories && this.categories.list) {
-          const selectedId = this.categories.selectedId;
-          return this.categories.list.find(item => item.id == selectedId).title;
+        if (this.init && this.categoryTab && this.categoryTab.list) {
+          const selectedId = this.categoryTab.selectedId;
+          const categoryItem = this.categoryTab.list.find(item => item.id == selectedId);
+          if (categoryItem != null) {
+            return categoryItem.title;
+          }
         }
       },
       /**

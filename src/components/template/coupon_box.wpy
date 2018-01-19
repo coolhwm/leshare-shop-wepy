@@ -18,7 +18,6 @@
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import Tips from '../../utils/Tips';
-  import coupon from '../../api/coupon';
   import CouponItem from '../../components/coupons/simple_item';
 
   @connect({
@@ -34,22 +33,22 @@
       /**
        * 领取优惠券
        */
-      async pickCoupon({id}) {
-        try {
-          Tips.loading();
-          await coupon.pick(id);
-          await Tips.success('领取成功');
-          await store.reflesh('ownCoupons', 'pickCoupons');
-          this.loaded();
-        } catch (e) {
-          if (e.serverCode == '50001') {
-            await Tips.alert('已达领取上限');
-            const index = this.coupons.findIndex(item => item.id == id);
-            this.coupons.splice(index, 1);
-            this.loaded();
-          }
-        }
-      }
+      // async pickCoupon({id}) {
+      //   try {
+      //     Tips.loading();
+      //     await coupon.pick(id);
+      //     await Tips.success('领取成功');
+      //     await store.reflesh('ownCoupons', 'pickCoupons');
+      //     this.loaded();
+      //   } catch (e) {
+      //     if (e.serverCode == '50001') {
+      //       await Tips.alert('已达领取上限');
+      //       const index = this.coupons.findIndex(item => item.id == id);
+      //       this.coupons.splice(index, 1);
+      //       this.loaded();
+      //     }
+      //   }
+      // }
     };
     components = {
       CouponItem: CouponItem
