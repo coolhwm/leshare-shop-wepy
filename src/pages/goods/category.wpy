@@ -58,7 +58,6 @@
   import FloatCart from '../../components/template/float-cart';
   import Cart from '../../utils/Cart';
   import SearchBar from '../../components/template/search_bar';
-  import data from '../../data/home';
 
   @connect({
     shop: store.get('shop'),
