@@ -10,10 +10,10 @@ const store = getStore();
 const meta = {};
 // 超时时间
 const CACHE_TIMEOUT = 5 * 60 * 1000;
-// 初始化标志
-let isInit = false;
+// 加载状态
+let isLoading = false;
 // 等待队列
-let initQueue = [];
+let loadingQueue = [];
 
 /**
  * 构造取值器
@@ -41,25 +41,30 @@ const save = (key, data) => {
  * 初始化
  */
 const init = async () => {
-  // 判读是否已经初始化
-  if (isInit) {
-    console.info('[init] store already init, waiting');
+  // 判读是否正在加载，正在加载则等待
+  if (isLoading) {
+    console.info('[store] store is loading, wait completed');
     return new Promise(resolve => {
       const callback = () => {
         resolve();
       };
-      initQueue.push(callback);
+      loadingQueue.push(callback);
     });
   } else {
     // 开始初始化
-    console.info('[init] start init store');
-    isInit = true;
+    console.info('[store] start init store');
+    isLoading = true;
     await use(
       'config',
       'ownCoupons',
       'pickCoupons',
       'member'
     );
+    // 清空等待队列
+    console.info('[store] store init completed');
+    isLoading = false;
+    loadingQueue.forEach(callback => callback());
+    loadingQueue = [];
   }
 };
 
@@ -69,9 +74,13 @@ const init = async () => {
 const use = async (...fields) => {
   // 过滤已加载完毕的字段
   const fetchFileds = fields.filter(field => !exists(field));
-  console.info(`use store: fields=${fetchFileds}`);
-  // 加载未加载的数据
-  await load(fetchFileds);
+  if (fetchFileds.length > 0) {
+    console.info(`[store] use store: fields=${fetchFileds}`);
+    // 加载未加载的数据
+    await load(fetchFileds);
+  } else {
+    console.info(`[store] use store: all fields cached`);
+  }
 };
 
 /**
@@ -93,9 +102,6 @@ const load = async (fields) => {
   });
   // 保存元数据
   save('meta', meta);
-  // 清空等待队列
-  initQueue.forEach(callback => callback());
-  initQueue = [];
 };
 
 /**

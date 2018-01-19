@@ -84,7 +84,7 @@
       searchParam: null
     };
     cartManager = Cart.create();
-    async onLoad ({goodsId, mode}, {preload}) {
+    async onLoad ({mode}) {
       this.mode = mode;
       // 用户信息
       await auth.user();

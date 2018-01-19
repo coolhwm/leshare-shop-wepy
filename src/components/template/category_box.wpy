@@ -67,7 +67,6 @@
     async doLoad () {
       this.categoryTab = {...this.categories};
       // 加载商品列表
-      console.info(this.discount);
       this.page = goods.list(this.discount);
       await this.next();
       // 同步购物车数量
