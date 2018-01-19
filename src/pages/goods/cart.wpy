@@ -85,7 +85,7 @@
     };
     data = {...this.def};
     cartManager = Cart.create();
-    async onLoad (options) {
+    async onLoad () {
       this.loaded();
     };
     methods = {

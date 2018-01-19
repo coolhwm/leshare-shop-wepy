@@ -1,6 +1,6 @@
 <template>
   <view class="goods-item row" >
-    <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="detail({{goods}})"></image>
+    <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="routeToGoods({{goods.id}})"></image>
     <view class="goods-main column" >
       <!-- 主体区域-->
       <view @tap="detail({{goods}})">
@@ -32,13 +32,13 @@
         <block wx:if="{{quantity}}">
           <view class="quantity row">
             <block wx:if="{{goods.num > 0}}">
-              <image class="minus" src="/images/icons/minus.png" @tap.stop="minus({{goods}})" />
+              <image class="minus" src="/images/icons/minus.png" @tap.stop="handleMinusCart({{goods.id}})" />
               <view class="number">
                 <text>{{goods.num}}</text>
               </view>
             </block>
             <image class="plus" src="/images/icons/plus-gray.png" wx:if="{{goods.goodsStocks[0].stock == 0 || goods.num >= goods.goodsStocks[0].stock}}" />
-            <image class="plus" src="/images/icons/plus.png" @tap.stop="plus({{goods}})" wx:else/>
+            <image class="plus" src="/images/icons/plus.png" @tap.stop="handlePlusCart({{goods}})" wx:else/>
           </view>
         </block>
       </view>
@@ -48,6 +48,7 @@
 
 <script>
   import wepy from 'wepy';
+  import router from '../../mixins/router';
   export default class GoodsItem extends wepy.component {
     props = {
       goods: {
@@ -59,30 +60,15 @@
     components = {
     };
     methods = {
-      plus(goods) {
-        this.updateNum('plus', goods);
-      },
-      minus(goods) {
-        this.updateNum('minus', goods);
-      },
       preview(goods) {
         const urls = goods.images.map(item => item.url);
         wepy.previewImage({
           urls: urls
         });
-      },
-      detail(goods) {
-        this.$emit('detail', goods);
       }
     };
-    updateNum(event, goods) {
-      const param = {
-        goodsId: goods.id,
-        sku: goods.sku
-      };
-      this.$emit(event, param);
-    }
     events = {};
+    mixins = [router];
     onLoad() {
     }
   }

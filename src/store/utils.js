@@ -10,6 +10,10 @@ const store = getStore();
 const meta = {};
 // 超时时间
 const CACHE_TIMEOUT = 5 * 60 * 1000;
+// 初始化标志
+let isInit = false;
+// 等待队列
+let initQueue = [];
 
 /**
  * 构造取值器
@@ -37,12 +41,26 @@ const save = (key, data) => {
  * 初始化
  */
 const init = async () => {
-  await use(
-    'config',
-    'ownCoupons',
-    'pickCoupons',
-    'member'
-  );
+  // 判读是否已经初始化
+  if (isInit) {
+    console.info('[init] store already init, waiting');
+    return new Promise(resolve => {
+      const callback = () => {
+        resolve();
+      };
+      initQueue.push(callback);
+    });
+  } else {
+    // 开始初始化
+    console.info('[init] start init store');
+    isInit = true;
+    await use(
+      'config',
+      'ownCoupons',
+      'pickCoupons',
+      'member'
+    );
+  }
 };
 
 /**
@@ -75,6 +93,9 @@ const load = async (fields) => {
   });
   // 保存元数据
   save('meta', meta);
+  // 清空等待队列
+  initQueue.forEach(callback => callback());
+  initQueue = [];
 };
 
 /**

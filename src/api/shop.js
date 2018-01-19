@@ -195,8 +195,17 @@ export default class shop extends base {
    */
   static processComponents (components) {
     return components
-      .filter(component => component.display !== false)
       .map(component => {
+        // 先处理参数合并
+        if (component.param) {
+          const param = JSON.parse(component.param);
+          Object.assign(component, param);
+          component.param = null;
+        }
+        // 处理内嵌数据
+        if (component.data) {
+          component.data = JSON.parse(component.data);
+        }
         // 需要处理商品信息
         if (component.type == 'GOODS_BOX') {
           component.data = component.data.map(item => goods._processGoodsDetail(item));

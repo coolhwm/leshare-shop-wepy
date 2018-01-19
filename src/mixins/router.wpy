@@ -36,6 +36,12 @@
     }
     methods = {
       /**
+       * 处理移除购物车事件
+       */
+      handleMinusCart(goods) {
+        this.minusCart(goods);
+      },
+      /**
        * 处理加入购物车事件
        */
       handlePlusCart(goods) {

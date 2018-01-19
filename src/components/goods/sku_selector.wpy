@@ -95,7 +95,7 @@
         console.warn('移除购物车的商品不存在');
         return;
       }
-      if (cartGoodsList.length > 1 && goodsSku == null) {
+      if (cartGoodsList.length > 1 && (goodsSku == null || goodsSku == '')) {
         Tips.alert('请在购物车操作');
         return;
       }

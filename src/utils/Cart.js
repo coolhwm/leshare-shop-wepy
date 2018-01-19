@@ -161,6 +161,7 @@ export default class Cart {
     } else {
       // 有多个，减少一个个数
       cart.goodsNum -= 1;
+      cart.totalPrice = (cart.goodsNum * cart.goodsPrice).toFixed(2);
     }
     // 保存
     this.save();
