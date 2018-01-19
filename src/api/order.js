@@ -518,7 +518,6 @@ export default class order extends base {
     }
 
     // 有物流，就一定需要展现动作列表
-    order.isAction = true;
     order.isExpress = true;
   }
 
@@ -531,14 +530,8 @@ export default class order extends base {
       // 订单没有退款信息，不做处理
       return;
     }
-    // 展现第一个退款记录
-    const refund = refunds[refunds.length - 1];
-    // 曾经退款过，就一定需要展现退款记录
-    order.isAction = true;
-    // 控制展现退款详情字段
-    order.isRefund = true;
     // 取出第一条退款记录
-    order.curRefund = refund;
+    order.curRefund = refunds[refunds.length - 1];
   }
 
   /**

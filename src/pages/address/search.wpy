@@ -40,7 +40,7 @@
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
-  import address from '../../api/address';
+  import map from '../../api/map';
   import SearchBar from '../../components/weui/search_bar';
   import Event from '../../utils/Event';
 
@@ -63,7 +63,7 @@
       this.latitude = latitude;
       this.longitude = longitude;
       // 逆向解析
-      const reverse = await address.reverse(latitude, longitude);
+      const reverse = await map.reverse(latitude, longitude);
       this.currentLocation = reverse.current;
       this.currentAddress = reverse.current.display;
       this.nearbyLocations = reverse.nearby;
@@ -100,7 +100,7 @@
           return;
         }
         this.isSearch = true;
-        this.searchLocations = await address.search(value);
+        this.searchLocations = await map.search(value);
         this.$apply();
       }
     };

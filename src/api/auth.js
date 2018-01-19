@@ -2,6 +2,9 @@ import base from './base'
 import wepy from 'wepy';
 import store from '../store/utils';
 
+/**
+ * 权限服务类
+ */
 export default class auth extends base {
   /**
    * 一键登录

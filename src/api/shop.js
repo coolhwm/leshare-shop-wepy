@@ -42,7 +42,7 @@ export default class shop extends base {
     return this.get(url).then(data => {
       return [{
         key: 'page',
-        value: this._processPage(data.globalConfig)
+        value: this._processPage(data.homePageConfig)
       },
       {
         key: 'categories',

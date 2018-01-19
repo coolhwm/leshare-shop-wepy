@@ -138,7 +138,6 @@
   import FormTips from '../../components/weui/tips';
   import ActionBar from '../../components/common/action_bar';
   import AddressSelector from '../../components/address/selector';
-  import ActionSheet from '../../components/weui/action_sheet';
   import AddressList from '../../components/address/list';
   import OrderItem from '../../components/order/customer_item';
   import InShopTab from '../../components/order/inshop_tab';
@@ -593,7 +592,6 @@
     components = {
       Tips: FormTips,
       ActionBar: ActionBar,
-      ActionSheet: ActionSheet,
       AddressSelector: AddressSelector,
       OrderItem: OrderItem,
       AddressList: AddressList,

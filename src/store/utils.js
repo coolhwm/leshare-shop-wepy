@@ -4,7 +4,7 @@ import shop from '../api/shop';
 import goods from '../api/goods';
 import coupon from '../api/coupon';
 import member from '../api/member';
-import card from '../api/member_card';
+import card from '../api/card';
 const store = getStore();
 // 元数据
 const meta = {};

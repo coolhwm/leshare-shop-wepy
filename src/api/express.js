@@ -1,7 +1,7 @@
 
 import base from './base';
 
-export default class order extends base {
+export default class express extends base {
   /**
    * 查询快递公司列表
    */

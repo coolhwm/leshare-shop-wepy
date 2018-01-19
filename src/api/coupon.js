@@ -1,12 +1,10 @@
 import base from './base';
-// import wepy from 'wepy'
 import Page from '../utils/Page';
-// import Lang from '../utils/Lang'
 
 /**
  * 卡券服务类
  */
-export default class CouponService extends base {
+export default class coupon extends base {
   /**
    * 返回分页对象
    */
@@ -14,27 +12,9 @@ export default class CouponService extends base {
     const url = `${this.baseUrl}/coupons`;
     return new Page(url, this._processCouponItem.bind(this));
   }
-
   /**
-   * 卡券货架
+   * 目前可以领取的优惠券
    */
-  static async shelf () {
-    let [ownList, pickList] = await Promise.all([this.own('NEVER_USED'), this.list()]);
-    const coupons = [...ownList, ...pickList];
-    const size = coupons.length;
-    let preview = coupons.map(item => `满${item.limitPrice}减${item.price}`);
-    if (preview.length > 3) {
-      preview = preview.slice(0, 3);
-      preview.push('...');
-    }
-    return {
-      size,
-      preview,
-      ownList,
-      pickList
-    };
-  }
-
   static list () {
     const url = `${this.baseUrl}/coupons/show`;
     return this.get(url).then(pickList => {
@@ -45,7 +25,6 @@ export default class CouponService extends base {
       }
     });
   }
-
   /**
    * 查找目前已领取的优惠券
    */
@@ -59,7 +38,6 @@ export default class CouponService extends base {
       }
     });
   }
-
   /**
    * 领取卡券
    */
@@ -67,7 +45,6 @@ export default class CouponService extends base {
     const url = `${this.baseUrl}/coupons/${couponId}/get`;
     return this.get(url);
   }
-
   /**
    * 删除卡券
    */
@@ -75,13 +52,12 @@ export default class CouponService extends base {
     const url = `${this.baseUrl}/coupons/${acceptId}`;
     return this.delete(url);
   }
-
   /**
    * 使用卡券
    */
-  static async use(id) {
+  static use(id) {
     const url = `${this.baseUrl}/coupons/use/${id}`;
-    return await this.put(url);
+    return this.put(url);
   }
 
   /**
@@ -94,7 +70,6 @@ export default class CouponService extends base {
       return data ? data.map(coupon => this._processCouponItem(coupon)) : [];
     });
   }
-
   /**
    * 获取活动中的卡券
    */
@@ -102,15 +77,16 @@ export default class CouponService extends base {
     const url = `${this.baseUrl}/coupons/campaign`;
     return this.post(url, visit);
   }
-
+  /**
+   * 处理可以领取的优惠券
+   */
   static _processPickItem (coupon) {
     coupon.beginTime = this._convertTimestapeToDay(coupon.beginTime);
     coupon.dueTime = this._convertTimestapeToDay(coupon.dueTime);
     return coupon;
   }
-
   /**
-   * 处理卡券数据
+   * 处理已拥有的优惠券
    */
   static _processCouponItem (data) {
     const root = data;
@@ -129,7 +105,6 @@ export default class CouponService extends base {
     this._processCouponDisplayFlag(coupon);
     return coupon;
   }
-
   /**
    * 处理卡券展示标签
    */
@@ -146,7 +121,6 @@ export default class CouponService extends base {
       coupon.isExpiring = true;
     }
   }
-
   /**
    * 计算时间间隔
    */
@@ -155,7 +129,6 @@ export default class CouponService extends base {
     const date = Date.parse(dateStr);
     return Math.round((Date.now() - date) / MS_OF_DAY);
   }
-
   /**
    * 处理时间格式
    */

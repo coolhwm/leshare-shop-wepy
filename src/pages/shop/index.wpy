@@ -68,7 +68,6 @@
   import SkuSelector from '../../components/goods/sku_selector';
   import Loadmore from '../../components/weui/loadmore';
   import ShopCart from '../../components/shop/cart';
-  import Navigator from '../../components/weui/navigator';
   import Tips from '../../utils/Tips';
   import Loading from '../../components/common/loading';
   import Event from '../../utils/Event';
@@ -394,7 +393,6 @@
       Loadmore: Loadmore,
       ShopCart: ShopCart,
       SkuSelector: SkuSelector,
-      Navigator: Navigator,
       Loading: Loading
     };
     mixins = [base, pagination, router];
