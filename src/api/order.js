@@ -7,6 +7,7 @@ import WxUtils from '../utils/WxUtils';
  * 订单服务类
  */
 export default class order extends base {
+  // TODO 字典表抽取 / 订单状态判读字典化
   static PAYMENT_OFFLINE = 0;
   static TYPE_TAKEAWAY = 20;
   static TYPE_FORHERE = 30;
@@ -63,10 +64,7 @@ export default class order extends base {
    */
   static getInfo (orderId) {
     const url = `${this.baseUrl}/orders/${orderId}`;
-    return this.get(url, {}).then(detail => {
-      this._processOrderDetail(detail);
-      return detail;
-    });
+    return this.get(url, {}).then(detail => this._processOrderDetail(detail));
   }
 
   /**
@@ -110,7 +108,7 @@ export default class order extends base {
   /**
    *  取消退款
    */
-  static cancelRefund (orderId, refundUuid) {
+  static cancelRefundOrder (orderId, refundUuid) {
     const url = `${this.baseUrl}/orders/${orderId}/status/cancel_refund_money`;
     const param = {
       refundUuid: refundUuid
@@ -133,74 +131,6 @@ export default class order extends base {
     const url = `${this.baseUrl}/orders/${orderId}/status/comments`;
     return this.put(url);
   }
-
-  /**
-   * 评价订单
-   */
-  static comment (orderId, comments) {
-    const url = `${this.baseUrl}/comments`;
-    return this.post(url, comments);
-  }
-
-  /**
-   * 评价列表
-   */
-  static commentList (goodsId) {
-    const url = `${this.baseUrl}/comments`;
-    return new Page(url, this._processGoodsComment.bind(this));
-  }
-
-  /**
-   * 评价统计
-   */
-  static commentCount (goodsId) {
-    const url = `${this.baseUrl}/comments/count?goods_id=${goodsId}`;
-    return this.get(url);
-  }
-
-  /**
-   * 处理评价列表数据
-   */
-  static _processGoodsComment (data) {
-    const comment = {};
-    comment.createTime = data.createTime.substring(0, 10);
-    comment.starArr = [0, 0, 0, 0, 0];
-    for (let i = 0; i < data.star; i++) {
-      comment.starArr[i] = 1;
-    }
-    comment.star = data.star;
-    if (data.customer) {
-      comment.avatar = data.customer.avatarUrl;
-      comment.nickName = data.customer.nickName;
-    } else {
-      comment.avatar = '/images/icons/customer.png';
-      comment.nickName = '微信用户';
-    }
-
-    comment.comment = data.comment;
-    return comment;
-  }
-
-  /**
-   * 计算支持的物流方式价格（根据商品信息及地址信息）
-   */
-  static queryPostPrice (address, goodsList) {
-    const url = `${this.baseUrl}/delivery`;
-      const param = {
-      address: address,
-      goodsList: goodsList
-    };
-    return this.post(url, param).then(data => {
-      if (data.delilveryList && data.delilveryList.length > 0) {
-        data.delilveryList.forEach(item => {
-          item.fee = item.fee.toFixed(2);
-        });
-      }
-      return data;
-    });
-  }
-  /** ********************* 工具方法 ***********************/
-
   /** ********************* 生成方法 ***********************/
 
   /**
@@ -231,6 +161,7 @@ export default class order extends base {
     }
     let finalPrice = price;
     let reduceFee = 0;
+    // 满减处理
     if (param && param.reduce) {
       reduceFee = param.reduce.fee;
       finalPrice -= reduceFee;
@@ -255,35 +186,6 @@ export default class order extends base {
       trade.arriveTime = '立即出餐';
     }
     return trade;
-  }
-
-  /**
-   * 构建一个交易对象（单个物品），商品页面直接下单
-   */
-  static createSingleTrade (goods, num = 1, sku) {
-    const imageUrl = this._processSingleOrderImageUrl(goods, sku);
-    const skuText = this._processOrderSku(sku.skuText);
-    const price = sku && sku.price ? sku.price : goods.sellPrice;
-    const dealPrice = this._fixedPrice(price * num);
-    // 构造交易对象
-    return {
-      dealPrice: dealPrice,
-      finalPrice: dealPrice,
-      paymentType: '1',
-      paymentText: '在线支付',
-      orderGoodsInfos: [
-        {
-          goodsId: goods.id,
-          goodsName: goods.name,
-          goodsSku: sku.skuText,
-          skuText: skuText,
-          imageUrl: imageUrl,
-          goodsPrice: price,
-          count: num
-        }
-      ],
-      shopName: this.shopName
-    };
   }
 
   /**
@@ -394,18 +296,6 @@ export default class order extends base {
   }
 
   /**
-   * 梳理订单图片（单独下单）
-   */
-  static _processSingleOrderImageUrl (goods, seletedSku) {
-    if (seletedSku && seletedSku.imageUrl) {
-      return seletedSku.imageUrl;
-    } else {
-      const hasImage = goods.images && goods.images.length > 0;
-      return hasImage ? goods.images[0].url : null;
-    }
-  }
-
-  /**
    * 处理订单地址
    */
   static _processOrderAddress (order, address) {
@@ -453,6 +343,7 @@ export default class order extends base {
     this._processOrderAction(detail);
     // 处理商品信息
     this._processOrderGoods(detail.orderGoodsInfos);
+    return detail;
   }
 
   /**
@@ -503,7 +394,6 @@ export default class order extends base {
    * 处理物流配送信息
    */
   static _processOrderDetailDelivery (order) {
-    // const price = order.postFee == 0 ? '免邮' : '￥' + order.postFee;
     order.deliveryText = this.deliveryText[order.deliveryType];
   }
 
@@ -516,7 +406,6 @@ export default class order extends base {
       // 没有物流信息，不做处理
       return;
     }
-
     // 有物流，就一定需要展现动作列表
     order.isExpress = true;
   }
