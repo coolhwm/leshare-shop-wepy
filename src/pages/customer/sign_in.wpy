@@ -52,7 +52,7 @@
     member: store.get('member')
   })
   export default class SignIn extends wepy.page {
-    def = {
+    data = {
       init: false,
       tab: {
         list: [
@@ -68,7 +68,6 @@
       signDay: [],
       signIn: {}
     };
-    data = {...this.def};
     params () {
       return {
         member_id: this.member.memberId,

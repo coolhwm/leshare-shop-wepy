@@ -136,12 +136,9 @@
         this.categoryTab.selectedId = selectedId;
         // 先判断缓存中是否存在商品列表
         if (this.pages[selectedId] && this.pages[selectedId].list.length > 0) {
-          console.info(1);
           this.page = this.pages[selectedId];
-          // this.setGoodsNum();
           this.$apply();
         } else {
-          console.info(2);
           this.page = goods.list(this.discount);
           this.reload();
         }
@@ -176,7 +173,7 @@
         this.setCartNum();
       },
       /**
-       * 计算折扣对象
+       * 计算折扣对象 TODO 折扣计算需要全区抽取
        */
       discount() {
         if (this.member == null || this.card == null) {

@@ -7,10 +7,6 @@
       this.$apply();
       Tips.loaded();
     }
-    // 卸载清理
-    onUnload() {
-      Object.assign(this, this.def);
-    }
     methods = {
       nopen() {
         Tips.alert('尚未开放');

@@ -80,10 +80,9 @@
     status: store.get('status')
   })
   export default class GoodsCart extends wepy.page {
-    def = {
+    data = {
       init: false
     };
-    data = {...this.def};
     cartManager = Cart.create();
     async onLoad () {
       this.loaded();
