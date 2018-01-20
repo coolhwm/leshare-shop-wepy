@@ -76,11 +76,11 @@
   import ImageBox from '../../components/template/image_box';
   import GoodsBox from '../../components/template/goods_box';
   import CouponBox from '../../components/template/coupon_box';
-  import GoodsPanel from '../../components/goods/buy-panel';
+  import GoodsPanel from '../../components/goods/buy_panel';
   import SkuSelector from '../../components/goods/sku_selector';
-  import FloatCart from '../../components/template/float-cart';
+  import FloatCart from '../../components/template/float_cart';
   import NoticeBar from '../../components/template/notice_bar';
-  import StatusTips from '../../components/template/status-tips';
+  import StatusTips from '../../components/template/status_tips';
 
   @connect({
     page: store.get('page')

@@ -55,7 +55,7 @@
   import Loadmore from '../../components/weui/loadmore';
   import Tips from '../../utils/Tips';
   import Loading from '../../components/common/loading';
-  import FloatCart from '../../components/template/float-cart';
+  import FloatCart from '../../components/template/float_cart';
   import Cart from '../../utils/Cart';
   import SearchBar from '../../components/template/search_bar';
 
