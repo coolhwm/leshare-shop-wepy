@@ -6,6 +6,16 @@ import Page from '../utils/Page';
  */
 export default class goods extends base {
   /**
+   * 获取推荐烧瓶
+   */
+  static recommend () {
+    let url = `${this.baseUrl}/goods/recommend`;
+    return new Page(url, item => {
+      this._processGoodsData(item);
+    });
+  }
+
+  /**
    * 新的分页方法
    */
   static list (discount) {

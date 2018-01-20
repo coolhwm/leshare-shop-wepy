@@ -142,7 +142,7 @@
       // 初始化全局存储
       await store.init();
       // 加载推荐商品
-      const {list} = await goods.page(true).next();
+      const {list} = await goods.recommend().next();
       this.goods = list.length > 5 ? list.slice(0, 5) : list;
       // 视图渲染
       this.loaded();
