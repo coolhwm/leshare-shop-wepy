@@ -10,7 +10,7 @@
     <ShopNav :mode.sync="mode"/>
 
     <!--主内容区域-->
-    <CategoryBox />
+    <CategoryBox top="145px" bottom="55px"/>
 
     <!-- 购物车 -->
     <block wx:if="{{version.isOrder}}">

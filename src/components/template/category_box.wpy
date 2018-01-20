@@ -1,13 +1,13 @@
 <template>
   <!--主内容区域-->
-  <view class="main-box row {{version.isOrder ? 'main-box-pad' : 'main-box-full' }}">
+  <view class="main-box row" style="top: {{top}};bottom:{{bottom}}">
     <!--分类侧边栏-->
     <SideTab :tab.sync="categoryTab" @change.user="switchTab" />
 
     <!--右侧滚动-->
     <scroll-view scroll-y class="goods-box" bindscrolltolower="onReachBottom">
       <!--卡券区域（只在推荐的时候展现）-->
-      <scroll-view scroll-x	class="coupon-box" wx:if="{{pickCoupons.length > 0}}">
+      <scroll-view scroll-x	class="coupon-box" wx:if="{{isCoupon &&pickCoupons.length > 0}}">
         <repeat for="{{pickCoupons}}" key="index" index="index" item="item">
           <CouponItem :coupon.sync="item"/>
         </repeat>
@@ -54,6 +54,15 @@
   })
   export default class CategoryBox extends wepy.component {
     props = {
+      top: {
+        default: '0px'
+      },
+      bottom: {
+        default: '0px'
+      },
+      isCoupon: {
+        default: true
+      }
     };
     data = {
       categoryTab: null,
@@ -224,16 +233,9 @@
 
 <style lang="scss">
   @import "../../styles/variable";
-  .main-box-full {
-    bottom: 0;
-  }
-  .main-box-pad {
-    bottom: 55px;
-  }
   .main-box{
     width: 100%;
     position: absolute;
-    top: 145px;
 
     .goods-box{
       flex: 1;
