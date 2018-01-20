@@ -6,10 +6,17 @@
     <SearchBar :param.sync="searchParam"/>
 
     <!--主内容区域-->
-    <CategoryBox top="80rpx" bottom="0" :isCoupon="isCoupon"/>
+    <CategoryBox top="80rpx" bottom="0" :isCoupon.sync="isCoupon"/>
+
+    <!--滑出购物面板-->
+    <block wx:if="{{buyPanelType == 'SLIDER'}}" >
+      <SilderPanel />
+    </block>
 
     <!--弹出购物面板-->
-    <PopupPanel/>
+    <block wx:if="{{buyPanelType == 'POPUP'}}" >
+      <PopupPanel />
+    </block>
 
     <!--悬浮购物车-->
     <FloatCart />
@@ -23,10 +30,10 @@
   import auth from '../../api/auth';
   import base from '../../mixins/base';
   import PopupPanel from '../../components/goods/popup_buy_panel';
+  import SilderPanel from '../../components/goods/slider_buy_panel';
   import Loadmore from '../../components/weui/loadmore';
   import Loading from '../../components/common/loading';
   import FloatCart from '../../components/template/float_cart';
-  import Cart from '../../utils/Cart';
   import SearchBar from '../../components/template/search_bar';
   import CategoryBox from '../../components/template/category_box';
 
@@ -35,11 +42,9 @@
   export default class ShopIndex extends wepy.page {
     data = {
       init: false,
-      mode: 1,
       isCoupon: false,
-      searchParam: null
+      buyPanelType: 'POPUP'
     };
-    cartManager = Cart.create();
     async onLoad () {
       // 用户信息
       await auth.user();
@@ -61,7 +66,8 @@
       PopupPanel: PopupPanel,
       Loading: Loading,
       SearchBar: SearchBar,
-      FloatCart: FloatCart
+      FloatCart: FloatCart,
+      SilderPanel: SilderPanel
     };
     mixins = [base];
     config = {

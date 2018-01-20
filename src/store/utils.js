@@ -139,7 +139,7 @@ const fetch = (field) => {
     case 'reduce' :
       return shop.reduces();
     case 'recommend' :
-      return goods.page(true).next();
+      return goods.recommend().next();
     case 'version' :
       return shop.chargeLimit();
   }

@@ -41,7 +41,6 @@
         } catch (e) {
           await Tips.alert('已达领取上限');
         }
-        this.$emit('pick', item, detail.formId);
       }
     };
     events = {};

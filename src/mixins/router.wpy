@@ -17,7 +17,7 @@
     }
     plusCart(goods, goodsSku = '') {
       const source = this.$root.$wxpage.route;
-      const mode = goods.skuMode;
+      const mode = this.getMode(goods);
       switch (mode) {
         case 'SLIDER':
           Event.emit(Event.GOODS_PANEL_OPEN, goods);
@@ -33,6 +33,16 @@
     minusCart(goodsId, goodsSku = '') {
       const source = this.$root.$wxpage.route;
       Event.emit(Event.GOODS_PANEL_MINUS, {goodsId, goodsSku, source});
+    }
+    getMode(goods) {
+      if (goods.skuMode) {
+        return goods.skuMode;
+      }
+      try {
+        return this.$root.$data.param.buyPanelType;
+      } catch (e) {
+        return null;
+      }
     }
     methods = {
       /**

@@ -2,6 +2,20 @@
   import wepy from 'wepy';
   import Tips from '../utils/Tips';
   export default class base extends wepy.mixin {
+    onLoad() {
+      // 注入页面参数
+      const params = wepy.$instance.globalData.pageParams;
+      if (params == null) {
+        return;
+      }
+      const path = this.$root.$wxpage.route;
+      const param = params.find(item => item.path == path);
+      if (param == null) {
+        return;
+      }
+      console.info(`[minxin] page base init path=${path}, param=`, param);
+      Object.assign(this, param);
+    }
     loaded() {
       this.init = true;
       this.$apply();

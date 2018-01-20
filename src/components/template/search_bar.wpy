@@ -14,6 +14,7 @@
 
 <script>
   import wepy from 'wepy';
+  import base from '../../mixins/base_com';
   export default class SearchBar extends wepy.component {
     props = {
       param: {}
@@ -25,7 +26,7 @@
         this.$root.$navigate(`/pages/goods/search?param=${param}`);
       }
     };
-    events = {};
+    mixins = [base];
     onLoad() {
     }
   }

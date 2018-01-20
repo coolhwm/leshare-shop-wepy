@@ -7,7 +7,7 @@
     <!--右侧滚动-->
     <scroll-view scroll-y class="goods-box" bindscrolltolower="onReachBottom">
       <!--卡券区域（只在推荐的时候展现）-->
-      <scroll-view scroll-x	class="coupon-box" wx:if="{{isCoupon &&pickCoupons.length > 0}}">
+      <scroll-view scroll-x	class="coupon-box" wx:if="{{isCoupon && pickCoupons.length > 0}}">
         <repeat for="{{pickCoupons}}" key="index" index="index" item="item">
           <CouponItem :coupon.sync="item"/>
         </repeat>
@@ -54,12 +54,15 @@
   })
   export default class CategoryBox extends wepy.component {
     props = {
+      // 顶部距离
       top: {
         default: '0px'
       },
+      // 底部距离
       bottom: {
         default: '0px'
       },
+      // 是否显示领取优惠券
       isCoupon: {
         default: true
       }

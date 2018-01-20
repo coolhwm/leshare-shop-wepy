@@ -9,7 +9,7 @@ export default class coupon extends base {
    * 返回分页对象
    */
   static page () {
-    const url = `${this.baseUrl}/coupons`;
+    const url = `${this.baseUrl}/coupons?by=accept_time&sort=desc`;
     return new Page(url, this._processCouponItem.bind(this));
   }
   /**
