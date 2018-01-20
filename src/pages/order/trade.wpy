@@ -140,7 +140,7 @@
   import AddressSelector from '../../components/address/select_item';
   import AddressList from '../../components/address/list_panel';
   import OrderItem from '../../components/order/order_item';
-  import InShopTab from '../../components/order/inshop_bar';
+  import InShopTab from '../../components/order/inshop_tab';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
