@@ -8,6 +8,7 @@
 
     <!--功能区域-->
     <ShopNav :mode.sync="mode"/>
+
     <!--主内容区域-->
     <CategoryBox />
 

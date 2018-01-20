@@ -95,7 +95,7 @@
       <view class="content column">
         <view class="goods-box row" wx:for="{{goods}}" wx:key="index">
           <image class="goods-image" src="{{item.imageUrl}}" @tap="previewGoodsImages({{item.imageUrl}})"/>
-          <navigator class="main column"  url="/pages/shop/index?goodsId={{item.id}}"  open-type="redirect">
+          <navigator class="main column"  url="/pages/goods/detail?goodsId={{item.id}}" >
             <text class="title">{{item.name}}</text>
             <text class="price">￥{{item.priceLable}}</text>
           </navigator>
