@@ -13,7 +13,7 @@
 
     <!-- 购物车 -->
     <block wx:if="{{version.isOrder}}">
-      <ShopCart @buy.user="buy" :mode.sync="mode"/>
+      <SliderCart @buy.user="buy" :mode.sync="mode"/>
     </block>
 
     <!--SKU选择器-->
@@ -34,7 +34,7 @@
   import ShopHeader from '../../components/shop/header';
   import ShopNav from '../../components/shop/nav';
   import SkuSelector from '../../components/goods/popup_buy_panel';
-  import ShopCart from '../../components/shop/slider_cart';
+  import SliderCart from '../../components/shop/slider_cart';
   import Loading from '../../components/common/loading';
 
   @connect({
@@ -68,7 +68,7 @@
     components = {
       ShopHeader: ShopHeader,
       ShopNav: ShopNav,
-      ShopCart: ShopCart,
+      SliderCart: SliderCart,
       SkuSelector: SkuSelector,
       CategoryBox: CategoryBox,
       Loading: Loading

@@ -81,7 +81,7 @@
     ownCoupons: store.get('ownCoupons'),
     reduce: store.get('reduce')
   })
-  export default class ShopCart extends wepy.component {
+  export default class SliderCart extends wepy.component {
     cartManager = Cart.create();
     props = {
       mode: {

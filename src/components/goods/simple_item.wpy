@@ -3,7 +3,7 @@
     <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="routeToGoods({{goods.id}})"></image>
     <view class="goods-main column" >
       <!-- 主体区域-->
-      <view @tap="detail({{goods}})">
+      <view @tap="routeToGoods({{goods.id}})">
         <view class="goods-name row-between">
           <text>{{goods.name}}</text>
         </view>
