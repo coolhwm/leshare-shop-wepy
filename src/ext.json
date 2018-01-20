@@ -35,6 +35,7 @@
     "pages/goods/comment_list",
     "pages/goods/comment_edit",
     "pages/address/edit",
+    "pages/address/select",
     "pages/order/trade",
     "pages/order/detail",
     "pages/order/refund_edit",

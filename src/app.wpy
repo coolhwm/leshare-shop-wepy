@@ -88,6 +88,9 @@ export default class extends wepy.app {
       'pages/goods/category',
       'pages/goods/comment_edit',
       'pages/address/edit',
+      'pages/address/select',
+      'pages/address/list',
+      'pages/address/search',
       'pages/order/trade',
       'pages/order/detail',
       'pages/order/refund_edit',
@@ -104,8 +107,6 @@ export default class extends wepy.app {
       'pages/customer/bonus_list',
       'pages/customer/vip_info',
       'pages/customer/sign_in',
-      'pages/address/list',
-      'pages/address/search',
       'pages/coupon/use',
       'pages/shop/contact',
       'pages/home/template'

@@ -1,9 +1,6 @@
 <template>
   <Tips/>
   <Loading :init.sync="init"/>
-  <!--地址浮动层-->
-  <AddressList :goodsList.sync="goodsList" :display.sync="isAddressListDisplay"/>
-
   <view class="container" wx:if="{{init}}">
     <!--地址栏/外卖情况才展现-->
 
@@ -138,7 +135,6 @@
   import FormTips from '../../components/weui/tips';
   import ActionBar from '../../components/common/action_bar';
   import AddressSelector from '../../components/address/select_item';
-  import AddressList from '../../components/address/list_panel';
   import OrderItem from '../../components/order/order_item';
   import InShopTab from '../../components/order/inshop_tab';
   import Tips from '../../utils/Tips';
@@ -166,7 +162,6 @@
       confirmStatus: false,
       confirmText: '立即下单',
       goodsList: null,
-      isAddressListDisplay: false,
       bonusPicker: null,
       selectedBonus: null
     };
@@ -221,7 +216,8 @@
        * 选择地址
        */
       address () {
-        this.isAddressListDisplay = true;
+        this.$preload('goodsList', this.trade.orderGoodsInfos);
+        this.$navigate('/pages/address/select');
       },
       /**
        * 选择优惠券
@@ -593,7 +589,6 @@
       ActionBar: ActionBar,
       AddressSelector: AddressSelector,
       OrderItem: OrderItem,
-      AddressList: AddressList,
       InShopTab: InShopTab,
       Loading: Loading
     };
