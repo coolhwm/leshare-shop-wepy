@@ -22,7 +22,7 @@
   import pagination from '../../mixins/pagination';
   import Placeholder from '../../components/common/placeholder';
   import Loadmore from '../../components/weui/loadmore';
-  import Address from '../../components/address/manage';
+  import Address from '../../components/address/manage_item';
   import ActionBar from '../../components/common/action_bar'
   import Event from '../../utils/Event'
 

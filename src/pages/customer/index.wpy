@@ -95,7 +95,7 @@
   import VipCard from '../../components/customer/vip_card';
   import ShopHeader from '../../components/shop/header';
   import Loadmore from '../../components/weui/loadmore';
-  import OrderItem from '../../components/order/customer_item';
+  import OrderItem from '../../components/order/order_item';
   import Event from '../../utils/Event';
   import Tips from '../../utils/Tips';
   import Loading from '../../components/common/loading';

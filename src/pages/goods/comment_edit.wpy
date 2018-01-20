@@ -42,7 +42,6 @@
     };
     methods = {
       star(goods, index) {
-        console.info(goods, index);
         const {goodsId, sku} = goods;
         const score = this.scores.find(item => item.goodsId == goodsId && item.sku == sku);
         for (let i = 0; i < 5; i++) {

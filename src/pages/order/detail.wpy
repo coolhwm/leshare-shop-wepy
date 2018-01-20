@@ -104,9 +104,9 @@
   import order from '../../api/order';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
-  import Address from '../../components/address/display';
+  import Address from '../../components/address/display_item';
   import Route from '../../utils/WxUtils';
-  import OrderItem from '../../components/order/customer_item';
+  import OrderItem from '../../components/order/order_item';
   import InShopStatus from '../../components/order/inshop_status';
   import Loading from '../../components/common/loading';
   export default class OrderDetail extends wepy.page {

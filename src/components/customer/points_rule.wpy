@@ -10,10 +10,6 @@
       <view class="jf_ins">亲，签到的积分可以享受满立减，下单更优惠！即满100积分可抵消5元现金；在您下单微信支付界面，系统会自动显示你的总积分多少可用多少，微信付款之后在商品金额上系统会自动减去5元。
       </view>
     </view>
-    <!--<view class="jf_content">
-      <view class="sec_title">积分社区的价值</view>
-      <view class="jf_ins">小e们听过各种社区互动获得的积分可以用于提升小嗨的等级，等级越高开启的社区特权越多。</view>
-    </view>-->
   </view>
 </template>
 <script>
@@ -23,10 +19,6 @@
     data = {};
 
     events = {
-      // 'index-broadcast': (...args) => {
-      //   let $event = args[args.length - 1]
-      //   console.log(`${this.$name} receive ${$event.name} from ${$event.source.name}`)
-      // }
     };
 
     methods = {};

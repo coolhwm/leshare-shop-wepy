@@ -35,7 +35,7 @@
   import Placeholder from '../../components/common/placeholder';
   import Event from '../../utils/Event';
   import Loadmore from '../../components/weui/loadmore';
-  import Address from '../../components/address/manage';
+  import Address from './manage_item';
 
   export default class AddressList extends wepy.component {
     props = {

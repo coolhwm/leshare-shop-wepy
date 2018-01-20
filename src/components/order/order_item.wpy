@@ -58,7 +58,7 @@
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
   import Route from '../../utils/WxUtils';
-  import OrderGoods from './goods';
+  import OrderGoods from './order_goods';
   export default class OrderItem extends wepy.component {
     props = {
       order: {

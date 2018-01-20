@@ -96,7 +96,7 @@
   import store from '../../store/utils';
   import Loading from '../../components/common/loading';
   import router from '../../mixins/router';
-  import SkuSelector from '../../components/goods/sku_selector';
+  import SkuSelector from '../../components/goods/popup_buy_panel';
 
   @connect({
     version: store.get('version')

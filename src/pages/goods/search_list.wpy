@@ -30,7 +30,7 @@
   import base from '../../mixins/base';
   import GoodsRow from '../../components/template/goods/goods_row';
   import ZanTab from '../../components/zanui/tab';
-  import PopupPanel from '../../components/goods/sku_selector';
+  import PopupPanel from '../../components/goods/popup_buy_panel';
   import FloatCart from '../../components/template/float_cart';
   import Placeholder from '../../components/common/placeholder';
   import Loadmore from '../../components/weui/loadmore';

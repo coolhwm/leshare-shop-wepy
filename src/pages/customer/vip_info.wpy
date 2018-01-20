@@ -114,7 +114,6 @@
       const {totalCost, bonus, memberPresentDetails} = await member.info();
       const isPresentUpdate = this.isPresentUpdate(memberPresentDetails);
       const isCostUpdate = totalCost != this.member.totalCost || bonus != this.member.bonus;
-      console.info(isPresentUpdate, isCostUpdate)
       if (!isPresentUpdate && !isCostUpdate) return;
       let text = '';
       if (isCostUpdate) {

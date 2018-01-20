@@ -83,6 +83,11 @@
   })
   export default class ShopCart extends wepy.component {
     cartManager = Cart.create();
+    props = {
+      mode: {
+        default: 1
+      }
+    };
     data = {
       buyStatus: 0,
       isCartDisplay: 'false',
@@ -123,7 +128,7 @@
             param.reduce = this.matchReduce.match;
           }
           param.formId = detail.formId;
-          this.$emit('buy', param);
+          // this.$emit('buy', param);
 
           // 权限校验
           const result = await auth.user({block: true, redirect: false});

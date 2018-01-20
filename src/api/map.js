@@ -53,7 +53,6 @@ export default class map {
         poi_options: 'policy=2',
         success: ({result}) => {
           const current = {};
-          console.info(result);
           // 当前地址文本
           current.display = result.formatted_addresses.recommend;
           current.province = result.ad_info.province;

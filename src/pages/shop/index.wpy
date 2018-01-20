@@ -13,8 +13,9 @@
 
     <!-- 购物车 -->
     <block wx:if="{{version.isOrder}}">
-      <ShopCart @buy.user="buy"/>
+      <ShopCart @buy.user="buy" :mode.sync="mode"/>
     </block>
+
     <!--SKU选择器-->
     <SkuSelector/>
 
@@ -32,8 +33,8 @@
   import pagination from '../../mixins/pagination.wpy';
   import ShopHeader from '../../components/shop/header';
   import ShopNav from '../../components/shop/nav';
-  import SkuSelector from '../../components/goods/sku_selector';
-  import ShopCart from '../../components/shop/cart';
+  import SkuSelector from '../../components/goods/popup_buy_panel';
+  import ShopCart from '../../components/shop/slider_cart';
   import Loading from '../../components/common/loading';
 
   @connect({

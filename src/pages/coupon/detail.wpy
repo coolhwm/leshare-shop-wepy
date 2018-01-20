@@ -29,7 +29,7 @@
   import base from '../../mixins/base';
   import input from '../../mixins/input';
   import coupon from '../../api/coupon';
-  import CouponItem from '../../components/coupons/item';
+  import CouponItem from '../../components/coupons/display_item';
   import Qrcode from '../../components/wux/qrcode/qrcode';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';

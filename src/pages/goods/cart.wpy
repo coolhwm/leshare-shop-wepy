@@ -71,7 +71,7 @@
   import order from '../../api/order';
   import auth from '../../api/auth';
   import Cart from '../../utils/Cart';
-  import CartItem from '../../components/goods/cart';
+  import CartItem from '../../components/goods/cart_item';
   import Tips from '../../utils/Tips';
 
   @connect({

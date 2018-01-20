@@ -104,7 +104,6 @@
         }
       },
       async add ({detail}) {
-        console.log(detail.value.code);
         if (!this.validate(detail.value.code)) return;
         this.registeInfo = this.input;
         try {

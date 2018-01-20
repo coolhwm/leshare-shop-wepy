@@ -39,7 +39,6 @@
         shop.reportFormId(detail.formId);
       },
       async auth({detail}) {
-        console.info(detail);
         if (detail.rawData == null) {
           Tips.alert('请确认授权');
           return;

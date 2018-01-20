@@ -51,7 +51,7 @@
   import pagination from '../../mixins/pagination.wpy';
   import SideTab from '../../components/common/side_tab';
   import GoodsItem from '../../components/goods/simple_item';
-  import SkuSelector from '../../components/goods/sku_selector';
+  import SkuSelector from '../../components/goods/popup_buy_panel';
   import Loadmore from '../../components/weui/loadmore';
   import Tips from '../../utils/Tips';
   import Loading from '../../components/common/loading';
@@ -181,7 +181,6 @@
     methods = {
       switchTab() {
         const selectedId = this.categories.selectedId;
-        console.info(selectedId);
         // 先判断缓存中是否存在商品列表
         if (this.pages[selectedId] && this.pages[selectedId].list.length > 0) {
           this.page = this.pages[selectedId];

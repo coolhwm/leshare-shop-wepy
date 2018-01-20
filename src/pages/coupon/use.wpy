@@ -22,7 +22,7 @@
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import Placeholder from '../../components/common/placeholder';
-  import CouponItem from '../../components/coupons/item';
+  import CouponItem from '../../components/coupons/display_item';
   import Event from '../../utils/Event';
 
   export default class CouponUse extends wepy.page {
