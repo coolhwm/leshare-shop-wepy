@@ -3,6 +3,7 @@
   @import "./styles/zent";
   @import "./styles/weui-extend";
 </style>
+<style lang="scss" src="./styles/weui.scss"></style>
 
 <script>
 import wepy from 'wepy';

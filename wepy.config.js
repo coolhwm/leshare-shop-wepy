@@ -45,6 +45,9 @@ if (prod) {
       config: {
       }
     },
+    filemin: {
+      filter: /\.(wxml)$/
+    },
     imagemin: {
       filter: /\.(jpg|png|jpeg)$/,
       config: {
