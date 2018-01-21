@@ -1,9 +1,9 @@
+<style lang="scss" src="./styles/weui.scss"></style>
 <style lang="scss">
   @import "./styles/base";
   @import "./styles/zent";
   @import "./styles/weui-extend";
 </style>
-<style lang="scss" src="./styles/weui.scss"></style>
 
 <script>
 import wepy from 'wepy';
@@ -124,7 +124,7 @@ export default class extends wepy.app {
     scene: '',
     app_code: null,
     shopType: 1,
-    version: 'v2.0.3',
+    version: 'v2.1.0',
     pageParams: null,
     // baseUrl: 'https://api.leshare.shop/v2/customer'
     // baseUrl: 'http://192.168.31.124:9999/v2/customer',
