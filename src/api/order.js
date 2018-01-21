@@ -1,56 +1,12 @@
 import base from './base';
 import Page from '../utils/Page';
-import {ACTIONS, ACTION_MAP} from './order_dict';
+import {ORDER_ACTIONS, STATUS_ACTIONS, statusName, statusDesc, deliveryType, paymentType, isHereOrder, isDeliveryOrder} from './order_const';
 import WxUtils from '../utils/WxUtils';
 
 /**
  * 订单服务类
  */
 export default class order extends base {
-  // TODO 字典表抽取 / 订单状态判读字典化
-  static PAYMENT_OFFLINE = 0;
-  static TYPE_TAKEAWAY = 20;
-  static TYPE_FORHERE = 30;
-  static TYPE_PACK = 33;
-  // 交易状态字典
-  static statusDict = {
-    '0': '全部',
-    '1': '等待买家付款',
-    '2': '等待店家接单',
-    '3': '店家配送中',
-    '4': '等待买家评价',
-    '5': '申请退款中',
-    '6': '交易成功',
-    '7': '交易关闭',
-    '8': '卖家已退款',
-    '9': '店家已接单'
-  };
-
-  // 字符字典
-  static paymentDict = {
-    '0': '线下支付',
-    '1': '在线支付'
-  };
-
-  // 订单配送方式
-  static deliveryText = {
-    'SELF': '上门自提',
-    'CITY': '同城配送',
-    'EXPRESS': '快递配送'
-  };
-
-  static statusDesc = {
-    '1': '请于24小时内付款，超时订单自动关闭',
-    '2': '您已完成付款，等待店家确认，超时未接单将自动退款',
-    '3': '店家已发货，请您耐心等待',
-    '4': '卖家已收到您的货款，请对本次交易进行评价',
-    '5': '您已发起退款申请，等待卖家处理',
-    '6': '交易已完成，卖家已收到您的货款',
-    '7': '本交易已取消，欢迎您下次光临',
-    '8': '钱款已原路退回，请查收',
-    '9': '店家正在备货配送中，请您耐心等待'
-  };
-
   /**
    * 返回分页对象
    */
@@ -182,7 +138,7 @@ export default class order extends base {
       orderGoodsInfos: orderGoodsInfos,
       shopName: this.shopName
     };
-    if (param.orderType == '30') {
+    if (isHereOrder(param.orderType)) {
       trade.arriveTime = '立即出餐';
     }
     return trade;
@@ -280,13 +236,13 @@ export default class order extends base {
    */
   static _processOrderAction(order, inner = false) {
     const basic = [];
-    // const basic = [ACTIONS.AGAIN];
+    // const basic = [ORDER_ACTIONS.AGAIN];
     // 有退款的情况
     if (order.curRefund) {
-      basic.push(ACTIONS.REFUND_DETAIL);
+      basic.push(ORDER_ACTIONS.REFUND_DETAIL);
     }
     const key = `${order.orderType}-${order.paymentType}-${order.status}`;
-    const actions = ACTION_MAP[key];
+    const actions = STATUS_ACTIONS[key];
     if (actions) {
       const display = inner ? actions.filter(v => v.inner != true) : actions;
       order.actions = basic.concat(display);
@@ -299,7 +255,7 @@ export default class order extends base {
    * 处理订单地址
    */
   static _processOrderAddress (order, address) {
-    if (order.orderType == '20') {
+    if (isDeliveryOrder(order.orderType)) {
       order.receiveName = `${address.name} ${address.sexText}`;
       order.receivePhone = address.phone;
       order.address = address.fullAddress;
@@ -350,7 +306,7 @@ export default class order extends base {
    * 处理订单支付方式
    */
   static _processOrderPaymentText (detail) {
-    detail.paymentText = this.paymentDict[detail.paymentType];
+    detail.paymentText = paymentType(detail.paymentType);
   }
 
   /**
@@ -376,15 +332,10 @@ export default class order extends base {
    * 处理状态描述文本
    */
   static _processOrderStatusDesc (order) {
-    const status = order.status;
-    order.statusText = this.statusDict[status];
-    order.statusDesc = this.statusDesc[status];
-    // 到店特殊状态
-    if (order.orderType != '20' && status == 3) {
-      order.statusText = '店家配餐中';
-      order.statusDesc = '店家努力配餐中，请耐心等待';
-    }
-    // 订单关闭
+    const {status, orderType} = order;
+    order.statusText = statusName(orderType, status);
+    order.statusDesc = statusDesc(order, status);
+    // 订单关闭增加关闭原因
     if (order.status == 7 && order.orderCloseNote) {
       const reason = order.orderCloseNote;
       order.statusDesc = `订单已关闭，关闭原因：${reason.note}`;
@@ -394,7 +345,7 @@ export default class order extends base {
    * 处理物流配送信息
    */
   static _processOrderDetailDelivery (order) {
-    order.deliveryText = this.deliveryText[order.deliveryType];
+    order.deliveryText = deliveryType(order.deliveryType);
   }
 
   /**

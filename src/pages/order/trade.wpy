@@ -131,6 +131,7 @@
   import address from '../../api/address';
   import coupon from '../../api/coupon';
   import order from '../../api/order';
+  import {PAYMENT, TYPE} from '../../api/order_const';
   import shop from '../../api/shop';
   import FormTips from '../../components/weui/tips';
   import ActionBar from '../../components/common/action_bar';
@@ -173,7 +174,7 @@
       // 订单数据
       this.trade = preload.trade;
       this.goodsList = this.trade.orderGoodsInfos;
-      if (this.trade.orderType == order.TYPE_TAKEAWAY) {
+      if (this.trade.orderType == TYPE.TAKEAWAY) {
         // 默认地址
         this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
         // 处理配送方式
@@ -283,7 +284,7 @@
           return;
         }
         // 数据准备
-        if (this.trade.orderType == order.TYPE_TAKEAWAY) {
+        if (this.trade.orderType == TYPE.TAKEAWAY) {
           this.trade.deliveryType = 'CITY';
         }
         // 表单ID
@@ -296,7 +297,7 @@
           return;
         }
         // 检查是否为离线订单
-        if (trade.paymentType == order.PAYMENT_OFFLINE) {
+        if (trade.paymentType == PAYMENT.OFFLINE) {
           Tips.success('下单成功');
         } else {
           // 发起支付
@@ -449,14 +450,14 @@
     }
     computed = {
       isTakeaway() {
-        return this.trade.orderType == order.TYPE_TAKEAWAY;
+        return this.trade.orderType == TYPE.TAKEAWAY;
       },
       isInShop() {
-        return this.trade.orderType == order.TYPE_FORHERE || this.trade.orderType == order.TYPE_PACK;
+        return this.trade.orderType == TYPE.FORHERE || this.trade.orderType == TYPE.PACK;
       },
       isForhearOrPack() {
         const type = this.trade.orderType;
-        return type == order.TYPE_FORHERE || type == order.TYPE_PACK;
+        return type == TYPE.FORHERE || type == TYPE.PACK;
       },
       // 配送费用文字
       delilveryText() {
