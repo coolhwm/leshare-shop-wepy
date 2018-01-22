@@ -149,7 +149,6 @@ export default class shop extends base {
       data.closeTips = '店铺已休息，请稍后再来';
     } else if (data.status == 'NORMAL' && !data.open) {
       data.closeTips = '店铺已休息，请稍后再来';
-      // data.closeTips = `店铺已休息，营业时间：${data.beginTime} - ${data.endTime}`;
     }
     return data;
   }
@@ -203,23 +202,5 @@ export default class shop extends base {
     }
     sign.orderId = 0;
     return sign;
-  }
-
-  // *** 整合数据的外部处理方法
-  static _createGoodsCategories (data) {
-    const list = [];
-    if (data != null) {
-      list.push(...data.map(item => {
-        return {
-          id: item.id,
-          title: item.name
-        };
-      }));
-    }
-    return {
-      list: list,
-      selectedId: list[0].id,
-      scroll: false
-    };
   }
 }

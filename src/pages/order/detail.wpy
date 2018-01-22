@@ -24,6 +24,7 @@
         </view>
       </view>
     </block>
+
     <!--地址展现-->
     <block wx:if="{{order.orderType == '20'}}">
       <Address :address.sync="address" />

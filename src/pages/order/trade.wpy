@@ -2,12 +2,14 @@
   <Tips/>
   <Loading :init.sync="init"/>
   <view class="container" wx:if="{{init}}">
-    <!--地址栏/外卖情况才展现-->
 
-    <block wx:if="{{isInShop}}">
+    <!--堂食/打包的情况， 展现选择栏-->
+    <block wx:if="{{trade.isInShop}}">
       <InShopTab @tap.user="switchInShopType" />
     </block>
-    <block wx:else>
+
+    <!--需要配送的订单展现地址选择栏-->
+    <block wx:if="{{trade.isDeliveryOrder}}">
       <AddressSelector :address.sync="selectedAddress" @select.user="address" />
     </block>
 
@@ -20,24 +22,24 @@
     <view class="weui-cells weui-cells_after-title weui-cells-merge-top" >
 
       <!--堂食/打包才有预约时间-->
-      <view class="weui-cell weui-cell_access" @tap="arriveTime" wx:if="{{isForhearOrPack}}">
+      <view class="weui-cell weui-cell_access" @tap="arriveTime"  wx:if="{{trade.isInShop}}">
         <view class="weui-cell__bd">预约时间</view>
         <text class="weui-cell__ft weui-cell__ft_in-access">{{trade.arriveTime}} </text>
       </view>
 
-
-      <!--外卖才能在线支付-->
+      <!--支付方式-->
       <view class="weui-cell weui-cell_access" @tap="paymentType">
         <view class="weui-cell__bd">支付方式</view>
-        <view class="weui-cell__ft {{shop.offPay == 1 && isTakeaway ? 'weui-cell__ft_in-access' : ''}}">{{trade.paymentText}}</view>
+        <view class="weui-cell__ft {{shop.offPay == 1 ? 'weui-cell__ft_in-access' : ''}}">{{trade.paymentText}}</view>
       </view>
 
-      <!--外卖才有配送方式-->
-      <view class="weui-cell weui-cell_access" @tap="delivery" wx:if="{{isTakeaway}}">
+      <!--需要配送的订单, 需要选择配送方式-->
+      <view class="weui-cell weui-cell_access" @tap="delivery" wx:if="{{trade.isDeliveryOrder}}">
         <view class="weui-cell__bd">配送方式</view>
         <text class="weui-cell__ft {{delilveryCount > 1 ? 'weui-cell__ft_in-access' : ''}}">{{delilveryText}} </text>
       </view>
 
+      <!--优惠券-->
       <view class="weui-cell weui-cell_access" @tap="coupon">
         <view class="weui-cell__bd">优惠券
           <view class="label small primary pain" wx:if="{{coupons.length > 0}}">{{couponLabel}}</view>
@@ -131,7 +133,7 @@
   import address from '../../api/address';
   import coupon from '../../api/coupon';
   import order from '../../api/order';
-  import {PAYMENT, TYPE} from '../../api/order_const';
+  import {PAYMENT, TYPE, orderUtils} from '../../api/order_const';
   import shop from '../../api/shop';
   import FormTips from '../../components/weui/tips';
   import ActionBar from '../../components/common/action_bar';
@@ -174,7 +176,7 @@
       // 订单数据
       this.trade = preload.trade;
       this.goodsList = this.trade.orderGoodsInfos;
-      if (this.trade.orderType == TYPE.TAKEAWAY) {
+      if (orderUtils.isDeliveryOrder(this.trade.orderType)) {
         // 默认地址
         this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
         // 处理配送方式
@@ -449,22 +451,13 @@
       trade.finalPrice = trade.finalPrice.toFixed(2);
     }
     computed = {
-      isTakeaway() {
-        return this.trade.orderType == TYPE.TAKEAWAY;
-      },
-      isInShop() {
-        return this.trade.orderType == TYPE.FORHERE || this.trade.orderType == TYPE.PACK;
-      },
-      isForhearOrPack() {
-        const type = this.trade.orderType;
-        return type == TYPE.FORHERE || type == TYPE.PACK;
-      },
       // 配送费用文字
       delilveryText() {
         let confirmStatus = false;
         let deliveryText = '暂不支持配送';
         let confirmText = '立即下单';
-        if (this.isForhearOrPack) {
+        if (this.isInShopOrder) {
+          // 在店内的订单不需要进行校验
           confirmStatus = true;
           confirmText = '立即下单';
         } else {

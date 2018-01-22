@@ -6,7 +6,7 @@ import Page from '../utils/Page';
  */
 export default class goods extends base {
   /**
-   * 获取推荐烧瓶
+   * 获取推荐
    */
   static recommend () {
     let url = `${this.baseUrl}/goods/recommend`;

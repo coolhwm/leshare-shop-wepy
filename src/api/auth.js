@@ -69,7 +69,7 @@ export default class auth extends base {
       rawData: rawUser.rawData,
       signature: rawUser.signature,
       thirdSession: this.getConfig('third_session'),
-      appCode: this.getShopCode()
+      app_code: this.getShopCode()
     };
     return await this.get(url, param);
   }
@@ -83,7 +83,7 @@ export default class auth extends base {
       encryptedData: rawUser.encryptedData,
       iv: rawUser.iv,
       thirdSession: this.getConfig('third_session'),
-      appCode: this.getShopCode()
+      app_code: this.getShopCode()
     };
     return await this.get(url, param);
   }

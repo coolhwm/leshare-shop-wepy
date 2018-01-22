@@ -261,13 +261,13 @@ const isDeliveryOrder = type => type == TYPE.TAKEAWAY || type == TYPE.MALL;
 /**
  * 是否为堂食订单
  */
-const isHereOrder = type => type == TYPE.FORHERE || type == TYPE.PACK;
+const isInShopOrder = type => type == TYPE.FORHERE || type == TYPE.PACK;
 
 /**
  * 导出的方法
  */
 const orderUtils = {
-  statusActions, orderType, paymentType, deliveryType, statusName, statusDesc, isMallOrder, isFoodOrder, isHereOrder, isDeliveryOrder
+  statusActions, orderType, paymentType, deliveryType, statusName, statusDesc, isMallOrder, isFoodOrder, isInShopOrder, isDeliveryOrder
 };
 
 export {

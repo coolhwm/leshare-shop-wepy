@@ -127,8 +127,9 @@ export default class order extends base {
     }
     finalPrice = finalPrice.toFixed(2);
     // 构造交易对象
+    const type = param.orderType;
     const trade = {
-      orderType: param.orderType,
+      orderType: type,
       dealPrice: price.toFixed(2),
       reduceFee: reduceFee,
       finalPrice: finalPrice,
@@ -138,7 +139,10 @@ export default class order extends base {
       orderGoodsInfos: orderGoodsInfos,
       shopName: this.shopName
     };
-    if (utils.isHereOrder(param.orderType)) {
+    // 初始化订单类型标志位
+    this._processTypeFlag(trade);
+    // 堂食打包初始化出餐时间
+    if (trade.isInShopOrder) {
       trade.arriveTime = '立即出餐';
     }
     return trade;
@@ -298,7 +302,21 @@ export default class order extends base {
     this._processOrderAction(detail);
     // 处理商品信息
     this._processOrderGoods(detail.orderGoodsInfos);
+    // 处理标志位信息
+    this._processTypeFlag(detail);
     return detail;
+  }
+
+  /**
+   * 处理标志位信息
+   */
+  static _processTypeFlag(order) {
+    const type = order.orderType;
+    order.isFoodOrder = utils.isFoodOrder(type);
+    order.isDeliveryOrder = utils.isDeliveryOrder(type);
+    order.isInShopOrder = utils.isInShopOrder(type);
+    order.isMallOrder = utils.isMallOrder(type);
+    return order;
   }
 
   /**

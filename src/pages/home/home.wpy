@@ -43,7 +43,6 @@
           <image class="icon-xl" src="/images/home/inshop.png" ></image>
           <text class="weak">堂食/外带</text>
         </button>
-
         <button class="shop-btn" @tap="nav" plain form-type="submit" wx:else>
           <image class="icon-xl" src="/images/home/nav.png" ></image>
           <text class="weak">一键导航</text>
