@@ -72,7 +72,8 @@
   @connect({
     member: store.get('member'),
     card: store.get('card'),
-    user: store.get('user')
+    user: store.get('user'),
+    discount: store.get('discount')
   })
   export default class VipDetail extends wepy.page {
     data = {
@@ -103,19 +104,8 @@
         }
         let describe = '';
         // 有折扣的情况
-        if (this.card.supplyDiscount == 1) {
-          const {discountRule, customDiscount} = this.member;
-          let discount = 100;
-          if (customDiscount > 0 && customDiscount < 100) {
-            // 自定义折扣
-            discount = customDiscount;
-          } else if (discountRule != null && discountRule.discount < 100) {
-            // 等级折扣
-            discount = discountRule.discount;
-          }
-          if (discount < 100) {
-            describe += `本会员卡享受部分商品 ${(discount / 10).toFixed(1)} 折优惠\n`;
-          }
+        if (this.discount != null) {
+          describe += `本会员卡享受部分商品 ${(this.discount.rate / 10).toFixed(1)} 折优惠\n`;
         }
         // 开启积分规则
         if (this.card.supplyBonus == 1 && this.card.bonusRule != null) {

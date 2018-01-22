@@ -57,7 +57,7 @@ export default class config extends base {
       return null;
     }
     let discount = 100;
-    if (customDiscount > 0 && customDiscount < 100) {
+    if (customDiscount > 0 && customDiscount <= 100) {
       // 自定义折扣
       discount = customDiscount;
     } else if (discountRule != null && discountRule.discount < 100) {
