@@ -11,6 +11,10 @@ const store = getStore();
 const meta = {};
 // 超时时间
 const CACHE_TIMEOUT = 5 * 60 * 1000;
+// 嵌套字段，需要拆解缓存
+const NESTED_KEY = ['config', 'member'];
+// 初始化需要加载的字段
+const INIT_KEY = ['config', 'ownCoupons', 'pickCoupons'];
 // 加载状态
 let isLoading = false;
 // 等待队列
@@ -55,11 +59,7 @@ const init = async () => {
     // 开始初始化
     console.info('[store] start init store');
     isLoading = true;
-    await use(
-      'config',
-      'ownCoupons',
-      'pickCoupons'
-    );
+    await use(...INIT_KEY);
     // 清空等待队列
     console.info('[store] store init completed');
     isLoading = false;
@@ -93,12 +93,13 @@ const load = async (fields) => {
   const data = await Promise.all(fetchPromises);
   // 保存结果
   fields.forEach((field, index) => {
-    if (field == 'config') {
-      // conifg 为整合接口，需要内嵌保存
-      const config = data[index];
-      Object.keys(config).forEach(key => save(key, config[key]));
+    const filedData = data[index];
+    if (isNested(field)) {
+      const keys = Object.keys(filedData);
+      console.info(`[store] load nest fields = ${keys}`);
+      keys.forEach(key => save(key, filedData[key]));
     } else {
-      save(field, data[index]);
+      save(field, filedData);
     }
   });
   // 保存元数据
@@ -109,7 +110,7 @@ const load = async (fields) => {
  * 刷新数据
  */
 const reflesh = async (...fields) => {
-  console.info(`reflesh store: fields=${fields}`);
+  console.info(`[store] reflesh store: fields=${fields}`);
   await load(fields);
 };
 
@@ -123,6 +124,8 @@ const fetch = (field) => {
   switch (field) {
     case 'config':
       return config.init();
+    case 'member' :
+      return member.info();
     case 'notices':
       return shop.notices();
     case 'status' :
@@ -133,10 +136,6 @@ const fetch = (field) => {
       return coupon.own();
     case 'pickCoupons' :
       return coupon.list();
-    case 'card' :
-      return member.card();
-    case 'member' :
-      return member.member();
     case 'reduce' :
       return shop.reduces();
     case 'recommend' :
@@ -155,6 +154,13 @@ const updateMeta = (field) => {
     meta[field].init = true;
   }
   meta[field].updateTime = new Date().getTime();
+};
+
+/**
+ * 判断是否为嵌套字段
+ */
+const isNested = field => {
+  return NESTED_KEY.some(key => key == field);
 };
 
 /**

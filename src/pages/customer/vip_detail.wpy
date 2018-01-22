@@ -93,7 +93,7 @@
       this.loaded();
     }
     async onPullDownRefresh() {
-      await store.reflesh('card', 'member');
+      await store.reflesh('member');
       this.loaded();
       wepy.stopPullDownRefresh();
     }
