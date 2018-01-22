@@ -5,7 +5,7 @@ import shop from '../api/shop';
 import goods from '../api/goods';
 import coupon from '../api/coupon';
 import member from '../api/member';
-import card from '../api/card';
+
 const store = getStore();
 // 元数据
 const meta = {};
@@ -134,9 +134,9 @@ const fetch = (field) => {
     case 'pickCoupons' :
       return coupon.list();
     case 'card' :
-      return card.info();
+      return member.card();
     case 'member' :
-      return member.info();
+      return member.member();
     case 'reduce' :
       return shop.reduces();
     case 'recommend' :

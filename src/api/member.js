@@ -2,10 +2,18 @@ import base from './base';
 import Page from '../utils/Page';
 
 export default class member extends base {
-    /**
-     * 获取会员卡信息
-     */
-  static async info() {
+
+  /**
+   * 获取会员卡信息
+   */
+  static async card() {
+    const url = `${this.baseUrl}/memberCards`;
+    return await this.get(url);
+  }
+  /**
+   * 获取会员卡信息
+   */
+  static async member() {
     const url = `${this.baseUrl}/members`;
     return await this.get(url);
   }
@@ -13,7 +21,7 @@ export default class member extends base {
   /**
    * 注册会员卡信息
    */
-  static async create(param, code) {
+  static async regist(param, code) {
     const url = `${this.baseUrl}/members?sms_code=${code}`;
     return this.post(url, param);
   }
@@ -29,7 +37,7 @@ export default class member extends base {
   /**
    * 历史积分信息
    */
-  static async bonusPage() {
+  static async bonus() {
     const url = `${this.baseUrl}/members/bonus_detail?by=create_time&sort=desc`;
     return new Page(url, this.processBonusTransformation.bind(this));
   }

@@ -108,7 +108,7 @@
         this.registeInfo = this.input;
         try {
           Tips.loading();
-          await member.create(this.registeInfo, detail.value.code);
+          await member.regist(this.registeInfo, detail.value.code);
           await Tips.success('注册成功');
           await store.reflesh('member');
           WxUtils.backOrRedirect('/pages/customer/index');

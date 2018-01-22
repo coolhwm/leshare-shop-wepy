@@ -19,7 +19,8 @@ export default class config extends base {
         reduce: shop._processReduce(data.reduceRules),
         shop: shop._processInfo(data.shop),
         version: shop._precoessVersion(data.shopChargeLimit),
-        status: shop._processStatus(data.shopStatusInfo)
+        status: shop._processStatus(data.shopStatusInfo),
+        campaign: data.campaignCoupon
       };
     }).then(config => {
       const {card, member} = config;

@@ -16,6 +16,15 @@ const store = configStore();
 setStore(store);
 
 export default class extends wepy.app {
+  globalData = {
+    auth: {},
+    scene: null,
+    appCode: null,
+    shopType: null,
+    pageParams: null,
+    baseUrl: null,
+    version: 'v2.1.0'
+  };
   constructor () {
     super();
     // 注册中间件
@@ -119,14 +128,5 @@ export default class extends wepy.app {
       navigationBarBackgroundColor: '#1296db'
     }
   };
-  globalData = {
-    auth: {},
-    scene: null,
-    appCode: null,
-    shopType: null,
-    pageParams: null,
-    baseUrl: null,
-    version: 'v2.1.0'
-  }
 }
 </script>
