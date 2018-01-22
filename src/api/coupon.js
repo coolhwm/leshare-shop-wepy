@@ -12,6 +12,18 @@ export default class coupon extends base {
     const url = `${this.baseUrl}/coupons?by=accept_time&sort=desc`;
     return new Page(url, this._processCouponItem.bind(this));
   }
+
+  /**
+   * 获取可领取、已领取的优惠券
+   */
+  static all () {
+    return Promise.all([this.list(), this.own()]).then(([pickCoupons, ownCoupons]) => {
+      return {
+        pickCoupons, ownCoupons
+      }
+    });
+  }
+
   /**
    * 目前可以领取的优惠券
    */

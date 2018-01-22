@@ -9,12 +9,14 @@ import member from '../api/member';
 const store = getStore();
 // 元数据
 const meta = {};
+// 是否调试
+const IS_DEBUG = true;
 // 超时时间
 const CACHE_TIMEOUT = 5 * 60 * 1000;
 // 嵌套字段，需要拆解缓存
-const NESTED_KEY = ['config', 'member'];
+const NESTED_KEY = ['config', 'member', 'coupon'];
 // 初始化需要加载的字段
-const INIT_KEY = ['config', 'ownCoupons', 'pickCoupons'];
+const INIT_KEY = ['config', 'coupon'];
 // 加载状态
 let isLoading = false;
 // 等待队列
@@ -33,6 +35,9 @@ const get = key => {
  * 保存数据
  */
 const save = (key, data) => {
+  if (IS_DEBUG) {
+    console.info(`[store] save key=${key}, data=`, data);
+  }
   store.dispatch({
     type: SAVE,
     payload: {
@@ -96,7 +101,7 @@ const load = async (fields) => {
     const filedData = data[index];
     if (isNested(field)) {
       const keys = Object.keys(filedData);
-      console.info(`[store] load nest fields = ${keys}`);
+      console.info(`[store] load [${field}] nest fields = ${keys}`);
       keys.forEach(key => save(key, filedData[key]));
     } else {
       save(field, filedData);
@@ -132,10 +137,8 @@ const fetch = (field) => {
       return shop.getStatus();
     case 'categories' :
       return goods.categories();
-    case 'ownCoupons' :
-      return coupon.own();
-    case 'pickCoupons' :
-      return coupon.list();
+    case 'coupon' :
+      return coupon.all();
     case 'reduce' :
       return shop.reduces();
     case 'recommend' :

@@ -5,12 +5,13 @@ export default class member extends base {
   /**
    * 获取会员整合信息
    */
-  static async info() {
-    const {member, card} = Promise.all([this._member(), this._card()]);
-    const discount = this.processDiscount(card, member);
-    return {
-      member, card, discount
-    }
+  static info() {
+    return Promise.all([this._member(), this._card()]).then(([member, card]) => {
+      const discount = this.processDiscount(card, member);
+      return {
+        member, card, discount
+      }
+    });
   }
   /**
    * 注册会员卡信息

@@ -186,7 +186,7 @@
      * 下拉刷新
      */
     async onPullDownRefresh() {
-      await store.reflesh('shop', 'notices', 'reduce', 'ownCoupons', 'status');
+      await store.reflesh('shop', 'notices', 'reduce', 'coupon', 'status');
       this.loaded();
       wepy.stopPullDownRefresh();
     }

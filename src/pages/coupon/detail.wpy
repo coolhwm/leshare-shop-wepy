@@ -54,7 +54,7 @@
           this.success = true;
           clearInterval(interval);
           Event.emit(Event.COUPON_LIST_UPDATE);
-          await store.reflesh('ownCoupons', 'pickCoupons');
+          await store.reflesh('coupon');
           await Tips.success('已核销', 1000);
           this.$apply();
         }
@@ -78,7 +78,7 @@
           await Tips.success('操作成功', 1000);
           this.$apply();
           Event.emit(Event.COUPON_LIST_UPDATE);
-          await store.reflesh('ownCoupons', 'pickCoupons');
+          await store.reflesh('coupon');
         } catch (e) {
           console.warn(e);
           this.tips('核销失败:' + e.message);
@@ -92,7 +92,7 @@
         clearInterval(interval);
         await Tips.success('操作成功');
         Event.emit(Event.COUPON_LIST_UPDATE);
-        await store.reflesh('ownCoupons', 'pickCoupons');
+        await store.reflesh('coupon');
         wepy.navigateBack();
       }
     };

@@ -58,7 +58,7 @@
       try {
         await coupon.pick(this.coupon.id);
         await Tips.success('领取成功');
-        await store.reflesh('pickCoupon', 'ownCoupon');
+        await store.reflesh('coupon');
         this.$redirect('/pages/coupon/list');
       } catch (e) {
         if (e.serverCode == '50001') {

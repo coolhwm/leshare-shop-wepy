@@ -312,7 +312,7 @@
         Event.emit(Event.CART_LIST_CLEAR);
         // 卡券领取更新
         if (trade.couponUsedId) {
-          await store.reflesh('ownCoupons', 'pickCoupons', 'member');
+          await store.reflesh('coupon', 'member');
         }
         // TODO 这个可能在TAB里
         WxUtils.backOrRedirect('/pages/customer/index');
