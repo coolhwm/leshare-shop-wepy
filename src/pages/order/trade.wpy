@@ -4,7 +4,7 @@
   <view class="container" wx:if="{{init}}">
 
     <!--堂食/打包的情况， 展现选择栏-->
-    <block wx:if="{{trade.isInShop}}">
+    <block wx:if="{{trade.isInShopOrder}}">
       <InShopTab @tap.user="switchInShopType" />
     </block>
 
