@@ -1,6 +1,6 @@
 import base from './base';
 import Page from '../utils/Page';
-import {ORDER_ACTIONS, STATUS_ACTIONS, statusName, statusDesc, deliveryType, paymentType, isHereOrder, isDeliveryOrder} from './order_const';
+import {ACTION, orderUtils as utils} from './order_const';
 import WxUtils from '../utils/WxUtils';
 
 /**
@@ -138,7 +138,7 @@ export default class order extends base {
       orderGoodsInfos: orderGoodsInfos,
       shopName: this.shopName
     };
-    if (isHereOrder(param.orderType)) {
+    if (utils.isHereOrder(param.orderType)) {
       trade.arriveTime = '立即出餐';
     }
     return trade;
@@ -236,13 +236,12 @@ export default class order extends base {
    */
   static _processOrderAction(order, inner = false) {
     const basic = [];
-    // const basic = [ORDER_ACTIONS.AGAIN];
     // 有退款的情况
     if (order.curRefund) {
-      basic.push(ORDER_ACTIONS.REFUND_DETAIL);
+      basic.push(ACTION.REFUND_DETAIL);
     }
-    const key = `${order.orderType}-${order.paymentType}-${order.status}`;
-    const actions = STATUS_ACTIONS[key];
+    const {orderType, paymentType, status} = order;
+    const actions = utils.statusActions(orderType, paymentType, status);
     if (actions) {
       const display = inner ? actions.filter(v => v.inner != true) : actions;
       order.actions = basic.concat(display);
@@ -255,7 +254,7 @@ export default class order extends base {
    * 处理订单地址
    */
   static _processOrderAddress (order, address) {
-    if (isDeliveryOrder(order.orderType)) {
+    if (utils.isDeliveryOrder(order.orderType)) {
       order.receiveName = `${address.name} ${address.sexText}`;
       order.receivePhone = address.phone;
       order.address = address.fullAddress;
@@ -306,7 +305,7 @@ export default class order extends base {
    * 处理订单支付方式
    */
   static _processOrderPaymentText (detail) {
-    detail.paymentText = paymentType(detail.paymentType);
+    detail.paymentText = utils.paymentType(detail.paymentType);
   }
 
   /**
@@ -333,8 +332,8 @@ export default class order extends base {
    */
   static _processOrderStatusDesc (order) {
     const {status, orderType} = order;
-    order.statusText = statusName(orderType, status);
-    order.statusDesc = statusDesc(order, status);
+    order.statusText = utils.statusName(orderType, status);
+    order.statusDesc = utils.statusDesc(order, status);
     // 订单关闭增加关闭原因
     if (order.status == 7 && order.orderCloseNote) {
       const reason = order.orderCloseNote;
@@ -345,7 +344,7 @@ export default class order extends base {
    * 处理物流配送信息
    */
   static _processOrderDetailDelivery (order) {
-    order.deliveryText = deliveryType(order.deliveryType);
+    order.deliveryText = utils.deliveryType(order.deliveryType);
   }
 
   /**

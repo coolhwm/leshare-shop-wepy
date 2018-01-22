@@ -98,83 +98,10 @@ const UNIQUE_STATUS_DICT = {
     [STATUS.SHIPPING]: ['店家配餐中', '店家配餐中，请您耐心等待']
   }
 };
-
-/**  映射方法 **/
-
 /**
- *  映射订单类型
+ * 按钮的字典
  */
-const orderType = value => ORDER_TYPE_DICT[value];
-
-/**
- *  映射支付类型
- */
-const paymentType = value => ORDER_PAYMENT_DICT[value];
-
-/**
- *  映射配送类型
- */
-const deliveryType = value => ORDER_DELIVERY_DICT[value];
-
-/**
- *  映射订单状态
- */
-const statusName = (type, status) => statusDict(type, status, 0);
-
-/**
- *  映射状态描述
- */
-const statusDesc = (type, status) => statusDict(type, status, 1);
-
-/**  工具方法 **/
-
-/**
- * 是否为商城订单
- */
-const isMallOrder = type => type == TYPE.MALL;
-/**
- * 是否为餐饮订单
- */
-const isFoodOrder = type => type == TYPE.FORHERE || type == TYPE.PACK || type == TYPE.TAKEAWAY;
-/**
- * 是否是需要配送的订单
- */
-const isDeliveryOrder = type => type == TYPE.TAKEAWAY || type == TYPE.MALL;
-/**
- * 是否为堂食订单
- */
-const isHereOrder = type => type == TYPE.FORHERE || type == TYPE.PACK;
-
-/**  内部方法 **/
-const statusDict = (type, status, index) => {
-  const unique = uniqueStatus(type, status, index);
-  if (unique != null) {
-    return unique;
-  } else {
-    return commonStatus(status, index);
-  }
-};
-const commonStatus = (status, index) => {
-  const statusDict = COMMON_STATUS_DICT[status];
-  if (statusDict == null) {
-    return;
-  }
-  return statusDict[index];
-};
-const uniqueStatus = (type, status, index) => {
-  const typeDict = UNIQUE_STATUS_DICT[type];
-  if (typeDict == null) {
-    return;
-  }
-  const statusDict = typeDict[status];
-  if (statusDict == null) {
-    return;
-  }
-  return statusDict[index];
-};
-
-/** 按钮映射 **/
-export const ORDER_ACTIONS = {
+const ACTION = {
   CLOSE: {
     primary: false,
     name: '关闭订单',
@@ -219,40 +146,135 @@ export const ORDER_ACTIONS = {
     func: 'again'
   }
 };
-const {CLOSE, RECEIVE, COMMENT, PAY, REFUND, UNREFUND} = ORDER_ACTIONS;
-export const STATUS_ACTIONS = {
+/**
+ * 状态与按钮的映射关系
+ */
+const STATUS_ACTIONS = {
   // 外卖（线下）
-  '20-0-2': [CLOSE],
-  '20-0-4': [COMMENT],
+  '20-0-2': [ACTION.CLOSE],
+  '20-0-4': [ACTION.COMMENT],
   // 外卖（线上）
-  '20-1-1': [CLOSE, PAY],
-  '20-1-2': [REFUND],
-  '20-1-4': [COMMENT],
-  '20-1-5': [UNREFUND],
+  '20-1-1': [ACTION.CLOSE, ACTION.PAY],
+  '20-1-2': [ACTION.REFUND],
+  '20-1-4': [ACTION.COMMENT],
+  '20-1-5': [ACTION.UNREFUND],
   // 堂食（线上）
-  '30-1-1': [CLOSE, PAY],
-  '30-1-2': [REFUND],
-  '30-1-4': [COMMENT],
-  '30-1-5': [UNREFUND],
+  '30-1-1': [ACTION.CLOSE, ACTION.PAY],
+  '30-1-2': [ACTION.REFUND],
+  '30-1-4': [ACTION.COMMENT],
+  '30-1-5': [ACTION.UNREFUND],
   // 外带（线上）
-  '33-1-1': [CLOSE, PAY],
-  '33-1-2': [REFUND],
-  '33-1-4': [COMMENT],
-  '33-1-5': [UNREFUND],
+  '33-1-1': [ACTION.CLOSE, ACTION.PAY],
+  '33-1-2': [ACTION.REFUND],
+  '33-1-4': [ACTION.COMMENT],
+  '33-1-5': [ACTION.UNREFUND],
   // 商城（线下）
-  '10-0-2': [CLOSE],
-  '10-0-3': [RECEIVE],
-  '10-0-4': [COMMENT],
+  '10-0-2': [ACTION.CLOSE],
+  '10-0-3': [ACTION.RECEIVE],
+  '10-0-4': [ACTION.COMMENT],
   // 商城（线上）
-  '10-1-1': [CLOSE, PAY],
-  '10-1-2': [REFUND],
-  '10-1-3': [RECEIVE],
-  '10-1-4': [COMMENT],
-  '10-1-5': [UNREFUND]
+  '10-1-1': [ACTION.CLOSE, ACTION.PAY],
+  '10-1-2': [ACTION.REFUND],
+  '10-1-3': [ACTION.RECEIVE],
+  '10-1-4': [ACTION.COMMENT],
+  '10-1-5': [ACTION.UNREFUND]
+};
+
+/**  内部方法 **/
+const statusDict = (type, status, index) => {
+  const unique = uniqueStatus(type, status, index);
+  if (unique != null) {
+    return unique;
+  } else {
+    return commonStatus(status, index);
+  }
+};
+const commonStatus = (status, index) => {
+  const statusDict = COMMON_STATUS_DICT[status];
+  if (statusDict == null) {
+    return;
+  }
+  return statusDict[index];
+};
+const uniqueStatus = (type, status, index) => {
+  const typeDict = UNIQUE_STATUS_DICT[type];
+  if (typeDict == null) {
+    return;
+  }
+  const statusDict = typeDict[status];
+  if (statusDict == null) {
+    return;
+  }
+  return statusDict[index];
+};
+
+/**  映射方法 **/
+
+/**
+ *  映射订单类型
+ */
+const orderType = value => ORDER_TYPE_DICT[value];
+
+/**
+ *  映射支付类型
+ */
+const paymentType = value => ORDER_PAYMENT_DICT[value];
+
+/**
+ *  映射配送类型
+ */
+const deliveryType = value => ORDER_DELIVERY_DICT[value];
+
+/**
+ *  映射订单状态
+ */
+const statusName = (type, status) => statusDict(type, status, 0);
+
+/**
+ *  映射状态描述
+ */
+const statusDesc = (type, status) => statusDict(type, status, 1);
+
+/**
+ * 映射状态动作
+ */
+const statusActions = (type, payment, status) => {
+  const key = `${type}-${payment}-${status}`;
+  const actions = STATUS_ACTIONS[key];
+  return actions != null ? actions : [];
+};
+
+/**  工具方法 **/
+
+/**
+ * 是否为商城订单
+ */
+const isMallOrder = type => type == TYPE.MALL;
+/**
+ * 是否为餐饮订单
+ */
+const isFoodOrder = type => type == TYPE.FORHERE || type == TYPE.PACK || type == TYPE.TAKEAWAY;
+/**
+ * 是否是需要配送的订单
+ */
+const isDeliveryOrder = type => type == TYPE.TAKEAWAY || type == TYPE.MALL;
+/**
+ * 是否为堂食订单
+ */
+const isHereOrder = type => type == TYPE.FORHERE || type == TYPE.PACK;
+
+/**
+ * 导出的方法
+ */
+const orderUtils = {
+  statusActions, orderType, paymentType, deliveryType, statusName, statusDesc, isMallOrder, isFoodOrder, isHereOrder, isDeliveryOrder
 };
 
 export {
-  TYPE, PAYMENT, DELIVERY, STATUS,
-  orderType, paymentType, deliveryType, statusName, statusDesc,
-  isMallOrder, isFoodOrder, isHereOrder, isDeliveryOrder
+  ACTION,
+  TYPE,
+  PAYMENT,
+  DELIVERY,
+  STATUS,
+  orderUtils
 }
