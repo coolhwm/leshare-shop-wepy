@@ -1,5 +1,6 @@
 import { getStore } from 'wepy-redux';
 import { SAVE } from './types/cache';
+import config from '../api/config';
 import shop from '../api/shop';
 import goods from '../api/goods';
 import coupon from '../api/coupon';
@@ -57,8 +58,7 @@ const init = async () => {
     await use(
       'config',
       'ownCoupons',
-      'pickCoupons',
-      'member'
+      'pickCoupons'
     );
     // 清空等待队列
     console.info('[store] store init completed');
@@ -95,7 +95,8 @@ const load = async (fields) => {
   fields.forEach((field, index) => {
     if (field == 'config') {
       // conifg 为整合接口，需要内嵌保存
-      data[index].forEach(item => save(item.key, item.value));
+      const config = data[index];
+      Object.keys(config).forEach(key => save(key, config[key]));
     } else {
       save(field, data[index]);
     }
@@ -121,7 +122,7 @@ const fetch = (field) => {
   // 再获取Promise对象
   switch (field) {
     case 'config':
-      return shop.config();
+      return config.init();
     case 'notices':
       return shop.notices();
     case 'status' :

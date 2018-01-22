@@ -35,54 +35,12 @@ export default class shop extends base {
   }
 
   /**
-   * 获取店铺完整配置信息
-   */
-  static config () {
-    const url = `${this.baseUrl}/shops/full`;
-    return this.get(url).then(data => {
-      return [{
-        key: 'page',
-        value: this._processPage(data.homePageConfig)
-      },
-      {
-        key: 'categories',
-        value: this._createGoodsCategories(data.goodsInnerCategories)
-      },
-      {
-        key: 'card',
-        value: data.memberCard
-      },
-      {
-        key: 'notices',
-        value: this._processNotices(data.notices)
-      },
-      {
-        key: 'reduce',
-        value: this._processReduce(data.reduceRules)
-      },
-      {
-        key: 'shop',
-        value: this._processInfo(data.shop)
-      },
-      {
-        key: 'version',
-        value: this._precoessVersion(data.shopChargeLimit)
-      },
-      {
-        key: 'status',
-        value: this._processStatus(data.shopStatusInfo)
-      }]
-    });
-  }
-
-  /**
    * 获取店铺信息
    */
   static async info() {
     const url = `${this.baseUrl}/shops`;
     return await this.get(url).then(data => this._processInfo(data));
   }
-
   /**
    * 获取店铺类型
    */
@@ -171,69 +129,6 @@ export default class shop extends base {
   }
 
   // *** 数据处理方法
-  /**
-   * 处理页面
-   */
-  static _processPage(data) {
-    const config = JSON.parse(data);
-    const components = this.processComponents(config.components);
-    const plugins = this.processPlugins(config.plugins);
-    return {
-      components, plugins
-    }
-  }
-
-  /**
-   * 处理页面的插件
-   */
-  static processPlugins (plugins) {
-    return plugins;
-  }
-
-  /**
-   * 处理页面的组件
-   */
-  static processComponents (components) {
-    return components
-      .map(component => {
-        // 先处理参数合并
-        if (component.param) {
-          const param = JSON.parse(component.param);
-          Object.assign(component, param);
-          component.param = null;
-        }
-        // 处理内嵌数据
-        if (component.data) {
-          component.data = JSON.parse(component.data);
-        }
-        // 需要处理商品信息
-        if (component.type == 'GOODS_BOX') {
-          component.data = component.data.map(item => goods._processGoodsDetail(item));
-        }
-        return this.copyParamToData(component);
-      });
-  }
-
-  /**
-   * 拷贝配置参数
-   */
-  static copyParamToData(component) {
-    const fieldsToCopy = {
-      SWIPER: ['height'],
-      IMAGE_BOX: ['heigth', 'width', 'isTitle'],
-      GOODS_BOX: ['isCart', 'isPrice', 'isName', 'isSales', 'skuMode', 'isTips']
-    };
-    const {data, type} = component;
-    const fields = fieldsToCopy[type];
-    if (fields != null) {
-      data.forEach(item => {
-        fields.forEach(field => {
-          item[field] = component[field];
-        });
-      });
-    }
-    return component;
-  }
   /**
    * 处理基本信息
    */
