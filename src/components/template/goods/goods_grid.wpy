@@ -5,7 +5,7 @@
       <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="routeToGoods({{goods.id}})"></image>
     </view>
     <view class="goods-title" @tap="routeToGoods({{goods.id}})">
-      <text class="inline lg" wx:if="{{goods.isName}}">{{goods.name}}</text>
+      <text class="inline lg" wx:if="{{goods.isGoodsName}}">{{goods.name}}</text>
     </view>
 
     <view class="row-between" wx:if="{{goods.isSales || goods.isPrice || goods.isCart}}">

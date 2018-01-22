@@ -5,6 +5,11 @@ import shop from './shop';
 import member from './member';
 
 export default class config extends base {
+  static fieldsToCopy = {
+    SWIPER: ['height'],
+    IMAGE_BOX: ['heigth', 'width', 'isTitle'],
+    GOODS_BOX: ['isCart', 'isPrice', 'isGoodsName', 'isSales', 'skuMode', 'isTips']
+  };
   /**
    * 获取店铺完整配置信息
    */
@@ -78,13 +83,8 @@ export default class config extends base {
    * 拷贝配置参数
    */
   static copyParamToData(component) {
-    const fieldsToCopy = {
-      SWIPER: ['height'],
-      IMAGE_BOX: ['heigth', 'width', 'isTitle'],
-      GOODS_BOX: ['isCart', 'isPrice', 'isName', 'isSales', 'skuMode', 'isTips']
-    };
     const {data, type} = component;
-    const fields = fieldsToCopy[type];
+    const fields = this.fieldsToCopy[type];
     if (fields != null) {
       data.forEach(item => {
         fields.forEach(field => {

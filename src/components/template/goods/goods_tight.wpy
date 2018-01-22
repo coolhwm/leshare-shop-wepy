@@ -4,7 +4,7 @@
     <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="routeToGoods({{goods.id}})"></image>
     <view class="content-box column" wx:if="{{goods.isName || goods.isPrice}}">
       <!--文字-->
-      <text class="inline" wx:if="{{goods.isName}}" @tap="routeToGoods({{goods.id}})">{{goods.name}}</text>
+      <text class="inline" wx:if="{{goods.isGoodsName}}" @tap="routeToGoods({{goods.id}})">{{goods.name}}</text>
 
       <!--销量-->
       <text class="xs muted" wx:if="{{goods.isSales}}">已售{{goods.salesVolume}}件</text>
