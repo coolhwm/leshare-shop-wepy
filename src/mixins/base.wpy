@@ -9,7 +9,7 @@
         return;
       }
       const path = this.$root.$wxpage.route;
-      const param = params.find(item => item.path == path);
+      const param = params[path];
       if (param == null) {
         return;
       }

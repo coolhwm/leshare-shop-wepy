@@ -6,7 +6,7 @@
       if (params == null) {
         return;
       }
-      const param = params.find(item => item.name == this.$name);
+      const param = params[this.$name];
       if (param != null) {
         console.info(`[minxin] component base init name=${this.$name}, param=`, param);
         Object.assign(this, param);
