@@ -36,6 +36,9 @@
       <block wx:if="{{item.type == 'NOTICE_BAR'}}">
         <NoticeBar :param.sync="item" />
       </block>
+
+      <!--间隔-->
+      <view class="h-gap" wx:if="{{item.border !== 'none'}}"></view>
     </repeat>
 
     <!--插件-->
@@ -129,5 +132,10 @@
   .template-box{
     width: 100%;
     overflow-x: hidden;
+    .h-gap {
+      width: 100%;
+      height: 1px;
+      background-color: $color-border;
+    }
   }
 </style>

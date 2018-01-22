@@ -40,8 +40,7 @@
     $size: 248rpx;
     background-color: white;
     width: $size;
-    border-right: $border;
-    border-bottom: $border;
+    border-top: $border;
     .goods-image{
       width: $size;
       height: $size;

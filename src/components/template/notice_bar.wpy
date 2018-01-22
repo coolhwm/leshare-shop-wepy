@@ -1,6 +1,5 @@
 <template>
-  <view class="notice-bar-box row">
-    <!--<view class="notice-bar-title">公告：</view>-->
+  <view class="notice-bar-box row" wx:if="{{notices.length > 0}}">
     <image class="notice-bar-icon" src="/images/icons/notice.png"></image>
     <swiper class="notice-bar-swiper" vertical autoplay circular interval="3000">
       <swiper-item wx:for="{{notices}}" wx:key="index">
@@ -19,7 +18,6 @@
   })
   export default class NoticeBar extends wepy.component {
     props = {
-      order: {}
     };
     data = {};
     methods = {};
@@ -32,8 +30,6 @@
 <style lang="scss">
   @import "../../styles/variable";
   .notice-bar-box{
-    border-top: $border;
-    border-bottom: $border;
     align-items: center;
     background-color: white;
     padding: 5rpx 10rpx;

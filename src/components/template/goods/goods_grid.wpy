@@ -38,8 +38,7 @@
     $size: 373rpx;
     background-color: white;
     width: $size;
-    border-right: $border;
-    border-bottom: $border;
+    border-top: $border;
     padding-bottom: 5rpx;
     .goods-image{
       width: $size;

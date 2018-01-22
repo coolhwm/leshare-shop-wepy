@@ -47,7 +47,7 @@
   @import "../../../styles/variable";
   .goods-row-box{
     background-color: white;
-    border-bottom: $border;
+    border-top: $border;
     align-items: center;
     padding: 10rpx;
     .goods-image {

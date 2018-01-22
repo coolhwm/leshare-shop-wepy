@@ -67,12 +67,12 @@
 <style lang="scss">
   @import "../../styles/variable";
   .goods-box {
-    border-top: $border;
     background-color: white;
+
     .box-title{
       height: 80rpx;
-      border-bottom: $border;
       background-color: $color-bg-body;
+
       .title-text{
         color: $color-primary;
         margin-left: 20px;
@@ -84,14 +84,24 @@
       }
     }
     .box-footer{
+      border-top: $border;
       padding: 15rpx;
     }
   }
 
   .tight-box{
     flex-wrap: wrap;
+    .goods-tight-box:nth-child(3n-2) {
+      border-right: $border;
+    }
+    .goods-tight-box:nth-child(3n-1) {
+      border-right: $border;
+    }
   }
   .grid-box{
     flex-wrap: wrap;
+    .goods-grid-box:nth-child(odd){
+      border-right: $border;
+    }
   }
 </style>
