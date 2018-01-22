@@ -53,6 +53,7 @@ export default class extends wepy.app {
     WxUtils.checkSDK();
     // 同步开放平台EXT数据
     const ext = wepy.getExtConfigSync();
+    console.info('[ext] init ext data', ext);
     Object.assign(wepy.$instance.globalData, ext);
     // 同步权限数据
     this.syncStoreConfig('login_code');
@@ -119,16 +120,13 @@ export default class extends wepy.app {
     }
   };
   globalData = {
-    auth: {
-    },
-    scene: '',
-    app_code: null,
-    shopType: 1,
-    version: 'v2.1.0',
+    auth: {},
+    scene: null,
+    appCode: null,
+    shopType: null,
     pageParams: null,
-    // baseUrl: 'https://api.leshare.shop/v2/customer'
-    // baseUrl: 'http://192.168.31.124:9999/v2/customer',
-    baseUrl: 'http://106.14.195.68:9999/v2/customer'
+    baseUrl: null,
+    version: 'v2.1.0'
   }
 }
 </script>
