@@ -20,7 +20,7 @@
       const mode = this.getMode(goods);
       switch (mode) {
         case 'SLIDER':
-          Event.emit(Event.GOODS_PANEL_OPEN, goods);
+          Event.emit(Event.GOODS_PANEL_OPEN, {goods, source});
           break;
         case 'POPUP':
           Event.emit(Event.GOODS_PANEL_PLUS, {goods, goodsSku, source});
@@ -39,7 +39,7 @@
         return goods.skuMode;
       }
       try {
-        return this.$root.$data.param.buyPanelType;
+        return this.$root.$data.buyPanelType;
       } catch (e) {
         return null;
       }

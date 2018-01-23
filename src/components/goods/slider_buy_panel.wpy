@@ -87,15 +87,20 @@
     props = {
     };
     data = {
-      goods: {}
+      goods: {},
+      source: null
     };
     skuManager = null;
     cartManager = Cart.create();
     async onLoad() {
+      this.source = this.$root.$wxpage.route;
       // 监听购物面板打开的事件
       Event.listen(Event.GOODS_PANEL_OPEN, this.open.bind(this), this);
     }
-    open(goods) {
+    open({goods, source}) {
+      if (source != this.source) {
+        return;
+      }
       this.goods = goods;
       this.skuManager = new Sku(goods);
       this.skuManager.action = 'cart';

@@ -82,9 +82,15 @@
         </view>
       </view>
     </view>
+    <!--滑出购物面板-->
+    <block wx:if="{{buyPanelType == 'SLIDER'}}" >
+      <SilderPanel />
+    </block>
 
-    <!--购物面板-->
-    <SkuSelector />
+    <!--弹出购物面板-->
+    <block wx:if="{{buyPanelType == 'POPUP'}}" >
+      <PopupPanel />
+    </block>
   </view>
 
 </template>
@@ -104,7 +110,8 @@
   import store from '../../store/utils';
   import Loading from '../../components/common/loading';
   import router from '../../mixins/router';
-  import SkuSelector from '../../components/goods/popup_buy_panel';
+  import PopupPanel from '../../components/goods/popup_buy_panel';
+  import SilderPanel from '../../components/goods/slider_buy_panel';
   import DiscountBadge from '../../components/goods/discount_badge';
 
   @connect({
@@ -121,7 +128,8 @@
         ]
       },
       commentInit: false,
-      tab: {}
+      tab: {},
+      buyPanelType: 'POPUP'
     };
     async onLoad ({goodsId}) {
       this.goodsId = goodsId;
@@ -219,7 +227,8 @@
       Placeholder: Placeholder,
       CommentItem: CommentItem,
       Loading: Loading,
-      SkuSelector: SkuSelector,
+      PopupPanel: PopupPanel,
+      SilderPanel: SilderPanel,
       DiscountBadge: DiscountBadge
     };
     mixins = [base, pagination, router];
