@@ -26,6 +26,8 @@
 <script>
   import wepy from 'wepy';
   import goods from '../../api/goods';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
   import pagination from '../../mixins/pagination.wpy';
   import base from '../../mixins/base';
   import GoodsRow from '../../components/template/goods/goods_row';
@@ -36,6 +38,9 @@
   import Loadmore from '../../components/weui/loadmore';
   import Loading from '../../components/common/loading';
 
+  @connect({
+    discount: store.get('discount')
+  })
   export default class GoodsSearchList extends wepy.page {
     data = {
       init: false,
@@ -61,7 +66,7 @@
       this.keyword = keyword;
       this.tab.sord = sort;
       this.tab.selectedId = by;
-      this.page = goods.list();
+      this.page = goods.list(this.discount);
       await this.next();
     };
     params() {
