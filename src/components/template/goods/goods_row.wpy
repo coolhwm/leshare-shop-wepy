@@ -12,9 +12,11 @@
       <!--销量展示-->
       <view class="row" wx:if="{{goods.isSales || goods.isSales == null}}">
         <text class="xs muted">已售{{goods.salesVolume}}件</text>
-        <view class="row-discount-box row" wx:if="{{goods.discount && (goods.isPrice || goods.isPrice == null)}}">
-          <view class="discount-rate"><text>{{goods.discountRate}}</text></view>
-          <view class="discount-text"><text>{{goods.discountText}}</text></view>
+        <!--折扣-->
+        <view wx:if="{{goods.discount && (goods.isPrice || goods.isPrice == null)}}">
+          <repeat for="{{[goods]}}" key="i" index="i" item="item">
+            <DiscountBadge :goods.sync="item"/>
+          </repeat>
         </view>
       </view>
       <!--价格-->
@@ -37,11 +39,15 @@
 <script>
   import wepy from 'wepy';
   import router from '../../../mixins/router';
+  import DiscountBadge from '../../../components/goods/discount_badge';
   export default class GoodRowItem extends wepy.component {
     props = {
       goods: {}
     };
     methods = {
+    };
+    components = {
+      DiscountBadge: DiscountBadge
     };
     mixins = [router]
   }
@@ -78,32 +84,6 @@
         color: $color-muted;
         font-size: $text-xs;
         text-decoration: line-through;
-      }
-    }
-
-    .row-discount-box{
-      border: 1px solid $color-major;
-      height: 15px;
-      margin-left: 7px;
-      text {
-        font-size: $text-xxs;
-      }
-      view{
-        display: flex;
-        align-items: center;
-        height: 15px;
-        padding: 0 3px;
-      }
-      .discount-rate{
-        background-color: $color-major;
-        text{
-          color: #FFF;
-        }
-      }
-      .discount-text {
-        text{
-          color: $color-major;
-        }
       }
     }
     .cart-icon{
