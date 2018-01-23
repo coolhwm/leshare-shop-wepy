@@ -53,7 +53,18 @@
     };
     methods = {
       more() {
-        this.$root.$navigate(`/pages/goods/search_list?categoryId=${this.param.categoryId}`);
+        const {sort, by, content, categoryId} = this.param;
+        let url = `/pages/goods/search_list?categoryId=${categoryId}`;
+        if (sort != null) {
+          url += `&sort=${sort}`;
+        }
+        if (by != null) {
+          url += `&by=${by}`;
+        }
+        if (content != null) {
+          url += `&keyword=${content}`;
+        }
+        this.$root.$navigate(url);
       }
     };
     components = {

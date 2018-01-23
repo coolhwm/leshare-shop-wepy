@@ -56,9 +56,11 @@
         scroll: false
       }
     };
-    async onLoad ({keyword, categoryId}) {
+    async onLoad ({keyword, categoryId, sort = 'desc', by = 'sales_volume'}) {
       this.categoryId = categoryId;
       this.keyword = keyword;
+      this.tab.sord = sort;
+      this.tab.selectedId = by;
       this.page = goods.list();
       await this.next();
     };
