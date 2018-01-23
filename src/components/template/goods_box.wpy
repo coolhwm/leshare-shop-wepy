@@ -35,6 +35,26 @@
       </repeat>
     </view>
 
+    <!--横向N个布局-->
+    <scroll-view scroll-x class="mini-box" wx:if="{{param.layout == 'MINI'}}">
+      <repeat for="{{param.data}}" key="index" index="index" item="item">
+        <!--限制数量-->
+        <block wx:if="{{index < param.count}}">
+          <MiniItem :goods.sync="item" />
+        </block>
+      </repeat>
+    </scroll-view>
+
+    <!--大型布局-->
+    <view class="big-box column" wx:if="{{param.layout == 'BIG'}}">
+      <repeat for="{{param.data}}" key="index" index="index" item="item">
+        <!--限制数量-->
+        <block wx:if="{{index < param.count}}">
+          <BigItem :goods.sync="item" />
+        </block>
+      </repeat>
+    </view>
+
     <!--更多商品-->
     <view class="box-footer row-center" wx:if="{{param.isMore}}" @tap="more">
       <text class="weak">{{param.moreText}}</text>
@@ -47,6 +67,8 @@
   import RowItem from './goods/goods_row';
   import TightItem from './goods/goods_tight';
   import GridItem from './goods/goods_grid';
+  import MiniItem from './goods/goods_mini';
+  import BigItem from './goods/goods_big';
   export default class GoodsBox extends wepy.component {
     props = {
       param: {}
@@ -70,7 +92,9 @@
     components = {
       RowItem: RowItem,
       TightItem: TightItem,
-      GridItem: GridItem
+      GridItem: GridItem,
+      MiniItem: MiniItem,
+      BigItem: BigItem
     };
   }
 </script>
@@ -114,5 +138,12 @@
     .goods-grid-box:nth-child(odd){
       border-right: $border;
     }
+  }
+  .mini-box{
+    width: 750rpx;
+    height: 300rpx;
+    white-space: nowrap;
+  }
+  .big-box{
   }
 </style>

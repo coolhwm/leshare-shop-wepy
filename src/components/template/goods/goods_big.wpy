@@ -1,0 +1,82 @@
+<template>
+  <view class="column goods-big-box">
+    <!--图片-->
+    <view>
+      <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="routeToGoods({{goods.id}})"></image>
+    </view>
+
+    <view class="main-box column">
+      <view class="goods-title" @tap="routeToGoods({{goods.id}})" wx:if="{{goods.isGoodsName}}">
+        <text class="inline xl" >{{goods.name}}</text>
+      </view>
+
+      <view class="row-between" wx:if="{{goods.isSales || goods.isPrice || goods.isCart}}">
+        <view class="content-box column" wx:if="{{goods.isSales || goods.isPrice}}">
+          <view class="row">
+            <text class="xs muted" wx:if="{{goods.isSales}}">已售{{goods.salesVolume}}件</text>
+            <view wx:if="{{goods.isPrice}}">
+              <repeat for="{{[goods]}}" key="i" index="i" item="item">
+                <DiscountBadge :goods.sync="item"/>
+              </repeat>
+            </view>
+
+          </view>
+          <view class="row" wx:if="{{goods.isPrice}}">
+            <text class="major xxl" >￥{{goods.priceLable}}</text>
+            <text class="cancel ml10" wx:if="{{goods.discount}}">￥{{goods.originalPrice}}</text>
+          </view>
+        </view>
+        <!--加入购物车按钮-->
+        <view  wx:if="{{goods.isCart}}" class="cart-icon" @tap="handlePlusCart({{goods}})">加入购物车</view>
+      </view>
+    </view>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import router from '../../../mixins/router';
+  import DiscountBadge from '../../../components/goods/discount_badge';
+  export default class GoodBigItem extends wepy.component {
+    props = {
+      goods: {}
+    };
+    methods = {
+    };
+    components = {
+      DiscountBadge: DiscountBadge
+    };
+    mixins = [router]
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+  .goods-big-box{
+    $size: 750rpx;
+    position: relative;
+    background-color: white;
+    width: $size;
+    border-top: $border;
+    padding-bottom: 5rpx;
+
+    .goods-image{
+      width: $size;
+      height: $size;
+    }
+    .main-box {
+      padding: 5rpx 25rpx;
+    }
+    .cart-icon{
+      width: 180rpx;
+      height: 50rpx;
+      line-height: 50rpx;
+      border-radius: 25rpx;
+      text-align: center;
+      color: white;
+      font-size: $text-sm;
+      background-color: $color-primary;
+    }
+  }
+</style>
