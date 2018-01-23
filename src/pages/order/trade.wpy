@@ -144,6 +144,7 @@
   import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
   import Loading from '../../components/common/loading';
+  import Cart from '../../utils/Cart';
 
   @connect({
     shop: store.get('shop'),
@@ -168,7 +169,7 @@
       bonusPicker: null,
       selectedBonus: null
     };
-
+    cartManager = Cart.create();
     async onLoad (params, {preload}) {
       const isOpen = await this.checkShopStatus();
       const result = await auth.user({block: true, redirect: true});
@@ -311,7 +312,7 @@
           }
         }
         // 清空购物车
-        Event.emit(Event.CART_LIST_CLEAR);
+        this.cartManager.clear();
         // 卡券领取更新
         if (trade.couponUsedId) {
           await store.reflesh('coupon', 'member');
