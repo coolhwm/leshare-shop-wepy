@@ -132,6 +132,7 @@
       buyPanelType: 'POPUP'
     };
     async onLoad ({goodsId}) {
+      await store.init();
       this.goodsId = goodsId;
       this.detail = await goods.getInfo(goodsId, this.discount);
       this.count = await comment.count(goodsId);
@@ -149,6 +150,17 @@
       return {
         status: 'ALL',
         goods_id: this.goodsId
+      };
+    }
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {id, name, imageUrl} = this.detail;
+      return {
+        title: name,
+        imageUrl: imageUrl,
+        path: `/pages/goods/detail?goodsId=${id}`
       };
     }
     methods = {
