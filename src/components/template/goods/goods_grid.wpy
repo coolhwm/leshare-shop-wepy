@@ -1,8 +1,7 @@
 <template>
   <view class="column goods-grid-box">
     <view class="grid-discount-box row" wx:if="{{goods.discount}}">
-      <image class="vip-icon" src="/images/icons/vip-white.png"></image>
-      <text>会员{{goods.discountRate}}</text>
+      <image class="vip-icon" src="/images/icons/vip-white.png"></image><text>会员{{goods.discountRate}}</text>
     </view>
     <!--图片-->
     <view>
@@ -50,6 +49,7 @@
     padding-bottom: 5rpx;
 
     .grid-discount-box{
+      height: 45rpx;
       position: absolute;
       background-color: $color-major;
       top: 0;
@@ -58,9 +58,10 @@
       -webkit-filter:opacity(.7);
       text{
         color: white;
-        font-size: $text-xs;
+        font-size: $text-sm;
       };
       .vip-icon{
+        vertical-align: middle;
         width: 13px;
         height: 13px;
         margin-right: 5rpx;

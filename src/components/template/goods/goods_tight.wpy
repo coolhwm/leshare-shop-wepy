@@ -57,7 +57,7 @@
       -webkit-filter:opacity(.7);
       text{
         color: white;
-        font-size: $text-xs;
+        font-size: $text-sm;
       };
       .vip-icon{
         width: 13px;
