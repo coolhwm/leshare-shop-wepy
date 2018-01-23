@@ -34,11 +34,19 @@
           <view class="small label primary" wx:if="{{detail.isRecommend == 1}}">推荐</view>
           <text class="name">{{detail.name}}</text>
         </view>
-        <text class="sm muted mt10">已售{{detail.salesVolume}}件</text>
+
+        <view class="row mt10">
+          <text class="sm muted mr10">已售{{detail.salesVolume}}件</text>
+          <DiscountBadge :goods.sync="detail"/>
+        </view>
 
         <!--价格区域-->
         <view class="price row-between mt10">
-          <text class="major xxl">￥{{detail.priceLable}}</text>
+          <view class="row">
+            <text class="major xxl">￥{{detail.priceLable}}</text>
+            <text class="cancel ml10" wx:if="{{detail.discount}}">￥{{detail.originalPrice}}</text>
+          </view>
+
           <!--数量选择器-->
           <view class="quantity row mr20">
             <view class="quantity-cart-btn" @tap.stop="handlePlusCart({{detail}})" wx:if="{{version.isOrder}}" >
@@ -97,9 +105,11 @@
   import Loading from '../../components/common/loading';
   import router from '../../mixins/router';
   import SkuSelector from '../../components/goods/popup_buy_panel';
+  import DiscountBadge from '../../components/goods/discount_badge';
 
   @connect({
-    version: store.get('version')
+    version: store.get('version'),
+    discount: store.get('discount')
   })
   export default class GoodsDetail extends wepy.page {
     data = {
@@ -115,7 +125,7 @@
     };
     async onLoad ({goodsId}) {
       this.goodsId = goodsId;
-      this.detail = await goods.getInfo(goodsId);
+      this.detail = await goods.getInfo(goodsId, this.discount);
       this.count = await comment.count(goodsId);
       this.page = comment.page();
       this.tab = {
@@ -134,6 +144,14 @@
       };
     }
     methods = {
+      /**
+       * 到达底部
+       */
+      async onReachBottom () {
+        if (this.tab.selectedId == 'COMMENT') {
+          await this.next();
+        }
+      },
       /**
        * 切换TAB页
        */
@@ -201,7 +219,8 @@
       Placeholder: Placeholder,
       CommentItem: CommentItem,
       Loading: Loading,
-      SkuSelector: SkuSelector
+      SkuSelector: SkuSelector,
+      DiscountBadge: DiscountBadge
     };
     mixins = [base, pagination, router];
     config = {

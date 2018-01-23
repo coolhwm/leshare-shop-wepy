@@ -1,12 +1,12 @@
 <template>
-  <view class="row goods-row-box">
+  <view class="row goods-row-box" @tap="routeToGoods({{goods.id}})">
     <view>
-      <image class="goods-image"  lazy-load src="{{goods.imageUrl}}"  @tap="routeToGoods({{goods.id}})"></image>
+      <image class="goods-image"  lazy-load src="{{goods.imageUrl}}" ></image>
     </view>
 
     <view class="main-box column">
       <!--标题-->
-      <view @tap="routeToGoods({{goods.id}})">
+      <view>
         <text class="xl">{{goods.name}}</text>
       </view>
       <!--销量展示-->
