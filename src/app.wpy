@@ -120,6 +120,7 @@ export default class extends wepy.app {
       'pages/customer/sign_in',
       'pages/coupon/use',
       'pages/shop/contact',
+      'pages/shop/pay',
       'pages/home/template'
     ],
     window: {

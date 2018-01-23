@@ -1,0 +1,82 @@
+<template>
+  <view wx:if="{{init}}">
+    <view class="pay-box column">
+      <view class="header-box column-between">
+        <image class="logo-image" src="/images/tab/user.png"/>
+        <text class="lg">店铺名称</text>
+      </view>
+      <view class="content-box">
+        <text class="lg">付款金额</text>
+        <view class="row input-box">
+          <text class="xxl">￥</text>
+          <input type="number" placeholder="请输入付款金额" />
+        </view>
+        <view class="button-box">
+          <button class="zan-btn zan-label--primary">立即付款</button>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+
+  export default class ShopIndex extends wepy.page {
+    data = {
+      init: false
+    };
+    async onLoad () {
+      this.init = true
+    };
+    /**
+     * 页面分享
+     */
+    methods = {
+    };
+    computed = {
+    };
+    components = {
+    };
+    mixins = [base];
+    config = {
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .pay-box{
+    background-color: #fff;
+    margin: 40rpx;
+    height: 700rpx;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    .header-box{
+      margin: 40rpx;
+      .logo-image {
+        border: $border;
+        width: 100rpx;
+        height: 100rpx;
+      }
+    }
+    .content-box{
+      padding: 30rpx 40rpx;
+      height: 400rpx;
+      .input-box{
+        height: 150rpx;
+        border-bottom: 1px solid #EDEDED;
+        input{
+          height: 100rpx;
+          font-size: 50rpx;
+        }
+      }
+      .button-box{
+        padding: 40rpx 0;
+      }
+    }
+  }
+
+</style>
