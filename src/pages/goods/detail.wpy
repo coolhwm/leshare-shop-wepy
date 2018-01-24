@@ -98,6 +98,9 @@
     <block wx:if="{{buyPanelType == 'POPUP'}}" >
       <PopupPanel />
     </block>
+
+    <!--购买栏-->
+    <BuyBar :goods.sync="detail"/>
   </view>
 
 </template>
@@ -121,6 +124,7 @@
   import SilderPanel from '../../components/goods/slider_buy_panel';
   import DiscountBadge from '../../components/goods/discount_badge';
   import ContactWidget from '../../components/template/contact_widget';
+  import BuyBar from '../../components/goods/bottom_buy_bar';
 
   @connect({
     version: store.get('version'),
@@ -260,7 +264,8 @@
       PopupPanel: PopupPanel,
       SilderPanel: SilderPanel,
       DiscountBadge: DiscountBadge,
-      ContactWidget: ContactWidget
+      ContactWidget: ContactWidget,
+      BuyBar: BuyBar
     };
     mixins = [base, pagination, router];
     config = {
@@ -324,6 +329,7 @@
   }
   .more-box {
     padding-top: 15px;
+    height: 50px;
     text-align: center;
   }
 
