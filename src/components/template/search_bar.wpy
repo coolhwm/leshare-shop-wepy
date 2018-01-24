@@ -7,7 +7,7 @@
       <text>{{param.placeholder == null  ? '请输入搜索内容...' : param.placeholder }}</text>
     </view>
     <button plain class="cs-box row-center" open-type="contact" wx:if="{{param.isContact}}">
-      <image src="/images/icons/cs.png"></image><text>咨询</text>
+      <image src="/images/icons/cs-white.png"></image><text>咨询</text>
     </button>
   </view>
 </template>

@@ -1,22 +1,11 @@
 <template>
   <Loading :init.sync="init"/>
   <view class="container" wx:if="{{init}}">
+    <ContactWidget />
     <!--详情标题-->
     <ZanTab :tab.sync="tab" @change.user="switchTab" />
-
-    <!--商品评价-->
-    <view wx:if="{{tab.selectedId == 'COMMENT'}}">
-      <!--列表展现-->
-      <repeat for="{{page.list}}" key="index" index="index" item="item">
-        <CommentItem :comment.sync="item" />
-      </repeat>
-      <!-- 加载提示 -->
-      <Loadmore :page.sync="page"/>
-      <Placeholder :show.sync="isPageEmpty" message="该商品没有相关评价"/>
-    </view>
-
     <!--商品介绍-->
-    <view wx:if="{{tab.selectedId == 'DETAIL'}}">
+    <view wx:if="{{tab.selectedId == 'INFO'}}">
       <!-- 轮播图 -->
       <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" @tap="previewDetailSwiper">
         <block wx:for="{{detail.images}}" wx:key="id">
@@ -30,9 +19,17 @@
       <view class="goods-info-box column">
 
         <!--基本信息-->
-        <view class="row">
-          <view class="small label primary" wx:if="{{detail.isRecommend == 1}}">推荐</view>
-          <text class="name">{{detail.name}}</text>
+        <view class="row-between">
+          <view>
+            <view class="small label primary" wx:if="{{detail.isRecommend == 1}}">推荐</view>
+            <text class="name">{{detail.name}}</text>
+          </view>
+          <view class="share-box">
+            <button open-type="share" plain class="column-center">
+              <image class="icon" src="/images/icons/share.png" ></image>
+              <text class="sm">分享</text>
+            </button>
+          </view>
         </view>
 
         <view class="row mt10">
@@ -62,26 +59,36 @@
         </view>
       </view>
 
-      <!--详情区域-->
-      <view class="detail-box" wx:if="{{detail.goodsDetails.length > 0}}">
-        <!--详情标题-->
-        <view class="detail-title row-center">
-          <text class="primary lg">── 商品详情 ──</text>
-        </view>
-
-        <view class="hr-light"></view>
-
-        <!--详情类列表区域/遍历详情-->
-        <view class="detail-list column">
-          <block wx:for="{{detail.goodsDetails}}" wx:key="id">
-            <!--文本-->
-            <text class="mb20 lg" wx:if="{{item.type == 1}}">{{item.content}}</text>
-            <!--图片-->
-            <image src="{{item.content}}" lazy-load mode="widthFix" wx:if="{{item.type == 2}}" @tap="previewDetailImages({{item.content}})"/>
-          </block>
-        </view>
+      <view class="more-box" @tap="detail">
+        <text class="muted">点击查看图文详情</text>
       </view>
     </view>
+
+    <!--详情区域-->
+    <view class="detail-box" wx:if="{{tab.selectedId == 'DETAIL'}}">
+      <!--详情类列表区域/遍历详情-->
+      <view class="detail-list column">
+        <block wx:for="{{detail.goodsDetails}}" wx:key="id">
+          <!--文本-->
+          <text class="mb20 lg" wx:if="{{item.type == 1}}">{{item.content}}</text>
+          <!--图片-->
+          <image src="{{item.content}}" lazy-load mode="widthFix" wx:if="{{item.type == 2}}" @tap="previewDetailImages({{item.content}})"/>
+        </block>
+      </view>
+    </view>
+
+    <!--评价区域-->
+    <view wx:if="{{tab.selectedId == 'COMMENT'}}">
+      <!--列表展现-->
+      <repeat for="{{page.list}}" key="index" index="index" item="item">
+        <CommentItem :comment.sync="item" />
+      </repeat>
+      <!-- 加载提示 -->
+      <Loadmore :page.sync="page"/>
+      <Placeholder :show.sync="isPageEmpty" message="该商品没有相关评价"/>
+    </view>
+
+
     <!--滑出购物面板-->
     <block wx:if="{{buyPanelType == 'SLIDER'}}" >
       <SilderPanel />
@@ -113,6 +120,7 @@
   import PopupPanel from '../../components/goods/popup_buy_panel';
   import SilderPanel from '../../components/goods/slider_buy_panel';
   import DiscountBadge from '../../components/goods/discount_badge';
+  import ContactWidget from '../../components/template/contact_widget';
 
   @connect({
     version: store.get('version'),
@@ -137,15 +145,22 @@
       this.detail = await goods.getInfo(goodsId, this.discount);
       this.count = await comment.count(goodsId);
       this.page = comment.page();
-      this.tab = {
-        list: [
-          {id: 'DETAIL', title: '商品介绍'},
-          {id: 'COMMENT', title: `商品评价(${this.count.ALL})`}
-        ],
-        selectedId: 'DETAIL'
-      };
+      this.tab = this.createTab();
       this.loaded();
     };
+    createTab() {
+      const tab = {
+        list: [
+        ],
+        selectedId: 'INFO'
+      };
+      tab.list.push({id: 'INFO', title: '基本信息'});
+      if (this.detail.goodsDetails.length > 0) {
+        tab.list.push({id: 'DETAIL', title: '图文详情'});
+      }
+      tab.list.push({id: 'COMMENT', title: `评价 (${this.count.ALL})`});
+      return tab;
+    }
     params() {
       return {
         status: 'ALL',
@@ -164,6 +179,9 @@
       };
     }
     methods = {
+      detail() {
+        this.tab.selectedId = 'DETAIL';
+      },
       /**
        * 到达底部
        */
@@ -241,7 +259,8 @@
       Loading: Loading,
       PopupPanel: PopupPanel,
       SilderPanel: SilderPanel,
-      DiscountBadge: DiscountBadge
+      DiscountBadge: DiscountBadge,
+      ContactWidget: ContactWidget
     };
     mixins = [base, pagination, router];
     config = {
@@ -270,6 +289,20 @@
       border-top: $border;
     }
   }
+  .share-box{
+    width: 40px;
+    min-width: 40px;
+    padding-left: 5px;
+    border-left: $border;
+    button{
+      align-items: center;
+      padding: 0;
+      text{
+        line-height: 26rpx;
+        margin-top: 15rpx;
+      }
+    }
+  }
 
   .quantity-cart-btn{
     background-color: $color-primary;
@@ -289,20 +322,13 @@
       height:650rpx;
     }
   }
+  .more-box {
+    padding-top: 15px;
+    text-align: center;
+  }
 
   .detail-box{
-    border-top: $border;
     background-color: #FFF;
-    margin-top: 20rpx;
-
-    .detail-title{
-      height: 75rpx;
-    }
-    .hr-light{
-      height: 1px;
-      background-color: #e6e6e6;
-      width: 100%;
-    }
 
     .detail-list{
       padding-bottom: 20rpx;

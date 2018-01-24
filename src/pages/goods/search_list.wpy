@@ -33,7 +33,7 @@
   import GoodsRow from '../../components/template/goods/goods_row';
   import ZanTab from '../../components/zanui/tab';
   import PopupPanel from '../../components/goods/popup_buy_panel';
-  import FloatCart from '../../components/template/float_cart';
+  import FloatCart from '../../components/template/cart_widget';
   import Placeholder from '../../components/common/placeholder';
   import Loadmore from '../../components/weui/loadmore';
   import Loading from '../../components/common/loading';

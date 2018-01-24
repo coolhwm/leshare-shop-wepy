@@ -81,9 +81,9 @@
   import CouponBox from '../../components/template/coupon_box';
   import GoodsPanel from '../../components/goods/slider_buy_panel';
   import SkuSelector from '../../components/goods/popup_buy_panel';
-  import FloatCart from '../../components/template/float_cart';
+  import FloatCart from '../../components/template/cart_widget';
   import NoticeBar from '../../components/template/notice_bar';
-  import StatusTips from '../../components/template/status_tips';
+  import StatusTips from '../../components/template/status_widget';
 
   @connect({
     page: store.get('page'),

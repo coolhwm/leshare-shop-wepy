@@ -33,7 +33,7 @@
   import SilderPanel from '../../components/goods/slider_buy_panel';
   import Loadmore from '../../components/weui/loadmore';
   import Loading from '../../components/common/loading';
-  import FloatCart from '../../components/template/float_cart';
+  import FloatCart from '../../components/template/cart_widget';
   import SearchBar from '../../components/template/search_bar';
   import CategoryBox from '../../components/template/category_box';
 
