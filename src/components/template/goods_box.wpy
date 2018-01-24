@@ -1,9 +1,14 @@
 <template>
   <view class="goods-box">
     <!--顶部标题-->
-    <view class="box-title row-center" wx:if="{{param.isTitle}}">
-      <text class="title-line">────────</text><text class="title-text">{{param.title}}</text><text class="title-line">────────</text>
-    </view>
+    <block wx:if="{{param.isTitle}}">
+      <repeat for="{{[param]}}" key="i" index="i" item="item">
+        <TitleBar :param.sync="item" />
+      </repeat>
+    </block>
+    <!--<view class="box-title row-center" wx:if="{{param.isTitle}}">-->
+      <!--<text class="title-line">────────</text><text class="title-text">{{param.title}}</text><text class="title-line">────────</text>-->
+    <!--</view>-->
 
     <!--横向单个布局-->
     <view class="row-box column" wx:if="{{param.layout == 'ROW'}}">
@@ -55,6 +60,21 @@
       </repeat>
     </view>
 
+    <!--2+1布局-->
+    <view class="big-grid-box row" wx:if="{{param.layout == 'BIG_GRID'}}">
+      <repeat for="{{param.data}}" key="index" index="index" item="item">
+        <!--限制数量-->
+        <block wx:if="{{index < param.count}}">
+          <block wx:if="{{(index + 1) % 3 == 1}}">
+            <BigItem :goods.sync="item" />
+          </block>
+          <block wx:else>
+            <GridItem :goods.sync="item" />
+          </block>
+        </block>
+      </repeat>
+    </view>
+
     <!--更多商品-->
     <view class="box-footer row-center" wx:if="{{param.isMore}}" @tap="more">
       <text class="weak">{{param.moreText}}</text>
@@ -69,6 +89,7 @@
   import GridItem from './goods/goods_grid';
   import MiniItem from './goods/goods_mini';
   import BigItem from './goods/goods_big';
+  import TitleBar from './title_bar';
   export default class GoodsBox extends wepy.component {
     props = {
       param: {}
@@ -94,7 +115,8 @@
       TightItem: TightItem,
       GridItem: GridItem,
       MiniItem: MiniItem,
-      BigItem: BigItem
+      BigItem: BigItem,
+      TitleBar: TitleBar
     };
   }
 </script>
@@ -103,27 +125,12 @@
   @import "../../styles/variable";
   .goods-box {
     background-color: white;
-
-    .box-title{
-      height: 80rpx;
-      background-color: $color-bg-body;
-
-      .title-text{
-        color: $color-primary;
-        margin-left: 20px;
-        margin-right: 20px;
-        font-size: $text-lg;
-      }
-      .title-line{
-        color: #E2E2E2;
-      }
-    }
     .box-footer{
       border-top: $border;
       padding: 15rpx;
     }
   }
-
+  /*三图*/
   .tight-box{
     flex-wrap: wrap;
     .goods-tight-box:nth-child(3n-2) {
@@ -133,17 +140,31 @@
       border-right: $border;
     }
   }
+  /*小图*/
   .grid-box{
     flex-wrap: wrap;
     .goods-grid-box:nth-child(odd){
       border-right: $border;
     }
   }
+  /*横向滚动*/
   .mini-box{
     width: 750rpx;
     height: 300rpx;
     white-space: nowrap;
   }
+  /*大图*/
   .big-box{
+  }
+
+  /*2+1布局*/
+  .big-grid-box{
+    flex-wrap: wrap;
+    .goods-big-box:nth-child(3n+1){
+      border-top: $border;
+    }
+    .goods-grid-box:nth-child(3n-1){
+      border-right: $border;
+    }
   }
 </style>

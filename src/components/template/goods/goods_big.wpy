@@ -27,7 +27,7 @@
           </view>
         </view>
         <!--加入购物车按钮-->
-        <view  wx:if="{{goods.isCart}}" class="cart-icon" @tap="handlePlusCart({{goods}})">加入购物车</view>
+        <view  wx:if="{{goods.isCart}}" class="cart-button" @tap="handlePlusCart({{goods}})">加入购物车</view>
       </view>
     </view>
 
@@ -68,9 +68,9 @@
     .main-box {
       padding: 5rpx 25rpx;
     }
-    .cart-icon{
+    .cart-button{
       width: 180rpx;
-      height: 50rpx;
+      height: 55rpx;
       line-height: 50rpx;
       border-radius: 25rpx;
       text-align: center;

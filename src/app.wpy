@@ -1,8 +1,8 @@
 <style lang="scss" src="./styles/weui.scss"></style>
 <style lang="scss">
+  @import "./styles/weui-extend";
   @import "./styles/base";
   @import "./styles/zent";
-  @import "./styles/weui-extend";
 </style>
 
 <script>
@@ -22,6 +22,7 @@ export default class extends wepy.app {
     appCode: null,
     shopType: null,
     pageParams: null,
+    componentsParams: null,
     baseUrl: null,
     version: 'v2.1.0'
   };
@@ -63,6 +64,11 @@ export default class extends wepy.app {
     // 同步开放平台EXT数据
     const ext = wepy.getExtConfigSync();
     console.info('[ext] init ext data', ext);
+    if (ext.globalConfig) {
+      const globalConfig = JSON.parse(ext.globalConfig);
+      console.info('[ext] init ext global config data', globalConfig);
+      Object.assign(ext, globalConfig);
+    }
     Object.assign(wepy.$instance.globalData, ext);
     // 同步权限数据
     this.syncStoreConfig('login_code');

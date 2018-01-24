@@ -32,7 +32,7 @@
   .notice-bar-box{
     align-items: center;
     background-color: white;
-    padding: 5rpx 10rpx;
+    padding: 10rpx 10rpx;
     .notice-bar-title{
       font-size: $text-sm;
     }
