@@ -126,7 +126,8 @@ export default class extends wepy.app {
       'pages/customer/sign_in',
       'pages/coupon/use',
       'pages/shop/contact',
-      'pages/home/template'
+      'pages/home/template',
+      'pages/shop/test'
     ],
     window: {
       backgroundTextStyle: 'dark',
