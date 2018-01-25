@@ -45,11 +45,11 @@
           </view>
 
           <!--数量选择器-->
-          <view class="quantity row mr20">
-            <view class="quantity-cart-btn" @tap.stop="handlePlusCart({{detail}})" wx:if="{{version.isOrder}}" >
-              加入购物车
-            </view>
-          </view>
+          <!--<view class="quantity row mr20">-->
+            <!--<view class="quantity-cart-btn" @tap.stop="handlePlusCart({{detail}})" wx:if="{{version.isOrder}}" >-->
+              <!--加入购物车-->
+            <!--</view>-->
+          <!--</view>-->
         </view>
 
         <!--评价向导-->
