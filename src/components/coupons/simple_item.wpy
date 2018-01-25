@@ -23,8 +23,8 @@
 <script>
   import wepy from 'wepy';
   import Tips from '../../utils/Tips';
-  import store from '../../store/utils';
   import coupon from '../../api/coupon';
+  import store from '../../store/utils';
   export default class CouponItem extends wepy.component {
     props = {
       coupon: {}

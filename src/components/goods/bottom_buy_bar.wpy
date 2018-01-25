@@ -7,15 +7,12 @@
       <text>收藏</text>
     </view>
     <view class="column-center btn-goto-cart" @tap="cart">
-      <view class="weui-badge" style="position: absolute;top: -5px;right: 0;">{{cart.num}}</view>
+      <view class="weui-badge" style="position: absolute;top: -5px;right: 5px;">{{cart.num}}</view>
       <image class="icon" src="/images/icons/cart-gray.png"></image>
       <text>购物车</text>
     </view>
     <view class="column-center btn-cart" @tap="handlePlusCart({{goods}})">
       <text>加入购物车</text>
-    </view>
-    <view class="column-center btn-buy">
-      <text>立即购买</text>
     </view>
   </view>
 </template>
@@ -43,7 +40,7 @@
     methods = {
       async fav() {
         if (this.isFav) {
-          await Tips.confirm('确认取消?');
+          await Tips.confirm('确认取消收藏?');
           await favorite.remove(this.goods.id);
         } else {
           await favorite.add(this.goods.id);
@@ -71,8 +68,8 @@
 <style lang="scss">
   @import "../../styles/variable";
 
-  $btn-width: 245rpx;
-  $btn-sm-width: (750rpx - $btn-width * 2 ) / 2;
+  $btn-width: 430rpx;
+  $btn-sm-width: (750rpx - $btn-width) / 2;
   .buy-bar-box{
     position: fixed;
     bottom: 0;
@@ -81,22 +78,21 @@
     background-color: white;
     border: $border;
     .btn-goto-cart{
+      border-left: $border;
       position: relative;
-    }
-    .btn-cart, .btn-buy{
-      height: 100%;
-      width: $btn-width;
-      text{color: white;}
     }
     .btn-fav, .btn-goto-cart{
       width: $btn-sm-width;
       text{font-size: $text-xs}
     }
-    .btn-buy{
-      background-color: darken($color-primary, 5%) ;
-    }
     .btn-cart{
-      background-color: lighten($color-primary, 5%);
+      height: 100%;
+      width: $btn-width;
+      background-color: $color-primary;
+      text{
+        color: white;
+        font-size: $text-xl;
+      }
     }
   }
   .buy-bar-placeholder{
