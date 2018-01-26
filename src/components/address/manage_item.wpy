@@ -20,10 +20,10 @@
       </view>
       <view class="address-opt-container">
         <view class="address-opt-action"  @tap="edit({{address.id}})">
-          <image src="/images/icons/edit.png"/><text>编辑</text>
+          <icon class="edit" color="gray"/><text>编辑</text>
         </view>
         <view class="address-opt-action"  @tap="delete({{address.id}})">
-          <image src="/images/icons/delete.png"/><text>删除</text>
+          <icon class="delete" color="gray" /><text>删除</text>
         </view>
       </view>
     </view>

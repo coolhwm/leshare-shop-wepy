@@ -3,12 +3,12 @@
   </view>
   <view class="row buy-bar-box">
     <view class="column-center  btn-fav" @tap="fav">
-      <image class="icon" src="/images/icons/like-{{isFav ? 'red' : 'gray'}}.png"></image>
+      <icon class="like{{!isFav ? '' : '-fill'}}" style="color: {{!isFav ? 'gray' : 'red'}}" />
       <text>收藏</text>
     </view>
     <view class="column-center btn-goto-cart" @tap="cart">
       <view class="weui-badge" style="position: absolute;top: -5px;right: 5px;">{{cart.num}}</view>
-      <image class="icon" src="/images/icons/cart-gray.png"></image>
+      <icon class="cart" color="gray"/>
       <text>购物车</text>
     </view>
     <view class="column-center btn-cart" @tap="handlePlusCart({{goods}})">

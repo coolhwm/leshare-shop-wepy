@@ -3,7 +3,7 @@
   <view class="container" wx:if="{{init}}">
     <!--状态栏-->
     <view class="order-status-bar row">
-      <image class="icon-lg" src="/images/icons/status-{{order.status}}.png" wx:if="{{order.status}}" />
+      <icon class="status-{{order.status}} large"/>
       <view class="status-box column">
         <text class="xxl">{{order.statusText}}</text>
         <!-- 订单文本描述/需要抽取到Service中 -->

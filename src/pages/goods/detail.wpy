@@ -26,7 +26,7 @@
           </view>
           <view class="share-box">
             <button open-type="share" plain class="column-center">
-              <image class="icon" src="/images/icons/share.png" ></image>
+              <icon class="share small" />
               <text class="sm">分享</text>
             </button>
           </view>
@@ -67,13 +67,13 @@
               </view>
             </view>
           </view>
-          <image class="icon" src="/images/icons/more-gray.png" />
+          <icon class="more" color="gray"/>
         </view>
 
         <!--评价向导-->
         <view class="comment-box row-between" @tap="comments">
           <text class="muted">{{commentText}}</text>
-          <image class="icon" src="/images/icons/more-gray.png" />
+          <icon class="more" color="gray"/>
         </view>
       </view>
 

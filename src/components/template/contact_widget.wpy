@@ -2,7 +2,7 @@
 
   <view class="contact-widget-box"  >
     <button plain class="column-center" open-type="contact">
-      <image class="icon" src="/images/icons/cs.png"></image>
+      <icon class="chat"/>
       <text class="contact-text">咨询</text>
     </button>
   </view>
