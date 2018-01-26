@@ -1,7 +1,7 @@
 <template>
   <view class="column goods-tight-box">
     <view class="tight-discount-box row" wx:if="{{goods.discount}}">
-      <image class="vip-icon" src="/images/icons/vip-white.png"></image>
+      <icon class="vip xsmall" color="white" />
       <text>{{goods.discountRate}}</text>
     </view>
     <!--图片-->
@@ -19,7 +19,7 @@
           <text class=" lg major" >￥{{goods.priceLable}}</text>
         </view>
         <!--加入购物车按钮-->
-        <image class="cart-icon" wx:if="{{goods.isCart}}"  src="/images/icons/plus.png" @tap="handlePlusCart({{goods}})"></image>
+        <icon class="plus" wx:if="{{goods.isCart || goods.isCart == null}}" @tap="handlePlusCart({{goods}})" />
       </view>
     </view>
   </view>
@@ -73,11 +73,6 @@
 
     .content-box{
       padding: 5rpx;
-    }
-    .cart-icon{
-      width: 35rpx;
-      height: 35rpx;
-      margin-right: 5px;
     }
   }
 </style>
