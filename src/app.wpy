@@ -13,8 +13,6 @@ import 'wepy-async-function';
 import { setStore } from 'wepy-redux'
 import configStore from './store'
 const store = configStore();
-
-
 setStore(store);
 export default class extends wepy.app {
   globalData = {

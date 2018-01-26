@@ -127,7 +127,6 @@
       PopupPanel: SkuSelector,
       CartWidget: CartWidget,
       NoticeBar: NoticeBar,
-      StatusWidget: StatusWidget
     };
     computed = {
     };

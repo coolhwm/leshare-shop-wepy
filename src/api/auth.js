@@ -34,6 +34,7 @@ export default class auth extends base {
         store.save('user', this.getConfig('user'));
         return true;
       }
+      console.info('[auth] user check fail');
       // 重新登录
       await this.doLogin();
       // 获取用户信息
@@ -92,7 +93,6 @@ export default class auth extends base {
    * 执行登录操作
    */
   static async doLogin() {
-    await this.removeConfig('login_code');
     const {code} = await wepy.login();
     const {third_session, login_code} = await this.session(code);
     await this.setConfig('login_code', login_code);
@@ -152,6 +152,7 @@ export default class auth extends base {
    * 删除权限值
    */
   static async removeConfig(key) {
+    console.info(`[auth] clear auth config [${key}]`);
     wepy.$instance.globalData.auth[key] = null;
     await wepy.removeStorage({key: key});
   }
