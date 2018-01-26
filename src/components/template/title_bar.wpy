@@ -13,8 +13,6 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
-  import Cart from '../../utils/Cart';
-  import router from '../../mixins/router';
 
   @connect({
     cart: store.get('cart')

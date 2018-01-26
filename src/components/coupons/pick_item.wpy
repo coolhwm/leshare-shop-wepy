@@ -15,10 +15,15 @@
         <view class="label primary small">现金</view>
         <text class="coupon-title-text">{{coupon.name}}</text>
       </view>
-      <view class="coupon-time-pick-container row-between">
-        <text class="coupon-time-text">{{coupon.beginTime}}-{{coupon.dueTime}}</text>
-        <view class="coupon-item-pick" wx:if="{{!own}}"  @tap="pick({{coupon.id}})">点击领取</view>
+      <view class="coupon-time-pick-container column">
+        <text class="coupon-time-text">开始时间：{{coupon.beginTime}}</text>
+        <text class="coupon-time-text">截止时间：{{coupon.beginTime}}</text>
       </view>
+    </view>
+
+    <view class="coupon-pick-button column-center" @tap="pick({{coupon}})">
+      <text>点击</text>
+      <text>领取</text>
     </view>
 
     <!-- 修饰图片 -->
@@ -27,18 +32,26 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-  export default class OrderGoods extends wepy.component {
+  import wepy from 'wepy';
+  import Tips from '../../utils/Tips';
+  import coupon from '../../api/coupon';
+  import store from '../../store/utils';
+  export default class CouponPickItem extends wepy.component {
     props = {
-      coupon: {},
-      own: {
-        default: false
-      }
+      coupon: {}
     };
     data = {};
     methods = {
-      pick(couponId) {
-        this.$emit('pick', couponId);
+      async pick(item) {
+        try {
+          Tips.loading();
+          await coupon.pick(item.id);
+          await Tips.success('领取成功');
+          await store.reflesh('coupon');
+          this.$root.$apply();
+        } catch (e) {
+          await Tips.alert('已达领取上限');
+        }
       }
     };
     events = {};
@@ -137,7 +150,15 @@
     height: 26rpx;
   }
 
-
+  .coupon-pick-button{
+    width: 130rpx;
+    height: 160rpx;
+    border-left: 1px dashed $color-muted;
+    text{
+      font-size: $text-xxl;
+      color: $color-primary;
+    }
+  }
 
   /*领取*/
   .coupon-item-pick{

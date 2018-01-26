@@ -52,6 +52,24 @@
           </view>
         </view>
 
+        <!--领取优惠券-->
+        <view class="coupons-box row-between" @tap="pick">
+          <view class="row">
+            <view><text class="lg">领券：</text></view>
+            <view class="row">
+              <block wx:for="{{pickCoupons}}" wx:key="index">
+                <view class="coupon-item" wx:if="{{index < 3}}">
+                  <text>满{{item.limitPrice}}减{{item.price}}</text>
+                </view>
+              </block>
+              <view class="coupon-item" wx:if="{{pickCoupons.length > 3}}">
+                <text>...</text>
+              </view>
+            </view>
+          </view>
+          <image class="icon" src="/images/icons/more-gray.png" />
+        </view>
+
         <!--评价向导-->
         <view class="comment-box row-between" @tap="comments">
           <text class="muted">{{commentText}}</text>
@@ -101,6 +119,9 @@
 
     <!--购买栏-->
     <BuyBar :goods.sync="detail"/>
+
+    <!--领取优惠券栏-->
+    <CouponPickPanel />
   </view>
 
 </template>
@@ -125,8 +146,10 @@
   import DiscountBadge from '../../components/goods/discount_badge';
   import ContactWidget from '../../components/template/contact_widget';
   import BuyBar from '../../components/goods/bottom_buy_bar';
+  import CouponPickPanel from '../../components/coupons/pick_panel';
 
   @connect({
+    pickCoupons: store.get('pickCoupons'),
     version: store.get('version'),
     discount: store.get('discount')
   })
@@ -183,6 +206,12 @@
       };
     }
     methods = {
+      /**
+       * 打开领取优惠券面板
+       */
+      pick() {
+        this.$invoke('CouponPickPanel', 'show');
+      },
       detail() {
         this.tab.selectedId = 'DETAIL';
       },
@@ -265,7 +294,8 @@
       SilderPanel: SilderPanel,
       DiscountBadge: DiscountBadge,
       ContactWidget: ContactWidget,
-      BuyBar: BuyBar
+      BuyBar: BuyBar,
+      CouponPickPanel: CouponPickPanel
     };
     mixins = [base, pagination, router];
     config = {
@@ -279,6 +309,7 @@
   .goods-info-box{
     background-color: #FFF;
     padding: 20rpx;
+    padding-bottom: 0rpx;
     border-bottom: $border;
     border-top: $border;
     .name{
@@ -289,10 +320,26 @@
       height: 32px;
       padding-bottom: 10rpx;
     }
-    .comment-box{
-      padding-top: 20rpx;
-      border-top: $border;
+  }
+  .coupons-box{
+    padding-top: 20rpx;
+    padding-bottom: 20rpx;
+    border-top: $border;
+    .coupon-item{
+      border: 1px solid $color-primary;
+      padding: 0 15rpx;
+      margin-left: 10rpx;
+      border-radius: 3px;
+      text{
+        color: $color-primary;
+        font-size: $text-sm;
+      }
     }
+  }
+  .comment-box{
+    padding-top: 20rpx;
+    padding-bottom: 20rpx;
+    border-top: $border;
   }
   .share-box{
     width: 40px;
@@ -308,7 +355,6 @@
       }
     }
   }
-
   .quantity-cart-btn{
     background-color: $color-primary;
     font-size: $text-sm;
@@ -317,7 +363,6 @@
     padding: 4px 13px;
     border-radius: 20px;
   }
-
   .goods-swiper{
     height: 650rpx;
     width: 750rpx;
@@ -332,7 +377,6 @@
     height: 50px;
     text-align: center;
   }
-
   .detail-box{
     background-color: #FFF;
 

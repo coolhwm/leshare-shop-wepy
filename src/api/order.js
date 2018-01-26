@@ -38,7 +38,7 @@ export default class order extends base {
     return WxUtils.wxPay({
       'timeStamp': payment.timeStamp,
       'nonceStr': payment.nonceStr,
-      'package': payment.package,
+      'package': payment.packageValue,
       'signType': 'MD5',
       'paySign': payment.paySign
     });
