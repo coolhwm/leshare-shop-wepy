@@ -17,11 +17,19 @@ export default class coupon extends base {
    * 获取可领取、已领取的优惠券
    */
   static all () {
-    return Promise.all([this.list(), this.own()]).then(([pickCoupons, ownCoupons]) => {
-      return {
-        pickCoupons, ownCoupons
-      }
+    const url = `${this.baseUrl}/coupons/all`;
+    return this.get(url).then((owned, show) => {
+      const pickList = this.processCouponsList(show, this._processPickItem.bind(this));
+      const ownList = this.processCouponsList(owned, this._processCouponItem.bind(this));
+      return {pickList, ownList};
     });
+  }
+  static processCouponsList(data, func) {
+    if (data && data.length > 0) {
+      return data.map(func);
+    } else {
+      return [];
+    }
   }
 
   /**

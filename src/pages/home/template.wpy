@@ -83,7 +83,6 @@
   import SkuSelector from '../../components/goods/popup_buy_panel';
   import CartWidget from '../../components/template/cart_widget';
   import NoticeBar from '../../components/template/notice_bar';
-  import StatusWidget from '../../components/template/status_widget';
 
   @connect({
     page: store.get('page'),
