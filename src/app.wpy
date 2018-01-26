@@ -66,9 +66,8 @@ export default class extends wepy.app {
     const ext = wepy.getExtConfigSync();
     console.info('[ext] init ext data', ext);
     if (ext.globalConfig) {
-      const globalConfig = JSON.parse(ext.globalConfig);
-      console.info('[ext] init ext global config data', globalConfig);
-      Object.assign(ext, globalConfig);
+      console.info('[ext] init ext global config data', ext.globalConfig);
+      Object.assign(ext, ext.globalConfig);
     }
     Object.assign(wepy.$instance.globalData, ext);
     // 同步权限数据
