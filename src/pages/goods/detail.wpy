@@ -1,9 +1,11 @@
 <template>
   <Loading :init.sync="init"/>
   <view class="container" wx:if="{{init}}">
-    <ContactWidget />
     <!--详情标题-->
-    <ZanTab :tab.sync="tab" @change.user="switchTab" />
+    <block wx:if="{{isTab}}">
+      <ZanTab :tab.sync="tab" @change.user="switchTab" />
+    </block>
+
     <!--商品介绍-->
     <view wx:if="{{tab.selectedId == 'INFO'}}">
       <!-- 轮播图 -->
@@ -25,7 +27,7 @@
             <text class="name">{{detail.name}}</text>
           </view>
           <view class="share-box">
-            <button open-type="share" plain class="column-center">
+            <button open-type="share" plain class="column-center" wx:if="{{isShare}}">
               <image class="icon" src="/images/icons/share.png" ></image>
               <text class="sm">分享</text>
             </button>
@@ -33,7 +35,7 @@
         </view>
 
         <view class="row mt10">
-          <text class="sm muted mr10">已售{{detail.salesVolume}}件</text>
+          <text class="sm muted mr10" wx:if="{{isSales}}">已售{{detail.salesVolume}}件</text>
           <DiscountBadge :goods.sync="detail"/>
         </view>
 
@@ -46,14 +48,14 @@
 
           <!--数量选择器-->
           <view class="quantity row mr20">
-            <view class="quantity-cart-btn" @tap.stop="handlePlusCart({{detail}})" wx:if="{{version.isOrder}}" >
+            <view class="quantity-cart-btn" @tap.stop="handlePlusCart({{detail}})" wx:if="{{version.isOrder && cartType=='BUTTON'}}">
               加入购物车
             </view>
           </view>
         </view>
 
         <!--领取优惠券-->
-        <view class="coupons-box row-between" @tap="pick">
+        <view class="coupons-box row-between" @tap="pick" wx:if="{{isCoupon}}">
           <view class="row">
             <view><text class="lg">领券：</text></view>
             <view class="row">
@@ -71,13 +73,13 @@
         </view>
 
         <!--评价向导-->
-        <view class="comment-box row-between" @tap="comments">
+        <view class="comment-box row-between" @tap="comments" wx:if="{{isComment}}">
           <text class="muted">{{commentText}}</text>
           <image class="icon" src="/images/icons/more-gray.png" />
         </view>
       </view>
 
-      <view class="more-box" @tap="detail">
+      <view class="more-box" @tap="detail" wx:if="{{detail.goodsDetails.length > 0}}">
         <text class="muted">点击查看图文详情</text>
       </view>
     </view>
@@ -118,10 +120,22 @@
     </block>
 
     <!--购买栏-->
-    <BuyBar :goods.sync="detail"/>
+    <block wx:if="{{cartType == 'BAR'}}">
+      <BuyBar :goods.sync="detail"/>
+    </block>
+
+    <block wx:if="{{cartType == 'BUTTON'}}">
+      <CartWidget />
+    </block>
+
 
     <!--领取优惠券栏-->
     <CouponPickPanel />
+
+    <!--联系客服-->
+    <block wx:if="{{isContact}}">
+      <ContactWidget />
+    </block>
   </view>
 
 </template>
@@ -147,6 +161,7 @@
   import ContactWidget from '../../components/template/contact_widget';
   import BuyBar from '../../components/goods/bottom_buy_bar';
   import CouponPickPanel from '../../components/coupons/pick_panel';
+  import CartWidget from '../../components/template/cart_widget';
 
   @connect({
     pickCoupons: store.get('pickCoupons'),
@@ -164,7 +179,14 @@
       },
       commentInit: false,
       tab: {},
-      buyPanelType: 'POPUP'
+      cartType: 'BAR',
+      buyPanelType: 'POPUP',
+      isTab: true,
+      isCoupon: true,
+      isComment: true,
+      isSales: true,
+      isContact: true,
+      isShare: true
     };
     async onLoad ({goodsId}) {
       await store.init();
@@ -185,7 +207,12 @@
       if (this.detail.goodsDetails.length > 0) {
         tab.list.push({id: 'DETAIL', title: '图文详情'});
       }
-      tab.list.push({id: 'COMMENT', title: `评价 (${this.count.ALL})`});
+      if (this.isComment) {
+        tab.list.push({id: 'COMMENT', title: `评价 (${this.count.ALL})`});
+      }
+      if (tab.list.length == 1) {
+        this.isTab = false;
+      }
       return tab;
     }
     params() {
@@ -295,7 +322,8 @@
       DiscountBadge: DiscountBadge,
       ContactWidget: ContactWidget,
       BuyBar: BuyBar,
-      CouponPickPanel: CouponPickPanel
+      CouponPickPanel: CouponPickPanel,
+      CartWidget: CartWidget
     };
     mixins = [base, pagination, router];
     config = {
