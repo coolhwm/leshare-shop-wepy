@@ -32,13 +32,13 @@
         <block wx:if="{{quantity}}">
           <view class="quantity row">
             <block wx:if="{{goods.num > 0}}">
-              <image class="minus" src="/images/icons/minus.png" @tap.stop="handleMinusCart({{goods.id}})" />
+              <icon class="minus" @tap.stop="handleMinusCart({{goods.id}})"/>
               <view class="number">
                 <text>{{goods.num}}</text>
               </view>
             </block>
-            <icon class="plus normal" color="gray"  wx:if="{{goods.goodsStocks[0].stock == 0 || goods.num >= goods.goodsStocks[0].stock}}" />
-            <icon class="plus normal"  @tap.stop="handlePlusCart({{goods}})" wx:else/>
+            <icon class="plus" color="gray"  wx:if="{{goods.goodsStocks[0].stock == 0 || goods.num >= goods.goodsStocks[0].stock}}" />
+            <icon class="plus"  @tap.stop="handlePlusCart({{goods}})" wx:else/>
           </view>
         </block>
       </view>
@@ -148,10 +148,6 @@
   }
 
   .quantity{
-    image{
-      height: 50rpx;
-      width: 50rpx;
-    }
     .number{
       font-size: $text-sm;
       min-width: 25px;

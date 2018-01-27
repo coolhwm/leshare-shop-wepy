@@ -5,16 +5,16 @@
 
     <!--状态-->
     <block wx:if="{{status}}">
-      <image class="status-tips" wx:if="{{status.open}}" mode="aspectFit" src="/images/icons/onsale.png"></image>
-      <image class="status-tips" wx:else mode="aspectFit" src="/images/icons/onclose.png"></image>
+      <icon wx:if="{{status.open}}" class="onsale status-tips xxlarge" mode="aspectFit"/>
+      <icon wx:else mode="aspectFit" class="onclose status-tips xxlarge"/>
     </block>
 
     <!--店铺信息区域-->
     <view class="header-box column-center">
       <image class="avatar" src="{{shop.avatar}}" />
       <text class="name">{{shop.name}}</text>
-      <view class="address"  @tap="nav">
-        <text class="weak">地址:{{shop.address}}</text> <image class="icon" src="/images/icons/more-gray.png"></image>
+      <view class="address row"  @tap="nav">
+        <text class="weak">地址:{{shop.address}}</text><icon class="more" color="gray"/>
       </view>
       <text class="time weak lg" wx:if="{{status.timeText}}"> {{'营业时间：' + status.timeText}} </text>
     </view>
@@ -22,10 +22,10 @@
     <!--优惠信息-->
     <view class="reduce-box column" wx:if="{{reduce.list.length > 0 || homeNotices.length > 0}}" @tap="shop">
       <view class="reduce-item row" wx:if="{{reduce.list.length > 0}}">
-        <image class="icon" src="/images/icons/reduce.png"></image><text class="reduce-content inline" >{{reduce.showText}}</text>
+        <icon class="reduce" style="color: #d81e06"/><text class="reduce-content inline" >{{reduce.showText}}</text>
       </view>
       <view class="reduce-item row" wx:for="{{homeNotices}}" wx:key="index">
-        <image class="icon" src="/images/icons/sale.png"></image><text class="reduce-content">{{item.content}}</text>
+        <icon class="sale"/><text class="reduce-content">{{item.content}}</text>
       </view>
     </view>
 
@@ -273,8 +273,8 @@
     position: absolute;
     right: 30px;
     top: 0;
-    width: 150rpx;
-    height: 150rpx;
+    width: 40px;
+    height: 40px;
   }
 
   .container{

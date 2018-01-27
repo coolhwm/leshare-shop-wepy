@@ -19,7 +19,7 @@
       </view>
       <!--关闭按钮-->
       <view class="buy-panel-close-container">
-        <image class="buy-panel-close-icon" @tap="close" src="/images/icons/close.png" />
+        <icon class="close" color="gray" @tap="close"/>
       </view>
 
     </view>
@@ -242,10 +242,6 @@
     padding-top: 28rpx;
     width: 100rpx;
     text-align: center;
-  }
-  .buy-panel-close-icon{
-    height: 45rpx;
-    width: 45rpx;
   }
 
   /**

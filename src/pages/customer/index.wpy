@@ -52,7 +52,7 @@
           </view>
           <navigator class="footer row" open-type="navigateBack">
             <text class="muted">返回</text>
-            <image class="icon" src="/images/icons/more-gray.png" />
+            <icon class="more" color="gray"/>
           </navigator>
         </view>
       </block>

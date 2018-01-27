@@ -6,7 +6,7 @@
     </view>
     <view class="footer row" @tap="goto">
       <text class="muted">个人中心</text>
-      <image class="icon" src="/images/icons/more-gray.png" />
+      <icon class="more" color="gary"/>
     </view>
   </view>
 </template>

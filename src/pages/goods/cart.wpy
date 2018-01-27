@@ -6,7 +6,7 @@
         <view class="cart-check-container" @tap="checkAll">
           <view class="zan-icon zan-icon-{{cart.all ? 'checked' : 'check'}}" />
         </view>
-        <image class="shop-info-icon" src="/images/icons/shop-gray.png" />
+        <icon class="shop" color="gray" />
         <text class="shop-info-name">{{shop.name}}</text>
       </view>
       <text class="cart-batch-edit" catchtap="batch"> {{cart.batch ? '完成' : '编辑'}}</text>
@@ -14,7 +14,7 @@
 
     <!--占位提示-->
     <view class="cart-empty-tips" wx:if="{{cart.carts.length == 0}}">
-      <image src="/images/icons/cart-empty.png" />
+      <icon class="cart-empty" style="font-size: 100px;"/>
       <text>购物车是空的</text>
     </view>
 
@@ -260,13 +260,6 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-  }
-
-  /*顶栏图片*/
-  .shop-info-icon{
-    height: 40rpx;
-    width: 40rpx;
-    vertical-align: middle;
   }
 
   /*顶栏店铺名称*/

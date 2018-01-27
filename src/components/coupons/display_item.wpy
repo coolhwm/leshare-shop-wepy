@@ -40,11 +40,10 @@
     </view>
 
     <!-- 修饰图片 -->
-    <image class="coupon-new-icon" wx:if="{{coupon.status == 'NEVER_USED' && coupon.isNew}}" src="/images/icons/new.png" />
-    <image class="coupon-new-icon" wx:elif="{{coupon.status == 'NEVER_USED' && coupon.isExpiring}}" src="/images/icons/expiring.png" />
-
-    <image class="coupon-used-icon" wx:if="{{coupon.status == 'USED'}}" src="/images/icons/used.png" />
-    <image class="coupon-used-icon" wx:if="{{coupon.status == 'EXPIRED'}}" src="/images/icons/expired.png" />
+    <icon class="new coupon-new-icon xxlarge" color="major" wx:if="{{coupon.status == 'NEVER_USED' && coupon.isNew}}" />
+    <icon class="expiring coupon-new-icon xxlarge" style="color: #d81e06;" wx:elif="{{coupon.status == 'NEVER_USED' && coupon.isExpiring}}"/>
+    <icon class="used coupon-used-icon" color="gray" style="font-size: 50px;" wx:if="{{coupon.status == 'USED'}}"/>
+    <icon class="expired coupon-used-icon" color="gray" style="font-size: 50px;" wx:if="{{coupon.status == 'EXPIRED'}}" />
   </view>
 </template>
 

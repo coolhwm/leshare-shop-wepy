@@ -7,7 +7,7 @@
     <view class="coupon-panel-title-container">
       <text class="coupon-panel-title">领优惠券</text>
       <view class="coupon-panel-close-container">
-        <image class="coupon-panel-close-icon" @tap="close" src="/images/icons/close.png" />
+        <icon class="close" color="gray" @tap="close"/>
       </view>
     </view>
     <scroll-view class="coupon-list-container" scroll-y="true">

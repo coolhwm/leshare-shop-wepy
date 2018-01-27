@@ -15,11 +15,11 @@
     <block wx:if="{{order.isExpress && order.orderExpress.telPhone}}">
       <view class="order-trace-bar row-between" >
         <view class="row">
-          <image class="icon" src="/images/icons/sender.png" />
+          <icon class="sender"/>
           <text class="ml20">{{order.orderExpress.note}}（{{order.orderExpress.telPhone}}）</text>
         </view>
         <view  class="row" @tap="sender">
-          <image class="icon" src="/images/icons/call.png"  />
+          <icon class="call"/>
           <text class="ml10 primary">电话联系</text>
         </view>
       </view>
@@ -72,7 +72,7 @@
       </view>
       <view class="price-box row-between" wx:if="{{order.reduceFee > 0}}">
         <view class="row">
-          <image class="icon" src="/images/icons/reduce.png"></image>
+          <icon class="reduce" style="color: #d81e06;"/>
           <text>优惠满减</text>
         </view>
         <text class="major">-￥{{order.reduceFee}}</text>
