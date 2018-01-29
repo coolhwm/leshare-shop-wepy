@@ -2,7 +2,7 @@
   <view class="zan-tab">
     <block wx:if="{{tab.scroll}}">
       <scroll-view
-        class="zan-tab__bd zan-tab__bd--scroll {{ fixed ? 'zan-tab__bd--fixed' : '' }}"
+        class="zan-tab__bd zan-tab__bd--scroll {{ fixed == '1' ? 'zan-tab__bd--fixed' : '' }}"
         scroll-x="true"
         style="height:{{ tab.height ? tab.height + 'px' : 'auto' }}"
       >
@@ -25,7 +25,7 @@
       </scroll-view>
     </block>
     <block wx:else>
-      <view class="zan-tab__bd {{fixed == 'true'? 'zan-tab__bd--fixed' : ''}}">
+      <view class="zan-tab__bd {{fixed == '1' ? 'zan-tab__bd--fixed' : ''}}">
         <view
           wx:for="{{tab.list}}"
           wx:key="id"
@@ -53,7 +53,7 @@
     props = {
       tab: {twoWay: true},
       fixed: {
-        default: 'true'
+        default: true
       }
     };
     data = {};

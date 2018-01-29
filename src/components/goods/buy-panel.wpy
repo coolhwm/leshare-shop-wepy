@@ -1,0 +1,331 @@
+<template>
+  <!--TODO 滑出面板可以重构-->
+  <view class="goods-buy-panel-cover" @tap="close" wx:if="{{sku.display}}"></view>
+
+  <!--购买面板-->
+  <view class="goods-buy-panel-container {{ sku.display ? 'goods-buy-panel-show' : '' }}" >
+    <!--信息面板-->
+    <view class="buy-panel-info-container">
+      <!--商品图-->
+      <image class="buy-panel-icon" src="{{sku.isReady ? sku.detail.imageUrl : goods.imageUrl}}" />
+      <!--文字 -->
+      <view class="buy-panel-title-price">
+        <text class="buy-panel-title">{{goods.name}}</text>
+        <text class="buy-panel-price">￥{{sku.isReady ? sku.detail.price: goods.priceLable}}</text>
+      </view>
+      <!--关闭按钮-->
+      <view class="buy-panel-close-container">
+        <image class="buy-panel-close-icon" @tap="close" src="/images/icons/close.png" />
+      </view>
+
+    </view>
+
+    <!--SKU展示 -->
+    <view class="buy-panel-sku-container" wx:if="{{sku.exists}}">
+      <view wx:for="{{sku.labels}}" wx:for-item="label" wx:key="key">
+        <view class="buy-panel-sku-title">
+          <text class="buy-panel-sku-title-text">{{label.key}}：</text>
+        </view>
+        <!--TODO 标签重构-->
+        <view class="buy-panel-sku-list">
+          <block wx:for-item="skuValue" wx:for="{{label.value}}" wx:key="*this" >
+            <view class="zan-label {{sku.disabledSkuValues[skuValue] ? 'zan-label--disabled' : '' }} {{sku.selected[label.key] == skuValue ? 'zan-label--primary' : ''}}"
+                  @tap="select({{label.key}}, {{skuValue}})">{{skuValue}}</view>
+          </block>
+        </view>
+      </view>
+    </view>
+
+    <!--购买数量 -->
+    <view class="buy-panel-num-container">
+      <view class="buy-panel-num-title">
+        <text class="buy-panel-num-text">购买数量：</text>
+        <text class="buy-panel-stock-text" >{{sku.stockText}}</text>
+      </view>
+
+      <view class="buy-panel-num-selector">
+        <ZanQuantity :quantity.sync="quantity" @change.user="num"/>
+      </view>
+    </view>
+
+    <block wx:if="{{status.open}}">
+      <view class="buy-panel-next {{sku.next ? '' : 'buy-panel-empty'}}" @tab="confirm('buy')" wx:if="{{sku.action =='buy'}}">
+        <text>下一步</text>
+      </view>
+      <view class="buy-panel-next {{sku.next ? '' : 'buy-panel-empty'}}" @tap="confirm('cart')" wx:if="{{sku.action =='cart'}}">
+        <text>确定</text>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="buy-panel-next buy-panel-empty" catchtap="onCloseTap" >
+        <text>未营业</text>
+      </view>
+    </block>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import ZanQuantity from '../../components/zanui/quantity';
+  import Sku from '../../utils/Sku';
+  import Tips from '../../utils/Tips';
+  import Event from '../../utils/Event';
+  import Cart from '../../utils/Cart';
+
+  @connect({
+    status: store.get('status')
+  })
+  export default class GoodsPanel extends wepy.component {
+    props = {
+    };
+    data = {
+      goods: {}
+    };
+    skuManager = null;
+    cartManager = Cart.create();
+    async onLoad() {
+      await store.init();
+      // 监听购物面板打开的事件
+      Event.listen(Event.GOODS_PANEL_OPEN, this.open.bind(this), this);
+    }
+    open(goods) {
+      this.goods = goods;
+      this.skuManager = new Sku(goods);
+      this.skuManager.action = 'cart';
+      this.skuManager.display = true;
+      this.$apply();
+    }
+    methods = {
+      // 选择SKU
+      select(key, value) {
+        if (this.sku.disabledSkuValues[value]) {
+          return;
+        }
+        this.skuManager.select(key, value);
+      },
+      // 关闭SKU
+      close() {
+        this.goods = null;
+        this.skuManager.display = false;
+      },
+      // 改变SKU数量
+      num({quantity}) {
+        this.skuManager.setNum(quantity);
+      },
+      // 确认选择
+      confirm(type) {
+        if (!this.sku.next) {
+          return;
+        }
+        // 增加到购物车
+        if (type == 'cart') {
+          const {skuText, num} = this.sku;
+          this.cartManager.plus(this.goods, skuText, num);
+          if (this.goods.isTips) {
+            Tips.success('已加入购物车');
+          }
+        }
+        // 关闭面板
+        this.skuManager.display = false;
+        this.$root.$apply();
+      }
+    };
+    computed = {
+      sku() {
+        if (this.skuManager == null) return;
+        return this.skuManager.export();
+      },
+      quantity() {
+        if (this.sku == null) {
+          return null;
+        } else {
+          return {
+            num: this.sku.num,
+            min: 1,
+            max: this.sku.stock
+          }
+        }
+      }
+    };
+    components = {
+      ZanQuantity: ZanQuantity
+    };
+    events = {};
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  /*购买面板*/
+  .goods-buy-panel-container{
+    position: fixed;
+    background: #FFF;
+    bottom: 0px;
+    width: 100%;
+    z-index: 1000;
+    transform: translateY(150%);
+    transition: all 0.4s ease;
+  }
+  .goods-buy-panel-show{
+    transform: translateY(0);
+  }
+
+  /*遮罩层*/
+  .goods-buy-panel-cover{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    background-color: black;
+    -webkit-filter:opacity(.6);
+    z-index: 100;
+  }
+
+  /*信息面板*/
+  .buy-panel-info-container{
+    margin-left: 30rpx;
+    border-bottom: 1px solid #E2E2E2;
+    display: flex;
+    flex-direction: row;
+  }
+
+  /*面板图片*/
+  .buy-panel-icon{
+    position: relative;
+    background-color: white;
+    top: -20rpx;
+    height: 170rpx;
+    min-height:170rpx;
+    width: 170rpx;
+    min-width: 170rpx;
+    border-radius: 5px;
+    border: 1px solid #E2E2E2;
+  }
+
+  /*信息-价格/标题面板*/
+  .buy-panel-title-price{
+    display: flex;
+    flex:1;
+    flex-direction: column;
+    padding-left: 30rpx;
+    padding-top: 28rpx;
+    text-overflow: ellipsis;
+    word-break:keep-all;/* 不换行 */
+    white-space:nowrap;/* 不换行 */
+    overflow:hidden;/* 内容超出宽度时隐藏超出部分的内容 */
+  }
+
+  /*商品标题*/
+  .buy-panel-title{
+    font-size: 30rpx;
+    text-overflow: ellipsis;
+    word-break:keep-all;/* 不换行 */
+    white-space:nowrap;/* 不换行 */
+    overflow:hidden;/* 内容超出宽度时隐藏超出部分的内容 */
+    color:#1F1F1F;
+  }
+  /*关闭图标*/
+  .buy-panel-close-container{
+    padding-top: 28rpx;
+    width: 100rpx;
+    text-align: center;
+  }
+  .buy-panel-close-icon{
+    height: 45rpx;
+    width: 45rpx;
+  }
+
+  /**
+  * 商品价格
+  */
+  .buy-panel-price{
+    margin-top: 20rpx;
+    font-size: 35rpx;
+    color:#ff6200;
+  }
+
+  /*SKU展示区域*/
+  .buy-panel-sku-container{
+    display: flex;
+    flex-direction: column;
+    margin-left: 30rpx;
+    padding-top: 25rpx;
+    border-bottom: 1px solid #E2E2E2;
+  }
+
+  /*SKU列表*/
+  .buy-panel-sku-list{
+    padding-top: 15rpx;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .buy-panel-sku-list view {
+    margin-bottom: 15rpx;
+  }
+
+  /*SKU标题容器*/
+  .buy-panel-sku-title{
+
+  }
+
+  /*SKU标题文字*/
+  .buy-panel-sku-title-text{
+    font-size: 30rpx;
+    color: #1F1F1F;
+  }
+
+  /*购买数量*/
+  .buy-panel-num-container{
+    display: flex;
+    flex-direction:  row;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 30rpx;
+    padding-top: 30rpx;
+    padding-bottom: 30rpx;
+    padding-right: 30rpx;
+  }
+
+  /*购买数量/剩余 容器*/
+  .buy-panel-num-title{
+    display: flex;
+    height: 82rpx;
+    justify-content: flex-start;
+    flex-direction: column;
+  }
+  /*购买数量文字*/
+  .buy-panel-num-text{
+    font-size: 30rpx;
+    color: #1F1F1F;
+  }
+  /*剩余数量文字*/
+  .buy-panel-stock-text{
+    margin-top: 10rpx;
+  }
+
+
+
+  /*购买栏底部*/
+  .buy-panel-next{
+    background-color: #1296db;
+    height: 100rpx;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .buy-panel-next text{
+    font-size: 36rpx;
+    color: #FFF;
+  }
+
+  /*购买栏为空*/
+  .buy-panel-empty{
+    background-color: #B0B0B0;
+  }
+
+</style>

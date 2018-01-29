@@ -1,5 +1,4 @@
 import wepy from 'wepy';
-import Tips from './Tips';
 
 // HTTP工具类
 export default class http {

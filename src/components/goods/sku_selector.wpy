@@ -1,7 +1,7 @@
 <template>
-  <CoverPanel :display.sync="display" zIndex="1000000"/>
+  <CoverPanel :display.sync="display" zIndex="1000000" @tap.user="close"/>
   <!--弹出窗口-->
-  <view class="wrap" wx:if="{{display == 'true'}}">
+  <view class="wrap" wx:if="{{display}}" >
     <view class="modal-panel column">
       <!--标题区域-->
       <view class="sku-title column-center">
@@ -42,23 +42,83 @@
   import Sku from '../../utils/Sku';
   import Tips from '../../utils/Tips';
   import DisplayBadge from './discount_badge';
+  import Event from '../../utils/Event';
+  import Cart from '../../utils/Cart';
   let skuData;
   export default class SkuSelector extends wepy.component {
     props = {
-      goods: {},
-      carts: {},
-      display: {
-        twoWay: true
-      }
     };
     data = {
+      goods: null,
       selected: null,
       price: null,
-      originalPrice: null
+      originalPrice: null,
+      display: false,
+      source: null
     };
+    cartManager = Cart.create();
+    onLoad () {
+      // 加一个到购物车的监听
+      this.source = this.$root.$wxpage.route;
+      Event.listen(Event.GOODS_PANEL_PLUS, this.plus.bind(this), this);
+      // 减少一个购物车监听
+      Event.listen(Event.GOODS_PANEL_MINUS, this.minus.bind(this), this);
+    }
+    plus({goods, goodsSku, source}) {
+      if (source != this.source) {
+        return;
+      }
+      // TODO 库存校验
+      // 初始化商品对象
+      this.goods = goods;
+      const hasSku = goods.goodsSkuInfo && (goodsSku == null || goodsSku == '');
+      if (hasSku) {
+        // 有SKU，且没有选择SKU的情况，展现面板
+        this.display = true;
+      } else {
+        // 没有SKU，直接加入购物车
+        this.cartManager.plus(goods, goodsSku);
+        if (goods.isTips || goods.isTips == null) {
+          Tips.success('已加入购物车');
+        }
+        this.clear();
+      }
+      this.$apply();
+    }
+    minus ({goodsId, goodsSku, source}) {
+      if (source != this.source) {
+        return;
+      }
+      // 根据商品ID查找购物车
+      const cartGoodsList = this.cartManager.findByGoodsId(goodsId);
+      if (cartGoodsList.length < 1) {
+        console.warn('移除购物车的商品不存在');
+        return;
+      }
+      if (cartGoodsList.length > 1 && goodsSku == null) {
+        Tips.alert('请在购物车操作');
+        return;
+      }
+      // 处理多规格商品，但是购物车只有一个的情况
+      const cartGoods = cartGoodsList[0];
+      if (goodsSku == null && cartGoods.goodsSku != null) {
+        goodsSku = cartGoods.goodsSku
+      }
+      // 购物车对象
+      this.cartManager.minus(goodsId, goodsSku);
+      this.$apply();
+    }
+    clear () {
+      skuData = null;
+      this.selected = null;
+      this.originalPrice = null;
+      this.price = null;
+      this.goods = null;
+      this.display = false;
+    }
     methods = {
       close() {
-        this.display = 'false';
+        this.clear();
       },
       select(sku) {
         const skuValue = sku.sku;
@@ -71,41 +131,46 @@
         this.originalPrice = skuData.detail.originalPrice;
         this.$apply();
       },
-      confirm() {
+      async confirm() {
         if (this.selected == null) {
           Tips.alert('请选择');
           return;
         }
-        this.$emit('select', {
-          goodsId: this.goods.id,
-          goodsSku: this.selected
-        });
+        this.cartManager.plus(this.goods, this.selected);
+        if (this.goods.isTips || this.goods.isTips == null) {
+          Tips.success('已加入购物车');
+        }
         // 清理残留数据
-        this.selected = null;
-        this.price = null;
-        this.originalPrice = null;
-        this.display = 'false';
+        this.clear();
+        this.$root.$apply();
       }
     };
     computed = {
-      sku() {
-        if (this.goods && this.goods.id) {
-          skuData = new Sku(this.goods);
-          const stocks = skuData.skuStocks;
-          stocks.forEach(stock => {
-            if (stock.stock == 0) {
-              stock.max = true;
-              return;
-            }
-            const cart = this.carts.find(item => item.goodsId == this.goods.id && item.goodsSku == stock.sku);
-            if (cart == null) {
-              stock.max = false;
-            } else {
-              stock.max = cart.goodsNum >= stock.stock;
-            }
-          });
-          return stocks;
+      carts() {
+        if (this.cartManager == null) {
+          return;
         }
+        return this.cartManager.export().carts;
+      },
+      sku() {
+        if (this.goods == null || this.carts == null) {
+          return;
+        }
+        skuData = new Sku(this.goods);
+        const stocks = skuData.skuStocks;
+        stocks.forEach(stock => {
+          if (stock.stock == 0) {
+            stock.max = true;
+            return;
+          }
+          const cart = this.carts.find(item => item.goodsId == this.goods.id && item.goodsSku == stock.sku);
+          if (cart == null) {
+            stock.max = false;
+          } else {
+            stock.max = cart.goodsNum >= stock.stock;
+          }
+        });
+        return stocks;
       }
     };
     components = {
@@ -137,6 +202,9 @@
 
   .sku-title{
     height: 120rpx;
+    padding: 10rpx 30rpx;
+    max-width: 550rpx;
+    text{text-align: center}
 
     .close{
       position: absolute;

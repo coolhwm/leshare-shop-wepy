@@ -1,0 +1,97 @@
+<template>
+  <view class="goods-box">
+    <!--顶部标题-->
+    <view class="box-title row-center" wx:if="{{param.isTitle}}">
+      <text class="title-line">────────</text><text class="title-text">{{param.title}}</text><text class="title-line">────────</text>
+    </view>
+
+    <!--横向单个布局-->
+    <view class="row-box column" wx:if="{{param.layout == 'ROW'}}">
+      <repeat for="{{param.data}}" key="index" index="index" item="item">
+        <!--限制数量-->
+        <block wx:if="{{index < param.count}}">
+          <RowItem :goods.sync="item" :param.sync="param"/>
+        </block>
+      </repeat>
+    </view>
+
+    <!--横向单个布局-->
+    <view class="tight-box row" wx:if="{{param.layout == 'TIGHT'}}">
+      <repeat for="{{param.data}}" key="index" index="index" item="item">
+        <!--限制数量-->
+        <block wx:if="{{index < param.count}}">
+          <TightItem :goods.sync="item" />
+        </block>
+      </repeat>
+    </view>
+
+    <!--横向两个布局-->
+    <view class="grid-box row" wx:if="{{param.layout == 'GRID'}}">
+      <repeat for="{{param.data}}" key="index" index="index" item="item">
+        <!--限制数量-->
+        <block wx:if="{{index < param.count}}">
+          <GridItem :goods.sync="item" />
+        </block>
+      </repeat>
+    </view>
+
+    <!--更多商品-->
+    <view class="box-footer row-center" wx:if="{{param.isMore}}" @tap="more">
+      <text class="weak">{{param.moreText}}</text>
+    </view>
+  </view>
+
+</template>
+<script>
+  import wepy from 'wepy';
+  import RowItem from './goods/goods_row';
+  import TightItem from './goods/goods_tight';
+  import GridItem from './goods/goods_grid';
+  export default class GoodsBox extends wepy.component {
+    props = {
+      param: {}
+    };
+    methods = {
+      more() {
+        this.$root.$navigate(`/pages/goods/search_list?categoryId=${this.param.categoryId}`);
+      }
+    };
+    components = {
+      RowItem: RowItem,
+      TightItem: TightItem,
+      GridItem: GridItem
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .goods-box {
+    border-top: $border;
+    background-color: white;
+    .box-title{
+      height: 80rpx;
+      border-bottom: $border;
+      background-color: $color-bg-body;
+      .title-text{
+        color: $color-primary;
+        margin-left: 20px;
+        margin-right: 20px;
+        font-size: $text-lg;
+      }
+      .title-line{
+        color: #E2E2E2;
+      }
+    }
+    .box-footer{
+      padding: 15rpx;
+    }
+  }
+
+  .tight-box{
+    flex-wrap: wrap;
+  }
+  .grid-box{
+    flex-wrap: wrap;
+  }
+</style>

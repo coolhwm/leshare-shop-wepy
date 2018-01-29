@@ -1,0 +1,134 @@
+<template>
+  <view class="zan-quantity {{ size === 'small' ? 'zan-quantity--small' : '' }}">
+    <view
+      class="zan-quantity__minus {{ quantity.num <= quantity.min ? 'zan-quantity--disabled' : '' }}"
+      data-component-id="{{ quantity.componentId }}"
+      data-quantity="{{ quantity.num }}"
+      data-disabled="{{ quantity.num <= quantity.min }}"
+      bindtap="_handleZanQuantityMinus"
+    >-</view>
+    <input
+      class="zan-quantity__text {{ quantity.min >= quantity.max ? 'zan-quantity--disabled' : '' }}"
+      type="number"
+      data-component-id="{{ quantity.componentId }}"
+      data-min="{{ quantity.min }}"
+      data-max="{{ quantity.max }}"
+      value="{{ quantity.num }}"
+      disabled="{{ quantity.min >= quantity.max }}"
+      bindblur="_handleZanQuantityBlur"
+    />
+    <view
+      class="zan-quantity__plus {{ quantity.num >= quantity.max ? 'zan-quantity--disabled' : '' }}"
+      data-component-id="{{ quantity.componentId }}"
+      data-quantity="{{ quantity.num }}"
+      data-disabled="{{ quantity.num >= quantity.max }}"
+      bindtap="_handleZanQuantityPlus"
+    >+</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class ZanQuantity extends wepy.component {
+    props = {
+      quantity: {}
+    };
+    data = {};
+    methods = {
+      _handleZanQuantityMinus(e) {
+        this.handle(e, -1);
+      },
+      _handleZanQuantityPlus(e) {
+        this.handle(e, +1);
+      },
+      _handleZanQuantityBlur(e) {
+        const dataset = e.currentTarget.dataset;
+        const componentId = dataset.componentId;
+        const max = +dataset.max;
+        const min = +dataset.min;
+        let value = e.detail.value;
+        if (!value) {
+          setTimeout(() => {
+            this.callback(componentId, min);
+          }, 16);
+          this.callback(componentId, value);
+          return '' + value;
+        }
+        value = +value;
+        if (value > max) {
+          value = max;
+        } else if (value < min) {
+          value = min;
+        }
+        this.callback(componentId, value);
+        return '' + value;
+      }
+    };
+    handle(e, num) {
+      const dataset = e.currentTarget.dataset;
+      const componentId = dataset.componentId;
+      const disabled = dataset.disabled;
+      const quantity = +dataset.quantity;
+      if (disabled) return null;
+      this.callback(componentId, quantity + num);
+    }
+    callback(componentId, quantity) {
+      quantity = +quantity;
+      const e = { componentId, quantity };
+      this.$emit('change', e);
+    }
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .zan-quantity {
+    color: #666;
+  }
+  .zan-quantity view {
+    display: inline-block;
+    line-height: 20px;
+    padding: 5px 0;
+    text-align: center;
+    min-width: 40px;
+    box-sizing: border-box;
+    vertical-align: middle;
+    font-size: 12px;
+    border: 1rpx solid #999;
+  }
+  .zan-quantity .zan-quantity__minus {
+    border-right: none;
+    border-radius: 2px 0 0 2px;
+  }
+  .zan-quantity .zan-quantity__text {
+    border: 1rpx solid #999;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    height: 30px;
+    width: 40px;
+    font-size: 12px;
+    line-height: 30px;
+  }
+  .zan-quantity .zan-quantity__plus {
+    border-left: none;
+    border-radius: 0 2px 2px 0;
+  }
+  .zan-quantity .zan-quantity--disabled {
+    background: #f8f8f8;
+    color: #bbb;
+    border-color: #e8e8e8;
+  }
+  .zan-quantity--small view {
+    min-width: 36px;
+    line-height: 18px;
+  }
+  .zan-quantity--small .zan-quantity__text {
+    width: 36px;
+    line-height: 28px;
+    height: 28px;
+  }
+
+</style>
