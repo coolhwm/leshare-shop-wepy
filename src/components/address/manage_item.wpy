@@ -102,17 +102,12 @@
     align-items: center;
     vertical-align: middle;
   }
-  /*操作图片*/
-  .address-opt-container image{
-    height: 40rpx;
-    width: 40rpx;
-    margin-left: 25rpx;
-  }
+
   /*操作文本*/
   .address-mgr-container text{
     color: #0A0A0D;
     font-size: 28rpx;
-    margin-left: 13rpx;
+    margin-right: 13rpx;
   }
 
 

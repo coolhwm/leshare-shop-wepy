@@ -3,13 +3,13 @@
 
     <!-- 占位空间 -->
     <view class="address-empty-box row" wx:if="{{!address}}">
-      <image class="icon-lg" src="/images/icons/plus-square.png"/>
+      <icon class="plus-square normal" />
       <text class="xl ml20">新增收货地址</text>
     </view>
 
     <!--左侧图标-->
     <view class="address-icon-box" wx:if="{{address}}">
-      <image class="icon" src="/images/icons/address.png"/>
+      <icon class="address normal" />
     </view>
 
     <!-- 地址内容 -->
@@ -26,7 +26,7 @@
     </view>
 
     <!--右侧图标-->
-    <image class="icon" src="/images/icons/more.png"/>
+    <icon class="more normal" />
   </view>
   <image class="hr" src="/images/icons/address-hr.png" />
 </template>

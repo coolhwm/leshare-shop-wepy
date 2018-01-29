@@ -1,11 +1,11 @@
 @import "variable";
 @font-face {
   font-family: 'iconfont';  /* project id 553949 */
-  src: url('//at.alicdn.com/t/font_553949_hn06p9qveha1yvi.eot');
-  src: url('//at.alicdn.com/t/font_553949_hn06p9qveha1yvi.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_553949_hn06p9qveha1yvi.woff') format('woff'),
-  url('//at.alicdn.com/t/font_553949_hn06p9qveha1yvi.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_553949_hn06p9qveha1yvi.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_553949_zhx1qoqgflsrlik9.eot');
+  src: url('//at.alicdn.com/t/font_553949_zhx1qoqgflsrlik9.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_553949_zhx1qoqgflsrlik9.woff') format('woff'),
+  url('//at.alicdn.com/t/font_553949_zhx1qoqgflsrlik9.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_553949_zhx1qoqgflsrlik9.svg#iconfont') format('svg');
 }
 @mixin icon-size($size){
   line-height: $size;
@@ -18,7 +18,7 @@ icon {
   font-style:normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   padding: 5rpx;
 }
@@ -89,3 +89,4 @@ icon.back-round:before { content: "\e884"; }
 icon.vip:before { content: "\e94f"; }
 icon.sale:before { content: "\e885"; }
 icon.address:before { content: "\e766"; }
+icon.picked:before { content: "\e618"; }

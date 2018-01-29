@@ -14,7 +14,6 @@ import { setStore } from 'wepy-redux'
 import configStore from './store'
 const store = configStore();
 
-
 setStore(store);
 export default class extends wepy.app {
   globalData = {
@@ -64,13 +63,8 @@ export default class extends wepy.app {
     WxUtils.checkSDK();
     // 同步开放平台EXT数据
     const ext = wepy.getExtConfigSync();
-    console.info('[ext] init ext data', ext);
-    if (ext.globalConfig) {
-      const globalConfig = JSON.parse(ext.globalConfig);
-      console.info('[ext] init ext global config data', globalConfig);
-      Object.assign(ext, globalConfig);
-    }
     Object.assign(wepy.$instance.globalData, ext);
+    console.info(ext);
     // 同步权限数据
     this.syncStoreConfig('login_code');
     this.syncStoreConfig('third_session');

@@ -1,12 +1,12 @@
 <template>
   <view class="inshop-tab row-center">
     <view class="tab-item row-center" @tap="tap(30)">
-      <image class="icon" src="/images/icons/inshop{{selectedId == '30' ? '' : '-gray'}}.png"/>
+      <icon class="inshop large" color="{{selectedId == '30' ? 'primary' : 'gray'}}" />
       <text class="{{selectedId == '30' ? 'text-selected' : ''}}">到店堂食</text>
     </view>
     <view class="tab-vr"></view>
     <view class="tab-item row-center" @tap="tap(33)">
-      <image class="icon" src="/images/icons/package{{selectedId == '33' ? '' : '-gray'}}.png"/>
+      <icon class="package large" color="{{selectedId == '33' ? 'primary' : 'gray'}}" />
       <text class="{{selectedId == '33' ? 'text-selected' : ''}}">打包带走</text>
     </view>
   </view>

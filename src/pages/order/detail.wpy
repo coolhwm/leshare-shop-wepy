@@ -26,7 +26,7 @@
     </block>
 
     <!--地址展现-->
-    <block wx:if="{{order.orderType == '20'}}">
+    <block wx:if="{{order.orderType == '20' || order.orderType == '10'}}">
       <Address :address.sync="address" />
     </block>
     <block wx:if="{{order.orderType == '30' || order.orderType == '33'}}">
@@ -352,7 +352,6 @@
     width: 750rpx;
     bottom: 0;
     border-top: $border;
-    height: 90rpx;
     padding-right: 10rpx;
   }
 

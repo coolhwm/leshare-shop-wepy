@@ -25,9 +25,6 @@
       <text>点击</text>
       <text>领取</text>
     </view>
-
-    <!-- 修饰图片 -->
-    <image class="coupon-picked-icon" wx:if="{{own}}"  src="/images/icons/picked.png" />
   </view>
 </template>
 

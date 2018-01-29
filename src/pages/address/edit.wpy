@@ -77,10 +77,6 @@
    </view>
 </template>
 
-<style lang="scss">
-  @import "../../styles/variable";
-</style>
-
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
@@ -211,3 +207,10 @@
     };
   }
 </script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .container {
+    background-color: white;
+  }
+</style>
