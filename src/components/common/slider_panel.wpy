@@ -13,7 +13,7 @@
 
       <!--关闭按钮-->
       <view class="close-box">
-        <image class="icon" @tap="close" src="/images/icons/close.png" />
+        <icon class="close" color="gray" @tap="close"/>
       </view>
     </view>
 

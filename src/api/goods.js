@@ -6,13 +6,20 @@ import Page from '../utils/Page';
  */
 export default class goods extends base {
   /**
-   * 返回分页对象
+   * 获取推荐
    */
-  static page (isRecommend = false, discount) {
-    let url = `${this.baseUrl}/goods`;
-    if (isRecommend) {
-      url += '/recommend';
-    }
+  static recommend () {
+    let url = `${this.baseUrl}/goods/recommend`;
+    return new Page(url, item => {
+      this._processGoodsData(item);
+    });
+  }
+
+  /**
+   * 新的分页方法
+   */
+  static list (discount) {
+    let url = `${this.baseUrl}/goods/list`;
     return new Page(url, item => {
       this._processGoodsDiscount(item, discount);
       this._processGoodsData(item);
@@ -48,20 +55,18 @@ export default class goods extends base {
   /**
    * 查询商品详情
    */
-  static getInfo (goodsId) {
+  static getInfo (goodsId, discount) {
     const url = `${this.baseUrl}/goods/${goodsId}`;
-    return this.get(url, {}).then(data => this._processGoodsDetail(data));
+    return this.get(url, {}).then(data => {
+      this._processGoodsDiscount(data, discount);
+      return this._processGoodsDetail(data)
+    });
   }
 
   /** ********************* 数据处理方法 ***********************/
 
   static _createGoodsCategories (data) {
     const list = [];
-    list.push({
-      id: '-1',
-      title: '推荐'
-    });
-
     if (data != null) {
       list.push(...data.map(item => {
         return {
@@ -72,7 +77,7 @@ export default class goods extends base {
     }
     return {
       list: list,
-      selectedId: '-1',
+      selectedId: list[0].id,
       scroll: false
     };
   }

@@ -21,7 +21,6 @@
     data = {};
     methods = {
       switchTab(selectedId) {
-        this.tab.selectedId = selectedId;
         this.$emit('change', selectedId);
       }
     };

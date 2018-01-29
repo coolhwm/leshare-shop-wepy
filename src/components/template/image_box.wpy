@@ -1,8 +1,8 @@
 <template>
   <view class="image-box row-around">
     <view class="column-around" wx:for="{{param.data}}" wx:for-item="image" wx:key="seq">
-      <image style="width:{{param.width}};height:{{param.heigth}} " mode="aspectFill" src="{{image.url}}" @tap="routeByAction({{image}})"></image>
-      <text wx:if="{{image.isTitle}}" class="image-title">{{image.title}}</text>
+      <image style="width:{{param.width}};height:{{param.height}} " mode="aspectFill" src="{{image.url}}" @tap="routeByAction({{image}})"></image>
+      <text wx:if="{{param.isShowTitle}}" class="image-title">{{image.title}}</text>
     </view>
   </view>
 

@@ -3,7 +3,7 @@
   <view class="container" wx:if="{{init}}">
     <!--状态栏-->
     <view class="order-status-bar row">
-      <image class="icon-lg" src="/images/icons/status-{{order.status}}.png" wx:if="{{order.status}}" />
+      <icon class="status-{{order.status}} large"/>
       <view class="status-box column">
         <text class="xxl">{{order.statusText}}</text>
         <!-- 订单文本描述/需要抽取到Service中 -->
@@ -15,20 +15,21 @@
     <block wx:if="{{order.isExpress && order.orderExpress.telPhone}}">
       <view class="order-trace-bar row-between" >
         <view class="row">
-          <image class="icon" src="/images/icons/sender.png" />
+          <icon class="sender"/>
           <text class="ml20">{{order.orderExpress.note}}（{{order.orderExpress.telPhone}}）</text>
         </view>
         <view  class="row" @tap="sender">
-          <image class="icon" src="/images/icons/call.png"  />
+          <icon class="call"/>
           <text class="ml10 primary">电话联系</text>
         </view>
       </view>
     </block>
+
     <!--地址展现-->
-    <block wx:if="{{order.orderType == '20'}}">
+    <block wx:if="{{order.orderType == '20' || order.orderType == '10'}}">
       <Address :address.sync="address" />
     </block>
-    <block wx:else>
+    <block wx:if="{{order.orderType == '30' || order.orderType == '33'}}">
       <InShopStatus :order.sync="order" />
     </block>
 
@@ -71,7 +72,7 @@
       </view>
       <view class="price-box row-between" wx:if="{{order.reduceFee > 0}}">
         <view class="row">
-          <image class="icon" src="/images/icons/reduce.png"></image>
+          <icon class="reduce" style="color: #d81e06;"/>
           <text>优惠满减</text>
         </view>
         <text class="major">-￥{{order.reduceFee}}</text>
@@ -104,9 +105,9 @@
   import order from '../../api/order';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
-  import Address from '../../components/address/display';
+  import Address from '../../components/address/display_item';
   import Route from '../../utils/WxUtils';
-  import OrderItem from '../../components/order/customer_item';
+  import OrderItem from '../../components/order/order_item';
   import InShopStatus from '../../components/order/inshop_status';
   import Loading from '../../components/common/loading';
   export default class OrderDetail extends wepy.page {
@@ -230,7 +231,7 @@
       const refundUuid = refundOrder.curRefund.refundUuid;
       await Tips.confirm('您确认取消退款申请吗？');
       Tips.loading();
-      await order.cancelRefund(orderId, refundUuid);
+      await order.cancelRefundOrder(orderId, refundUuid);
       await Tips.success('取消成功');
       Event.emit(Event.ORDER_LIST_UPDATE);
       Route.backOrRedirect('/pages/customer/index');
@@ -351,7 +352,6 @@
     width: 750rpx;
     bottom: 0;
     border-top: $border;
-    height: 90rpx;
     padding-right: 10rpx;
   }
 

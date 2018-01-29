@@ -1,0 +1,16 @@
+<script>
+  import wepy from 'wepy';
+  export default class base extends wepy.mixin {
+    onLoad() {
+      const params = wepy.$instance.globalData.componentsParams;
+      if (params == null) {
+        return;
+      }
+      const param = params[this.$name];
+      if (param != null) {
+        console.info(`[minxin] component base init name=${this.$name}, param=`, param);
+        Object.assign(this, param);
+      }
+    }
+  }
+</script>

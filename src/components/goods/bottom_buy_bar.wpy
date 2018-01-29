@@ -1,0 +1,102 @@
+<template>
+  <view class="buy-bar-placeholder">
+  </view>
+  <view class="row buy-bar-box">
+    <view class="column-center  btn-fav" @tap="fav">
+      <icon class="like{{!isFav ? '' : '-fill'}}" style="color: {{!isFav ? 'gray' : 'red'}}" />
+      <text>收藏</text>
+    </view>
+    <view class="column-center btn-goto-cart" @tap="cart">
+      <view class="weui-badge" style="position: absolute;top: -5px;right: 5px;">{{cart.num}}</view>
+      <icon class="cart" color="gray"/>
+      <text>购物车</text>
+    </view>
+    <view class="column-center btn-cart" @tap="handlePlusCart({{goods}})">
+      <text>加入购物车</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import { connect } from 'wepy-redux';
+  import favorite from '../../api/favorite';
+  import store from '../../store/utils';
+  import router from '../../mixins/router';
+  import wepy from 'wepy';
+  import Tips from '../../utils/Tips';
+
+  @connect({
+    cart: store.get('cart')
+  })
+  export default class BuyBar extends wepy.component {
+    props = {
+      goods: {
+        default: null
+      }
+    };
+    data = {
+      isFav: false
+    };
+    methods = {
+      async fav() {
+        if (this.isFav) {
+          await Tips.confirm('确认取消收藏?');
+          await favorite.remove(this.goods.id);
+        } else {
+          await favorite.add(this.goods.id);
+          await Tips.success('收藏成功');
+        }
+        this.isFav = !this.isFav;
+        this.$apply();
+      },
+      cart() {
+        this.$parent.$switch('/pages/goods/cart');
+      }
+    };
+    watch = {
+      async goods(current, origin) {
+        if (origin != null && origin.id != null) return;
+        const result = await favorite.is(current.id);
+        this.isFav = result.isFavorite == 1;
+        this.$apply();
+      }
+    };
+    mixins = [router];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  $btn-width: 430rpx;
+  $btn-sm-width: (750rpx - $btn-width) / 2;
+  .buy-bar-box{
+    position: fixed;
+    bottom: 0;
+    height: 105rpx;
+    width: 100%;
+    background-color: white;
+    border: $border;
+    .btn-goto-cart{
+      border-left: $border;
+      position: relative;
+    }
+    .btn-fav, .btn-goto-cart{
+      width: $btn-sm-width;
+      text{font-size: $text-xs}
+    }
+    .btn-cart{
+      height: 100%;
+      width: $btn-width;
+      background-color: $color-primary;
+      text{
+        color: white;
+        font-size: $text-xl;
+      }
+    }
+  }
+  .buy-bar-placeholder{
+    height: 105rpx;
+    width: 100%;
+  }
+</style>

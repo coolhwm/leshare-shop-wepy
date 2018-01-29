@@ -42,7 +42,7 @@
   import Tips from '../../utils/Tips';
   import BonusItem from '../../components/customer/bonus_item';
   import PointsRule from '../../components/customer/points_rule';
-  import WepySignTime from '../../components/customer/wepy_sign_time';
+  import WepySignTime from '../../components/customer/sign_time';
   import pagination from '../../mixins/pagination.wpy';
   import Loadmore from '../../components/weui/loadmore';
   import Placeholder from '../../components/common/placeholder';
@@ -52,7 +52,7 @@
     member: store.get('member')
   })
   export default class SignIn extends wepy.page {
-    def = {
+    data = {
       init: false,
       tab: {
         list: [
@@ -68,7 +68,6 @@
       signDay: [],
       signIn: {}
     };
-    data = {...this.def};
     params () {
       return {
         member_id: this.member.memberId,

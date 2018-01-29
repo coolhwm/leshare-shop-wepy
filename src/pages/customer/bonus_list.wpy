@@ -29,7 +29,7 @@
       }
     };
     async onLoad() {
-      this.page = await member.bonusPage();
+      this.page = await member.bonus();
       await this.next();
     };
     config = {

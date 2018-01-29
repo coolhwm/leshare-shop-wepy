@@ -1,6 +1,6 @@
 <template>
   <Loading :init.sync="init"/>
-  <view wx:if="{{init}}">
+  <view class="template-box" wx:if="{{init}}">
     <repeat for="{{components}}" key="index" index="index" item="item">
       <!--搜索栏-->
       <block wx:if="{{item.type == 'SEARCH_BAR'}}">
@@ -31,6 +31,14 @@
       <block wx:if="{{item.type == 'GOODS_BOX'}}">
         <GoodsBox :param.sync="item" />
       </block>
+
+      <!--公告栏-->
+      <block wx:if="{{item.type == 'NOTICE_BAR'}}">
+        <NoticeBar :param.sync="item" />
+      </block>
+
+      <!--间隔-->
+      <view class="h-gap" wx:if="{{item.border !== 'none'}}"></view>
     </repeat>
 
     <!--插件-->
@@ -46,8 +54,13 @@
       </block>
 
       <!--浮动购物车-->
-      <block wx:if="{{item.type == 'CART_FLOAT'}}" >
-        <FloatCart />
+      <block wx:if="{{item.type == 'CART_WIDGET'}}" >
+        <CartWidget />
+      </block>
+
+      <!--状态提示-->
+      <block wx:if="{{item.type == 'STATUS_WIDGET'}}" >
+        <StatusWidget />
       </block>
     </repeat>
   </view>
@@ -55,9 +68,10 @@
 
 <script>
   import store from '../../store/utils';
+  import { connect } from 'wepy-redux';
+  import auth from '../../api/auth';
   import wepy from 'wepy';
   import base from '../../mixins/base';
-  import data from '../../data/home';
   import Loading from '../../components/common/loading';
   import SearchBar from '../../components/template/search_bar';
   import SwiperBar from '../../components/template/swiper_bar';
@@ -65,47 +79,38 @@
   import ImageBox from '../../components/template/image_box';
   import GoodsBox from '../../components/template/goods_box';
   import CouponBox from '../../components/template/coupon_box';
-  import GoodsPanel from '../../components/goods/buy-panel';
-  import SkuSelector from '../../components/goods/sku_selector';
-  import FloatCart from '../../components/template/float-cart';
+  import GoodsPanel from '../../components/goods/slider_buy_panel';
+  import SkuSelector from '../../components/goods/popup_buy_panel';
+  import CartWidget from '../../components/template/cart_widget';
+  import NoticeBar from '../../components/template/notice_bar';
 
+  @connect({
+    page: store.get('page'),
+    shop: store.get('shop')
+  })
   export default class IndexTemplate extends wepy.page {
     data = {
       init: false,
       components: null,
-      plugins: null,
-      fieldsToCopy: {
-        SWIPER: ['height'],
-        IMAGE_BOX: ['heigth', 'width', 'isTitle'],
-        GOODS_BOX: ['isCart', 'isPrice', 'isName', 'isSales', 'skuMode', 'isTips']
-      }
+      plugins: null
     };
     async onLoad () {
+      // 登录检查
+      await auth.login();
       await store.init();
-      this.components = this.processComponents(data.components);
-      this.plugins = this.processPlugins(data.plugins);
+      this.components = this.page.components;
+      this.plugins = this.page.plugins;
       this.loaded();
     };
-    processPlugins (plugins) {
-      return plugins
-        .filter(plugin => plugin.enable !== false);
-    }
-    processComponents (components) {
-      return components
-        .filter(component => component.display !== false)
-        .map(component => this.copyParamToData(component));
-    }
-    copyParamToData(component) {
-      const {data, type} = component;
-      const fields = this.fieldsToCopy[type];
-      if (fields != null) {
-        data.forEach(item => {
-          fields.forEach(field => {
-            item[field] = component[field];
-          });
-        });
-      }
-      return component;
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {name, avatar} = this.shop;
+      return {
+        title: `${name} 欢迎光临`,
+        imageUrl: avatar
+      };
     }
     methods = {
     };
@@ -119,7 +124,8 @@
       CouponBox: CouponBox,
       SilderPanel: GoodsPanel,
       PopupPanel: SkuSelector,
-      FloatCart: FloatCart
+      CartWidget: CartWidget,
+      NoticeBar: NoticeBar,
     };
     computed = {
     };
@@ -132,4 +138,13 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .template-box{
+    width: 100%;
+    overflow-x: hidden;
+    .h-gap {
+      width: 100%;
+      height: 1px;
+      background-color: $color-border;
+    }
+  }
 </style>

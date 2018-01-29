@@ -6,7 +6,7 @@
         <view class="cart-check-container" @tap="checkAll">
           <view class="zan-icon zan-icon-{{cart.all ? 'checked' : 'check'}}" />
         </view>
-        <image class="shop-info-icon" src="/images/icons/shop-gray.png" />
+        <icon class="shop" color="gray" />
         <text class="shop-info-name">{{shop.name}}</text>
       </view>
       <text class="cart-batch-edit" catchtap="batch"> {{cart.batch ? '完成' : '编辑'}}</text>
@@ -14,7 +14,7 @@
 
     <!--占位提示-->
     <view class="cart-empty-tips" wx:if="{{cart.carts.length == 0}}">
-      <image src="/images/icons/cart-empty.png" />
+      <icon class="cart-empty" style="font-size: 100px;"/>
       <text>购物车是空的</text>
     </view>
 
@@ -71,7 +71,7 @@
   import order from '../../api/order';
   import auth from '../../api/auth';
   import Cart from '../../utils/Cart';
-  import CartItem from '../../components/goods/cart';
+  import CartItem from '../../components/goods/cart_item';
   import Tips from '../../utils/Tips';
 
   @connect({
@@ -80,12 +80,11 @@
     status: store.get('status')
   })
   export default class GoodsCart extends wepy.page {
-    def = {
+    data = {
       init: false
     };
-    data = {...this.def};
     cartManager = Cart.create();
-    async onLoad (options) {
+    async onLoad () {
       this.loaded();
     };
     methods = {
@@ -123,9 +122,9 @@
         // 权限校验
         const result = await auth.user({block: true, redirect: false});
         if (!result) return;
-        // 订单类型
+        // 订单类型 TODO 订单类型
         param.orderType = 10;
-        const trade = order.createCartTrade(this.cartManager.carts, param);
+        const trade = order.createCartTrade(this.cartManager.getCheckedCarts(), param);
         // shop.reportFormId(param.formId);
         this.$preload('trade', trade);
         this.$navigate(`../order/trade`);
@@ -261,13 +260,6 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-  }
-
-  /*顶栏图片*/
-  .shop-info-icon{
-    height: 40rpx;
-    width: 40rpx;
-    vertical-align: middle;
   }
 
   /*顶栏店铺名称*/

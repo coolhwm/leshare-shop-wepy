@@ -2,21 +2,12 @@
   <Loading :init.sync="init"/>
   <view class="container" wx:if="{{init}}">
     <!--详情标题-->
-    <ZanTab :tab.sync="tab" @change.user="switchTab" />
-
-    <!--商品评价-->
-    <view wx:if="{{tab.selectedId == 'COMMENT'}}">
-      <!--列表展现-->
-      <repeat for="{{page.list}}" key="index" index="index" item="item">
-        <CommentItem :comment.sync="item" />
-      </repeat>
-      <!-- 加载提示 -->
-      <Loadmore :page.sync="page"/>
-      <Placeholder :show.sync="isPageEmpty" message="该商品没有相关评价"/>
-    </view>
+    <block wx:if="{{isTab}}">
+      <ZanTab :tab.sync="tab" @change.user="switchTab" />
+    </block>
 
     <!--商品介绍-->
-    <view wx:if="{{tab.selectedId == 'DETAIL'}}">
+    <view wx:if="{{tab.selectedId == 'INFO'}}">
       <!-- 轮播图 -->
       <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" @tap="previewDetailSwiper">
         <block wx:for="{{detail.images}}" wx:key="id">
@@ -30,53 +21,121 @@
       <view class="goods-info-box column">
 
         <!--基本信息-->
-        <view class="row">
-          <view class="small label primary" wx:if="{{detail.isRecommend == 1}}">推荐</view>
-          <text class="name">{{detail.name}}</text>
+        <view class="row-between">
+          <view>
+            <view class="small label primary" wx:if="{{detail.isRecommend == 1}}">推荐</view>
+            <text class="name">{{detail.name}}</text>
+          </view>
+          <view class="share-box">
+            <button open-type="share" plain class="column-center"  wx:if="{{isShare}}">
+              <icon class="share small" />
+              <text class="sm">分享</text>
+            </button>
+          </view>
         </view>
-        <text class="sm muted mt10">已售{{detail.salesVolume}}件</text>
+
+        <view class="row mt10">
+          <text class="sm muted mr10" wx:if="{{isSales}}">已售{{detail.salesVolume}}件</text>
+          <DiscountBadge :goods.sync="detail"/>
+        </view>
 
         <!--价格区域-->
         <view class="price row-between mt10">
-          <text class="major xxl">￥{{detail.priceLable}}</text>
+          <view class="row">
+            <text class="major xxl">￥{{detail.priceLable}}</text>
+            <text class="cancel ml10" wx:if="{{detail.discount}}">￥{{detail.originalPrice}}</text>
+          </view>
+
           <!--数量选择器-->
           <view class="quantity row mr20">
-            <view class="quantity-cart-btn" @tap.stop="handlePlusCart({{detail}})" wx:if="{{version.isOrder}}" >
+            <view class="quantity-cart-btn" @tap.stop="handlePlusCart({{detail}})" wx:if="{{version.isOrder && cartType=='BUTTON'}}">
               加入购物车
             </view>
           </view>
         </view>
 
+        <!--领取优惠券-->
+        <view class="coupons-box row-between" @tap="pick" wx:if="{{isCoupon}}">
+          <view class="row">
+            <view><text class="lg">领券：</text></view>
+            <view class="row">
+              <block wx:for="{{pickCoupons}}" wx:key="index">
+                <view class="coupon-item" wx:if="{{index < 3}}">
+                  <text>满{{item.limitPrice}}减{{item.price}}</text>
+                </view>
+              </block>
+              <view class="coupon-item" wx:if="{{pickCoupons.length > 3}}">
+                <text>...</text>
+              </view>
+            </view>
+          </view>
+          <icon class="more" color="gray"/>
+        </view>
+
         <!--评价向导-->
-        <view class="comment-box row-between" @tap="comments">
+        <view class="comment-box row-between" @tap="comments" wx:if="{{isComment}}">
           <text class="muted">{{commentText}}</text>
-          <image class="icon" src="/images/icons/more-gray.png" />
+          <icon class="more" color="gray"/>
         </view>
       </view>
 
-      <!--详情区域-->
-      <view class="detail-box" wx:if="{{detail.goodsDetails.length > 0}}">
-        <!--详情标题-->
-        <view class="detail-title row-center">
-          <text class="primary lg">── 商品详情 ──</text>
-        </view>
-
-        <view class="hr-light"></view>
-
-        <!--详情类列表区域/遍历详情-->
-        <view class="detail-list column">
-          <block wx:for="{{detail.goodsDetails}}" wx:key="id">
-            <!--文本-->
-            <text class="mb20 lg" wx:if="{{item.type == 1}}">{{item.content}}</text>
-            <!--图片-->
-            <image src="{{item.content}}" lazy-load mode="widthFix" wx:if="{{item.type == 2}}" @tap="previewDetailImages({{item.content}})"/>
-          </block>
-        </view>
+      <view class="more-box" @tap="detail" wx:if="{{detail.goodsDetails.length > 0}}">
+        <text class="muted">点击查看图文详情</text>
       </view>
     </view>
 
-    <!--购物面板-->
-    <SkuSelector />
+    <!--详情区域-->
+    <view class="detail-box" wx:if="{{tab.selectedId == 'DETAIL'}}">
+      <!--详情类列表区域/遍历详情-->
+      <view class="detail-list column">
+        <block wx:for="{{detail.goodsDetails}}" wx:key="id">
+          <!--文本-->
+          <text class="mb20 lg" wx:if="{{item.type == 1}}">{{item.content}}</text>
+          <!--图片-->
+          <image src="{{item.content}}" lazy-load mode="widthFix" wx:if="{{item.type == 2}}" @tap="previewDetailImages({{item.content}})"/>
+        </block>
+      </view>
+    </view>
+
+    <!--评价区域-->
+    <view wx:if="{{tab.selectedId == 'COMMENT'}}">
+      <!--列表展现-->
+      <repeat for="{{page.list}}" key="index" index="index" item="item">
+        <CommentItem :comment.sync="item" />
+      </repeat>
+      <!-- 加载提示 -->
+      <Loadmore :page.sync="page"/>
+      <Placeholder :show.sync="isPageEmpty" message="该商品没有相关评价"/>
+    </view>
+
+
+    <!--滑出购物面板-->
+    <block wx:if="{{buyPanelType == 'SLIDER'}}" >
+      <SilderPanel />
+    </block>
+
+    <!--弹出购物面板-->
+    <block wx:if="{{buyPanelType == 'POPUP'}}" >
+      <PopupPanel />
+    </block>
+
+    <!--购买栏-->
+    <block wx:if="{{cartType == 'BAR'}}">
+      <BuyBar :goods.sync="detail"/>
+    </block>
+
+    <block wx:if="{{cartType == 'BUTTON'}}">
+      <CartWidget />
+    </block>
+
+
+    <!--领取优惠券栏-->
+    <CouponPickPanel />
+
+    <!--联系客服-->
+    <block wx:if="{{isContact}}">
+      <ContactWidget />
+    </block>
   </view>
 
 </template>
@@ -96,10 +155,18 @@
   import store from '../../store/utils';
   import Loading from '../../components/common/loading';
   import router from '../../mixins/router';
-  import SkuSelector from '../../components/goods/sku_selector';
+  import PopupPanel from '../../components/goods/popup_buy_panel';
+  import SilderPanel from '../../components/goods/slider_buy_panel';
+  import DiscountBadge from '../../components/goods/discount_badge';
+  import ContactWidget from '../../components/template/contact_widget';
+  import BuyBar from '../../components/goods/bottom_buy_bar';
+  import CouponPickPanel from '../../components/coupons/pick_panel';
+  import CartWidget from '../../components/template/cart_widget';
 
   @connect({
-    version: store.get('version')
+    pickCoupons: store.get('pickCoupons'),
+    version: store.get('version'),
+    discount: store.get('discount')
   })
   export default class GoodsDetail extends wepy.page {
     data = {
@@ -111,29 +178,78 @@
         ]
       },
       commentInit: false,
-      tab: {}
+      tab: {},
+      cartType: 'BAR',
+      buyPanelType: 'POPUP',
+      isTab: true,
+      isCoupon: true,
+      isComment: true,
+      isSales: true,
+      isContact: true,
+      isShare: true
     };
     async onLoad ({goodsId}) {
+      await store.init();
       this.goodsId = goodsId;
-      this.detail = await goods.getInfo(goodsId);
+      this.detail = await goods.getInfo(goodsId, this.discount);
       this.count = await comment.count(goodsId);
       this.page = comment.page();
-      this.tab = {
-        list: [
-          {id: 'DETAIL', title: '商品介绍'},
-          {id: 'COMMENT', title: `商品评价(${this.count.ALL})`}
-        ],
-        selectedId: 'DETAIL'
-      };
+      this.tab = this.createTab();
       this.loaded();
     };
+    createTab() {
+      const tab = {
+        list: [
+        ],
+        selectedId: 'INFO'
+      };
+      tab.list.push({id: 'INFO', title: '基本信息'});
+      if (this.detail.goodsDetails.length > 0) {
+        tab.list.push({id: 'DETAIL', title: '图文详情'});
+      }
+      if (this.isComment) {
+        tab.list.push({id: 'COMMENT', title: `评价 (${this.count.ALL})`});
+      }
+      if (tab.list.length == 1) {
+        this.isTab = false;
+      }
+      return tab;
+    }
     params() {
       return {
         status: 'ALL',
         goods_id: this.goodsId
       };
     }
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {id, name, imageUrl} = this.detail;
+      return {
+        title: name,
+        imageUrl: imageUrl,
+        path: `/pages/goods/detail?goodsId=${id}`
+      };
+    }
     methods = {
+      /**
+       * 打开领取优惠券面板
+       */
+      pick() {
+        this.$invoke('CouponPickPanel', 'show');
+      },
+      detail() {
+        this.tab.selectedId = 'DETAIL';
+      },
+      /**
+       * 到达底部
+       */
+      async onReachBottom () {
+        if (this.tab.selectedId == 'COMMENT') {
+          await this.next();
+        }
+      },
       /**
        * 切换TAB页
        */
@@ -201,7 +317,13 @@
       Placeholder: Placeholder,
       CommentItem: CommentItem,
       Loading: Loading,
-      SkuSelector: SkuSelector
+      PopupPanel: PopupPanel,
+      SilderPanel: SilderPanel,
+      DiscountBadge: DiscountBadge,
+      ContactWidget: ContactWidget,
+      BuyBar: BuyBar,
+      CouponPickPanel: CouponPickPanel,
+      CartWidget: CartWidget
     };
     mixins = [base, pagination, router];
     config = {
@@ -215,6 +337,7 @@
   .goods-info-box{
     background-color: #FFF;
     padding: 20rpx;
+    padding-bottom: 0rpx;
     border-bottom: $border;
     border-top: $border;
     .name{
@@ -225,12 +348,41 @@
       height: 32px;
       padding-bottom: 10rpx;
     }
-    .comment-box{
-      padding-top: 20rpx;
-      border-top: $border;
+  }
+  .coupons-box{
+    padding-top: 20rpx;
+    padding-bottom: 20rpx;
+    border-top: $border;
+    .coupon-item{
+      border: 1px solid $color-primary;
+      padding: 0 15rpx;
+      margin-left: 10rpx;
+      border-radius: 3px;
+      text{
+        color: $color-primary;
+        font-size: $text-sm;
+      }
     }
   }
-
+  .comment-box{
+    padding-top: 20rpx;
+    padding-bottom: 20rpx;
+    border-top: $border;
+  }
+  .share-box{
+    width: 40px;
+    min-width: 40px;
+    padding-left: 5px;
+    border-left: $border;
+    button{
+      align-items: center;
+      padding: 0;
+      text{
+        line-height: 26rpx;
+        margin-top: 15rpx;
+      }
+    }
+  }
   .quantity-cart-btn{
     background-color: $color-primary;
     font-size: $text-sm;
@@ -239,7 +391,6 @@
     padding: 4px 13px;
     border-radius: 20px;
   }
-
   .goods-swiper{
     height: 650rpx;
     width: 750rpx;
@@ -249,20 +400,13 @@
       height:650rpx;
     }
   }
-
+  .more-box {
+    padding-top: 15px;
+    height: 50px;
+    text-align: center;
+  }
   .detail-box{
-    border-top: $border;
     background-color: #FFF;
-    margin-top: 20rpx;
-
-    .detail-title{
-      height: 75rpx;
-    }
-    .hr-light{
-      height: 1px;
-      background-color: #e6e6e6;
-      width: 100%;
-    }
 
     .detail-list{
       padding-bottom: 20rpx;

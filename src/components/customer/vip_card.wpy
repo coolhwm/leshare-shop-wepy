@@ -33,8 +33,7 @@
           <!--</view>-->
         </view>
       </view>
-      <image class="icon-qrcode" src="/images/icons/qrcode.png"
-             @tap.stop="info"/>
+      <icon class="qrcode xxlarge" color="white" @tap.stop="info"/>
     </view>
     <view class="footer-box row-between" style="width: 100%">
       <text class="xxl">{{numberText}}</text>
@@ -151,10 +150,6 @@
     background-color: #FFF;
     border: 2px solid #FFF;
     box-shadow: 0 0 5px gray;
-  }
-  .icon-qrcode{
-    width: 80rpx;
-    height: 80rpx;
   }
   .vip-box {
     box-shadow: 0 0 2px gray;

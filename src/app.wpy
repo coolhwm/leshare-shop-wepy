@@ -1,20 +1,30 @@
+<style lang="scss" src="./styles/weui.scss"></style>
+<style lang="scss" src="styles/icons.scss"></style>
+
 <style lang="scss">
+  @import "./styles/weui-extend";
   @import "./styles/base";
   @import "./styles/zent";
-  @import "./styles/weui-extend";
 </style>
-
 <script>
 import wepy from 'wepy';
 import WxUtils from './utils/WxUtils';
 import 'wepy-async-function';
 import { setStore } from 'wepy-redux'
 import configStore from './store'
-
 const store = configStore();
 setStore(store);
-
 export default class extends wepy.app {
+  globalData = {
+    auth: {},
+    scene: null,
+    appCode: null,
+    shopType: null,
+    pageParams: null,
+    componentsParams: null,
+    baseUrl: null,
+    version: 'v2.1.0'
+  };
   constructor () {
     super();
     // 注册中间件
@@ -52,8 +62,12 @@ export default class extends wepy.app {
     WxUtils.checkSDK();
     // 同步开放平台EXT数据
     const ext = wepy.getExtConfigSync();
+    console.info('[ext] init ext data', ext);
+    if (ext.globalConfig) {
+      console.info('[ext] init ext global config data', ext.globalConfig);
+      Object.assign(ext, ext.globalConfig);
+    }
     Object.assign(wepy.$instance.globalData, ext);
-    console.info(ext);
     // 同步权限数据
     this.syncStoreConfig('login_code');
     this.syncStoreConfig('third_session');
@@ -81,10 +95,17 @@ export default class extends wepy.app {
       'pages/home/home',
       'pages/home/login',
       'pages/shop/index',
+      'pages/goods/cart',
       'pages/goods/detail',
       'pages/goods/comment_list',
+      'pages/goods/search',
+      'pages/goods/search_list',
+      'pages/goods/category',
       'pages/goods/comment_edit',
       'pages/address/edit',
+      'pages/address/select',
+      'pages/address/list',
+      'pages/address/search',
       'pages/order/trade',
       'pages/order/detail',
       'pages/order/refund_edit',
@@ -100,10 +121,11 @@ export default class extends wepy.app {
       'pages/customer/address_list',
       'pages/customer/bonus_list',
       'pages/customer/vip_info',
-      'pages/address/list',
-      'pages/address/search',
+      'pages/customer/sign_in',
       'pages/coupon/use',
-      'pages/shop/contact'
+      'pages/shop/contact',
+      'pages/home/template',
+      'pages/shop/icons'
     ],
     window: {
       backgroundTextStyle: 'dark',
@@ -111,16 +133,5 @@ export default class extends wepy.app {
       navigationBarBackgroundColor: '#1296db'
     }
   };
-  globalData = {
-    auth: {
-    },
-    scene: '',
-    shopType: 1,
-    app_code: null,
-    version: 'v2.0.4',
-    // baseUrl: 'https://api.leshare.shop/v2/customer'
-    // baseUrl: 'http://192.168.31.124:9999/v2/customer',
-    baseUrl: 'http://106.14.195.68:9999/v2/customer'
-  }
 }
 </script>

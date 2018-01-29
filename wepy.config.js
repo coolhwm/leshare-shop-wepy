@@ -8,10 +8,10 @@ module.exports = {
   eslint: true,
   compilers: {
     sass: {
-      outputStyle: 'expanded'
+      outputStyle: 'compact'
     },
     babel: {
-      sourceMap: true,
+      sourceMap: false,
       presets: [
         'es2015',
         'stage-1'
@@ -44,6 +44,9 @@ if (prod) {
       filter: /\.js$/,
       config: {
       }
+    },
+    filemin: {
+      filter: /\.(wxml)$/
     },
     imagemin: {
       filter: /\.(jpg|png|jpeg)$/,

@@ -1,20 +1,20 @@
 <template>
-    <!-- 店铺信息区域 -->
-    <view class="shop-box row" url="/pages/home/home" @tap="home">
-        <image class="shop-avatar" src="{{shop.avatar}}/medium" wx:if="{{shop.avatar}}"/>
-        <view class="shop-content column">
-            <view class="column">
-                <text class="xl">{{shop.name}}</text>
-                <text class="xxs inline">{{shop.address}}</text>
-            </view>
-            <swiper class="notice-swiper" vertical autoplay circular interval="3000">
-                <swiper-item wx:for="{{notices}}" wx:key="index">
-                    <view class="notice-content">公告：{{item.content}}</view>
-                </swiper-item>
-            </swiper>
-        </view>
-        <image class="icon" src="/images/icons/more-white.png"/>
+  <!-- 店铺信息区域 -->
+  <view class="shop-box row" url="/pages/home/home" @tap="home">
+    <image class="shop-avatar" src="{{shop.avatar}}/medium" wx:if="{{shop.avatar}}"/>
+    <view class="shop-content column">
+      <view class="column">
+        <text class="xl">{{shop.name}}</text>
+        <text class="xxs inline">{{shop.address}}</text>
+      </view>
+      <swiper class="notice-swiper" vertical autoplay circular interval="3000">
+        <swiper-item wx:for="{{notices}}" wx:key="index">
+          <view class="notice-content">公告：{{item.content}}</view>
+        </swiper-item>
+      </swiper>
     </view>
+    <icon class="more" color="white"/>
+  </view>
 </template>
 
 <script>

@@ -1,0 +1,56 @@
+<template>
+  <view class="column goods-mini-box">
+    <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="routeToGoods({{goods.id}})"></image>
+    <view class="content-box column" wx:if="{{goods.isName || goods.isPrice}}">
+      <!--文字-->
+      <text class="inline" wx:if="{{goods.isGoodsName}}" @tap="routeToGoods({{goods.id}})">{{goods.name}}</text>
+      <!--购物车与价格标签-->
+      <view class="row-between" wx:if="{{goods.isPrice || goods.isCart}}">
+        <view class="row">
+          <text class=" lg major" >￥{{goods.priceLable}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import router from '../../../mixins/router';
+  export default class GoodMiniItem extends wepy.component {
+    props = {
+      goods: {}
+    };
+    methods = {
+    };
+    mixins = [router]
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+  .goods-mini-box{
+    position: relative;
+    $size: 180rpx;
+    padding: 10rpx;
+    display: inline-flex;
+    background-color: white;
+    width: $size;
+    border-top: $border;
+
+    .goods-image{
+      width: $size;
+      height: $size;
+    }
+
+    .content-box{
+      padding: 5rpx;
+    }
+    .cart-icon{
+      width: 35rpx;
+      height: 35rpx;
+      margin-right: 5px;
+    }
+  }
+</style>

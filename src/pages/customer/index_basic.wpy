@@ -61,7 +61,7 @@
   import store from '../../store/utils';
   import base from '../../mixins/base';
   import Copyright from '../../components/common/copyright';
-  import OrderItem from '../../components/order/customer_item';
+  import OrderItem from '../../components/order/order_item';
   import Placeholder from '../../components/common/placeholder';
   import Loadmore from '../../components/weui/loadmore';
 

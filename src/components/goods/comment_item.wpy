@@ -2,15 +2,16 @@
   <view class="score-box">
     <view class="header-box">
       <view class="info-box">
-        <image class="avatar" src="/images/icons/customer.png"></image>
+        <icon class="customer large" color="gray"/>
+
         <view class="name-box">
           <text class="username">匿名用户</text>
           <text class="date">{{comment.createTime}}</text>
         </view>
       </view>
-      <view class="star-box">
+      <view class="star-box row">
         <block wx:for="{{comment.starArr}}" wx:key="*this">
-          <image src="/images/icons/star{{item == 1 ? '-fill' : ''}}.png"  ></image>
+          <icon class="star{{item == 1 ? '-fill' : ''}}" color="{{item == 1 ? 'major' : 'gray'}}"/>
         </block>
       </view>
     </view>
@@ -82,7 +83,7 @@
     margin-left: 20rpx;
   }
 
-  .star-box image{
+  .star-box icon{
     height: 40rpx;
     width: 40rpx;
     vertical-align: middle;
