@@ -45,6 +45,7 @@
         color: white;
         font-size: $text-xl;
       }
+      margin-right: 20rpx;
     }
     .cs-box{
       padding: 0;
@@ -60,7 +61,6 @@
     .content{
       flex: 1;
       background-color: white;
-      margin-left: 20rpx;
       border-radius: 3px;
       padding: 6rpx 20rpx;
       text{

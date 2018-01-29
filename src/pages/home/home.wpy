@@ -33,23 +33,23 @@
     <view class="nav-box column-cernter">
       <view class="row-between">
         <button class="shop-btn" plain form-type="submit" @tap="goto" data-url="/pages/shop/index?mode=1">
-          <image class="icon-xl" src="/images/home/food.png" wx:if="{{version.isOrder}}"></image>
-          <image class="icon-xl" src="/images/home/inshop.png" wx:else></image>
+          <image class="icon-xl" src="http://img.leshare.shop/shop/home/food.png" wx:if="{{version.isOrder}}"></image>
+          <image class="icon-xl" src="http://img.leshare.shop/shop/home/inshop.png" wx:else></image>
           <text class="weak">{{version.isOrder ? shop.type.name : shop.type.basicName}}</text>
         </button>
 
         <!--堂食模式-->
         <button class="shop-btn" @tap="goto" data-url='/pages/shop/index?mode=2' plain form-type="submit" wx:if="{{shop.inShop == 1 && version.isOrder}}">
-          <image class="icon-xl" src="/images/home/inshop.png" ></image>
+          <image class="icon-xl" src="http://img.leshare.shop/shop/home/inshop.png" ></image>
           <text class="weak">堂食/外带</text>
         </button>
         <button class="shop-btn" @tap="nav" plain form-type="submit" wx:else>
-          <image class="icon-xl" src="/images/home/nav.png" ></image>
+          <image class="icon-xl" src="http://img.leshare.shop/shop/home/nav.png" ></image>
           <text class="weak">一键导航</text>
         </button>
 
         <button class="shop-btn" plain form-type="submit" @tap="phone">
-          <image class="icon-xl" src="/images/home/phone.png"></image>
+          <image class="icon-xl" src="http://img.leshare.shop/shop/home/phone.png"></image>
           <text class="weak">电话联系</text>
         </button>
 
@@ -60,21 +60,21 @@
       <view class="row-between">
         <!--兼容不同版本-->
         <button class="shop-btn" plain open-type="share" form-type="submit" wx:if="{{share}}">
-          <image class="icon-xl" src="/images/home/share.png"></image>
+          <image class="icon-xl" src="http://img.leshare.shop/shop/home/share.png"></image>
           <text class="weak">分享好友</text>
         </button>
         <button class="shop-btn" plain @tap="share" form-type="submit" open-type="share" wx:else>
-          <image class="icon-xl" src="/images/home/share.png"></image>
+          <image class="icon-xl" src="http://img.leshare.shop/shop/home/share.png"></image>
           <text class="weak">分享好友</text>
         </button>
         <button class="shop-btn" plain form-type="submit" @tap="goto" data-url="/pages/coupon/list">
-          <image class="icon-xl" src="/images/home/coupon.png"></image>
+          <image class="icon-xl" src="http://img.leshare.shop/shop/home/coupon.png"></image>
           <view class="weui-badge" style="position: absolute;top: 0;right: 0;" wx:if="{{ownCoupons.length > 0}}">{{ownCoupons.length}}张</view>
           <text class="weak">我的优惠券</text>
         </button>
 
         <button class="shop-btn" plain @tap="goto" data-url="{{version.isMember ? '/pages/customer/index' : '/pages/customer/index_basic'}}" >
-          <image class="icon-xl" src="/images/home/my.png"></image>
+          <image class="icon-xl" src="http://img.leshare.shop/shop/home/my.png"></image>
           <text class="weak">个人中心</text>
         </button>
       </view>

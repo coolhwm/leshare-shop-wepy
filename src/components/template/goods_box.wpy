@@ -6,9 +6,6 @@
         <TitleBar :param.sync="item" />
       </repeat>
     </block>
-    <!--<view class="box-title row-center" wx:if="{{param.isTitle}}">-->
-      <!--<text class="title-line">────────</text><text class="title-text">{{param.title}}</text><text class="title-line">────────</text>-->
-    <!--</view>-->
 
     <!--横向单个布局-->
     <view class="row-box column" wx:if="{{param.layout == 'ROW'}}">

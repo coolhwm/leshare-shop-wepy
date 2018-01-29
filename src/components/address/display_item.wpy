@@ -15,7 +15,7 @@
       </view>
     </view>
   </view>
-  <image class="address-box-hr" src="/images/icons/address-hr.png" />
+  <image class="address-box-hr" src="http://img.leshare.shop/shop/other/address-hr.png" />
 </template>
 
 <script>

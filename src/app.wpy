@@ -93,6 +93,7 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/home/home',
+      'pages/home/template',
       'pages/home/login',
       'pages/shop/index',
       'pages/goods/cart',
@@ -123,9 +124,7 @@ export default class extends wepy.app {
       'pages/customer/vip_info',
       'pages/customer/sign_in',
       'pages/coupon/use',
-      'pages/shop/contact',
-      'pages/home/template',
-      'pages/shop/icons'
+      'pages/shop/contact'
     ],
     window: {
       backgroundTextStyle: 'dark',

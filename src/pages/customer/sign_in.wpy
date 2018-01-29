@@ -1,6 +1,6 @@
 <template>
   <view class="sgin_in" wx:if="{{init}}">
-    <image src="../../images/icons/bc_qdyl.jpg" class="head_bc"></image>
+    <image src="http://img.leshare.shop/shop/other/bc_qdyl.jpg" class="head_bc"></image>
     <view class="qd_content">
       <view class="jf">积分 : {{member.bonus}}</view>
       <view class="out_crl">

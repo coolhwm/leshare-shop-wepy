@@ -32,7 +32,7 @@
   @import "../../styles/variable";
   .left-title{
     height: 80rpx;
-    background-color: $color-bg-body;
+    background-color: white;
     border-left: $color-primary solid 3px;
     .title-text{
       color: $color-primary;

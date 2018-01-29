@@ -124,7 +124,7 @@
             break;
           case 'CATEGORY':
             // 某个分类
-            this.$root.$navigate(`/pages/goods/category?categoryId=${targetId}`);
+            this.$root.$navigate(`/pages/goods/search_list?categoryId=${targetId}`);
             break;
           case 'USER':
             // 用户首页
@@ -145,6 +145,20 @@
           case 'MEMBER_DETAIL':
             // 会员详情
             this.$root.$navigate('/pages/customer/vip_detail');
+            break;
+          case 'PHONE':
+            // 拨打电话
+            wepy.makePhoneCall({
+              phoneNumber: `${targetId}`
+            });
+            break;
+          case 'SHARE':
+            // 分享好友
+            wepy.showShareMenu();
+            break;
+          case 'MEMBER_REGIST':
+            // 注册会员
+            this.routeToCustomer();
             break;
         }
       }

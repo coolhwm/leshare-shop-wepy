@@ -22,6 +22,7 @@
         <ImageBox :param.sync="item" />
       </block>
 
+
       <!--优惠券橱窗-->
       <block wx:if="{{item.type == 'COUPON_BOX'}}">
         <CouponBox :param.sync="item" />
@@ -98,8 +99,13 @@
       // 登录检查
       await auth.login();
       await store.init();
-      this.components = this.page.components;
-      this.plugins = this.page.plugins;
+      if (this.page) {
+        this.components = this.page.components;
+        this.plugins = this.page.plugins;
+      }
+      wepy.setNavigationBarTitle({
+        title: this.shop.name
+      });
       this.loaded();
     };
     /**
@@ -107,9 +113,10 @@
      */
     onShareAppMessage () {
       const {name, avatar} = this.shop;
+      console.info(`${avatar}/5x4`);
       return {
         title: `${name} 欢迎光临`,
-        imageUrl: avatar
+        imageUrl: `${avatar}/5x4`
       };
     }
     methods = {
