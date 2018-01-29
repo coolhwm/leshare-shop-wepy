@@ -71,6 +71,7 @@
   icon[color="white"]{color: white}
   icon[color="gray"]{color: #8a8a8a}
 
+
   icon.shop:before { content: "\e601"; }
   icon.call:before { content: "\e614"; }
   icon.more:before { content: "\e6a7"; }
@@ -106,7 +107,7 @@
   icon.package:before { content: "\e6ad"; }
   icon.share:before { content: "\e622"; }
   icon.expiring:before { content: "\e6ca"; }
-  icon.plus:before { content: "\e659"; }
+  icon.plus:before { content: "\e60e"; }
   icon.status-5:before { content: "\e66c"; }
   icon.status-3:before { content: "\e602"; }
   icon.coupon:before { content: "\e63f"; }

@@ -5,7 +5,7 @@
   </view>
   <view class="cart-box row">
     <view class="icon-box column-center" @tap="cart">
-      <image class="icon-lg" src="/images/icons/cart.png" />
+      <icon class="cart-fill large"/>
       <view class="weui-badge cart-num">{{totalCount}}</view>
     </view>
 
@@ -49,12 +49,12 @@
 
               <view class="quantity row">
                 <block wx:if="{{item.goodsNum > 0}}">
-                  <image class="minus" src="/images/icons/minus.png" @tap="minus({{item}})" />
+                  <icon class="minus" @tap="minus({{item}})" />
                   <view class="number">
                     <text>{{item.goodsNum}}</text>
                   </view>
                 </block>
-                <image class="plus" src="/images/icons/plus.png" @tap="plus({{item}})" />
+                <icon class="plus" @tap="plus({{item}})" />
               </view>
             </view>
           </view>

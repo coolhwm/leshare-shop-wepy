@@ -29,7 +29,7 @@
 
         <!--加入购物车按钮-->
         <view>
-          <icon class="plus large" wx:if="{{goods.isCart || goods.isCart == null}}" @tap="handlePlusCart({{goods}})" />
+          <icon class="plus normal" wx:if="{{goods.isCart || goods.isCart == null}}" @tap="handlePlusCart({{goods}})" />
         </view>
       </view>
     </view>

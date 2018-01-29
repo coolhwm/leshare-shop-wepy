@@ -2,10 +2,10 @@
   <view class="score-item-box" wx:for="{{scores}}" wx:key="index" wx:for-item="goods" wx:for-index="index">
     <view class="socre-header">
       <image class="goods-img" src='{{goods.preview}}'></image>
-      <text class="title">商品评分</text>
+      <text class="title mr10">商品评分</text>
       <view class="star-box">
         <block wx:for="{{goods.starArr}}" wx:key="index" wx:for-index="index">
-          <image src="/images/icons/star{{item == 1 ? '-fill' : ''}}.png"  @tap="star({{goods}}, {{index}})" ></image>
+          <icon class="star{{item == 1 ? '-fill' : ''}} normal" color="{{item == 1 ? 'major' : 'gray'}}"   @tap="star({{goods}}, {{index}})" ></icon>
         </block>
       </view>
     </view>
@@ -109,13 +109,6 @@
     height: 60rpx;
     width: 60rpx;
     vertical-align: middle;
-  }
-
-  .star-box image{
-    height: 50rpx;
-    width: 50rpx;
-    vertical-align: middle;
-    margin-left: 30rpx;
   }
 
   textarea{

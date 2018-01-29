@@ -27,8 +27,8 @@
             <text class="name">{{detail.name}}</text>
           </view>
           <view class="share-box">
-            <button open-type="share" plain class="column-center" wx:if="{{isShare}}">
-              <image class="icon" src="/images/icons/share.png" ></image>
+            <button open-type="share" plain class="column-center"  wx:if="{{isShare}}">
+              <icon class="share small" />
               <text class="sm">分享</text>
             </button>
           </view>
@@ -69,13 +69,13 @@
               </view>
             </view>
           </view>
-          <image class="icon" src="/images/icons/more-gray.png" />
+          <icon class="more" color="gray"/>
         </view>
 
         <!--评价向导-->
         <view class="comment-box row-between" @tap="comments" wx:if="{{isComment}}">
           <text class="muted">{{commentText}}</text>
-          <image class="icon" src="/images/icons/more-gray.png" />
+          <icon class="more" color="gray"/>
         </view>
       </view>
 

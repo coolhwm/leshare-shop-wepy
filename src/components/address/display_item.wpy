@@ -2,7 +2,7 @@
   <view class="address-box row">
     <!--左侧图标-->
     <view class="icon-box">
-      <image class="icon-lg" src="/images/icons/address.png"/>
+      <icon class="address large"/>
     </view>
     <!-- 地址内容 -->
     <view class="info-box column">

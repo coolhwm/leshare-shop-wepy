@@ -12,31 +12,31 @@
         <!--功能区域-->
         <view class="function-box row-between">
           <view class="btn" @tap="gotoAddress">
-            <image class="icon" src="/images/icons/address.png"/>
+            <icon class="address"/>
             <text class="xs">我的地址</text>
           </view>
 
           <view class="v-line"/>
           <view class="btn" @tap="gotoCoupon">
-            <image class="icon" src="/images/icons/coupon.png"/>
+            <icon class="coupon" style="color: red"/>
             <text class="xs">优惠券</text>
           </view>
 
           <view class="v-line"/>
           <view class="btn" @tap="gotoBonus">
-            <image class="icon" src="/images/icons/bouns.png"/>
+            <icon class="bouns" style="color:green"/>
             <text class="xs">我的积分</text>
           </view>
 
           <view class="v-line"/>
           <view class="btn" @tap="gotoDetail">
-            <image class="icon" src="/images/icons/privilege.png"/>
+            <icon class="privilege" color="major" />
             <text class="xs">我的特权</text>
           </view>
 
           <view class="v-line"/>
           <view class="btn" @tap="gotoSign">
-            <image class="icon" src="/images/icons/sign.png"/>
+            <icon class="sign" style="color: rebeccapurple" />
             <text class="xs">签到</text>
           </view>
         </view>
@@ -52,7 +52,7 @@
           </view>
           <navigator class="footer row" open-type="navigateBack">
             <text class="muted">返回</text>
-            <image class="icon" src="/images/icons/more-gray.png" />
+            <icon class="more" color="gray"/>
           </navigator>
         </view>
       </block>

@@ -3,7 +3,7 @@
   <view class="container" wx:if="{{init}}">
     <!--状态栏-->
     <view class="order-status-bar row">
-      <image class="icon-lg" src="/images/icons/status-{{order.status}}.png" wx:if="{{order.status}}" />
+      <icon class="status-{{order.status}} large"/>
       <view class="status-box column">
         <text class="xxl">{{order.statusText}}</text>
         <!-- 订单文本描述/需要抽取到Service中 -->
@@ -15,18 +15,18 @@
     <block wx:if="{{order.isExpress && order.orderExpress.telPhone}}">
       <view class="order-trace-bar row-between" >
         <view class="row">
-          <image class="icon" src="/images/icons/sender.png" />
+          <icon class="sender"/>
           <text class="ml20">{{order.orderExpress.note}}（{{order.orderExpress.telPhone}}）</text>
         </view>
         <view  class="row" @tap="sender">
-          <image class="icon" src="/images/icons/call.png"  />
+          <icon class="call"/>
           <text class="ml10 primary">电话联系</text>
         </view>
       </view>
     </block>
 
     <!--地址展现-->
-    <block wx:if="{{order.orderType == '20'}}">
+    <block wx:if="{{order.orderType == '20' || order.orderType == '10'}}">
       <Address :address.sync="address" />
     </block>
     <block wx:if="{{order.orderType == '30' || order.orderType == '33'}}">
@@ -72,7 +72,7 @@
       </view>
       <view class="price-box row-between" wx:if="{{order.reduceFee > 0}}">
         <view class="row">
-          <image class="icon" src="/images/icons/reduce.png"></image>
+          <icon class="reduce" style="color: #d81e06;"/>
           <text>优惠满减</text>
         </view>
         <text class="major">-￥{{order.reduceFee}}</text>
@@ -352,7 +352,6 @@
     width: 750rpx;
     bottom: 0;
     border-top: $border;
-    height: 90rpx;
     padding-right: 10rpx;
   }
 
