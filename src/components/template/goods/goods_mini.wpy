@@ -1,25 +1,14 @@
 <template>
-  <view class="column goods-tight-box">
-    <view class="tight-discount-box row" wx:if="{{goods.discount}}">
-      <icon class="vip xsmall" color="white" />
-      <text>{{goods.discountRate}}</text>
-    </view>
-    <!--图片-->
+  <view class="column goods-mini-box">
     <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="routeToGoods({{goods.id}})"></image>
     <view class="content-box column" wx:if="{{goods.isName || goods.isPrice}}">
       <!--文字-->
       <text class="inline" wx:if="{{goods.isGoodsName}}" @tap="routeToGoods({{goods.id}})">{{goods.name}}</text>
-
-      <!--销量-->
-      <text class="xs muted" wx:if="{{goods.isSales}}">已售{{goods.salesVolume}}件</text>
-
       <!--购物车与价格标签-->
       <view class="row-between" wx:if="{{goods.isPrice || goods.isCart}}">
         <view class="row">
           <text class=" lg major" >￥{{goods.priceLable}}</text>
         </view>
-        <!--加入购物车按钮-->
-        <icon class="plus" wx:if="{{goods.isCart || goods.isCart == null}}" @tap="handlePlusCart({{goods}})" />
       </view>
     </view>
   </view>
@@ -29,7 +18,7 @@
 <script>
   import wepy from 'wepy';
   import router from '../../../mixins/router';
-  export default class GoodTightItem extends wepy.component {
+  export default class GoodMiniItem extends wepy.component {
     props = {
       goods: {}
     };
@@ -41,31 +30,15 @@
 
 <style lang="scss">
   @import "../../../styles/variable";
-  .goods-tight-box{
-    $size: 248rpx;
+  .goods-mini-box{
     position: relative;
+    $size: 180rpx;
+    padding: 10rpx;
+    display: inline-flex;
     background-color: white;
     width: $size;
     border-top: $border;
 
-    .tight-discount-box{
-      position: absolute;
-      background-color: $color-major;
-      top: 0;
-      left: 0;
-      padding: 5rpx 10rpx;
-      height: 15px;
-      -webkit-filter:opacity(.7);
-      text{
-        color: white;
-        font-size: $text-xs;
-      };
-      .vip-icon{
-        width: 13px;
-        height: 13px;
-        margin-right: 5rpx;
-      }
-    }
     .goods-image{
       width: $size;
       height: $size;
@@ -73,6 +46,11 @@
 
     .content-box{
       padding: 5rpx;
+    }
+    .cart-icon{
+      width: 35rpx;
+      height: 35rpx;
+      margin-right: 5px;
     }
   }
 </style>

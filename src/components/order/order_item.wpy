@@ -3,8 +3,8 @@
     <!--顶栏/基本信息-->
     <view class="order-header-container colunm">
       <view class="row-between">
-        <view class="user-info-container">
-          <image class="icon" src="/images/icons/shop-gray.png"/>
+        <view class="user-info-container row">
+          <icon class="shop" color="gray" />
           <text class="sm ml10">{{shopName}}</text>
         </view>
         <text class="sm primary" wx:if="{{order.statusText}}">{{order.statusText}}{{order.paymentType == 0 ? '(线下支付)' : ''}}</text>

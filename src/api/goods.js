@@ -45,9 +45,12 @@ export default class goods extends base {
   /**
    * 查询商品详情
    */
-  static getInfo (goodsId) {
+  static getInfo (goodsId, discount) {
     const url = `${this.baseUrl}/goods/${goodsId}`;
-    return this.get(url, {}).then(data => this._processGoodsDetail(data));
+    return this.get(url, {}).then(data => {
+      this._processGoodsDiscount(data, discount);
+      return this._processGoodsDetail(data)
+    });
   }
 
   /** ********************* 数据处理方法 ***********************/

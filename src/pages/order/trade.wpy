@@ -81,9 +81,9 @@
         <text>积分抵扣</text>
         <text class="major">-￥{{trade.bonusPrice}}</text>
       </view>
-      <view class="price-box row-between" wx:if="{{reduceFee > 0}}">
+      <view class="price-box row-between" >
         <view class="row">
-          <image class="icon" src="/images/icons/reduce.png"></image>
+          <icon class="reduce" style="color: #F07373" />
           <text>优惠满减</text>
         </view>
         <text class="major">-￥{{reduceFee}}</text>
@@ -144,6 +144,7 @@
   import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
   import Loading from '../../components/common/loading';
+  import Cart from '../../utils/Cart';
 
   @connect({
     shop: store.get('shop'),
@@ -168,7 +169,7 @@
       bonusPicker: null,
       selectedBonus: null
     };
-
+    cartManager = Cart.create();
     async onLoad (params, {preload}) {
       const isOpen = await this.checkShopStatus();
       const result = await auth.user({block: true, redirect: true});
@@ -311,7 +312,7 @@
           }
         }
         // 清空购物车
-        Event.emit(Event.CART_LIST_CLEAR);
+        this.cartManager.clear();
         // 卡券领取更新
         if (trade.couponUsedId) {
           await store.reflesh('coupon', 'member');
@@ -456,7 +457,7 @@
         let confirmStatus = false;
         let deliveryText = '暂不支持配送';
         let confirmText = '立即下单';
-        if (this.isInShopOrder) {
+        if (this.trade.isInShopOrder) {
           // 在店内的订单不需要进行校验
           confirmStatus = true;
           confirmText = '立即下单';

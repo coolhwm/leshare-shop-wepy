@@ -54,13 +54,13 @@
       </block>
 
       <!--浮动购物车-->
-      <block wx:if="{{item.type == 'CART_FLOAT'}}" >
-        <FloatCart />
+      <block wx:if="{{item.type == 'CART_WIDGET'}}" >
+        <CartWidget />
       </block>
 
       <!--状态提示-->
-      <block wx:if="{{item.type == 'STATUS_TIPS'}}" >
-        <StatusTips />
+      <block wx:if="{{item.type == 'STATUS_WIDGET'}}" >
+        <StatusWidget />
       </block>
     </repeat>
   </view>
@@ -81,12 +81,12 @@
   import CouponBox from '../../components/template/coupon_box';
   import GoodsPanel from '../../components/goods/slider_buy_panel';
   import SkuSelector from '../../components/goods/popup_buy_panel';
-  import FloatCart from '../../components/template/float_cart';
+  import CartWidget from '../../components/template/cart_widget';
   import NoticeBar from '../../components/template/notice_bar';
-  import StatusTips from '../../components/template/status_tips';
 
   @connect({
-    page: store.get('page')
+    page: store.get('page'),
+    shop: store.get('shop')
   })
   export default class IndexTemplate extends wepy.page {
     data = {
@@ -102,6 +102,16 @@
       this.plugins = this.page.plugins;
       this.loaded();
     };
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {name, avatar} = this.shop;
+      return {
+        title: `${name} 欢迎光临`,
+        imageUrl: avatar
+      };
+    }
     methods = {
     };
     components = {
@@ -114,9 +124,8 @@
       CouponBox: CouponBox,
       SilderPanel: GoodsPanel,
       PopupPanel: SkuSelector,
-      FloatCart: FloatCart,
+      CartWidget: CartWidget,
       NoticeBar: NoticeBar,
-      StatusTips: StatusTips
     };
     computed = {
     };

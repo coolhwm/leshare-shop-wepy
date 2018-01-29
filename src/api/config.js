@@ -1,4 +1,3 @@
-
 import base from './base';
 import goods from './goods';
 import shop from './shop';
@@ -10,6 +9,8 @@ export default class config extends base {
     IMAGE_BOX: ['heigth', 'width', 'isTitle'],
     GOODS_BOX: ['isCart', 'isPrice', 'isGoodsName', 'isSales', 'skuMode', 'isTips']
   };
+
+  static discount = null;
   /**
    * 获取店铺完整配置信息
    */
@@ -17,20 +18,24 @@ export default class config extends base {
     const url = `${this.baseUrl}/shops/full`;
     return this.get(url).then(data => {
       return {
-        page: this._processPage(data.homePageConfig),
-        categories: goods._createGoodsCategories(data.goodsInnerCategories),
+        page: data.homePageConfig,
         card: data.memberCard,
         member: data.member,
+        campaign: data.campaignCoupon,
+        categories: goods._createGoodsCategories(data.goodsInnerCategories),
         notices: shop._processNotices(data.notices),
         reduce: shop._processReduce(data.reduceRules),
         shop: shop._processInfo(data.shop),
         version: shop._precoessVersion(data.shopChargeLimit),
-        status: shop._processStatus(data.shopStatusInfo),
-        campaign: data.campaignCoupon
+        status: shop._processStatus(data.shopStatusInfo)
       };
     }).then(config => {
-      const {card, member: info} = config;
-      config.discount = member.processDiscount(card, info);
+      // 处理需要二次加工的数据
+      const {card, member: info, page} = config;
+      // 会员折扣
+      config.discount = this.discount = member.processDiscount(card, info);
+      // 页面组件
+      config.page = this._processPage(page);
       return config;
     });
   }
@@ -73,7 +78,10 @@ export default class config extends base {
         }
         // 需要处理商品信息
         if (component.type == 'GOODS_BOX') {
-          component.data = component.data.map(item => goods._processGoodsDetail(item));
+          component.data.forEach(item => {
+            goods._processGoodsDiscount(item, this.discount);
+            goods._processGoodsData(item);
+          });
         }
         return this.copyParamToData(component);
       });

@@ -1,6 +1,6 @@
 <template>
   <view class="notice-bar-box row" wx:if="{{notices.length > 0}}">
-    <image class="notice-bar-icon" src="/images/icons/notice.png"></image>
+    <icon class="notice xsmall"/>
     <swiper class="notice-bar-swiper" vertical autoplay circular interval="3000">
       <swiper-item wx:for="{{notices}}" wx:key="index">
         <text class="notice-content inline">{{item.content}}</text>
@@ -32,16 +32,9 @@
   .notice-bar-box{
     align-items: center;
     background-color: white;
-    padding: 5rpx 10rpx;
+    padding: 10rpx 10rpx;
     .notice-bar-title{
       font-size: $text-sm;
-    }
-
-    .notice-bar-icon{
-      width: 30rpx;
-      height: 30rpx;
-      margin-right: 10rpx;
-      vertical-align: middle;
     }
 
     .notice-bar-swiper {

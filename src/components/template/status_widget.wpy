@@ -1,7 +1,7 @@
 <template>
   <block wx:if="{{status}}">
-    <image class="status-tips" wx:if="{{status.open}}" mode="aspectFit" src="/images/icons/onsale.png"></image>
-    <image class="status-tips" wx:else mode="aspectFit" src="/images/icons/onclose.png"></image>
+    <icon class="status-tips onsale" style="font-size: 50px" wx:if="{{status.open}}" mode="aspectFit"/>
+    <icon class="status-tips onclose" style="font-size: 50px" color="gray" wx:else mode="aspectFit"/>
   </block>
 </template>
 

@@ -1,13 +1,13 @@
 <template>
   <view class="quantity row">
     <block wx:if="{{quantity && quantity.num != 0}}">
-      <image class="minus" src="/images/icons/minus.png" @tap="minus" />
+      <icon class="minus" @tap="minus"/>
       <view class="number">
         <text>{{quantity.num}}</text>
       </view>
     </block>
 
-    <image class="plus" src="/images/icons/plus.png" @tap="plus" />
+    <icon class="plus"/>
   </view>
 </template>
 
@@ -35,10 +35,6 @@
   @import "../../styles/variable";
 
   .quantity{
-    image{
-      height: 45rpx;
-      width: 45rpx;
-    }
     .number{
       font-size: $text-sm;
       min-width: 30px;

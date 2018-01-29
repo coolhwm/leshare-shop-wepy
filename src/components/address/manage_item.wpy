@@ -20,10 +20,10 @@
       </view>
       <view class="address-opt-container">
         <view class="address-opt-action"  @tap="edit({{address.id}})">
-          <image src="/images/icons/edit.png"/><text>编辑</text>
+          <icon class="edit" color="gray"/><text>编辑</text>
         </view>
         <view class="address-opt-action"  @tap="delete({{address.id}})">
-          <image src="/images/icons/delete.png"/><text>删除</text>
+          <icon class="delete" color="gray" /><text>删除</text>
         </view>
       </view>
     </view>
@@ -102,17 +102,12 @@
     align-items: center;
     vertical-align: middle;
   }
-  /*操作图片*/
-  .address-opt-container image{
-    height: 40rpx;
-    width: 40rpx;
-    margin-left: 25rpx;
-  }
+
   /*操作文本*/
   .address-mgr-container text{
     color: #0A0A0D;
     font-size: 28rpx;
-    margin-left: 13rpx;
+    margin-right: 13rpx;
   }
 
 

@@ -1,0 +1,58 @@
+<template>
+  <view class="title-bar-box">
+    <view class="left-title row-between" wx:if="{{param.titleStyle == 'LEFT'}}">
+      <text class="title-text">{{param.title}}</text>
+    </view>
+
+    <view class="center-title row-center" wx:else>
+      <text class="title-line">────────</text><text class="title-text">{{param.title}}</text><text class="title-line">────────</text>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+
+  @connect({
+    cart: store.get('cart')
+  })
+  export default class TitleBar extends wepy.component {
+    props = {
+      param: {}
+    };
+    async onLoad () {
+    }
+    methods = {
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .left-title{
+    height: 80rpx;
+    background-color: $color-bg-body;
+    border-left: $color-primary solid 3px;
+    .title-text{
+      color: $color-primary;
+      margin-left: 25rpx;
+      font-size: $text-xl;
+    }
+  }
+
+  .center-title{
+    height: 80rpx;
+    background-color: $color-bg-body;
+
+    .title-text{
+      color: $color-primary;
+      margin-left: 20px;
+      margin-right: 20px;
+      font-size: $text-lg;
+    }
+    .title-line{
+      color: #E2E2E2;
+    }
+  }
+</style>

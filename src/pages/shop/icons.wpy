@@ -1,0 +1,130 @@
+<template>
+  <view class="row">
+    <text>文本</text>
+    <icon class="chat xsmall"/>
+    <text>文本</text>
+    <icon class="chat small" color="major"/>
+    <text>文本</text>
+    <icon class="chat normal" color="white"/>
+    <text>文本</text>
+
+  </view>
+  <view class="row">
+    <text>文本</text>
+    <icon class="chat large"/>
+    <text>文本</text>
+    <icon class="chat xlarge" color="gray"/>
+    <text>文本</text>
+    <icon class="chat xxlarge" color="white"/>
+    <text>文本</text>
+    <icon class="chat" style="font-size: 50px; color: purple"/>
+    <text>文本</text>
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class test extends wepy.page {
+  }
+</script>
+
+
+<style lang="scss">
+  @import "../../styles/variable";
+  @font-face {
+    font-family: 'iconfont';  /* project id 553949 */
+    src: url('//at.alicdn.com/t/font_553949_5hk2cnwnm1mj9k9.eot');
+    src: url('//at.alicdn.com/t/font_553949_5hk2cnwnm1mj9k9.eot?#iefix') format('embedded-opentype'),
+    url('//at.alicdn.com/t/font_553949_5hk2cnwnm1mj9k9.woff') format('woff'),
+    url('//at.alicdn.com/t/font_553949_5hk2cnwnm1mj9k9.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_553949_5hk2cnwnm1mj9k9.svg#iconfont') format('svg');
+  }
+
+  /** 内置样式 **/
+  @mixin icon-size($size){
+    line-height: $size;
+    font-size: $size;
+  }
+
+  icon {
+    font-family:"iconfont" !important;
+    @include icon-size(20px);
+    color: $color-primary;
+    font-style:normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    display: flex;
+    align-items: center;
+  }
+
+  icon.xxlarge{@include icon-size(40px);}
+  icon.xlarge{@include icon-size(35px);}
+  icon.large{@include icon-size(30px);}
+  icon.normal{@include icon-size(25px);}
+  icon.small{@include icon-size(20px);}
+  icon.xsmall{@include icon-size(15px);}
+
+
+  icon[color="primary"]{color: $color-primary}
+  icon[color="major"]{color: $color-major}
+  icon[color="white"]{color: white}
+  icon[color="gray"]{color: #8a8a8a}
+
+
+  icon.shop:before { content: "\e601"; }
+  icon.call:before { content: "\e614"; }
+  icon.more:before { content: "\e6a7"; }
+  icon.edit:before { content: "\e642"; }
+  icon.status-8:before { content: "\e689"; }
+  icon.error:before { content: "\e613"; }
+  icon.alert:before { content: "\e6fc"; }
+  icon.privilege:before { content: "\e6b2"; }
+  icon.empty:before { content: "\e66f"; }
+  icon.cart-fill:before { content: "\e600"; }
+  icon.status-6:before { content: "\e621"; }
+  icon.close:before { content: "\e723"; }
+  icon.cart:before { content: "\e73d"; }
+  icon.delete:before { content: "\e74b"; }
+  icon.like-fill:before { content: "\e760"; }
+  icon.like:before { content: "\e761"; }
+  icon.cart-empty:before { content: "\e663"; }
+  icon.status-4:before { content: "\e611"; }
+  icon.back:before { content: "\e639"; }
+  icon.cart-round:before { content: "\e63b"; }
+  icon.onsale:before { content: "\e61b"; }
+  icon.onclose:before { content: "\e606"; }
+  icon.bouns:before { content: "\e60a"; }
+  icon.chat:before { content: "\e7a8"; }
+  icon.status-2:before { content: "\e62f"; }
+  icon.status-7:before { content: "\e603"; }
+  icon.reduce:before { content: "\e6af"; }
+  icon.status-1:before { content: "\e6b5"; }
+  icon.customer:before { content: "\e643"; }
+  icon.star-fill:before { content: "\e6b0"; }
+  icon.plus-square:before { content: "\e640"; }
+  icon.notice:before { content: "\e615"; }
+  icon.package:before { content: "\e6ad"; }
+  icon.share:before { content: "\e622"; }
+  icon.expiring:before { content: "\e6ca"; }
+  icon.plus:before { content: "\e60e"; }
+  icon.status-5:before { content: "\e66c"; }
+  icon.status-3:before { content: "\e602"; }
+  icon.coupon:before { content: "\e63f"; }
+  icon.inshop:before { content: "\e8b2"; }
+  icon.fork:before { content: "\e616"; }
+  icon.star:before { content: "\e630"; }
+  icon.sender:before { content: "\e607"; }
+  icon.minus:before { content: "\e636"; }
+  icon.expired:before { content: "\e64e"; }
+  icon.used:before { content: "\e64f"; }
+  icon.new:before { content: "\e60d"; }
+  icon.modify:before { content: "\e63c"; }
+  icon.qrcode:before { content: "\e668"; }
+  icon.sign:before { content: "\e641"; }
+  icon.back-round:before { content: "\e884"; }
+  icon.vip:before { content: "\e94f"; }
+  icon.sale:before { content: "\e885"; }
+  icon.address:before { content: "\e766"; }
+
+</style>

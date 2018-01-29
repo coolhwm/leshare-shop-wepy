@@ -8,19 +8,12 @@
   export default class router extends wepy.mixin {
     config = {};
     components = {};
-    goto(url, switchTo) {
-      if (switchTo) {
-        this.$root.$switch(url);
-      } else {
-        this.$root.$navigate(url);
-      }
-    }
     plusCart(goods, goodsSku = '') {
       const source = this.$root.$wxpage.route;
       const mode = this.getMode(goods);
       switch (mode) {
         case 'SLIDER':
-          Event.emit(Event.GOODS_PANEL_OPEN, goods);
+          Event.emit(Event.GOODS_PANEL_OPEN, {goods, source});
           break;
         case 'POPUP':
           Event.emit(Event.GOODS_PANEL_PLUS, {goods, goodsSku, source});
@@ -39,12 +32,67 @@
         return goods.skuMode;
       }
       try {
-        return this.$root.$data.param.buyPanelType;
+        return this.$root.$data.buyPanelType;
       } catch (e) {
         return null;
       }
     }
+    /**
+     * 判断是否为TAB
+     */
+    isTab() {
+      const type = wepy.$instance.globalData.shopType;
+      return type == 1;
+    }
+    /**
+     * 处理跳转到商品详情
+     */
+    routeToCart() {
+      this.$root.$switch(`/pages/goods/cart`);
+    }
+    /**
+     * 跳转到分类购物
+     */
+    routeToIndex () {
+      if (this.isTab()) {
+        this.$root.$switch(`/pages/goods/category`);
+      } else {
+        this.$root.$navigate(`/pages/shop/index`);
+      }
+    }
+    /**
+     * 跳转到首页
+     */
+    routeToHome () {
+      if (this.isTab()) {
+        this.$root.$switch(`/pages/home/template`);
+      } else {
+        this.$root.$navigate(`/pages/home/home`);
+      }
+    }
+    /**
+     * 跳转到用户页面
+     */
+    routeToCustomer () {
+      if (this.isTab()) {
+        this.$root.$switch(`/pages/customer/index`);
+      } else {
+        this.$root.$navigate(`/pages/customer/index`);
+      }
+    }
     methods = {
+      routeToCart() {
+        this.routeToCart();
+      },
+      routeToHome() {
+        this.routeToHome();
+      },
+      routeToCustomer() {
+        this.roureCustomer();
+      },
+      routeToIndex() {
+        this.routeToIndex();
+      },
       /**
        * 处理移除购物车事件
        */
@@ -64,38 +112,39 @@
         this.$root.$navigate(`/pages/goods/detail?goodsId=${goodsId}`);
       },
       /**
-       * 处理跳转到商品详情
-       */
-      routeToCart() {
-        this.$root.$switch(`/pages/goods/cart`);
-      },
-      /**
        * 处理图片点击事件
        */
       routeByAction(event) {
-        const {action, targetId, switchTo} = event;
+        const {action, targetId} = event;
         // 根据动作进行路由
         switch (action) {
           case 'GOODS':
+            // 某个商品
             this.$root.$navigate(`/pages/goods/detail?goodsId=${targetId}`);
             break;
           case 'CATEGORY':
-            console.info(`跳转到商品分类：${targetId}`);
+            // 某个分类
+            this.$root.$navigate(`/pages/goods/category?categoryId=${targetId}`);
             break;
           case 'USER':
-            this.goto('/pages/customer/index', switchTo);
+            // 用户首页
+            this.routeToCustomer();
             break;
           case 'GOODS_ALL':
-            this.goto('/pages/shop/index', switchTo);
+            // 商品首页
+            this.routeToIndex();
             break;
           case 'MEMBER_SIGN':
-            this.goto('/pages/customer/sign_in', switchTo);
+            // 签到打卡
+            this.$root.$navigate('/pages/customer/sign_in');
             break;
           case 'COUPON_OWN':
-            this.goto('/pages/coupon/list', switchTo);
+            // 我的优惠券
+            this.$root.$navigate('/pages/coupon/list');
             break;
           case 'MEMBER_DETAIL':
-            this.goto('/pages/customer/vip_detail', switchTo);
+            // 会员详情
+            this.$root.$navigate('/pages/customer/vip_detail');
             break;
         }
       }

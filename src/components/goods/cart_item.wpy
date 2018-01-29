@@ -11,7 +11,13 @@
       <!--商品说明-->
       <view class="cart-info-container">
         <text class="goods-title-text">{{cart.goodsName}}</text>
-        <text class="goods-sku-text">{{cart.goodsSku}}</text>
+        <view class="row">
+          <text class="goods-sku-text">{{cart.goodsSku}}</text>
+          <repeat for="{{[cart]}}" key="i" index="i" item="item">
+            <DiscountBadge :goods.sync="item"/>
+          </repeat>
+        </view>
+
         <view class="goods-price-num-container">
           <view class="goods-price-container">
             <text class="goods-price-small">￥</text>
@@ -32,6 +38,7 @@
 
 <script>
   import wepy from 'wepy';
+  import DiscountBadge from '../../components/goods/discount_badge';
   import ZanQuantity from '../../components/zanui/quantity';
 
   export default class CartItem extends wepy.component {
@@ -102,7 +109,8 @@
       }
     };
     components = {
-      ZanQuantity: ZanQuantity
+      ZanQuantity: ZanQuantity,
+      DiscountBadge: DiscountBadge
     };
   }
 </script>

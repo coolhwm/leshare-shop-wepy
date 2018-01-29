@@ -11,11 +11,15 @@
       <!--文字 -->
       <view class="buy-panel-title-price">
         <text class="buy-panel-title">{{goods.name}}</text>
-        <text class="buy-panel-price">￥{{sku.isReady ? sku.detail.price: goods.priceLable}}</text>
+        <view class="panel-price-box row">
+          <text class="buy-panel-price">￥{{sku.isReady ? sku.detail.price: goods.priceLable}}</text>
+          <text class="cancel ml10" wx:if="{{goods.discount}}">￥{{goods.originalPrice}}</text>
+          <DiscountBadge :goods.sync="goods" />
+        </view>
       </view>
       <!--关闭按钮-->
       <view class="buy-panel-close-container">
-        <image class="buy-panel-close-icon" @tap="close" src="/images/icons/close.png" />
+        <icon class="close" color="gray" @tap="close"/>
       </view>
 
     </view>
@@ -74,6 +78,7 @@
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
   import Cart from '../../utils/Cart';
+  import DiscountBadge from './discount_badge';
 
   @connect({
     status: store.get('status')
@@ -82,15 +87,20 @@
     props = {
     };
     data = {
-      goods: {}
+      goods: {},
+      source: null
     };
     skuManager = null;
     cartManager = Cart.create();
     async onLoad() {
+      this.source = this.$root.$wxpage.route;
       // 监听购物面板打开的事件
       Event.listen(Event.GOODS_PANEL_OPEN, this.open.bind(this), this);
     }
-    open(goods) {
+    open({goods, source}) {
+      if (source != this.source) {
+        return;
+      }
       this.goods = goods;
       this.skuManager = new Sku(goods);
       this.skuManager.action = 'cart';
@@ -150,7 +160,8 @@
       }
     };
     components = {
-      ZanQuantity: ZanQuantity
+      ZanQuantity: ZanQuantity,
+      DiscountBadge: DiscountBadge
     };
     events = {};
   }
@@ -232,16 +243,11 @@
     width: 100rpx;
     text-align: center;
   }
-  .buy-panel-close-icon{
-    height: 45rpx;
-    width: 45rpx;
-  }
 
   /**
   * 商品价格
   */
   .buy-panel-price{
-    margin-top: 20rpx;
     font-size: 35rpx;
     color:#ff6200;
   }
@@ -307,7 +313,6 @@
   }
 
 
-
   /*购买栏底部*/
   .buy-panel-next{
     background-color: #1296db;
@@ -325,6 +330,11 @@
   /*购买栏为空*/
   .buy-panel-empty{
     background-color: #B0B0B0;
+  }
+
+  .panel-price-box{
+    margin-top: 20rpx;
+    align-items: center;
   }
 
 </style>

@@ -142,6 +142,9 @@ view.bg-white{background-color: white}
   width: $size;
   vertical-align: middle;
 }
+.icon-sm {
+  @include icon-image(15px);
+}
 .icon {
   @include icon-image(20px);
 }
