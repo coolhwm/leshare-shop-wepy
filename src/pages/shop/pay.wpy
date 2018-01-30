@@ -1,6 +1,6 @@
 <template>
   <view wx:if="{{init}}">
-    <view class="pay-box column">
+    <view wx:if="{{mode === 'pay'}}" class="pay-box column">
       <view class="header-box column-between">
         <image class="logo-image" src="{{shop.avatar}}/medium" wx:if="{{shop.avatar}}"/>
         <image class="logo-image" src="/images/tab/user.png" wx:else/>
@@ -13,10 +13,26 @@
           <text class="xxl">￥</text>
           <input type="number" placeholder="请输入付款金额" bindinput="dealPriceInput"/>
         </view>
-        <text class="primary sm" @tap="coupon">{{couponText}}</text>
+        <view class="coupon-box row" @tap="coupon">
+          <view class="weui-cell__bd">优惠券
+            <view class="label small primary pain" wx:if="{{coupons.length > 0}}">{{couponLabel}}</view>
+          </view>
+          <view class="weui-cell__ft {{coupons.length > 0 ? 'weui-cell__ft_in-access' : ''}}">{{couponText}}</view>
+        </view>
         <view class="button-box">
           <button class="zan-btn zan-label--primary" @tap="offline">立即付款</button>
         </view>
+      </view>
+    </view>
+    <view wx:else class="success-box column">
+      <view class="header-box column-between">
+        <icon class="confirm" style="font-size: 50px"/>
+        <text class="xxl pay-success">支付成功</text>
+        <text class="mb20">{{shop.name}}</text>
+        <text class="price-box">￥{{dealPrice * 1 - selectedCoupon.price * 1}}</text>
+      </view>
+      <view class="button-box">
+        <button class="zan-btn zan-label--primary" @tap="finish">完成</button>
       </view>
     </view>
   </view>
@@ -29,6 +45,8 @@
   import order from '../../api/order'
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
+  import Event from '../../utils/Event';
+  import Tips from '../../utils/Tips';
 
   @connect({
     shop: store.get('shop'),
@@ -38,12 +56,14 @@
     data = {
       init: false,
       dealPrice: 0,
-      selectedCoupon: []
+      couponText: '无可用',
+      selectedCoupon: null,
+      mode: 'pay'
     };
     async onLoad () {
       await store.init();
-      this.setDefaultCoupon();
       this.loaded();
+      Event.listen(Event.TRADE_COUPON_UPDATE, this.updateCoupon.bind(this), this);
     };
     /**
      * 页面分享
@@ -51,28 +71,37 @@
     methods = {
       dealPriceInput (e) {
         this.dealPrice = e.detail.value;
+        console.info(this.dealPrice)
       },
       async offline () {
         const param = {
-//          couponPrice: this.selectedCoupon.price,
-//          couponUsedId: this.selectedCoupon.id,
+          couponPrice: this.selectedCoupon.price,
+          couponUsedId: this.selectedCoupon.id,
           dealPrice: this.dealPrice,
           finalPrice: this.dealPrice * 1 - this.selectedCoupon.price * 1
         };
-        await order.offline(param);
-      }
-    };
-    /**
-     * 选择默认卡券
-     */
-    setDefaultCoupon() {
-      if (this.ownCoupons && this.ownCoupons.length > 0) {
-        let selected = this.ownCoupons[0];
-        this.ownCoupons.forEach(item => {
-          selected = item.price > selected.price ? item : selected;
-        });
-        console.info(selected);
-        this.updateCoupon(selected);
+        await Tips.confirm('确认支付？');
+        console.info(param);
+//        await order.offline(param);
+        await Tips.success('支付成功');
+        this.mode = 'success';
+        this.$apply();
+      },
+      /**
+       * 选择优惠券
+       */
+      coupon () {
+        if (this.ownCoupons.length < 1) {
+          return;
+        }
+        const param = {
+          coupons: JSON.stringify(this.coupons)
+        };
+        this.$navigate('../coupon/use', param);
+      },
+      async finish () {
+        await Tips.success('完成');
+        this.$apply();
       }
     };
     /**
@@ -88,9 +117,29 @@
     }
     computed = {
       couponText () {
-        console.info(this.ownCoupons);
-        if (!this.ownCoupons) return '无可用';
+        if (!this.coupons || !this.dealPrice) return '无可用';
         return this.selectedCoupon ? `满${this.selectedCoupon.limitPrice}减${this.selectedCoupon.price}` : '未使用';
+      },
+      coupons () {
+        if (!this.ownCoupons || !this.dealPrice) return;
+        const coupons = this.ownCoupons.filter(item => item.limitPrice <= this.dealPrice);
+        return coupons;
+      },
+      couponLabel () {
+        if (!this.coupons || !this.dealPrice) return;
+        return this.selectedCoupon ? '已选择' : this.coupons.length + '张可用';
+      }
+    };
+    watch = {
+      coupons (news) {
+        if (!this.coupons) return;
+        let selected = news[0];
+        news.forEach(item => {
+          selected = item.price > selected.price ? item : selected;
+        });
+        if (!selected) return;
+        this.selectedCoupon = selected;
+        this.$apply();
       }
     };
     components = {
@@ -121,17 +170,45 @@
     .content-box{
       padding: 30rpx 40rpx;
       height: 400rpx;
+      .input-box, .coupon-box{
+        border-bottom: 1px solid #EDEDED;
+      }
       .input-box{
         height: 150rpx;
-        border-bottom: 1px solid #EDEDED;
         input{
           height: 100rpx;
           font-size: 50rpx;
         }
       }
+      .coupon-box{
+        padding: 10rpx 0;
+      }
       .button-box{
         padding: 40rpx 0;
       }
+    }
+  }
+  .success-box{
+    background-color: #fff;
+    margin: 40rpx;
+    height: 700rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .header-box{
+      margin: 40rpx;
+      padding: 10rpx 0;
+      border-bottom: 1px solid #EDEDED;
+      width: 90%;
+    }
+    .pay-success{
+      margin: 50rpx 0 20rpx;
+    }
+    .price-box{
+      font-size: 30px;
+    }
+    .button-box{
+      width: 90%;
     }
   }
 
