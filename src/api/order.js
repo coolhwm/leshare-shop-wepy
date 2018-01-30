@@ -87,6 +87,15 @@ export default class order extends base {
     const url = `${this.baseUrl}/orders/${orderId}/status/comments`;
     return this.put(url);
   }
+
+  /***
+   * 创建线下订单
+   */
+  static offline(param) {
+    const url = `${this.baseUrl}/orders/offline`;
+    return this.post(url, param);
+  }
+
   /** ********************* 生成方法 ***********************/
 
   /**

@@ -2,40 +2,96 @@
   <view wx:if="{{init}}">
     <view class="pay-box column">
       <view class="header-box column-between">
-        <image class="logo-image" src="/images/tab/user.png"/>
-        <text class="lg">店铺名称</text>
+        <image class="logo-image" src="{{shop.avatar}}/medium" wx:if="{{shop.avatar}}"/>
+        <image class="logo-image" src="/images/tab/user.png" wx:else/>
+        <text class="lg" wx:if="{{shop.name}}">{{shop.name}}</text>
+        <text class="lg" wx:else>店铺名称</text>
       </view>
       <view class="content-box">
         <text class="lg">付款金额</text>
         <view class="row input-box">
           <text class="xxl">￥</text>
-          <input type="number" placeholder="请输入付款金额" />
+          <input type="number" placeholder="请输入付款金额" bindinput="dealPriceInput"/>
         </view>
+        <text class="primary sm" @tap="coupon">{{couponText}}</text>
         <view class="button-box">
-          <button class="zan-btn zan-label--primary">立即付款</button>
+          <button class="zan-btn zan-label--primary" @tap="offline">立即付款</button>
         </view>
       </view>
     </view>
   </view>
+
 </template>
 
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
+  import order from '../../api/order'
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
 
+  @connect({
+    shop: store.get('shop'),
+    ownCoupons: store.get('ownCoupons')
+  })
   export default class ShopIndex extends wepy.page {
     data = {
-      init: false
+      init: false,
+      dealPrice: 0,
+      selectedCoupon: []
     };
     async onLoad () {
-      this.init = true
+      await store.init();
+      this.setDefaultCoupon();
+      this.loaded();
     };
     /**
      * 页面分享
      */
     methods = {
+      dealPriceInput (e) {
+        this.dealPrice = e.detail.value;
+      },
+      async offline () {
+        const param = {
+//          couponPrice: this.selectedCoupon.price,
+//          couponUsedId: this.selectedCoupon.id,
+          dealPrice: this.dealPrice,
+          finalPrice: this.dealPrice * 1 - this.selectedCoupon.price * 1
+        };
+        await order.offline(param);
+      }
     };
+    /**
+     * 选择默认卡券
+     */
+    setDefaultCoupon() {
+      if (this.ownCoupons && this.ownCoupons.length > 0) {
+        let selected = this.ownCoupons[0];
+        this.ownCoupons.forEach(item => {
+          selected = item.price > selected.price ? item : selected;
+        });
+        console.info(selected);
+        this.updateCoupon(selected);
+      }
+    };
+    /**
+     * 回调更新优惠券
+     */
+    updateCoupon(coupon) {
+      if (!coupon) {
+        this.selectedCoupon = null;
+      } else {
+        this.selectedCoupon = coupon;
+      }
+      this.$apply();
+    }
     computed = {
+      couponText () {
+        console.info(this.ownCoupons);
+        if (!this.ownCoupons) return '无可用';
+        return this.selectedCoupon ? `满${this.selectedCoupon.limitPrice}减${this.selectedCoupon.price}` : '未使用';
+      }
     };
     components = {
     };
