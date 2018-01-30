@@ -134,6 +134,24 @@
             // 商品首页
             this.routeToIndex();
             break;
+          case 'GOODS_SEARCH':
+            // 商品检索
+            const {categoryId, sort, by, content} = targetId;
+            let url = `/pages/goods/search_list?`;
+            if (categoryId != null) {
+              url += `&categoryId=${categoryId}`;
+            }
+            if (sort != null) {
+              url += `&sort=${sort}`;
+            }
+            if (by != null) {
+              url += `&by=${by}`;
+            }
+            if (content != null) {
+              url += `&keyword=${content}`;
+            }
+            this.$root.$navigate(url);
+            break;
           case 'MEMBER_SIGN':
             // 签到打卡
             this.$root.$navigate('/pages/customer/sign_in');

@@ -94,7 +94,10 @@
     methods = {
       more() {
         const {sort, by, content, categoryId} = this.param;
-        let url = `/pages/goods/search_list?categoryId=${categoryId}`;
+        let url = `/pages/goods/search_list?`;
+        if (categoryId != null) {
+          url += `&categoryId=${categoryId}`;
+        }
         if (sort != null) {
           url += `&sort=${sort}`;
         }

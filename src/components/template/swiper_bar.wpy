@@ -1,6 +1,6 @@
 <template>
   <!--TODO 自定义高度处理-->
-  <swiper indicator-dots="true" indicator-active-color="#EEE" interval="3000" autoplay>
+  <swiper indicator-dots="true" indicator-active-color="#EEE" interval="3000" autoplay style="height:{{param.height}}">
     <swiper-item class="swiper-box" wx:for="{{param.data}}" wx:key="index" wx:index="index" >
       <image mode="aspectFill" src="{{item.url}}" @tap="routeByAction({{item}})"></image>
     </swiper-item>
@@ -21,7 +21,7 @@
 <style lang="scss">
   @import "../../styles/variable";
   .swiper-box{
-    height: 300px;
+    height: 100%;
     width: 100%;
     image{
       height: 100%;

@@ -55,7 +55,7 @@
         </view>
 
         <!--领取优惠券-->
-        <view class="coupons-box row-between" @tap="pick" wx:if="{{isCoupon}}">
+        <view class="coupons-box row-between" @tap="pick" wx:if="{{isCoupon && pickCoupons.length > 0}}">
           <view class="row">
             <view><text class="lg">领券：</text></view>
             <view class="row">
