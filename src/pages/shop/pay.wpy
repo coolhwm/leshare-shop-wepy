@@ -81,8 +81,7 @@
           finalPrice: this.dealPrice * 1 - this.selectedCoupon.price * 1
         };
         await Tips.confirm('确认支付？');
-        console.info(param);
-//        await order.offline(param);
+        await order.offline(param);
         await Tips.success('支付成功');
         this.mode = 'success';
         this.$apply();
@@ -99,9 +98,9 @@
         };
         this.$navigate('../coupon/use', param);
       },
-      async finish () {
-        await Tips.success('完成');
-        this.$apply();
+      finish () {
+        Tips.success('完成');
+        this.$switch('../home/template');
       }
     };
     /**
