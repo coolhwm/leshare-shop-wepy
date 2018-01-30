@@ -23,7 +23,7 @@ export default class extends wepy.app {
     pageParams: null,
     componentsParams: null,
     baseUrl: null,
-    version: 'v2.1.0'
+    version: 'v3.0.0'
   };
   constructor () {
     super();
