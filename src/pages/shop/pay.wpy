@@ -1,6 +1,6 @@
 <template>
   <view wx:if="{{init}}">
-    <view wx:if="{{mode === 'pay'}}" class="pay-box column">
+    <view wx:if="{{mode === 'pay'}}" class="pay-box column-between">
       <view class="header-box column-between">
         <image class="logo-image" src="{{shop.avatar}}/medium" wx:if="{{shop.avatar}}"/>
         <image class="logo-image" src="/images/tab/user.png" wx:else/>
@@ -24,7 +24,7 @@
         </view>
       </view>
     </view>
-    <view wx:else class="success-box column">
+    <view wx:else class="success-box column-center">
       <view class="header-box column-between">
         <icon class="confirm" style="font-size: 50px"/>
         <text class="xxl pay-success">支付成功</text>
@@ -71,7 +71,6 @@
     methods = {
       dealPriceInput (e) {
         this.dealPrice = e.detail.value;
-        console.info(this.dealPrice)
       },
       async offline () {
         const param = {
@@ -155,11 +154,9 @@
     background-color: #fff;
     margin: 40rpx;
     height: 700rpx;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
     .header-box{
       margin: 40rpx;
+      width: 90%;
       .logo-image {
         border: $border;
         width: 100rpx;
@@ -191,9 +188,6 @@
     background-color: #fff;
     margin: 40rpx;
     height: 700rpx;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     .header-box{
       margin: 40rpx;
       padding: 10rpx 0;
