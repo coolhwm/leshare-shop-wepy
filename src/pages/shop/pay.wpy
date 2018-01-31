@@ -1,17 +1,18 @@
 <template>
-  <view wx:if="{{init}}">
+  <view class="container" wx:if="{{init}}">
+
+    <!--待支付-->
     <view wx:if="{{mode === 'pay'}}" class="pay-box column-between">
       <view class="header-box column-between">
-        <image class="logo-image" src="{{shop.avatar}}/medium" wx:if="{{shop.avatar}}"/>
-        <image class="logo-image" src="/images/tab/user.png" wx:else/>
-        <text class="lg" wx:if="{{shop.name}}">{{shop.name}}</text>
-        <text class="lg" wx:else>店铺名称</text>
+        <image class="logo-image" src="{{shop.avatar}}/medium"/>
+        <text class="lg">{{shop.name}}</text>
       </view>
+
       <view class="content-box">
         <text class="lg">付款金额</text>
         <view class="row input-box">
-          <text class="xxl">￥</text>
-          <input type="number" placeholder="请输入付款金额" bindinput="dealPriceInput"/>
+          <text class="xxl mr10">￥</text>
+          <input type="number" bindinput="dealPriceInput"/>
         </view>
         <view class="coupon-box row" @tap="coupon">
           <view class="weui-cell__bd">优惠券
@@ -24,12 +25,14 @@
         </view>
       </view>
     </view>
+
+    <!--支付成功-->
     <view wx:else class="success-box column-center">
       <view class="header-box column-between">
-        <icon class="confirm" style="font-size: 50px"/>
+        <icon class="confirm" style="font-size: 50px;height: 50px;"/>
         <text class="xxl pay-success">支付成功</text>
         <text class="mb20">{{shop.name}}</text>
-        <text class="price-box">￥{{dealPrice * 1 - selectedCoupon.price * 1}}</text>
+        <text class="price-box">￥{{result.finalPrice}}</text>
       </view>
       <view class="button-box">
         <button class="zan-btn zan-label--primary" @tap="finish">完成</button>
@@ -58,7 +61,8 @@
       dealPrice: 0,
       couponText: '无可用',
       selectedCoupon: null,
-      mode: 'pay'
+      mode: 'pay',
+      result: null
     };
     async onLoad () {
       await store.init();
@@ -71,15 +75,33 @@
       },
       async offline () {
         const param = {
-          couponPrice: this.selectedCoupon.price,
-          couponUsedId: this.selectedCoupon.id,
           dealPrice: this.dealPrice,
-          finalPrice: this.dealPrice * 1 - this.selectedCoupon.price * 1
+          finalPrice: this.dealPrice
         };
-        await Tips.confirm('确认支付？');
-        await order.offline(param);
-        await Tips.success('支付成功');
-        this.mode = 'success';
+        if (this.selectedCoupon) {
+          param.couponPrice = this.selectedCoupon.price;
+          param.couponUsedId = this.selectedCoupon.id;
+          param.finalPrice = this.dealPrice * 1 - this.selectedCoupon.price * 1
+        }
+        await Tips.confirm(`确认支付${param.finalPrice}元给${this.shop.name}？`);
+        try {
+          // 创建订单
+          const trade = await order.offline(param);
+          this.result = trade;
+          // 调用后台支付接口
+          const payment = await order.prepayOrder(trade.orderId);
+          // 拉起支付页面
+          await order.wxpayOrder(payment);
+          await Tips.success('支付成功');
+          this.mode = 'success';
+        } catch (error) {
+          if (error.errMsg == 'requestPayment:fail cancel') {
+            await Tips.error('支付取消');
+          } else {
+            await Tips.error('支付失败');
+            console.error('支付失败：', error);
+          }
+        }
         this.$apply();
       },
       /**
@@ -95,7 +117,6 @@
         this.$navigate('../coupon/use', param);
       },
       finish () {
-        Tips.success('完成');
         this.$switch('../home/template');
       }
     };
@@ -146,49 +167,47 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .container{
+    padding: 40rpx;
+  }
+
   .pay-box{
+    padding: 40rpx;
     background-color: #fff;
-    margin: 40rpx;
-    height: 700rpx;
+    border-radius: 2px;
     .header-box{
-      margin: 40rpx;
-      width: 90%;
       .logo-image {
-        border: $border;
-        width: 100rpx;
-        height: 100rpx;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
       }
     }
+
     .content-box{
-      padding: 30rpx 40rpx;
-      height: 400rpx;
+      margin-top: 20rpx;
       .input-box, .coupon-box{
-        border-bottom: 1px solid #EDEDED;
+        border-bottom: $border;
       }
       .input-box{
         height: 150rpx;
-        input{
+        input, text{
+          line-height: 100rpx;
           height: 100rpx;
           font-size: 50rpx;
         }
       }
       .coupon-box{
-        padding: 10rpx 0;
-      }
-      .button-box{
-        padding: 40rpx 0;
+        padding: 25rpx 0;
       }
     }
   }
   .success-box{
     background-color: #fff;
-    margin: 40rpx;
-    height: 700rpx;
+    padding: 40rpx;
     .header-box{
-      margin: 40rpx;
-      padding: 10rpx 0;
       border-bottom: 1px solid #EDEDED;
-      width: 90%;
+      width: 100%;
+      padding-bottom: 20rpx;
     }
     .pay-success{
       margin: 50rpx 0 20rpx;
@@ -196,8 +215,13 @@
     .price-box{
       font-size: 30px;
     }
-    .button-box{
-      width: 90%;
+  }
+
+  .button-box{
+    margin-top: 40rpx;
+    width: 100%;
+    .zan-btn {
+      margin-bottom: 0;
     }
   }
 
