@@ -317,6 +317,8 @@
         if (trade.couponUsedId) {
           await store.reflesh('coupon', 'member');
         }
+        // 刷新列表
+        Event.emit(Event.ORDER_LIST_UPDATE);
         // TODO 这个可能在TAB里
         WxUtils.backOrRedirect('/pages/customer/index');
       }

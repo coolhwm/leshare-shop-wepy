@@ -8,7 +8,7 @@
       <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="routeToGoods({{goods.id}})"></image>
     </view>
     <view class="goods-title" @tap="routeToGoods({{goods.id}})">
-      <text class="inline lg" wx:if="{{goods.isGoodsName}}">{{goods.name}}</text>
+      <text wx:if="{{goods.isGoodsName}}">{{goods.name}}</text>
     </view>
 
     <view class="row-between" wx:if="{{goods.isSales || goods.isPrice || goods.isCart}}">
@@ -73,7 +73,16 @@
       height: $size;
     }
     .goods-title{
+      height: 80rpx;
       padding: 0 10rpx;
+      text{
+        word-break: break-all;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+      }
     }
     .content-box{
       padding: 5rpx 10rpx;

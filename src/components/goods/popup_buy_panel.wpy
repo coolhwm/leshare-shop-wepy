@@ -64,6 +64,9 @@
       // 减少一个购物车监听
       Event.listen(Event.GOODS_PANEL_MINUS, this.minus.bind(this), this);
     }
+    onUnload () {
+      console.info('popup unload');
+    }
     plus({goods, goodsSku, source}) {
       if (source != this.source) {
         return;

@@ -28,7 +28,7 @@
     <!--右侧图标-->
     <icon class="more normal" />
   </view>
-  <image class="hr" src="/images/icons/address-hr.png" />
+  <image class="hr" src="http://img.leshare.shop/shop/other/address-hr.png" />
 </template>
 
 <script>

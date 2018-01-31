@@ -45,6 +45,9 @@ export default class config extends base {
    * 处理页面
    */
   static _processPage(data) {
+    if (data == null || data == '') {
+      return null;
+    }
     const config = JSON.parse(data);
     const components = this.processComponents(config.components);
     const plugins = this.processPlugins(config.plugins);

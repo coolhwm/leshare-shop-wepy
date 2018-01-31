@@ -74,7 +74,7 @@
     computed = {
       avatarUrl () {
         if (this.user == null || this.user.avatarUrl == null) {
-          return '/images/icons/customer_white.png';
+          return 'http://img.leshare.shop/shop/other/customer_white.png';
         } else {
           return this.user.avatarUrl;
         }

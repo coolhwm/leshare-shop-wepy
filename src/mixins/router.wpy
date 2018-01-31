@@ -124,7 +124,7 @@
             break;
           case 'CATEGORY':
             // 某个分类
-            this.$root.$navigate(`/pages/goods/category?categoryId=${targetId}`);
+            this.$root.$navigate(`/pages/goods/search_list?categoryId=${targetId}`);
             break;
           case 'USER':
             // 用户首页
@@ -133,6 +133,24 @@
           case 'GOODS_ALL':
             // 商品首页
             this.routeToIndex();
+            break;
+          case 'GOODS_SEARCH':
+            // 商品检索
+            const {categoryId, sort, by, content} = targetId;
+            let url = `/pages/goods/search_list?`;
+            if (categoryId != null) {
+              url += `&categoryId=${categoryId}`;
+            }
+            if (sort != null) {
+              url += `&sort=${sort}`;
+            }
+            if (by != null) {
+              url += `&by=${by}`;
+            }
+            if (content != null) {
+              url += `&keyword=${content}`;
+            }
+            this.$root.$navigate(url);
             break;
           case 'MEMBER_SIGN':
             // 签到打卡
@@ -145,6 +163,20 @@
           case 'MEMBER_DETAIL':
             // 会员详情
             this.$root.$navigate('/pages/customer/vip_detail');
+            break;
+          case 'PHONE':
+            // 拨打电话
+            wepy.makePhoneCall({
+              phoneNumber: `${targetId}`
+            });
+            break;
+          case 'SHARE':
+            // 分享好友
+            wepy.showShareMenu();
+            break;
+          case 'MEMBER_REGIST':
+            // 注册会员
+            this.routeToCustomer();
             break;
         }
       }

@@ -40,6 +40,8 @@ export default class Event {
   static GOODS_PANEL_PLUS = 'GOODS_PANEL_PLUS';
   static GOODS_PANEL_MINUS = 'GOODS_PANEL_MINUS';
   static listen(eventName, callback, observer) {
+    // 先移除监听
+    this.remove(eventName, observer);
     WxNotificationCenter.addNotification(eventName, callback, observer);
   }
 

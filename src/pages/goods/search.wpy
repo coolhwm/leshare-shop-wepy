@@ -68,7 +68,7 @@
     };
     onLoad ({param}) {
       // 热门搜索初始化
-      if (param != null) {
+      if (param != null && param != 'null' && param != 'undefined') {
         const {hotKeywords} = JSON.parse(param);
         this.hotKeywords = hotKeywords;
       }
