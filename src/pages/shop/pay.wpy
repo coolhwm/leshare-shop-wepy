@@ -24,6 +24,7 @@
         </view>
       </view>
     </view>
+    // 支付成功后跳转
     <view wx:else class="success-box column-center">
       <view class="header-box column-between">
         <icon class="confirm" style="font-size: 50px"/>
@@ -65,9 +66,6 @@
       this.loaded();
       Event.listen(Event.TRADE_COUPON_UPDATE, this.updateCoupon.bind(this), this);
     };
-    /**
-     * 页面分享
-     */
     methods = {
       dealPriceInput (e) {
         this.dealPrice = e.detail.value;
@@ -120,8 +118,7 @@
       },
       coupons () {
         if (!this.ownCoupons || !this.dealPrice) return;
-        const coupons = this.ownCoupons.filter(item => item.limitPrice <= this.dealPrice);
-        return coupons;
+        return this.ownCoupons.filter(item => item.limitPrice <= this.dealPrice);
       },
       couponLabel () {
         if (!this.coupons || !this.dealPrice) return;
