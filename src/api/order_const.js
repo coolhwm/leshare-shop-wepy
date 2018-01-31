@@ -6,7 +6,8 @@ const TYPE = {
   MALL: 10,
   TAKEAWAY: 20,
   FORHERE: 30,
-  PACK: 33
+  PACK: 33,
+  OFFLINE: 40
 };
 /**
  * 支付方式

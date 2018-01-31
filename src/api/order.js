@@ -1,6 +1,6 @@
 import base from './base';
 import Page from '../utils/Page';
-import {ACTION, orderUtils as utils} from './order_const';
+import {TYPE, ACTION, orderUtils as utils} from './order_const';
 import WxUtils from '../utils/WxUtils';
 
 /**
@@ -288,6 +288,8 @@ export default class order extends base {
     // 处理商品信息
     const goods = order.orderGoodsInfos;
     this._processOrderGoods(goods);
+    // 处理离线支付
+    this._processOfflinePayment(order);
   }
   /**
    * 处理订单详情
@@ -313,7 +315,21 @@ export default class order extends base {
     this._processOrderGoods(detail.orderGoodsInfos);
     // 处理标志位信息
     this._processTypeFlag(detail);
+    // 处理离线支付
+    this._processOfflinePayment(detail);
     return detail;
+  }
+
+  static _processOfflinePayment(order) {
+    const orderType = order.orderType;
+    if (orderType != TYPE.OFFLINE) return;
+    order.orderGoodsInfos = [{
+      imageUrl: 'http://img.leshare.shop/shop/other/wechat_pay.png',
+      goodsName: `微信支付 ${order.finalPrice}元`,
+      goodsPrice: order.finalPrice,
+      goodsNum: 1
+    }];
+    return order;
   }
 
   /**
@@ -404,6 +420,7 @@ export default class order extends base {
    * 处理订单商品信息
    */
   static _processOrderGoods (goods) {
+    if (goods == null || goods.length < 1) return;
     goods.forEach(item => {
       item.imageUrl += '/small';
     });
