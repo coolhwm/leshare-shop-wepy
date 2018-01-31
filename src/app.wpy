@@ -7,130 +7,130 @@
   @import "./styles/zent";
 </style>
 <script>
-import wepy from 'wepy';
-import WxUtils from './utils/WxUtils';
-import 'wepy-async-function';
-import { setStore } from 'wepy-redux'
-import configStore from './store'
-const store = configStore();
-setStore(store);
-export default class extends wepy.app {
-  globalData = {
-    auth: {},
-    scene: null,
-    appCode: null,
-    shopType: null,
-    pageParams: null,
-    componentsParams: null,
-    baseUrl: null,
-    version: 'v3.0.0'
-  };
-  constructor () {
-    super();
-    // 注册中间件
-    this.use('requestfix');
-    this.use('promisify');
-    this.intercept('request', {
-      config (p) {
-        p.header = this.createAuthHeader();
-        return p;
+  import wepy from 'wepy';
+  import WxUtils from './utils/WxUtils';
+  import 'wepy-async-function';
+  import { setStore } from 'wepy-redux'
+  import configStore from './store'
+  const store = configStore();
+  setStore(store);
+  export default class extends wepy.app {
+    globalData = {
+      auth: {},
+      scene: null,
+      appCode: null,
+      shopType: null,
+      pageParams: null,
+      componentsParams: null,
+      baseUrl: null,
+      version: 'v3.0.1'
+    };
+    constructor () {
+      super();
+      // 注册中间件
+      this.use('requestfix');
+      this.use('promisify');
+      this.intercept('request', {
+        config (p) {
+          p.header = this.createAuthHeader();
+          return p;
+        }
+      });
+      this.intercept('uploadFile', {
+        config (p) {
+          p.header = this.createAuthHeader();
+          return p;
+        },
+        success (p) {
+          return p.data;
+        }
+      });
+    }
+    /**
+     * 构造权限头部
+     */
+    createAuthHeader () {
+      const loginCode = wepy.$instance.globalData.auth.login_code;
+      const header = {};
+      if (loginCode) {
+        header['login_code'] = loginCode;
       }
-    });
-    this.intercept('uploadFile', {
-      config (p) {
-        p.header = this.createAuthHeader();
-        return p;
-      },
-      success (p) {
-        return p.data;
+      return header;
+    }
+    onLaunch(param) {
+      // 校验SDK
+      WxUtils.checkSDK();
+      // 同步开放平台EXT数据
+      const ext = wepy.getExtConfigSync();
+      console.info('[ext] init ext data', ext);
+      if (ext.globalConfig) {
+        console.info('[ext] init ext global config data', ext.globalConfig);
+        Object.assign(ext, ext.globalConfig);
       }
-    });
-  }
-  /**
-   * 构造权限头部
-   */
-  createAuthHeader () {
-    const loginCode = wepy.$instance.globalData.auth.login_code;
-    const header = {};
-    if (loginCode) {
-      header['login_code'] = loginCode;
-    }
-    return header;
-  }
-  onLaunch(param) {
-    // 校验SDK
-    WxUtils.checkSDK();
-    // 同步开放平台EXT数据
-    const ext = wepy.getExtConfigSync();
-    console.info('[ext] init ext data', ext);
-    if (ext.globalConfig) {
-      console.info('[ext] init ext global config data', ext.globalConfig);
-      Object.assign(ext, ext.globalConfig);
-    }
-    Object.assign(wepy.$instance.globalData, ext);
-    // 同步权限数据
-    this.syncStoreConfig('login_code');
-    this.syncStoreConfig('third_session');
-    this.syncStoreConfig('user');
-    // 获取保存场景值
-    if (param && param.scene) {
-      console.info('[scene]onLaunch scene', param.scene);
-      wepy.$instance.globalData.scene = param.scene;
-      console.info('[auth]onLaunch end');
-    }
-  }
-  syncStoreConfig(key) {
-    try {
-      const value = wepy.getStorageSync(key);
-      if (value !== '') {
-        console.info(`[auth]${key} sync success `);
-        wepy.$instance.globalData.auth[key] = value;
+      Object.assign(wepy.$instance.globalData, ext);
+      // 同步权限数据
+      this.syncStoreConfig('login_code');
+      this.syncStoreConfig('third_session');
+      this.syncStoreConfig('user');
+      // 获取保存场景值
+      if (param && param.scene) {
+        console.info('[scene]onLaunch scene', param.scene);
+        wepy.$instance.globalData.scene = param.scene;
+        console.info('[auth]onLaunch end');
       }
-    } catch (e) {
-      console.warn(`[auth]${key} sync fail `);
     }
+    syncStoreConfig(key) {
+      try {
+        const value = wepy.getStorageSync(key);
+        if (value !== '') {
+          console.info(`[auth]${key} sync success `);
+          wepy.$instance.globalData.auth[key] = value;
+        }
+      } catch (e) {
+        console.warn(`[auth]${key} sync fail `);
+      }
+    }
+    config = {
+      pages: [
+        'pages/home/home',
+        'pages/home/template',
+        'pages/home/login',
+        'pages/shop/index',
+        'pages/goods/cart',
+        'pages/goods/detail',
+        'pages/goods/comment_list',
+        'pages/goods/search',
+        'pages/goods/search_list',
+        'pages/goods/category',
+        'pages/goods/comment_edit',
+        'pages/address/edit',
+        'pages/address/select',
+        'pages/address/list',
+        'pages/address/search',
+        'pages/order/trade',
+        'pages/order/detail',
+        'pages/order/refund_edit',
+        'pages/order/refund_detail',
+        'pages/coupon/active',
+        'pages/coupon/list',
+        'pages/coupon/detail',
+        'pages/coupon/pick',
+        'pages/customer/index',
+        'pages/customer/index_basic',
+        'pages/customer/registe_member',
+        'pages/customer/vip_detail',
+        'pages/customer/address_list',
+        'pages/customer/bonus_list',
+        'pages/customer/vip_info',
+        'pages/customer/sign_in',
+        'pages/coupon/use',
+        'pages/shop/contact'
+      ],
+      window: {
+        backgroundTextStyle: 'dark',
+        backgroundColor: '#F5F5F5',
+        navigationBarBackgroundColor: '#1296db'
+      }
+    };
   }
-  config = {
-    pages: [
-      'pages/home/home',
-      'pages/home/template',
-      'pages/home/login',
-      'pages/shop/index',
-      'pages/goods/cart',
-      'pages/goods/detail',
-      'pages/goods/comment_list',
-      'pages/goods/search',
-      'pages/goods/search_list',
-      'pages/goods/category',
-      'pages/goods/comment_edit',
-      'pages/address/edit',
-      'pages/address/select',
-      'pages/address/list',
-      'pages/address/search',
-      'pages/order/trade',
-      'pages/order/detail',
-      'pages/order/refund_edit',
-      'pages/order/refund_detail',
-      'pages/coupon/active',
-      'pages/coupon/list',
-      'pages/coupon/detail',
-      'pages/coupon/pick',
-      'pages/customer/index',
-      'pages/customer/index_basic',
-      'pages/customer/registe_member',
-      'pages/customer/vip_detail',
-      'pages/customer/address_list',
-      'pages/customer/bonus_list',
-      'pages/customer/vip_info',
-      'pages/customer/sign_in',
-      'pages/coupon/use',
-      'pages/shop/contact'
-    ],
-    window: {
-      backgroundTextStyle: 'dark',
-      backgroundColor: '#F5F5F5',
-      navigationBarBackgroundColor: '#1296db'
-    }
-  };
-}
 </script>
