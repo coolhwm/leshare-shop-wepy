@@ -327,7 +327,7 @@ export default class order extends base {
       imageUrl: 'http://img.leshare.shop/shop/other/wechat_pay.png',
       goodsName: `微信支付 ${order.finalPrice}元`,
       goodsPrice: order.finalPrice,
-      goodsNum: 1
+      count: 1
     }];
     return order;
   }
