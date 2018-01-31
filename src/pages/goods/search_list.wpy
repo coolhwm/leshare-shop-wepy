@@ -39,7 +39,8 @@
   import Loading from '../../components/common/loading';
 
   @connect({
-    discount: store.get('discount')
+    discount: store.get('discount'),
+    categories: store.get('categories')
   })
   export default class GoodsSearchList extends wepy.page {
     data = {
@@ -66,9 +67,25 @@
       this.keyword = keyword;
       this.tab.sord = sort;
       this.tab.selectedId = by;
+      this.initTitle();
       this.page = goods.list(this.discount);
       await this.next();
     };
+    initTitle() {
+      let title = '搜索结果';
+      if (this.categoryId && this.categories) {
+        const category = this.categories.list.find(item => item.id == this.categoryId);
+        if (category != null) {
+          title = category.title;
+        }
+      }
+      if (this.keyword) {
+        title = `搜索：${this.keyword}`;
+      }
+      wepy.setNavigationBarTitle({
+        title: title
+      });
+    }
     params() {
       const param = {
         by: this.tab.selectedId,
