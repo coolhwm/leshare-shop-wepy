@@ -24,7 +24,6 @@
         </view>
       </view>
     </view>
-    // 支付成功后跳转
     <view wx:else class="success-box column-center">
       <view class="header-box column-between">
         <icon class="confirm" style="font-size: 50px"/>
