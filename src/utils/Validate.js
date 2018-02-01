@@ -141,4 +141,11 @@ export default class Validate {
   static optional(value) {
     return !this.required(value) && 'dependency-mismatch'
   }
+
+  /***
+   * 验证金额
+   */
+  static money(value) {
+    return this.optional(value) || /(^[1-9]([0-9]+)?(\.[0-9]{1,2})?$)|(^(0){1}$)|(^[0-9]\.[0-9]([0-9])?$)/.test(value)
+  }
 }

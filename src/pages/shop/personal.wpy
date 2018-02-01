@@ -1,0 +1,60 @@
+<template>
+  <Loading :init.sync="init"/>
+  <view wx:if="{{init}}">
+    <view class="container user-box">
+
+      <!-- 会员卡 -->
+      <view class="box-bg">
+        <VipCard/>
+      </view>
+
+      <view class="row">
+        <view>
+          <text></text>
+          <text></text>
+        </view>
+        <view></view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import store from '../../store/utils';
+  import base from '../../mixins/base';
+  import pagination from '../../mixins/pagination';
+  import VipCard from '../../components/customer/vip_card';
+  import Loading from '../../components/common/loading';
+
+  export default class CustomerIndex extends wepy.page {
+    data = {
+      init: false
+    };
+    async onLoad() {
+      await store.init();
+      this.loaded();
+    };
+    methods = {
+    };
+    computed = {
+    };
+    components = {
+      VipCard: VipCard,
+      Loading: Loading
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '个人中心',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .user-box {
+    background-color: white;
+    border-bottom: $border;
+  }
+</style>

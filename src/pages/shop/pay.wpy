@@ -1,0 +1,250 @@
+<template>
+  <Tips/>
+  <view class="container" wx:if="{{init}}">
+
+    <!--待支付-->
+    <view wx:if="{{mode === 'pay'}}" class="pay-box column-between">
+      <view class="header-box column-between">
+        <image class="logo-image" src="{{shop.avatar}}/medium"/>
+        <text class="lg">{{shop.name}}</text>
+      </view>
+
+      <view class="content-box">
+        <text class="lg">付款金额</text>
+        <view class="row input-box">
+          <text class="xxl mr10">￥</text>
+          <input type="digit" bindinput="dealPriceInput" maxlength="12"/>
+        </view>
+        <view class="coupon-box row">
+          <view class="weui-cell__bd">优惠券
+            <view class="label small primary pain" wx:if="{{coupons.length > 0}}">{{couponLabel}}</view>
+          </view>
+          <view wx:if="{{coupons.length > 0}}" class="weui-cell__ft {{coupons.length > 0 ? 'weui-cell__ft_in-access' : ''}}"  @tap="coupon">{{couponText}}</view>
+          <view wx:else class="weui-cell__ft" >{{couponText}}</view>
+        </view>
+        <view class="button-box">
+          <button class="zan-btn zan-label--primary" @tap="offline">立即付款</button>
+        </view>
+      </view>
+    </view>
+
+    <!--支付成功-->
+    <view wx:else class="success-box column-center">
+      <view class="header-box column-between">
+        <icon class="confirm" style="font-size: 50px;height: 50px;"/>
+        <text class="xxl pay-success">支付成功</text>
+        <text class="mb20">{{shop.name}}</text>
+        <text class="price-box">￥{{result.finalPrice}}</text>
+      </view>
+      <view class="button-box">
+        <button class="zan-btn zan-label--primary" @tap="finish">完成</button>
+      </view>
+    </view>
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import input from '../../mixins/input';
+  import order from '../../api/order'
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import Event from '../../utils/Event';
+  import Tips from '../../utils/Tips';
+  import FormTips from '../../components/weui/tips';
+
+  @connect({
+    shop: store.get('shop'),
+    ownCoupons: store.get('ownCoupons')
+  })
+  export default class ShopIndex extends wepy.page {
+    data = {
+      init: false,
+      dealPrice: 0,
+      couponText: '无可用',
+      selectedCoupon: null,
+      mode: 'pay',
+      result: null
+    };
+    async onLoad () {
+      await store.init();
+      this.loaded();
+      Event.listen(Event.TRADE_COUPON_UPDATE, this.updateCoupon.bind(this), this);
+    };
+    methods = {
+      dealPriceInput (e) {
+        this.dealPrice = e.detail.value;
+      },
+      async offline () {
+        if (!this.validate()) return;
+        if (this.dealPrice == 0) return;
+        const param = {
+          dealPrice: this.dealPrice,
+          finalPrice: this.dealPrice
+        };
+        if (this.selectedCoupon) {
+          param.couponPrice = this.selectedCoupon.price;
+          param.couponUsedId = this.selectedCoupon.id;
+          param.finalPrice = this.dealPrice * 1 - this.selectedCoupon.price * 1
+        }
+        await Tips.confirm(`确认支付${param.finalPrice}元给${this.shop.name}？`);
+        try {
+          // 创建订单
+          const trade = await order.offline(param);
+          this.result = trade;
+          // 调用后台支付接口
+          const payment = await order.prepayOrder(trade.orderId);
+          // 拉起支付页面
+          await order.wxpayOrder(payment);
+          await Tips.success('支付成功');
+          this.mode = 'success';
+        } catch (error) {
+          if (error.errMsg == 'requestPayment:fail cancel') {
+            await Tips.error('支付取消');
+          } else {
+            await Tips.error('支付失败');
+            console.error('支付失败：', error);
+          }
+        }
+        this.$apply();
+      },
+      /**
+       * 选择优惠券
+       */
+      coupon () {
+        if (this.ownCoupons.length < 1) {
+          return;
+        }
+        const param = {
+          coupons: JSON.stringify(this.coupons)
+        };
+        this.$navigate('../coupon/use', param);
+      },
+      finish () {
+        this.$switch('../home/template');
+      }
+    };
+    /**
+     * 回调更新优惠券
+     */
+    updateCoupon(coupon) {
+      if (!coupon) {
+        this.selectedCoupon = null;
+      } else {
+        this.selectedCoupon = coupon;
+      }
+      this.$apply();
+    }
+    validate() {
+      const rules = [
+        {
+          value: this.dealPrice,
+          method: 'money',
+          message: '请输入正确的价格'
+        }
+      ];
+      return this.check(rules);
+    }
+    computed = {
+      couponText () {
+        if (!this.coupons || this.coupons.length <= 0) return '无可用';
+        return this.selectedCoupon ? `满${this.selectedCoupon.limitPrice}减${this.selectedCoupon.price}` : '未使用';
+      },
+      coupons () {
+        if (!this.ownCoupons && !this.dealPrice) return;
+        if (!this.ownCoupons) return;
+        return this.ownCoupons.filter(item => item.limitPrice <= this.dealPrice);
+      },
+      couponLabel () {
+        if (!this.coupons || !this.dealPrice) return;
+        return this.selectedCoupon ? '已选择' : this.coupons.length + '张可用';
+      }
+    };
+    watch = {
+      coupons (news) {
+        if (!this.coupons) return;
+        if (news.length > 0) {
+          let selected = news[0];
+          news.forEach(item => {
+            selected = item.price > selected.price ? item : selected;
+          });
+          if (!selected) return;
+          this.selectedCoupon = selected;
+        } else {
+          this.selectedCoupon = null;
+        }
+        this.$apply();
+      }
+    };
+    components = {
+      Tips: FormTips
+    };
+    mixins = [base, input];
+    config = {
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .container{
+    padding: 40rpx;
+  }
+
+  .pay-box{
+    padding: 40rpx;
+    background-color: #fff;
+    border-radius: 2px;
+    .header-box{
+      .logo-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+      }
+    }
+
+    .content-box{
+      margin-top: 20rpx;
+      .input-box, .coupon-box{
+        border-bottom: $border;
+      }
+      .input-box{
+        height: 150rpx;
+        input, text{
+          line-height: 100rpx;
+          height: 100rpx;
+          font-size: 50rpx;
+        }
+      }
+      .coupon-box{
+        padding: 25rpx 0;
+      }
+    }
+  }
+  .success-box{
+    background-color: #fff;
+    padding: 40rpx;
+    .header-box{
+      border-bottom: 1px solid #EDEDED;
+      width: 100%;
+      padding-bottom: 20rpx;
+    }
+    .pay-success{
+      margin: 50rpx 0 20rpx;
+    }
+    .price-box{
+      font-size: 30px;
+    }
+  }
+
+  .button-box{
+    margin-top: 40rpx;
+    width: 100%;
+    .zan-btn {
+      margin-bottom: 0;
+    }
+  }
+
+</style>

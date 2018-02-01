@@ -32,7 +32,8 @@
   import pagination from '../../mixins/pagination.wpy';
   import Placeholder from '../../components/common/placeholder';
   import ZanTab from '../../components/zanui/tab';
-  import CouponItem from '../../components/coupons/display_item';
+//  import CouponItem from '../../components/coupons/display_item';
+  import CouponItem from '../../components/coupons/coupon_item';
   import Loadmore from '../../components/weui/loadmore';
   import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
