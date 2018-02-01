@@ -1,11 +1,11 @@
 @import "variable";
 @font-face {
   font-family: 'iconfont';  /* project id 553949 */
-  src: url('//at.alicdn.com/t/font_553949_koh57wrq21acq5mi.eot');
-  src: url('//at.alicdn.com/t/font_553949_koh57wrq21acq5mi.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_553949_koh57wrq21acq5mi.woff') format('woff'),
-  url('//at.alicdn.com/t/font_553949_koh57wrq21acq5mi.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_553949_koh57wrq21acq5mi.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_553949_7qjsdguyj7jmunmi.eot');
+  src: url('//at.alicdn.com/t/font_553949_7qjsdguyj7jmunmi.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_553949_7qjsdguyj7jmunmi.woff') format('woff'),
+  url('//at.alicdn.com/t/font_553949_7qjsdguyj7jmunmi.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_553949_7qjsdguyj7jmunmi.svg#iconfont') format('svg');
 }
 @mixin icon-size($size){
   line-height: $size;
@@ -100,3 +100,8 @@ icon.gift-card:before { content: "\e664"; }
 icon.service:before { content: "\e657"; }
 icon.receive-coupons:before { content: "\e627"; }
 icon.recharge:before { content: "\e626"; }
+icon.received:before { content: "\e6ba"; }
+icon.evaluated:before { content: "\e6b9"; }
+icon.refund:before { content: "\e608"; }
+icon.payment:before { content: "\e6b8"; }
+icon.delivery:before { content: "\e6b7"; }

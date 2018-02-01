@@ -1,20 +1,63 @@
 <template>
   <Loading :init.sync="init"/>
   <view wx:if="{{init}}">
+    <!--用户信息-->
     <view class="container user-box">
-
       <!-- 会员卡 -->
-      <view class="box-bg">
+      <view>
         <VipCard/>
       </view>
-
-      <view class="row">
-        <view>
-          <text></text>
-          <text></text>
+      <!--余额、充值-->
+      <view class="row money-box">
+        <view class="column-center">
+          <text>{{balance}}</text>
+          <text>我的余额</text>
         </view>
-        <view></view>
+        <view class="column-center">
+          <icon class="recharge"/>
+          <text>充值</text>
+        </view>
       </view>
+    </view>
+    <!--订单信息-->
+    <view class="column order-box">
+      <view>
+        <view class="weui-cells weui-cells_after-title">
+          <navigator url="" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+            <view class="weui-cell__bd">我的订单</view>
+            <view class="weui-cell__ft weui-cell__ft_in-access">查看全部订单</view>
+          </navigator>
+        </view>
+      </view>
+      <view class="row-around state-box">
+        <view class="column-center">
+          <icon class="payment large" color="gray"/>
+          <text>待付款</text>
+        </view>
+        <view class="column-center">
+          <icon class="delivery large" color="gray"/>
+          <text>待发货</text>
+        </view>
+        <view class="column-center">
+          <icon class="received large" color="gray"/>
+          <text>待收货</text>
+        </view>
+        <view class="column-center">
+          <icon class="evaluated large" color="gray"/>
+          <text>待评论</text>
+        </view>
+        <view class="column-center">
+          <icon class="refund large" color="gray"/>
+          <text>退货/退款</text>
+        </view>
+      </view>
+    </view>
+    <!--工具功能-->
+    <view class="tool-box" wx:if="{{grid.style == 'GRID'}}">
+      <PersonalGrid :grid.sync="grid" />
+    </view>
+    <view class="tool-box" wx:else>
+      <PersonalList :grid.sync="grid" />
     </view>
   </view>
 </template>
@@ -26,10 +69,76 @@
   import pagination from '../../mixins/pagination';
   import VipCard from '../../components/customer/vip_card';
   import Loading from '../../components/common/loading';
+  import PersonalGrid from '../../components/shop/personal_grid'
+  import PersonalList from '../../components/shop/personal_list'
 
   export default class CustomerIndex extends wepy.page {
     data = {
-      init: false
+      init: false,
+      balance: 0.0,
+      grid: {
+        title: '我的工具',
+        style: 'LIST',
+        data: [
+          [
+            {
+              iconClass: 'like',
+              iconColor: 'red',
+              iconSize: '24px',
+              title: '我的收藏1',
+              explain: '说明文字'
+            },
+            {
+              iconClass: 'like',
+              iconColor: 'red',
+              iconSize: '24px',
+              title: '我的收藏1',
+              explain: '说明文字'
+            },
+            {
+              iconClass: 'like',
+              iconColor: 'red',
+              iconSize: '24px',
+              title: '我的收藏1',
+              explain: '说明文字'
+            },
+            {
+              iconClass: 'like',
+              iconColor: 'red',
+              iconSize: '24px',
+              title: '我的收藏1',
+              explain: '说明文字'
+            }
+          ],
+          [
+            {
+              iconClass: 'like',
+              iconColor: 'red',
+              iconSize: '24px',
+              title: '我的收藏1',
+              explain: '说明文字'
+            },
+            {
+              iconClass: 'like',
+              iconColor: 'red',
+              iconSize: '24px',
+              title: '我的收藏6'
+            },
+            {
+              iconClass: 'like',
+              iconColor: 'red',
+              iconSize: '24px',
+              title: '我的收藏7'
+            },
+            {
+              iconClass: 'like',
+              iconColor: 'red',
+              iconSize: '24px',
+              title: '我的收藏8'
+            }
+          ]
+        ]
+      }
     };
     async onLoad() {
       await store.init();
@@ -41,20 +150,43 @@
     };
     components = {
       VipCard: VipCard,
-      Loading: Loading
+      Loading: Loading,
+      PersonalGrid: PersonalGrid,
+      PersonalList: PersonalList
     };
-    mixins = [base, pagination];
+    mixins = [base];
     config = {
       navigationBarTitleText: '个人中心',
-      enablePullDownRefresh: true
     };
   }
 </script>
 <style lang="scss">
   @import "../../styles/variable";
-
+  $bg-white: white;
   .user-box {
-    background-color: white;
-    border-bottom: $border;
+    border: $border;
+    background-color: $bg-white;
+    .money-box{
+      margin-bottom: 10rpx;
+      view{
+        flex: 1;
+      }
+      view + view{
+        border-left: $border;
+      }
+    }
   }
+  .order-box{
+    margin-top: 10rpx;
+    background-color: $bg-white;
+    border: $border;
+    .state-box{
+      padding: 10rpx 0;
+    }
+  }
+  .tool-box{
+    border: $border;
+    margin-top: 10rpx;
+  }
+
 </style>
