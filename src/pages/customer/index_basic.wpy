@@ -1,0 +1,163 @@
+<template>
+  <view class="user-conatiner" wx:if="{{init}}">
+
+    <!-- 头图区域 -->
+    <view class="user-info-box">
+      <image class="user-avatar" src="{{user.avatarUrl}}" />
+      <text class="user-nickname">{{user.nickName}}</text>
+    </view>
+
+    <view class="mt20"></view>
+
+    <view class="weui-cells-merge-top bg-white">
+      <navigator url="/pages/customer/address_list" class="weui-cell weui-cell_access" hover-class="weui-cell_active" >
+        <view class="weui-cell__bd">我的地址</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+      </navigator>
+
+      <navigator url="/pages/coupon/pick" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__bd">领取优惠券</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">{{pickCoupons.length}}张</view>
+      </navigator>
+
+      <navigator url="/pages/coupon/list" class="weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__bd">我的优惠券</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">{{ownCoupons.length}}张</view>
+      </navigator>
+    </view>
+
+    <!--订单区域-->
+    <view class="order-box" wx:if="{{version.isOrder}}">
+      <view class="bg-white">
+        <view class="weui-cell">我的订单</view>
+      </view>
+
+      <!--列表展现-->
+      <repeat for="{{page.list}}" key="index" index="index" item="item">
+        <OrderItem :order.sync="item" @tap.user="detail"/>
+      </repeat>
+
+      <!--占位符-->
+      <view class="order-placeholder" wx:if="{{isPageEmpty}}">
+        <Placeholder :show.sync="isPageEmpty" message="您还没有历史订单" fixed="false"/>
+      </view>
+
+
+      <!-- 加载提示 -->
+      <Loadmore :page.sync="page"/>
+    </view>
+
+
+    <Copyright buttom="true"/>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import auth from '../../api/auth';
+  import { connect } from 'wepy-redux';
+  import order from '../../api/order';
+  import pagination from '../../mixins/pagination';
+  import store from '../../store/utils';
+  import base from '../../mixins/base';
+  import Copyright from '../../components/common/copyright';
+  import OrderItem from '../../components/order/order_item';
+  import Placeholder from '../../components/common/placeholder';
+  import Loadmore from '../../components/weui/loadmore';
+
+  @connect({
+    version: store.get('version'),
+    user: store.get('user'),
+    ownCoupons: store.get('ownCoupons'),
+    pickCoupons: store.get('pickCoupons')
+  })
+  export default class CustomerIndex extends wepy.page {
+    data = {
+      init: false,
+      page: {
+        list: [
+          {orderGoodsInfos: []}
+        ]
+      }
+    };
+    async onLoad () {
+      // 校验是否登录成功
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
+      await store.init();
+      if (this.version.isOrder) {
+        this.page = order.page();
+        // 分页加载
+        await this.next();
+        // 监听更新事件
+        Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
+      }
+      this.loaded();
+    };
+    events = {};
+    components = {
+      Copyright: Copyright,
+      Placeholder: Placeholder,
+      Loadmore: Loadmore,
+      OrderItem: OrderItem
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '个人中心'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  page{
+    height: 100%;
+    background-color: #f2f2f2;
+  }
+
+  /*用户信息*/
+  .user-info-box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 300rpx;
+    background-color: #1296db;
+  }
+  .user-avatar{
+    height:160rpx;
+    width: 160rpx;
+    border-radius: 50%;
+  }
+
+  .user-nickname{
+    color: white;
+    font-size: 40rpx;
+  }
+  .user-func-container{
+    display: flex;
+    flex-direction: column;
+    background-color: #FFF;
+    margin-top: 20rpx;
+    padding: 10rpx;
+  }
+
+  .user-func-item{
+    display: flex;
+    font-size: 30rpx;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 20rpx;
+  }
+  .func-text{
+    font-size: 30rpx;
+    line-height: 60rpx;
+  }
+
+  .order-box {
+    margin-top: 10rpx;
+    border-top: $border;
+  }
+
+</style>

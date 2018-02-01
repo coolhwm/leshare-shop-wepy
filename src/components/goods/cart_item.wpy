@@ -1,0 +1,207 @@
+<template>
+  <view class="cart-item-wrap" style="{{txtStyle[index]}}"  data-index="{{index}}" bindtouchstart="touchS" bindtouchmove="touchM" bindtouchend="touchE">
+    <view class="cart-item-container" catchlongtap="remove({{index}})" >
+      <!--多选按钮-->
+      <view class="cart-check-container">
+        <view class="zan-icon zan-icon-{{cart.check ? 'checked' : 'check'}}" @tap="check({{index}})" />
+      </view>
+      <!--商品图片-->
+      <image class="cart-item-image" src="{{cart.goodsImage}}"  @tap="detail({{cart.goodsId}})" />
+
+      <!--商品说明-->
+      <view class="cart-info-container">
+        <text class="goods-title-text">{{cart.goodsName}}</text>
+        <view class="row">
+          <text class="goods-sku-text">{{cart.goodsSku}}</text>
+          <repeat for="{{[cart]}}" key="i" index="i" item="item">
+            <DiscountBadge :goods.sync="item"/>
+          </repeat>
+        </view>
+
+        <view class="goods-price-num-container">
+          <view class="goods-price-container">
+            <text class="goods-price-small">￥</text>
+            <text class="goods-price-big">{{cart.goodsPrice}}</text>
+          </view>
+          <!--数量选择器-->
+          <repeat for="{{[cart.quantity]}}" key="i" index="i" item="item">
+            <ZanQuantity :quantity.sync="item" @change.user="num"/>
+          </repeat>
+        </view>
+      </view>
+    </view>
+    <view class="cart-item-delete"  @tap="remove({{index}})">
+      <text>删除</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import DiscountBadge from '../../components/goods/discount_badge';
+  import ZanQuantity from '../../components/zanui/quantity';
+
+  export default class CartItem extends wepy.component {
+    props = {
+      cart: {},
+      index: {}
+    };
+    data = {
+      txtStyle: [],
+      startX: 0,
+      delBtnWidth: 60
+    };
+    methods = {
+      num (event) {
+        this.$emit('num', event);
+      },
+      check (index) {
+        this.$emit('check', index);
+      },
+      remove (index) {
+        this.$emit('remove', index);
+      },
+      detail (goodsId) {
+        this.$root.$navigate(`detail?goodsId=${goodsId}`);
+      },
+      touchS(e) {
+        if (e.touches.length == 1) {
+          this.startX = e.touches[0].clientX;
+        }
+      },
+      // TODO 组件化容器
+      touchM(e) {
+        if (e.touches.length == 1) {
+          // 手指移动时水平方向位置
+          let moveX = e.touches[0].clientX;
+          // 手指起始点位置与移动期间的差值
+          let disX = this.startX - moveX - 30;
+          let delBtnWidth = this.delBtnWidth;
+          let txtStyle = '';
+          if (disX == 0 || disX < 0) {
+            // 如果移动距离小于等于0，文本层位置不变
+            txtStyle = 'left:0px';
+          } else if (disX > 0) {
+            // 移动距离大于0，文本层left值等于手指移动距离
+            txtStyle = 'left:-' + disX + 'px';
+            if (disX >= delBtnWidth) {
+              // 控制手指移动距离最大值为删除按钮的宽度
+              txtStyle = 'left:-' + delBtnWidth + 'px';
+            }
+          }
+          // 获取手指触摸的是哪一项
+          this.txtStyle[this.index] = txtStyle;
+        }
+      },
+      // TODO 组件化容器
+      touchE(e) {
+        if (e.changedTouches.length == 1) {
+          // 手指移动结束后水平位置
+          let endX = e.changedTouches[0].clientX;
+          // 触摸开始与结束，手指移动的距离
+          let disX = this.startX - endX - 30;
+          let delBtnWidth = this.delBtnWidth;
+          // 如果距离小于删除按钮的1/2，不显示删除按钮
+          let txtStyle = disX > delBtnWidth / 2 ? 'left:-' + delBtnWidth + 'px' : 'left:0px';
+          // 获取手指触摸的是哪一项
+          this.txtStyle[this.index] = txtStyle;
+        }
+      }
+    };
+    components = {
+      ZanQuantity: ZanQuantity,
+      DiscountBadge: DiscountBadge
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  /*外框容器*/
+
+  .cart-item-wrap{
+    width: 100%;
+    transition: left 0.2s ease-in-out;
+    position: relative;
+  }
+
+  .cart-item-container{
+    padding: 20rpx;
+    background-color: #FFF;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2px;
+
+  }
+
+  .cart-item-delete{
+    position: absolute;
+    top:0;
+    right: -60px;
+    background-color: #FF4343;
+    height: 100%;
+    width: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .cart-item-delete text{
+    font-size: 32rpx;
+    color: white;
+  }
+
+  /*选择框容器*/
+  .cart-check-container{
+    width: 40rpx;
+    margin-right: 20rpx;
+    text-align: center;
+  }
+
+  /*图片*/
+  .cart-item-image{
+    width: 180rpx;
+    height: 180rpx;
+    border: 1px solid #E7E7E7;
+    border-radius: 5px;
+  }
+
+  /* 信息容器 */
+  .cart-info-container{
+    width: auto;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    margin-left: 20rpx;
+    justify-content: space-between;
+    height: 180rpx;
+  }
+  /*商品主标题*/
+  .goods-title-text{
+    font-size: 28rpx;
+    color: #2D2D2D;
+  }
+  /*规则*/
+  .goods-sku-text{
+    font-size: 28rpx;
+    color: #A3A3A3;
+  }
+  /*商品价格*/
+  .goods-price-small{
+    font-size: 26rpx;
+    color:#ff6200;
+  }
+  .goods-price-big{
+    font-size: 36rpx;
+    color:#ff6200;
+  }
+
+  /*价格/数量栏*/
+  .goods-price-num-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+</style>

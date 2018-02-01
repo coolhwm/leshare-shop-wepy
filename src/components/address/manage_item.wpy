@@ -1,0 +1,156 @@
+<template>
+  <view class="address-item-container {{disabled == '1' ? 'address-item-disabled' : ''}}">
+    <!-- 地址内容 -->
+    <view class="address-info-container"  @tap="select({{disabled != '1' ? address : ''}})">
+      <view class="address-name-phone-container">
+        <text class="address-info-name">{{address.name}} {{address.sexText}}</text>
+        <text class="address-info-phone">{{address.phone}}</text>
+      </view>
+      <view class="address-detail-container">
+        <text class="address-info-detail">{{address.simpleAddress}}</text>
+      </view>
+    </view>
+    <view class="address-mgr-container">
+      <view class="address-default-container">
+        <view @tap="setDefault({{address.id}})" wx:if="{{disabled != '1'}}">
+          <icon class="weui-icon-checkbox_success" type="success" size="18" wx:if="{{address.isDefault == 1}}"></icon>
+          <icon class="weui-icon-checkbox_circle" type="circle" size="18" wx:else></icon>
+          <text>设为默认</text>
+        </view>
+      </view>
+      <view class="address-opt-container">
+        <view class="address-opt-action"  @tap="edit({{address.id}})">
+          <icon class="edit" color="gray"/><text>编辑</text>
+        </view>
+        <view class="address-opt-action"  @tap="delete({{address.id}})">
+          <icon class="delete" color="gray" /><text>删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import address from '../../api/address';
+  import Event from '../../utils/Event';
+  import Tips from '../../utils/Tips';
+  export default class Address extends wepy.component {
+    props = {
+      address: {},
+      disabled: {
+        default: null
+      }
+    };
+    methods = {
+      select(address) {
+        if (address != '') {
+          this.$emit('select', address);
+        } else {
+          Tips.alert('非配送区域');
+        }
+      },
+      edit(id) {
+        const param = {
+          mode: 'edit',
+          id: id
+        };
+        this.$root.$navigate('/pages/address/edit', param);
+      },
+      async setDefault(id) {
+        Tips.loading();
+        await address.setDefault(id);
+        await Tips.success('操作成功');
+        Event.emit(Event.ADDRESS_LIST_UPDATE);
+      },
+      async delete(id) {
+        await Tips.confirm('确定删除该地址？');
+        Tips.loading();
+        await address.remove(id);
+        await Tips.success('操作成功');
+        Event.emit(Event.ADDRESS_LIST_UPDATE);
+      }
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  /*父窗口*/
+  .address-item-container{
+    display: flex;
+    flex-direction: column;
+    background-color: #FFF;
+    margin-top: 10rpx;
+  }
+
+  /*管理按钮容器*/
+  .address-mgr-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25rpx;
+    border-top: 1px solid #EAEAEA;
+  }
+
+  /*操作容器*/
+  .address-opt-container, .address-default-container, .address-opt-action, .address-mgr-container>view{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    vertical-align: middle;
+  }
+
+  /*操作文本*/
+  .address-mgr-container text{
+    color: #0A0A0D;
+    font-size: 28rpx;
+    margin-right: 13rpx;
+  }
+
+
+  /*信息容器*/
+  .address-info-container{
+    display: flex;
+    flex-direction: column;
+    padding: 30rpx 25rpx;
+  }
+  /*容器*/
+  .address-name-phone-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  /*姓名*/
+  .address-info-name{
+    color: #232326;
+    font-size: 34rpx;
+    font-weight: bold;
+  }
+  /*电话*/
+  .address-info-phone{
+    font-size: 28rpx;
+    color: #232326;
+  }
+
+  /*
+  * 地址详情
+  */
+  .address-info-detail{
+    color: #0A0A0D;
+    font-size: 28rpx;
+  }
+  /*地址容器*/
+  .address-detail-container{
+    margin-top: 10rpx;
+  }
+
+  .address-item-disabled{
+    text{
+      color: $color-muted;
+    }
+  }
+</style>

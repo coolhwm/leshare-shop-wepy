@@ -31,7 +31,7 @@
           <text>{{parsentText}}</text>
         </view>
       </view>
-      <view class="weui-cell">
+      <view class="weui-cell" wx:if="{{card.servicePhone}}">
         <view class="weui-label muted">客服电话</view>
         <text class="info-container">{{card.servicePhone}}</text>
       </view>
@@ -72,7 +72,8 @@
   @connect({
     member: store.get('member'),
     card: store.get('card'),
-    user: store.get('user')
+    user: store.get('user'),
+    discount: store.get('discount')
   })
   export default class VipDetail extends wepy.page {
     data = {
@@ -81,9 +82,9 @@
     };
 
     async onLoad () {
-      await store.init();
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;
+      await store.init();
       // 没注册的会员引导注册
       if (this.member == null) {
         this.$redirect('/pages/customer/registe_member');
@@ -92,7 +93,7 @@
       this.loaded();
     }
     async onPullDownRefresh() {
-      await store.reflesh('card', 'member');
+      await store.reflesh('member');
       this.loaded();
       wepy.stopPullDownRefresh();
     }
@@ -103,19 +104,8 @@
         }
         let describe = '';
         // 有折扣的情况
-        if (this.card.supplyDiscount == 1) {
-          const {discountRule, customDiscount} = this.member;
-          let discount = 100;
-          if (customDiscount > 0 && customDiscount < 100) {
-            // 自定义折扣
-            discount = customDiscount;
-          } else if (discountRule != null && discountRule.discount < 100) {
-            // 等级折扣
-            discount = discountRule.discount;
-          }
-          if (discount < 100) {
-            describe += `本会员卡享受部分商品 ${(discount / 10).toFixed(1)} 折优惠\n`;
-          }
+        if (this.discount != null) {
+          describe += `本会员卡享受部分商品 ${(this.discount.rate / 10).toFixed(1)} 折优惠\n`;
         }
         // 开启积分规则
         if (this.card.supplyBonus == 1 && this.card.bonusRule != null) {
@@ -177,7 +167,7 @@
         const isMember = this.member && this.member.memberPresentDetails && this.member.memberPresentDetails.length > 0;
         if (!isMember) return ruleText;
         const {currentCount, totalCount, presentCount} = this.member.memberPresentDetails[0];
-        const detailText = `\n• 现有累计${unit}数：${currentCount}\n• 已兑换累计${unit}数：${presentCount}\n• 总消费${unit}数：${totalCount}`;
+        const detailText = `\n• 现有累计${unit}数：${currentCount}\n• 已赠送兑换券：${presentCount}\n• 总消费${unit}数：${totalCount}`;
         return ruleText + detailText;
       }
     };

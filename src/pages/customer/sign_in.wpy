@@ -1,0 +1,244 @@
+<template>
+  <view class="sgin_in" wx:if="{{init}}">
+    <image src="http://img.leshare.shop/shop/other/bc_qdyl.jpg" class="head_bc"></image>
+    <view class="qd_content">
+      <view class="jf">积分 : {{member.bonus}}</view>
+      <view class="out_crl">
+        <view class="second_crl" @tap="sign">
+          <view class="in_crl">
+            <text class="sign_state" wx:if="{{signed}}">已签到</text>
+            <text class="sign_state" wx:if="{{!signed}}">签到</text>
+            <view class="line"/>
+            <text class="sign_times">连续{{signIn.continuationTimes}}天</text>
+          </view>
+        </view>
+      </view>
+      <view class="sign_doc" wx:if="{{signed}}">今日已签到，获得10积分</view>
+      <view class="sign_doc" wx:if="{{!signed}}">今日还未签到</view>
+    </view>
+    <view class="line-box">
+      <wepySignTime :list.sync="signDay"/>
+    </view>
+    <!--tab模块-->
+    <tab :tab.sync="tab" fixed="0"/>
+    <scroll-view scroll-y="true" class="swiper-item-box">
+      <!-- 积分规则 -->
+      <pointsRule wx:if="{{tab.selectedId==0}}"/>
+      <!-- 积分记录 -->
+      <repeat for="{{page.list}}" key="index" index="index" item="item" wx:if="{{tab.selectedId==1}}">
+        <BonusItem :bonusInfo.sync="item"/>
+      </repeat>
+      <!-- 加载提示 -->
+      <Loadmore :page.sync="page"/>
+    </scroll-view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import shop from '../../api/shop';
+  import Tab from '../../components/zanui/tab';
+  import Tips from '../../utils/Tips';
+  import BonusItem from '../../components/customer/bonus_item';
+  import PointsRule from '../../components/customer/points_rule';
+  import WepySignTime from '../../components/customer/sign_time';
+  import pagination from '../../mixins/pagination.wpy';
+  import Loadmore from '../../components/weui/loadmore';
+  import Placeholder from '../../components/common/placeholder';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  @connect({
+    member: store.get('member')
+  })
+  export default class SignIn extends wepy.page {
+    data = {
+      init: false,
+      tab: {
+        list: [
+          {id: 0, title: '积分规则'},
+          {id: 1, title: '获得记录'}
+        ],
+        selectedId: 0
+      },
+      page: {
+        list: []
+      },
+      signed: false,
+      signDay: [],
+      signIn: {}
+    };
+    params () {
+      return {
+        member_id: this.member.memberId,
+        by: 'sign_date',
+        sort: 'desc'
+      };
+    };
+    async getUserSign () {
+      this.signIn = await shop.signList(this.member.memberId);
+      this.page = await shop.signHistory();
+      this.dateAdd();
+      this.next();
+    }
+
+    async doSign () {
+      await shop.sign(this.member.memberId);
+      Tips.success('签到成功');
+      await this.getUserSign();
+    }
+
+    async onLoad () {
+      await store.init();
+      await this.getUserSign();
+    }
+    methods = {
+      async sign () {
+        if (this.signed) {
+          Tips.alert('你今天已签过了!');
+        } else {
+          await this.doSign();
+        }
+      }
+    };
+    computed = {
+      // 是否签到
+      signs () {
+        const myDate = new Date();
+        if (this.signIn.lastDate == this.dateChange(myDate)) {
+          this.signed = true;
+        }
+      }
+    };
+    // 日期数组填充7天
+    dateAdd () {
+      for (let i = 6; i >= 0; i--) {
+        let date = new Date();
+        date.setDate(date.getDate() - i);
+        if (this.signIn.sevenHistory.find(item => item.signDate == this.dateChange(date))) {
+          this.signDay.push({signTime: date.getDate(), signed: 1});
+        } else {
+          this.signDay.push({signTime: date.getDate(), signed: 0});
+        }
+      }
+    };
+    // 日期截取
+    dateChange (date) {
+      const year = `${date.getFullYear()}`;
+      let month = `${date.getMonth() + 1}`;
+      if (month.length == 1) {
+        month = `0${date.getMonth() + 1}`
+      } else {
+        month = `${date.getMonth() + 1}`
+      }
+      let day = `${date.getDate()}`;
+      if (day.length == 1) {
+        day = `0${date.getDate()}`
+      } else {
+        day = `${date.getDate()}`
+      }
+      return year + month + day
+    };
+    config = {
+      navigationBarTitleText: '签到有礼'
+    };
+    components = {
+      tab: Tab,
+      pointsRule: PointsRule,
+      wepySignTime: WepySignTime,
+      Placeholder: Placeholder,
+      Loadmore: Loadmore,
+      BonusItem: BonusItem
+    };
+    mixins = [base, pagination];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .qd_content {
+    position: relative;
+    z-index: 6;
+    height: 460rpx;
+  }
+  .head_bc {
+    height: 460rpx;
+    width: 100%;
+    position: absolute;
+  }
+  .jf {
+    font-size: 32rpx;
+    color: #fff;
+    padding: 50rpx 0rpx 10rpx 35rpx;
+  }
+  .in_crl {
+    background: #FFF;
+    border-radius: 1000rpx;
+    border: 2rpx solid #7fbcff;
+    bottom: 0;
+    height: 200rpx;
+    left: 0;
+    margin: auto;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 200rpx;
+    z-index: 100;
+    text-align: center;
+  }
+  .second_crl {
+    position: relative;
+    border-radius: 1000rpx;
+    width: 235rpx;
+    height: 235rpx;
+    margin: 0 auto;
+    top: 15rpx;
+    z-index: 3;
+    background: #fff;
+  }
+  .out_crl {
+    position: relative;
+    border-radius: 1000rpx;
+    width: 265rpx;
+    height: 265rpx;
+    margin: 0 auto;
+    z-index: 2;
+    background: #f40;
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  .sign_state {
+    font-size: 40rpx;
+    font-weight: 600;
+    color: $color-primary;
+    margin-bottom: 15rpx;
+    margin-top: 25rpx;
+    display: block;
+  }
+  .line {
+    border: 1rpx solid #dcdcdc;
+    width: 165rpx;
+    margin: 0 auto;
+  }
+  .sign_times {
+    font-size: 30rpx;
+    margin-top: 15rpx;
+    color: $color-primary;
+    display: block;
+  }
+  .sign_doc {
+    font-size: 30rpx;
+    text-align: center;
+    color: #fff;
+    margin-top: 30rpx;
+  }
+  .tab_box {
+    background: #fff;
+    padding: 0 120rpx;
+  }
+  .line-box {
+    height: 100rpx;
+    position: relative;
+    background: #fff;
+    margin-bottom: 10rpx;
+  }
+</style>

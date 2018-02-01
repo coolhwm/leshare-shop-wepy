@@ -26,7 +26,7 @@
       </view>
     </view>
 
-    <view class="tips-box column">
+    <view class="tips-box column" wx:if="{{discountRuleText.length > 0 || bonusRuleText.length > 0}}">
       <text>加入会员可享受下列特权：</text>
       <block wx:if="{{discountRuleText.length > 0}}">
         <text>• 会员折扣</text>
@@ -56,7 +56,6 @@
   import VCode from '../../components/weui/vcode';
   import Tips from '../../utils/Tips';
   import WxUtils from '../../utils/WxUtils';
-
 
   @connect({
     card: store.get('card')
@@ -105,12 +104,11 @@
         }
       },
       async add ({detail}) {
-        console.log(detail.value.code);
         if (!this.validate(detail.value.code)) return;
         this.registeInfo = this.input;
         try {
           Tips.loading();
-          await member.create(this.registeInfo, detail.value.code);
+          await member.regist(this.registeInfo, detail.value.code);
           await Tips.success('注册成功');
           await store.reflesh('member');
           WxUtils.backOrRedirect('/pages/customer/index');

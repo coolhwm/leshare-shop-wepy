@@ -1,0 +1,59 @@
+<!--积分规则-->
+<template>
+  <view class="jf_rule">
+    <view class="jf_content">
+      <view class="sec_title">1.签到积分规则 </view>
+      <view class="jf_ins">亲，每天签到送积分啦！每天签到一次送10积分，多签多得，积分可以抵消现金的，记得每天签到一次哦。</view>
+    </view>
+    <view class="jf_content">
+      <view class="sec_title">2.积分使用规则 </view>
+      <view class="jf_ins">亲，签到的积分可以享受满立减，下单更优惠！即满100积分可抵消5元现金；在您下单微信支付界面，系统会自动显示你的总积分多少可用多少，微信付款之后在商品金额上系统会自动减去5元。
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+
+  export default class PointsRule extends wepy.component {
+    data = {};
+
+    events = {
+    };
+
+    methods = {};
+
+    onLoad () {}
+  }
+
+</script>
+<style lang="less">
+  .jf_rule {
+    border-top: 1px solid #efefef;
+    background: #fff;
+    padding: 33px 20rpx;
+    margin-top: 10rpx;
+    .title {
+      font-size: 36rpx;
+    }
+    .jf_jz_title {
+      color: #9999ff;
+      font-size: 30rpx;
+      padding-top: 56rpx;
+      display: block;
+    }
+    .jf_content {
+      text-align: left;
+      font-size: 30rpx;
+      .sec_title {
+        color: #666;
+        padding-top: 20rpx;
+      }
+      .jf_ins {
+        color: #999;
+        padding-top: 30rpx;
+      }
+    }
+  }
+
+</style>

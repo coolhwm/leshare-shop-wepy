@@ -1,16 +1,16 @@
 <template>
   <Tips/>
   <Loading :init.sync="init"/>
-  <!--地址浮动层-->
-  <AddressList :goodsList.sync="goodsList" :display.sync="isAddressListDisplay"/>
-
   <view class="container" wx:if="{{init}}">
-    <!--地址栏/外卖情况才展现-->
-    <block wx:if="{{isTakeaway}}">
-      <AddressSelector :address.sync="selectedAddress" @select.user="address" />
-    </block>
-    <block wx:else>
+
+    <!--堂食/打包的情况， 展现选择栏-->
+    <block wx:if="{{trade.isInShopOrder}}">
       <InShopTab @tap.user="switchInShopType" />
+    </block>
+
+    <!--需要配送的订单展现地址选择栏-->
+    <block wx:if="{{trade.isDeliveryOrder}}">
+      <AddressSelector :address.sync="selectedAddress" @select.user="address" />
     </block>
 
     <view class="mt10"></view>
@@ -22,24 +22,24 @@
     <view class="weui-cells weui-cells_after-title weui-cells-merge-top" >
 
       <!--堂食/打包才有预约时间-->
-      <view class="weui-cell weui-cell_access" @tap="arriveTime" wx:if="{{isForhearOrPack}}">
+      <view class="weui-cell weui-cell_access" @tap="arriveTime"  wx:if="{{trade.isInShop}}">
         <view class="weui-cell__bd">预约时间</view>
         <text class="weui-cell__ft weui-cell__ft_in-access">{{trade.arriveTime}} </text>
       </view>
 
-
-      <!--外卖才能在线支付-->
+      <!--支付方式-->
       <view class="weui-cell weui-cell_access" @tap="paymentType">
         <view class="weui-cell__bd">支付方式</view>
-        <view class="weui-cell__ft {{shop.offPay == 1 && isTakeaway ? 'weui-cell__ft_in-access' : ''}}">{{trade.paymentText}}</view>
+        <view class="weui-cell__ft {{shop.offPay == 1 ? 'weui-cell__ft_in-access' : ''}}">{{trade.paymentText}}</view>
       </view>
 
-      <!--外卖才有配送方式-->
-      <view class="weui-cell weui-cell_access" @tap="delivery" wx:if="{{isTakeaway}}">
+      <!--需要配送的订单, 需要选择配送方式-->
+      <view class="weui-cell weui-cell_access" @tap="delivery" wx:if="{{trade.isDeliveryOrder}}">
         <view class="weui-cell__bd">配送方式</view>
         <text class="weui-cell__ft {{delilveryCount > 1 ? 'weui-cell__ft_in-access' : ''}}">{{delilveryText}} </text>
       </view>
 
+      <!--优惠券-->
       <view class="weui-cell weui-cell_access" @tap="coupon">
         <view class="weui-cell__bd">优惠券
           <view class="label small primary pain" wx:if="{{coupons.length > 0}}">{{couponLabel}}</view>
@@ -81,9 +81,9 @@
         <text>积分抵扣</text>
         <text class="major">-￥{{trade.bonusPrice}}</text>
       </view>
-      <view class="price-box row-between" wx:if="{{reduceFee > 0}}">
+      <view class="price-box row-between" >
         <view class="row">
-          <image class="icon" src="/images/icons/reduce.png"></image>
+          <icon class="reduce" style="color: #F07373" />
           <text>优惠满减</text>
         </view>
         <text class="major">-￥{{reduceFee}}</text>
@@ -133,18 +133,18 @@
   import address from '../../api/address';
   import coupon from '../../api/coupon';
   import order from '../../api/order';
+  import {PAYMENT, TYPE, orderUtils} from '../../api/order_const';
   import shop from '../../api/shop';
   import FormTips from '../../components/weui/tips';
   import ActionBar from '../../components/common/action_bar';
-  import AddressSelector from '../../components/address/selector';
-  import ActionSheet from '../../components/weui/action_sheet';
-  import AddressList from '../../components/address/list';
-  import OrderItem from '../../components/order/customer_item';
+  import AddressSelector from '../../components/address/select_item';
+  import OrderItem from '../../components/order/order_item';
   import InShopTab from '../../components/order/inshop_tab';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
   import Loading from '../../components/common/loading';
+  import Cart from '../../utils/Cart';
 
   @connect({
     shop: store.get('shop'),
@@ -166,11 +166,10 @@
       confirmStatus: false,
       confirmText: '立即下单',
       goodsList: null,
-      isAddressListDisplay: false,
       bonusPicker: null,
       selectedBonus: null
     };
-
+    cartManager = Cart.create();
     async onLoad (params, {preload}) {
       const isOpen = await this.checkShopStatus();
       const result = await auth.user({block: true, redirect: true});
@@ -178,7 +177,7 @@
       // 订单数据
       this.trade = preload.trade;
       this.goodsList = this.trade.orderGoodsInfos;
-      if (this.isTakeaway) {
+      if (orderUtils.isDeliveryOrder(this.trade.orderType)) {
         // 默认地址
         this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
         // 处理配送方式
@@ -221,7 +220,8 @@
        * 选择地址
        */
       address () {
-        this.isAddressListDisplay = true;
+        this.$preload('goodsList', this.trade.orderGoodsInfos);
+        this.$navigate('/pages/address/select');
       },
       /**
        * 选择优惠券
@@ -244,7 +244,6 @@
         this.trade.bonus = this.selectedBonus.bonus;
         this.trade.bonusPrice = this.selectedBonus.money.toFixed(2);
         this.updateTradePrice();
-        console.info(this.selectedBonus);
       },
       /**
        * 选择预约时间
@@ -288,7 +287,7 @@
           return;
         }
         // 数据准备
-        if (this.trade.orderType == order.TYPE_TAKEAWAY) {
+        if (this.trade.orderType == TYPE.TAKEAWAY) {
           this.trade.deliveryType = 'CITY';
         }
         // 表单ID
@@ -301,7 +300,7 @@
           return;
         }
         // 检查是否为离线订单
-        if (trade.paymentType == order.PAYMENT_OFFLINE) {
+        if (trade.paymentType == PAYMENT.OFFLINE) {
           Tips.success('下单成功');
         } else {
           // 发起支付
@@ -313,11 +312,14 @@
           }
         }
         // 清空购物车
-        Event.emit(Event.CART_LIST_CLEAR);
+        this.cartManager.clear();
         // 卡券领取更新
         if (trade.couponUsedId) {
-          await store.reflesh('ownCoupons', 'pickCoupons', 'member');
+          await store.reflesh('coupon', 'member');
         }
+        // 刷新列表
+        Event.emit(Event.ORDER_LIST_UPDATE);
+        // TODO 这个可能在TAB里
         WxUtils.backOrRedirect('/pages/customer/index');
       }
     };
@@ -452,19 +454,13 @@
       trade.finalPrice = trade.finalPrice.toFixed(2);
     }
     computed = {
-      isTakeaway() {
-        return this.trade.orderType == order.TYPE_TAKEAWAY;
-      },
-      isForhearOrPack() {
-        const type = this.trade.orderType;
-        return type == order.TYPE_FORHERE || type == order.TYPE_PACK;
-      },
       // 配送费用文字
       delilveryText() {
         let confirmStatus = false;
         let deliveryText = '暂不支持配送';
         let confirmText = '立即下单';
-        if (this.isForhearOrPack) {
+        if (this.trade.isInShopOrder) {
+          // 在店内的订单不需要进行校验
           confirmStatus = true;
           confirmText = '立即下单';
         } else {
@@ -588,10 +584,8 @@
     components = {
       Tips: FormTips,
       ActionBar: ActionBar,
-      ActionSheet: ActionSheet,
       AddressSelector: AddressSelector,
       OrderItem: OrderItem,
-      AddressList: AddressList,
       InShopTab: InShopTab,
       Loading: Loading
     };

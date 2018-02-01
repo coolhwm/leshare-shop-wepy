@@ -1,0 +1,51 @@
+<template>
+  <view class="address-box row">
+    <!--左侧图标-->
+    <view class="icon-box">
+      <icon class="address large"/>
+    </view>
+    <!-- 地址内容 -->
+    <view class="info-box column">
+      <view class="row-between">
+        <text>收货人：{{address.name}} {{address.sexText}}</text>
+        <text>{{address.phone}}</text>
+      </view>
+      <view class="mt10">
+        <text>地址：{{address.simpleAddress}} </text>
+      </view>
+    </view>
+  </view>
+  <image class="address-box-hr" src="http://img.leshare.shop/shop/other/address-hr.png" />
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class Address extends wepy.component {
+    props = {
+      address: {}
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .address-box{
+    padding: 25rpx 20rpx 25rpx 0;
+    background-color: #FFF;
+    .icon-box{
+      width: 80rpx;
+      text-align: center;
+    }
+    .info-box{
+      width: 600rpx;
+      flex:1;
+
+      text{ font-size: $text-lg}
+    }
+  }
+  .address-box-hr{
+    width: 100%;
+    height: 5px;
+    margin-bottom: 15rpx;
+  }
+</style>

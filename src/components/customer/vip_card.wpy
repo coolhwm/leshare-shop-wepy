@@ -33,15 +33,14 @@
           <!--</view>-->
         </view>
       </view>
-      <image class="icon-qrcode" src="/images/icons/qrcode.png"
-             @tap.stop="info"/>
+      <icon class="qrcode xxlarge" color="white" @tap.stop="info"/>
     </view>
-    <view class="row-between" style="width: 100%">
+    <view class="footer-box row-between" style="width: 100%">
       <text class="xxl">{{numberText}}</text>
-      <view>
-
+      <view class="desc-box column">
+        <text class="sm" wx:if="{{parsentText}}">{{parsentText}}</text>
+        <text class="sm" wx:if="{{discountText}}">{{discountText}}</text>
       </view>
-      <text class="sm">{{parsentText}}</text>
     </view>
 
   </view>
@@ -74,14 +73,14 @@
     };
     computed = {
       avatarUrl () {
-        if (this.user == null || this.user.avatarUrl == null ) {
-          return '/images/icons/customer_white.png';
+        if (this.user == null || this.user.avatarUrl == null) {
+          return 'http://img.leshare.shop/shop/other/customer_white.png';
         } else {
           return this.user.avatarUrl;
         }
       },
       nickName () {
-        if (this.user == null || this.user.nickName == null ) {
+        if (this.user == null || this.user.nickName == null) {
           return '微信用户';
         } else {
           return this.user.nickName;
@@ -98,9 +97,13 @@
         // 对合法性进行检查
         const isRule = this.card && this.card.memberPresentRules && this.card.memberPresentRules.length > 0;
         const isMember = this.member && this.member.memberPresentDetails && this.member.memberPresentDetails.length > 0;
+        // 没有规则的情况
         if (!isRule || !isMember) return '';
-        const {currentCount} = this.member.memberPresentDetails[0];
         const {unit} = this.card.memberPresentRules[0];
+        // 没有初始化的情况
+        if (!isRule || !isMember) return `当前已累计0${unit}`;
+        // 正常的情况
+        const {currentCount} = this.member.memberPresentDetails[0];
         return `当前已累计${currentCount}${unit}`;
       },
       numberText() {
@@ -114,6 +117,16 @@
           }
         }
         return text;
+      },
+      discountText() {
+        if (this.member == null || this.member.discountRule == null) return;
+        const {discountRule, customDiscount} = this.member;
+        const isCustomDiscount = customDiscount != null && customDiscount > 0 && customDiscount <= 100;
+        const discount = isCustomDiscount ? customDiscount : discountRule.discount;
+        if (discount < 100 && discount > 0) {
+          const discountText = (discount / 10).toFixed(1);
+          return `持卡享受${discountText}折优惠`;
+        }
       }
     };
     mixins = [base]
@@ -137,10 +150,6 @@
     background-color: #FFF;
     border: 2px solid #FFF;
     box-shadow: 0 0 5px gray;
-  }
-  .icon-qrcode{
-    width: 80rpx;
-    height: 80rpx;
   }
   .vip-box {
     box-shadow: 0 0 2px gray;
@@ -171,6 +180,12 @@
         font-size: $text-xxl;
         font-weight: bold;
       }
+    }
+  }
+  .footer-box{
+    align-items: flex-end;
+    .desc-box {
+      align-items: flex-end;
     }
   }
 </style>

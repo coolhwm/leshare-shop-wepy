@@ -1,9 +1,9 @@
 <template>
   <view class="goods-item row" >
-    <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="detail({{goods}})"></image>
+    <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="routeToGoods({{goods.id}})"></image>
     <view class="goods-main column" >
       <!-- 主体区域-->
-      <view @tap="detail({{goods}})">
+      <view @tap="routeToGoods({{goods.id}})">
         <view class="goods-name row-between">
           <text>{{goods.name}}</text>
         </view>
@@ -19,7 +19,7 @@
         </view>
       </view>
 
-      <!--价格及数量徐峥区域-->
+      <!--价格及数量选择区域-->
       <view class="row-between">
         <!--价格-->
         <view class="price-box">
@@ -29,16 +29,18 @@
         </view>
 
         <!--数量选择器-->
-        <view class="quantity row">
-          <block wx:if="{{goods.num > 0}}">
-            <image class="minus" src="/images/icons/minus.png" @tap.stop="minus({{goods}})" />
-            <view class="number">
-              <text>{{goods.num}}</text>
-            </view>
-          </block>
-          <image class="plus" src="/images/icons/plus-gray.png" wx:if="{{goods.goodsStocks[0].stock == 0 || goods.num >= goods.goodsStocks[0].stock}}" />
-          <image class="plus" src="/images/icons/plus.png" @tap.stop="plus({{goods}})" wx:else/>
-      </view>
+        <block wx:if="{{quantity}}">
+          <view class="quantity row">
+            <block wx:if="{{goods.num > 0}}">
+              <icon class="minus" @tap.stop="handleMinusCart({{goods.id}})"/>
+              <view class="number">
+                <text>{{goods.num}}</text>
+              </view>
+            </block>
+            <icon class="plus" color="gray"  wx:if="{{goods.goodsStocks[0].stock == 0 || goods.num >= goods.goodsStocks[0].stock}}" />
+            <icon class="plus"  @tap.stop="handlePlusCart({{goods}})" wx:else/>
+          </view>
+        </block>
       </view>
     </view>
   </view>
@@ -46,38 +48,27 @@
 
 <script>
   import wepy from 'wepy';
+  import router from '../../mixins/router';
   export default class GoodsItem extends wepy.component {
     props = {
       goods: {
+      },
+      quantity: {
+        default: true
       }
     };
     components = {
     };
     methods = {
-      plus(goods) {
-        this.updateNum('plus', goods);
-      },
-      minus(goods) {
-        this.updateNum('minus', goods);
-      },
       preview(goods) {
         const urls = goods.images.map(item => item.url);
         wepy.previewImage({
           urls: urls
         });
-      },
-      detail(goods) {
-        this.$emit('detail', goods);
       }
     };
-    updateNum(event, goods) {
-      const param = {
-        goodsId: goods.id,
-        sku: goods.sku
-      };
-      this.$emit(event, param);
-    }
     events = {};
+    mixins = [router];
     onLoad() {
     }
   }
@@ -157,10 +148,6 @@
   }
 
   .quantity{
-    image{
-      height: 50rpx;
-      width: 50rpx;
-    }
     .number{
       font-size: $text-sm;
       min-width: 25px;

@@ -1,12 +1,19 @@
 <template>
   <view class="coupon-item">
-    <view class="coupon-main column">
+    <view class="coupon-main column"  wx:if="{{coupon.type == 'CASH'}}">
       <view>
         <text class="xs">￥</text> <text class="xxl">{{coupon.price}}</text>
       </view>
       <text class="xs">满{{coupon.limitPrice}}元使用</text>
     </view>
-    <image class="coupon-hr"  src="/images/icons/coupon-hr.png"/>
+    <view class="coupon-main column" wx:if="{{coupon.type == 'EXCHANGE'}}">
+      <view>
+        <text class="xxl">兑换券</text>
+      </view>
+      <text class="xs" wx:if="{{coupon.limitPrice > 0}}">满{{coupon.limitPrice}}元使用</text>
+      <text class="xs" wx:else>无门槛</text>
+    </view>
+    <image class="coupon-hr"  src="http://img.leshare.shop/shop/other/coupon-hr.png"/>
     <form class="coupon-pick column-center" report-submit="true" @submit="pick({{coupon}})">
       <button plain  form-type="submit"><text>领取</text></button>
     </form>
@@ -14,15 +21,26 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
+  import wepy from 'wepy';
+  import Tips from '../../utils/Tips';
+  import coupon from '../../api/coupon';
+  import store from '../../store/utils';
   export default class CouponItem extends wepy.component {
     props = {
       coupon: {}
     };
     data = {};
     methods = {
-      pick(coupon, {detail}) {
-        this.$emit('pick', coupon, detail.formId);
+      async pick(item, {detail}) {
+        try {
+          Tips.loading();
+          await coupon.pick(item.id);
+          await Tips.success('领取成功');
+          await store.reflesh('coupon');
+          this.$root.$apply();
+        } catch (e) {
+          await Tips.alert('已达领取上限');
+        }
       }
     };
     events = {};

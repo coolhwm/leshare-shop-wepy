@@ -1,0 +1,186 @@
+<script>
+  import wepy from 'wepy';
+  import Event from '../utils/Event';
+
+  /**
+   * 分页通用方法
+   */
+  export default class router extends wepy.mixin {
+    config = {};
+    components = {};
+    plusCart(goods, goodsSku = '') {
+      const source = this.$root.$wxpage.route;
+      const mode = this.getMode(goods);
+      switch (mode) {
+        case 'SLIDER':
+          Event.emit(Event.GOODS_PANEL_OPEN, {goods, source});
+          break;
+        case 'POPUP':
+          Event.emit(Event.GOODS_PANEL_PLUS, {goods, goodsSku, source});
+          break;
+        default:
+          // 默认用简化版
+          Event.emit(Event.GOODS_PANEL_PLUS, {goods, goodsSku, source});
+      }
+    }
+    minusCart(goodsId, goodsSku = '') {
+      const source = this.$root.$wxpage.route;
+      Event.emit(Event.GOODS_PANEL_MINUS, {goodsId, goodsSku, source});
+    }
+    getMode(goods) {
+      if (goods.skuMode) {
+        return goods.skuMode;
+      }
+      try {
+        return this.$root.$data.buyPanelType;
+      } catch (e) {
+        return null;
+      }
+    }
+    /**
+     * 判断是否为TAB
+     */
+    isTab() {
+      const type = wepy.$instance.globalData.shopType;
+      return type == 1;
+    }
+    /**
+     * 处理跳转到商品详情
+     */
+    routeToCart() {
+      this.$root.$switch(`/pages/goods/cart`);
+    }
+    /**
+     * 跳转到分类购物
+     */
+    routeToIndex () {
+      if (this.isTab()) {
+        this.$root.$switch(`/pages/goods/category`);
+      } else {
+        this.$root.$navigate(`/pages/shop/index`);
+      }
+    }
+    /**
+     * 跳转到首页
+     */
+    routeToHome () {
+      if (this.isTab()) {
+        this.$root.$switch(`/pages/home/template`);
+      } else {
+        this.$root.$navigate(`/pages/home/home`);
+      }
+    }
+    /**
+     * 跳转到用户页面
+     */
+    routeToCustomer () {
+      if (this.isTab()) {
+        this.$root.$switch(`/pages/customer/index`);
+      } else {
+        this.$root.$navigate(`/pages/customer/index`);
+      }
+    }
+    methods = {
+      routeToCart() {
+        this.routeToCart();
+      },
+      routeToHome() {
+        this.routeToHome();
+      },
+      routeToCustomer() {
+        this.roureCustomer();
+      },
+      routeToIndex() {
+        this.routeToIndex();
+      },
+      /**
+       * 处理移除购物车事件
+       */
+      handleMinusCart(goods) {
+        this.minusCart(goods);
+      },
+      /**
+       * 处理加入购物车事件
+       */
+      handlePlusCart(goods) {
+        this.plusCart(goods);
+      },
+      /**
+       * 处理跳转到购物车页面
+       */
+      routeToGoods(goodsId) {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${goodsId}`);
+      },
+      /**
+       * 处理图片点击事件
+       */
+      routeByAction(event) {
+        const {action, targetId} = event;
+        // 根据动作进行路由
+        switch (action) {
+          case 'GOODS':
+            // 某个商品
+            this.$root.$navigate(`/pages/goods/detail?goodsId=${targetId}`);
+            break;
+          case 'CATEGORY':
+            // 某个分类
+            this.$root.$navigate(`/pages/goods/search_list?categoryId=${targetId}`);
+            break;
+          case 'USER':
+            // 用户首页
+            this.routeToCustomer();
+            break;
+          case 'GOODS_ALL':
+            // 商品首页
+            this.routeToIndex();
+            break;
+          case 'GOODS_SEARCH':
+            // 商品检索
+            const {categoryId, sort, by, content} = targetId;
+            let url = `/pages/goods/search_list?`;
+            if (categoryId != null) {
+              url += `&categoryId=${categoryId}`;
+            }
+            if (sort != null) {
+              url += `&sort=${sort}`;
+            }
+            if (by != null) {
+              url += `&by=${by}`;
+            }
+            if (content != null) {
+              url += `&keyword=${content}`;
+            }
+            this.$root.$navigate(url);
+            break;
+          case 'MEMBER_SIGN':
+            // 签到打卡
+            this.$root.$navigate('/pages/customer/sign_in');
+            break;
+          case 'COUPON_OWN':
+            // 我的优惠券
+            this.$root.$navigate('/pages/coupon/list');
+            break;
+          case 'MEMBER_DETAIL':
+            // 会员详情
+            this.$root.$navigate('/pages/customer/vip_detail');
+            break;
+          case 'PHONE':
+            // 拨打电话
+            wepy.makePhoneCall({
+              phoneNumber: `${targetId}`
+            });
+            break;
+          case 'SHARE':
+            // 分享好友
+            wepy.showShareMenu();
+            break;
+          case 'MEMBER_REGIST':
+            // 注册会员
+            this.routeToCustomer();
+            break;
+        }
+      }
+    };
+    events = {};
+  }
+</script>

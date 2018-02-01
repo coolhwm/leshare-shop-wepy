@@ -35,7 +35,13 @@ export default class Event {
   static REGISTE_MEMBER_UPDATE = 'REGISTE_MEMBER_UPDATE';
   // 会员卡信息更新
   static MEMBER_CARD_UPDATE = 'MEMBER_CARD_UPDATE';
+  // 打开购物面板
+  static GOODS_PANEL_OPEN = 'GOOD_PANEL_OPEN';
+  static GOODS_PANEL_PLUS = 'GOODS_PANEL_PLUS';
+  static GOODS_PANEL_MINUS = 'GOODS_PANEL_MINUS';
   static listen(eventName, callback, observer) {
+    // 先移除监听
+    this.remove(eventName, observer);
     WxNotificationCenter.addNotification(eventName, callback, observer);
   }
 

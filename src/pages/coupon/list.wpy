@@ -9,7 +9,7 @@
       <CouponItem :coupon.sync="item" @delete.user="delete" @select.user="detail"/>
     </repeat>
 
-    <form report-submit="true" @submit="use" class="zan-panel"  wx:if="{{!isPageEmpty && tab.selectedId == 'NEVER_USED'}}">
+    <form report-submit="true" @submit="use" class="zan-panel"  wx:if="{{!isPageEmpty && tab.selectedId == 'NEVER_USED' && version.isOrder}}">
       <view class="zan-btns">
         <button class="zan-btn zan-btn--fill" form-type="submit">立即下单使用</button>
       </view>
@@ -32,12 +32,17 @@
   import pagination from '../../mixins/pagination.wpy';
   import Placeholder from '../../components/common/placeholder';
   import ZanTab from '../../components/zanui/tab';
-  import CouponItem from '../../components/coupons/item';
+  import CouponItem from '../../components/coupons/display_item';
   import Loadmore from '../../components/weui/loadmore';
   import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
   import Loading from '../../components/common/loading';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
 
+  @connect({
+    version: store.get('version')
+  })
   export default class CouponList extends wepy.page {
     data = {
       init: false,

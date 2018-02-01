@@ -1,5 +1,4 @@
 @import "variable";
-
 page{
   height: 100%;
   background-color: $color-bg-body;
@@ -141,6 +140,9 @@ view.bg-white{background-color: white}
   height: $size;
   width: $size;
   vertical-align: middle;
+}
+.icon-sm {
+  @include icon-image(15px);
 }
 .icon {
   @include icon-image(20px);

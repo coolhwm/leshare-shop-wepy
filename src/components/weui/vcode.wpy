@@ -7,7 +7,7 @@
   export default class VCode extends wepy.component {
     props = {
       tap: {}
-    }
+    };
     data = {
       display: false,
       message: '',

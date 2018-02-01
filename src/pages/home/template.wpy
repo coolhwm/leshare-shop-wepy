@@ -1,0 +1,157 @@
+<template>
+  <Loading :init.sync="init"/>
+  <view class="template-box" wx:if="{{init}}">
+    <repeat for="{{components}}" key="index" index="index" item="item">
+      <!--搜索栏-->
+      <block wx:if="{{item.type == 'SEARCH_BAR'}}">
+        <SearchBar :param.sync="item"/>
+      </block>
+
+      <!--店铺信息-->
+      <block wx:if="{{item.type == 'SHOP_BAR'}}">
+        <ShopBar :param.sync="item"/>
+      </block>
+
+      <!--轮播图-->
+      <block wx:if="{{item.type == 'SWIPER'}}">
+        <SwiperBar :param.sync="item" />
+      </block>
+
+      <!--图片橱窗-->
+      <block wx:if="{{item.type == 'IMAGE_BOX'}}">
+        <ImageBox :param.sync="item" />
+      </block>
+
+
+      <!--优惠券橱窗-->
+      <block wx:if="{{item.type == 'COUPON_BOX'}}">
+        <CouponBox :param.sync="item" />
+      </block>
+
+      <!--商品橱窗-->
+      <block wx:if="{{item.type == 'GOODS_BOX'}}">
+        <GoodsBox :param.sync="item" />
+      </block>
+
+      <!--公告栏-->
+      <block wx:if="{{item.type == 'NOTICE_BAR'}}">
+        <NoticeBar :param.sync="item" />
+      </block>
+
+      <!--间隔-->
+      <view class="h-gap" wx:if="{{item.border !== 'none'}}"></view>
+    </repeat>
+
+    <!--插件-->
+    <repeat for="{{plugins}}" key="index" index="index" item="item">
+      <!--滑出购物面板-->
+      <block wx:if="{{item.type == 'SKU_SLIDE_PANEL'}}" >
+        <SilderPanel />
+      </block>
+
+      <!--弹出购物面板-->
+      <block wx:if="{{item.type == 'SKU_POPUP_PANEL'}}" >
+        <PopupPanel />
+      </block>
+
+      <!--浮动购物车-->
+      <block wx:if="{{item.type == 'CART_WIDGET'}}" >
+        <CartWidget />
+      </block>
+
+      <!--状态提示-->
+      <block wx:if="{{item.type == 'STATUS_WIDGET'}}" >
+        <StatusWidget />
+      </block>
+    </repeat>
+  </view>
+</template>
+
+<script>
+  import store from '../../store/utils';
+  import { connect } from 'wepy-redux';
+  import auth from '../../api/auth';
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import Loading from '../../components/common/loading';
+  import SearchBar from '../../components/template/search_bar';
+  import SwiperBar from '../../components/template/swiper_bar';
+  import ShopBar from '../../components/shop/header';
+  import ImageBox from '../../components/template/image_box';
+  import GoodsBox from '../../components/template/goods_box';
+  import CouponBox from '../../components/template/coupon_box';
+  import GoodsPanel from '../../components/goods/slider_buy_panel';
+  import SkuSelector from '../../components/goods/popup_buy_panel';
+  import CartWidget from '../../components/template/cart_widget';
+  import NoticeBar from '../../components/template/notice_bar';
+
+  @connect({
+    page: store.get('page'),
+    shop: store.get('shop')
+  })
+  export default class IndexTemplate extends wepy.page {
+    data = {
+      init: false,
+      components: null,
+      plugins: null
+    };
+    async onLoad () {
+      // 登录检查
+      await auth.login();
+      await store.init();
+      if (this.page) {
+        this.components = this.page.components;
+        this.plugins = this.page.plugins;
+      }
+      wepy.setNavigationBarTitle({
+        title: this.shop.name
+      });
+      this.loaded();
+    };
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {name, avatar} = this.shop;
+      console.info(`${avatar}/5x4`);
+      return {
+        title: `${name} 欢迎光临`,
+        imageUrl: `${avatar}/5x4`
+      };
+    }
+    methods = {
+    };
+    components = {
+      Loading: Loading,
+      SearchBar: SearchBar,
+      SwiperBar: SwiperBar,
+      ShopBar: ShopBar,
+      ImageBox: ImageBox,
+      GoodsBox: GoodsBox,
+      CouponBox: CouponBox,
+      SilderPanel: GoodsPanel,
+      PopupPanel: SkuSelector,
+      CartWidget: CartWidget,
+      NoticeBar: NoticeBar,
+    };
+    computed = {
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '首页'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .template-box{
+    width: 100%;
+    overflow-x: hidden;
+    .h-gap {
+      width: 100%;
+      height: 1px;
+      background-color: $color-border;
+    }
+  }
+</style>

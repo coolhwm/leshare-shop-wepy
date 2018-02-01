@@ -1,0 +1,76 @@
+<template>
+  <view class="row search-bar-box">
+    <view class="logo-text" wx:if="{{param.logoText}}">
+      <text>{{param.logoText}}</text>
+    </view>
+    <view wx:else class="mr20">
+      <icon class="home" color="white" @tap="routeToHome"/>
+    </view>
+    <view class="content" @tap="search">
+      <text>{{param.placeholder == null  ? '请输入搜索内容...' : param.placeholder }}</text>
+    </view>
+    <button plain class="cs-box row-center" open-type="contact" wx:if="{{param.isContact == null || param.isContact}}">
+      <icon class="chat" color="white"/><text>咨询</text>
+    </button>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import router from '../../mixins/router';
+  import base from '../../mixins/base_com';
+  export default class SearchBar extends wepy.component {
+    props = {
+      param: {}
+    };
+    data = {};
+    methods = {
+      search() {
+        const param = JSON.stringify(this.param);
+        this.$root.$navigate(`/pages/goods/search?param=${param}`);
+      }
+    };
+    mixins = [base, router];
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .search-bar-box{
+    background-color: $color-primary;
+    align-items: center;
+    height: 80rpx;
+    padding: 0 20rpx;
+
+    .logo-text{
+      text{
+        color: white;
+        font-size: $text-xl;
+      }
+      margin-right: 20rpx;
+    }
+    .cs-box{
+      padding: 0;
+      margin-left: 20rpx;
+      align-items: center;
+      text {
+        margin-left: 5rpx;
+        color: white;
+        font-size: 26rpx;
+        padding-bottom: 3px;
+      }
+    }
+    .content{
+      flex: 1;
+      background-color: white;
+      border-radius: 3px;
+      padding: 6rpx 20rpx;
+      text{
+        color: $color-muted;
+        font-size: $text-sm;
+      }
+    }
+  }
+</style>

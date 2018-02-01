@@ -1,0 +1,82 @@
+<template>
+  <view class="address-item-box row-between" @tap="select">
+
+    <!-- 占位空间 -->
+    <view class="address-empty-box row" wx:if="{{!address}}">
+      <icon class="plus-square normal" />
+      <text class="xl ml20">新增收货地址</text>
+    </view>
+
+    <!--左侧图标-->
+    <view class="address-icon-box" wx:if="{{address}}">
+      <icon class="address normal" />
+    </view>
+
+    <!-- 地址内容 -->
+    <view class="address-info-box column" wx:if="{{address}}">
+      <view class="user-info-box row">
+        <text class="user-name">{{address.name}} {{address.sexText}}</text>
+        <text class="user-phone">{{address.phone}}</text>
+        <view class="ml10 label small primary" wx:if="{{address.isDefault == 1}}">默认</view>
+      </view>
+
+      <view class="mt10">
+        <text>{{address.simpleAddress}}</text>
+      </view>
+    </view>
+
+    <!--右侧图标-->
+    <icon class="more normal" />
+  </view>
+  <image class="hr" src="http://img.leshare.shop/shop/other/address-hr.png" />
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class AddressSelector extends wepy.component {
+    props = {
+      address: {}
+    };
+    data = {};
+    methods = {
+      select() {
+        this.$emit('select');
+      }
+    };
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .address-item-box{
+    padding-top:25rpx;
+    padding-bottom: 25rpx;
+    padding-right:25rpx;
+    background-color: #FFF;
+
+    .address-empty-box{
+      flex:1;
+      padding-left: 20rpx;
+    }
+
+    .address-icon-box{
+      width: 60rpx;
+      text-align: center;
+    }
+
+    .address-info-box{
+      width: 600rpx;
+      .user-name, .user-nphone{
+        font-size: $text-xxl;
+        font-weight: bold;
+      }
+      .user-phone{
+        margin-left: 30rpx;
+      }
+    }
+  }
+</style>

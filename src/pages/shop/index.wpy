@@ -7,41 +7,18 @@
     <ShopHeader />
 
     <!--功能区域-->
-    <ShopNav :badegText.sync="badgeText" :title.sync="title"  navText="个人中心" navUrl="/pages/customer/index" />
+    <ShopNav :mode.sync="mode"/>
+
     <!--主内容区域-->
-    <view class="main-box row">
-      <!--分类侧边栏-->
-      <SideTab :tab.sync="categories" @change.user="switchTab" />
+    <CategoryBox top="145px" bottom="55px"/>
 
-      <!--右侧滚动-->
-      <scroll-view scroll-y class="goods-box" bindscrolltolower="onReachBottom">
-        <!--卡券区域（只在推荐的时候展现）-->
-        <scroll-view scroll-x	class="coupon-box" wx:if="{{categories.selectedId==-1 && pickCoupons.length > 0}}">
-          <repeat for="{{pickCoupons}}" key="index" index="index" item="item">
-            <CouponItem :coupon.sync="item" @pick.user="pickCoupon" />
-          </repeat>
-        </scroll-view>
-
-        <!--分类名称-->
-        <view class="goods-title row">
-          <text class="weak">{{selectedCategoryName}}</text>
-        </view>
-
-        <!--商品列表-->
-        <view class="goods-list">
-          <repeat for="{{page.list}}" key="index" index="index" item="item">
-            <GoodsItem :goods.sync="item" @plus.user="plus" @minus.user="minus" @detail.user="detail"/>
-          </repeat>
-        </view>
-
-        <Loadmore :page.sync="page" emptyText="暂无商品"/>
-      </scroll-view>
-    </view>
     <!-- 购物车 -->
-    <ShopCart :carts.sync="carts"  @plus.user="plus" @minus.user="minus" @clear.user="clear" @buy.user="buy"/>
+    <block wx:if="{{version.isOrder}}">
+      <SliderCart @buy.user="buy" :mode.sync="mode"/>
+    </block>
 
     <!--SKU选择器-->
-    <SkuSelector :display.sync="skuDisplay" :goods.sync="skuGoods" :carts.sync="carts" @select.user="selectSku" />
+    <SkuSelector/>
 
   </view>
 </template>
@@ -51,487 +28,53 @@
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import auth from '../../api/auth';
-  import shop from '../../api/shop';
-  import goods from '../../api/goods';
-  import coupon from '../../api/coupon';
-  import order from '../../api/order';
+  import CategoryBox from '../../components/template/category_box';
   import base from '../../mixins/base';
+  import router from '../../mixins/router';
   import pagination from '../../mixins/pagination.wpy';
-  import SideTab from '../../components/common/side_tab';
   import ShopHeader from '../../components/shop/header';
   import ShopNav from '../../components/shop/nav';
-  import CouponItem from '../../components/coupons/simple_item';
-  import GoodsItem from '../../components/goods/simple_item';
-  import SkuSelector from '../../components/goods/sku_selector';
-  import Loadmore from '../../components/weui/loadmore';
-  import ShopCart from '../../components/shop/cart';
-  import Navigator from '../../components/weui/navigator';
-  import Tips from '../../utils/Tips';
+  import SkuSelector from '../../components/goods/popup_buy_panel';
+  import SliderCart from '../../components/shop/slider_cart';
   import Loading from '../../components/common/loading';
-  import Event from '../../utils/Event';
 
   @connect({
-    shop: store.get('shop'),
-    notices: store.get('notices'),
-    status: store.get('status'),
-    ownCoupons: store.get('ownCoupons'),
-    pickCoupons: store.get('pickCoupons'),
     member: store.get('member'),
     card: store.get('card'),
-    categories: store.get('categories')
+    version: store.get('version')
   })
   export default class ShopIndex extends wepy.page {
     data = {
       init: false,
-      page: {},
-      pages: {},
-      categoryTab: {},
-      carts: [],
-      skuDisplay: 'false',
-      detailDisplay: false,
-      skuGoods: {},
       mode: 1
     };
-    async onLoad ({goodsId, mode}, {preload}) {
+    async onLoad ({mode}) {
       this.mode = mode;
       // 用户信息
       await auth.user();
       // 初始化Store
       await store.init();
-      // 加载商品分类
-      this.categoryTab = {...this.categories};
-      // 购物车
-      const carts = wepy.getStorageSync('carts');
-      this.carts = carts == '' ? [] : carts;
-      // 加载商品列表
-      await this.loadGoodsList();
-      // 处理推荐跳转
-      if (goodsId) {
-        const detail = this.methods.detail.bind(this);
-        detail({id: goodsId});
-      }
-      // 处理购物车初始化
-      if (preload && preload.cart) {
-        await this.doResetCart(preload.cart)
-      }
-      // 监听事件
-      Event.listen(Event.CART_LIST_CLEAR, this.doClearCart.bind(this), this);
-      Event.listen(Event.CART_LIST_RESET, this.doResetCart.bind(this), this);
-      Event.listen(Event.CART_LIST_ADD, this.doAddCart.bind(this), this);
       this.loaded();
     };
-    // TODO 店铺状态判断需要重构
-    // async onShow () {
-    //   if (this.init) {
-    //     // 重新判断店铺状态
-    //     Tips.setLoading();
-    //     await this.setShopTitle();
-    //     this.loaded();
-    //   }
-    // }
     /**
      * 页面分享
      */
     onShareAppMessage () {
       return {};
     }
-    /**
-     * 分页加载完毕, 缓存，处理分类数量
-     */
-    onPageLoad() {
-      this.pages[this.categories.selectedId] = this.page;
-      this.setGoodsNum();
-      this.setCategoryNum();
-    }
-    /**
-     * 分页参数
-     */
-    params() {
-      return {category_id: this.categories.selectedId};
-    }
-    /**
-     * 加载商品列表
-     */
-    async loadGoodsList() {
-      this.page = goods.page(true, this.discount);
-      await this.next();
-      if (this.page.list.length == 0) {
-        // 删掉推荐分类
-        if (this.categories.list[0].id == -1) {
-          this.categories.list.splice(0, 1);
-        }
-        // 重新请求第一个分类
-        this.categories.selectedId = this.categories.list[0].id;
-        this.page = goods.page(false, this.discount);
-        await this.next();
-      } else {
-        // 默认需要选择第一个分类
-        this.categories.selectedId = -1;
-      }
-    }
-    /**
-     * 设置商品分类数量
-     */
-    setCategoryNum() {
-      if (!this.categories.list) {
-        return;
-      }
-      this.categories.list.forEach(item => {
-        item.count = 0;
-        this.carts.forEach(cart => {
-          if (cart.innerCid && item.id == cart.innerCid) {
-            item.count += cart.goodsNum;
-          }
-        });
-      });
-    }
-    /**
-     * 设置商列表数量
-     */
-    setGoodsNum() {
-      // 处理商品列表
-      this.page.list.forEach(goods => {
-        goods.num = this.countCartGoodNum(goods.id);
-      });
-      // 处理商品详情
-      if (this.detail) {
-        this.detail.num = this.countCartGoodNum(this.detail.id);
-      }
-    }
-    /**
-     * 同步购物车数量
-     */
-    countCartGoodNum(goodsId) {
-      let num = 0;
-      this.carts.forEach(cart => {
-        if (cart.goodsId == goodsId) {
-          num += cart.goodsNum;
-        }
-      });
-      return num;
-    }
     methods = {
-      switchTab() {
-        const selectedId = this.categories.selectedId;
-        // 先判断缓存中是否存在商品列表
-        if (this.pages[selectedId] && this.pages[selectedId].list.length > 0) {
-          this.page = this.pages[selectedId];
-          this.setGoodsNum();
-          this.loaded();
-        } else {
-          this.page = goods.page(selectedId == -1, this.discount);
-          this.reload();
-        }
-      },
-      async selectSku(sku) {
-        const plus = this.methods.plus.bind(this);
-        plus(sku);
-      },
-      /**
-       * 领取优惠券
-       */
-      async pickCoupon({id}, formId) {
-        try {
-          Tips.loading();
-          await coupon.pick(id);
-          shop.reportFormId(formId, 0);
-          await Tips.success('领取成功');
-          await store.reflesh('ownCoupons', 'pickCoupons');
-          this.loaded();
-        } catch (e) {
-          if (e.serverCode == '50001') {
-            await Tips.alert('已达领取上限');
-            const index = this.coupons.findIndex(item => item.id == id);
-            this.coupons.splice(index, 1);
-            this.loaded();
-          }
-        }
-      },
-      /**
-       * 增加商品到购物车
-       */
-      async plus({goodsId, goodsSku, count = 1}) {
-        // 商品里列表
-        const goods = this.findGoods(goodsId);
-        if (goods) {
-          if (goods.goodsSkuInfo && goodsSku == null) {
-            await this.skuSelector(goodsId);
-            return;
-          }
-          if (goods.goodsSkuInfo == null) {
-            const isMax = goods.goodsStocks[0].stock == 0 || goods.num >= goods.goodsStocks[0].stock;
-            if (isMax) {
-              return;
-            }
-          }
-        }
-        // 购物车
-        const target = this.findCart(goodsId, goodsSku);
-        if (target) {
-          // 购物车中已存在
-          target.goodsNum = target.goodsNum + count;
-          target.totalPrice = (target.goodsNum * target.goodsPrice).toFixed(2);
-        } else {
-          // 购物车中不存在
-          let goodsPrice, originalPrice;
-          if (goodsSku) {
-            const skuInfo = goods.goodsSkuInfo.goodsSkuDetails.find(item => item.sku == goodsSku);
-            goodsPrice = skuInfo.goodsSkuDetailBase.price;
-            originalPrice = skuInfo.goodsSkuDetailBase.originalPrice;
-          } else if (goods) {
-            goodsPrice = goods.sellPrice;
-            originalPrice = goods.originalPrice;
-          } else if (this.detail && this.detail.id == goodsId) {
-            goodsPrice = this.detail.sellPrice;
-          }
-          // goodsPrice = goodsPrice.toFixed(2);
-          this.carts.push({
-            goodsId: goodsId,
-            goodsSku: goodsSku,
-            goodsName: goods.name,
-            innerCid: goods.innerCid,
-            goodsImage: goods.imageUrl,
-            goodsPrice: goodsPrice,
-            goodsNum: 1,
-            totalPrice: goodsPrice,
-            originalPrice: originalPrice,
-            discount: goods.discount,
-            discountRate: goods.discountRate,
-            discountText: goods.discountText
-          });
-        }
-        // 重置数据
-        this.setGoodsNum();
-        this.setCategoryNum();
-        this.saveCartStore();
-        this.skuGoods = {};
-        this.loaded();
-      },
-      /**
-       * 减少购物车商品
-       */
-      async minus({goodsId, goodsSku}) {
-        // 商品对象
-        const goods = this.findGoods(goodsId);
-        // 特殊情况，商品已经不足1个
-        if (goods && goods.num < 1) {
-          return;
-        }
-        // 若果购物车有多个对象，但是goodsSku 为空，那么则无法操作
-        const count = this.countCart(goodsId);
-        if (count > 1 && goodsSku == null) {
-          Tips.alert('请在购物车操作');
-          return;
-        }
-        // 购物车对象
-        const target = this.findCart(goodsId, goodsSku);
-        if (target.goodsNum == 1) {
-          this.removeCart(goodsId, target.goodsSku);
-        } else {
-          target.goodsNum -= 1;
-          target.totalPrice = (target.goodsNum * target.goodsPrice).toFixed(2);
-        }
-        // 重置数据
-        this.setGoodsNum();
-        this.setCategoryNum();
-        this.saveCartStore();
-        this.loaded();
-      },
-      /**
-       * 清空商品
-       */
-      async clear() {
-        if (this.carts.length < 1) {
-          Tips.alert('购物车为空');
-          return;
-        }
-        await Tips.confirm('确认清空购物车？');
-        await this.doClearCart();
-      },
-      /**
-       * 确认购买
-       */
-      async buy (param) {
-        // 权限校验
-        const result = await auth.user({block: true, redirect: false});
-        if (!result) return;
-        // 订单类型
-        if (this.mode == 2) {
-          // 堂食点餐
-          param.orderType = 30;
-        } else {
-          // 外卖订单
-          param.orderType = 20;
-        }
-        const trade = order.createCartTrade(this.carts, param);
-        shop.reportFormId(param.formId);
-        this.$preload('trade', trade);
-        this.$navigate(`../order/trade`);
-      },
-      /**
-       * 商品详情
-       */
-      async detail({id}) {
-        this.$navigate(`/pages/goods/detail?goodsId=${id}`);
-      }
     };
-    /**
-     * 清空购物车
-     */
-    async doClearCart() {
-      this.carts = [];
-      this.setCategoryNum();
-      this.setGoodsNum();
-      wepy.setStorage({
-        key: 'carts',
-        data: []
-      });
-      this.loaded();
-    }
-    /**
-     * 再来一单
-     */
-    async doResetCart(goodsList) {
-      this.carts = [];
-      // TODO 需要检验商品是否能够再来一单
-      goodsList.forEach(goods => {
-        this.carts.push({
-          goodsId: goods.goodsId,
-          goodsSku: goods.goodsSku,
-          goodsName: goods.goodsName,
-          innerCid: goods.innerCid,
-          goodsImage: goods.imageUrl,
-          goodsPrice: goods.goodsPrice,
-          goodsNum: goods.count,
-          totalPrice: (goods.goodsPrice * goods.count).toFixed(2)
-        });
-      });
-      // 重置数据
-      this.setGoodsNum();
-      this.setCategoryNum();
-      this.saveCartStore();
-      this.loaded();
-      this.loaded();
-    }
-    /**
-     * 增加购物车商品
-     */
-    doAddCart(goods) {
-      const plus = this.methods.plus.bind(this);
-      plus({
-        goodsId: goods.id
-      });
-    }
-    /**
-     * SKU选择器
-     */
-    async skuSelector(goodsId) {
-      this.skuGoods = this.findGoods(goodsId);
-      this.skuDisplay = 'true';
-      this.loaded();
-    }
-    /**
-     * 保存购物车数据
-     */
-    saveCartStore() {
-      wepy.setStorage({
-        key: 'carts',
-        data: this.carts
-      });
-    }
-    /**
-     * 寻找购物车商品
-     */
-    findGoods(goodsId) {
-      return this.page.list.find(item => item.id == goodsId);
-    }
-    findCart(goodsId, goodsSku) {
-      return this.carts.find(item => item.goodsId == goodsId && (goodsSku == null || item.goodsSku == goodsSku));
-    }
-    countCart(goodsId) {
-      let count = 0;
-      this.carts.forEach(item => {
-        if (item.goodsId == goodsId) {
-          count += 1;
-        }
-      });
-      return count;
-    }
-    removeCart(goodsId, goodsSku) {
-      const index = this.carts.findIndex(item => item.goodsId == goodsId && item.goodsSku == goodsSku);
-      this.carts.splice(index, 1);
-    }
     computed = {
-      title() {
-        if (this.shop == null || this.shop.type == null) return;
-        const type = this.shop.type;
-        if (!this.status || !this.status.open) {
-          if (!this.init) {
-            Tips.modal(this.status.closeTips);
-          }
-          return this.status.closeTips;
-        }
-        // 标题处理
-        if (this.mode == 2) {
-          wepy.setNavigationBarTitle({ title: '堂食点餐' });
-          return '点堂食/外带';
-        } else {
-          wepy.setNavigationBarTitle({ title: type.name });
-          return type.name;
-        }
-      },
-      badgeText() {
-        if (this.shop == null || this.shop.type == null) return;
-        return this.mode == 2 ? '堂食' : this.shop.type.badgeText;
-      },
-      discount() {
-        if (this.member == null || this.card == null) {
-          return null;
-        }
-        if (this.card.supplyDiscount != 1) {
-          return null;
-        }
-        // 计算折扣
-        const {discountRule, customDiscount} = this.member;
-        let discount = 100;
-        if (customDiscount > 0 && customDiscount < 100) {
-          // 自定义折扣
-          discount = customDiscount;
-        } else if (discountRule != null && discountRule.discount < 100) {
-          // 等级折扣
-          discount = discountRule.discount;
-        }
-        if (discount == 100) {
-          return null;
-        }
-        const categories = discountRule.discountCategoryLists.map(item => item.categoryId);
-        return {
-          level: discountRule.levelName,
-          categories,
-          rate: discount
-        };
-      },
-      selectedCategoryName() {
-        if (this.init && this.categories && this.categories.list) {
-          const selectedId = this.categories.selectedId;
-          return this.categories.list.find(item => item.id == selectedId).title;
-        }
-      }
     };
     components = {
       ShopHeader: ShopHeader,
-      SideTab: SideTab,
-      CouponItem: CouponItem,
-      GoodsItem: GoodsItem,
-      CommentNav: ShopNav,
       ShopNav: ShopNav,
-      Loadmore: Loadmore,
-      ShopCart: ShopCart,
+      SliderCart: SliderCart,
       SkuSelector: SkuSelector,
-      Navigator: Navigator,
+      CategoryBox: CategoryBox,
       Loading: Loading
     };
-    mixins = [base, pagination];
+    mixins = [base, pagination, router];
     config = {
     };
   }
@@ -539,34 +82,5 @@
 
 <style lang="scss">
   @import "../../styles/variable";
-
-  .main-box{
-    width: 100%;
-    position: absolute;
-    top: 145px;
-    bottom: 55px;
-
-    .goods-box{
-      flex: 1;
-      height: 100%;
-      .goods-title{
-        height: 30px;
-        padding-left: 20rpx;
-        align-items: center;
-        border-bottom: $border;
-      }
-      .goods-list{
-        background-color: #FFF;
-        padding-left: 10px;
-      }
-    }
-    .coupon-box{
-      padding: 10px 0 10px 20rpx;
-      height: 60px;
-      width: 545rpx;
-      border-bottom: $border;
-      white-space: nowrap;
-    }
-  }
 
 </style>

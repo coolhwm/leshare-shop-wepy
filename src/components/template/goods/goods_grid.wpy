@@ -1,0 +1,91 @@
+<template>
+  <view class="column goods-grid-box">
+    <view class="grid-discount-box row" wx:if="{{goods.discount}}">
+      <icon class="vip xsmall" color="white" /><text> 会员{{goods.discountRate}}</text>
+    </view>
+    <!--图片-->
+    <view>
+      <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="routeToGoods({{goods.id}})"></image>
+    </view>
+    <view class="goods-title" @tap="routeToGoods({{goods.id}})">
+      <text wx:if="{{goods.isGoodsName}}">{{goods.name}}</text>
+    </view>
+
+    <view class="row-between" wx:if="{{goods.isSales || goods.isPrice || goods.isCart}}">
+      <view class="content-box column" wx:if="{{goods.isSales || goods.isPrice}}">
+        <text class="xs muted" wx:if="{{goods.isSales}}">已售{{goods.salesVolume}}件</text>
+        <view class="row" wx:if="{{goods.isPrice}}">
+          <text class="major lg" >￥{{goods.priceLable}}</text>
+          <text class="cancel ml10" wx:if="{{goods.discount}}">￥{{goods.originalPrice}}</text>
+        </view>
+      </view>
+      <!--加入购物车按钮-->
+      <icon class="plus normal" wx:if="{{goods.isCart}}" @tap="handlePlusCart({{goods}})" />
+
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import router from '../../../mixins/router';
+  export default class GoodGridItem extends wepy.component {
+    props = {
+      goods: {}
+    };
+    methods = {
+    };
+    mixins = [router]
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+  .goods-grid-box{
+    $size: 373rpx;
+    position: relative;
+    background-color: white;
+    width: $size;
+    border-top: $border;
+    padding-bottom: 5rpx;
+
+    .grid-discount-box{
+      height: 45rpx;
+      position: absolute;
+      background-color: $color-major;
+      top: 0;
+      left: 0;
+      padding: 0 10rpx;
+      -webkit-filter:opacity(.7);
+      text{
+        color: white;
+        font-size: $text-sm;
+      };
+      .vip-icon{
+        vertical-align: middle;
+        width: 13px;
+        height: 13px;
+        margin-right: 5rpx;
+      }
+    }
+    .goods-image{
+      width: $size;
+      height: $size;
+    }
+    .goods-title{
+      height: 80rpx;
+      padding: 0 10rpx;
+      text{
+        word-break: break-all;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+      }
+    }
+    .content-box{
+      padding: 5rpx 10rpx;
+    }
+  }
+</style>

@@ -1,0 +1,42 @@
+<template>
+
+  <view class="contact-widget-box"  >
+    <button plain class="column-center" open-type="contact">
+      <icon class="chat"/>
+      <text class="contact-text">咨询</text>
+    </button>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  export default class ContactWidget extends wepy.component {
+    props = {
+    };
+    async onLoad () {
+    }
+    methods = {
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .contact-widget-box{
+    top: 200px;
+    right: 0;
+    position: fixed;
+    z-index: 10000;
+    background-color: white;
+    border: 1px solid $color-primary;
+    border-right: none;
+    border-bottom-left-radius: 10px;
+    border-top-left-radius: 10px;
+    .contact-text{
+      margin-top: 10rpx;
+      writing-mode: tb-rl;
+    }
+    button{
+      padding: 20rpx 0;
+    }
+  }
+</style>

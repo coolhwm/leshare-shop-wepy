@@ -1,0 +1,36 @@
+<template>
+  <block wx:if="{{status}}">
+    <icon class="status-tips onsale" style="font-size: 50px" wx:if="{{status.open}}" mode="aspectFit"/>
+    <icon class="status-tips onclose" style="font-size: 50px" color="gray" wx:else mode="aspectFit"/>
+  </block>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+
+  @connect({
+    status: store.get('status')
+  })
+  export default class StatusTips extends wepy.component {
+    props = {
+    };
+    data = {};
+    methods = {};
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .status-tips{
+    position: absolute;
+    right: 30px;
+    top: 0;
+    width: 150rpx;
+    height: 150rpx;
+  }
+</style>

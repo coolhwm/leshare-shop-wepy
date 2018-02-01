@@ -1,0 +1,45 @@
+<template>
+  <view class="image-box row-around" style="background-color: {{param.backgroundColor}}">
+
+
+    <block wx:for="{{param.data}}" wx:for-item="image" wx:key="seq">
+      <!--普通的图片-->
+      <button plain class="column-around" wx:if="{{image.action == 'SHARE'}}" open-type="share">
+        <image style="width:{{param.width}};height:{{param.height}} " mode="aspectFill" src="{{image.url}}" @tap="routeByAction({{image}})"></image>
+        <text wx:if="{{param.isShowTitle}}" class="image-title">{{image.title}}</text>
+      </button>
+      <view class="column-around" wx:else >
+        <image style="width:{{param.width}};height:{{param.height}} " mode="aspectFill" src="{{image.url}}" @tap="routeByAction({{image}})"></image>
+        <text wx:if="{{param.isShowTitle}}" class="image-title">{{image.title}}</text>
+      </view>
+    </block>
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import router from '../../mixins/router';
+  export default class ImageBox extends wepy.component {
+    props = {
+      param: {}
+    };
+    mixins = [router]
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .image-box{
+    background-color: white;
+    padding-top: 10rpx;
+    padding-bottom: 10rpx;
+    .image-title{
+      margin-top: 3px;
+    }
+    button{
+      padding: 0;
+      line-height: 1.2em;
+    }
+  }
+</style>
