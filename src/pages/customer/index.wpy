@@ -162,6 +162,10 @@
         this.$root.$navigate('/pages/customer/vip_detail');
       },
       gotoSign() {
+        if (this.member == null) {
+          Tips.alert('请先注册');
+          return;
+        }
         this.$root.$navigate(`/pages/customer/sign_in`);
       }
     };

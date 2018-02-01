@@ -25,6 +25,6 @@
       nopen() {
         Tips.alert('尚未开放');
       }
-    }
+    };
   }
 </script>
