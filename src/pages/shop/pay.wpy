@@ -1,4 +1,5 @@
 <template>
+  <Tips/>
   <view class="container" wx:if="{{init}}">
 
     <!--待支付-->
@@ -12,13 +13,14 @@
         <text class="lg">付款金额</text>
         <view class="row input-box">
           <text class="xxl mr10">￥</text>
-          <input type="number" bindinput="dealPriceInput"/>
+          <input type="digit" bindinput="dealPriceInput" maxlength="12"/>
         </view>
-        <view class="coupon-box row" @tap="coupon">
+        <view class="coupon-box row">
           <view class="weui-cell__bd">优惠券
             <view class="label small primary pain" wx:if="{{coupons.length > 0}}">{{couponLabel}}</view>
           </view>
-          <view class="weui-cell__ft {{coupons.length > 0 ? 'weui-cell__ft_in-access' : ''}}">{{couponText}}</view>
+          <view wx:if="{{coupons.length > 0}}" class="weui-cell__ft {{coupons.length > 0 ? 'weui-cell__ft_in-access' : ''}}"  @tap="coupon">{{couponText}}</view>
+          <view wx:else class="weui-cell__ft" >{{couponText}}</view>
         </view>
         <view class="button-box">
           <button class="zan-btn zan-label--primary" @tap="offline">立即付款</button>
@@ -45,11 +47,13 @@
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
+  import input from '../../mixins/input';
   import order from '../../api/order'
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import Event from '../../utils/Event';
   import Tips from '../../utils/Tips';
+  import FormTips from '../../components/weui/tips';
 
   @connect({
     shop: store.get('shop'),
@@ -74,6 +78,8 @@
         this.dealPrice = e.detail.value;
       },
       async offline () {
+        if (!this.validate()) return;
+        if (this.dealPrice == 0) return;
         const param = {
           dealPrice: this.dealPrice,
           finalPrice: this.dealPrice
@@ -131,13 +137,24 @@
       }
       this.$apply();
     }
+    validate() {
+      const rules = [
+        {
+          value: this.dealPrice,
+          method: 'money',
+          message: '请输入正确的价格'
+        }
+      ];
+      return this.check(rules);
+    }
     computed = {
       couponText () {
-        if (!this.coupons || !this.dealPrice) return '无可用';
+        if (!this.coupons || this.coupons.length <= 0) return '无可用';
         return this.selectedCoupon ? `满${this.selectedCoupon.limitPrice}减${this.selectedCoupon.price}` : '未使用';
       },
       coupons () {
-        if (!this.ownCoupons || !this.dealPrice) return;
+        if (!this.ownCoupons && !this.dealPrice) return;
+        if (!this.ownCoupons) return;
         return this.ownCoupons.filter(item => item.limitPrice <= this.dealPrice);
       },
       couponLabel () {
@@ -148,18 +165,23 @@
     watch = {
       coupons (news) {
         if (!this.coupons) return;
-        let selected = news[0];
-        news.forEach(item => {
-          selected = item.price > selected.price ? item : selected;
-        });
-        if (!selected) return;
-        this.selectedCoupon = selected;
+        if (news.length > 0) {
+          let selected = news[0];
+          news.forEach(item => {
+            selected = item.price > selected.price ? item : selected;
+          });
+          if (!selected) return;
+          this.selectedCoupon = selected;
+        } else {
+          this.selectedCoupon = null;
+        }
         this.$apply();
       }
     };
     components = {
+      Tips: FormTips
     };
-    mixins = [base];
+    mixins = [base, input];
     config = {
     };
   }
