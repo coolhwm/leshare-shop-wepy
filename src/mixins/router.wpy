@@ -118,6 +118,10 @@
         const {action, targetId} = event;
         // 根据动作进行路由
         switch (action) {
+          case 'DEBUG':
+            // 某个商品
+            console.info(event);
+            break;
           case 'GOODS':
             // 某个商品
             this.$root.$navigate(`/pages/goods/detail?goodsId=${targetId}`);
