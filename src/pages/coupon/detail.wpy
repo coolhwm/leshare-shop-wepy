@@ -13,11 +13,9 @@
       <text style="width: 200px; height: 200px;" class="muted lg column-center" wx:if="{{coupon.supportType ==1}}">暂不支持线下店铺消费</text>
     </view>
 
-    <view class="zan-panel" wx:if="{{!success}}">
-      <view class="zan-btns">
-        <button class="zan-btn zan-btn--fill" @tap="check" wx:if="{{coupon.isSelfUse}}">自助核销</button>
-        <button class="zan-btn" @tap="delete">删除优惠券</button>
-      </view>
+    <view class="btn-panel" wx:if="{{!success}}">
+      <button class="weui-btn" type="primary"  @tap="check" wx:if="{{coupon.isSelfUse}}">自助核销</button>
+      <button class="weui-btn" type="warn" plain @tap="delete">删除优惠券</button>
     </view>
   </view>
 

@@ -72,7 +72,9 @@
       </view>
 
       <!--操作栏-->
-      <ActionPanel submitText="确定"/>
+      <view class="btn-panel">
+        <button class="weui-btn" type="primary" form-type="submit">确定</button>
+      </view>
     </form>
    </view>
 </template>

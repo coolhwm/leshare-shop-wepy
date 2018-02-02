@@ -23,7 +23,7 @@
           <view wx:else class="weui-cell__ft" >{{couponText}}</view>
         </view>
         <view class="button-box">
-          <button class="zan-btn zan-label--primary" @tap="offline">立即付款</button>
+          <button class="weui-btn" type="primary" @tap="offline">立即付款</button>
         </view>
       </view>
     </view>
@@ -37,7 +37,7 @@
         <text class="price-box">￥{{result.finalPrice}}</text>
       </view>
       <view class="button-box">
-        <button class="zan-btn zan-label--primary" @tap="finish">完成</button>
+        <button class="weui-btn" @tap="finish">完成</button>
       </view>
     </view>
   </view>
@@ -155,7 +155,10 @@
       coupons () {
         if (!this.ownCoupons && !this.dealPrice) return;
         if (!this.ownCoupons) return;
-        return this.ownCoupons.filter(item => item.limitPrice <= this.dealPrice);
+        return this.ownCoupons
+          .filter(item => item.supportType != 1)  // 并不能使仅线上使用
+          .filter(item => item.type == 'CASH')    // 必须是现金券
+          .filter(item => item.limitPrice <= this.dealPrice); // 金额满足要求
       },
       couponLabel () {
         if (!this.coupons || !this.dealPrice) return;
@@ -242,9 +245,6 @@
   .button-box{
     margin-top: 40rpx;
     width: 100%;
-    .zan-btn {
-      margin-bottom: 0;
-    }
   }
 
 </style>

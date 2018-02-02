@@ -55,12 +55,25 @@
   border-top: $border;
 }
 
-
+/** 重新定义按钮 **/
 button[type="primary"][plain]{
   color: $color-primary;
   border-color: $color-primary;
 }
-
+.btn-panel {
+  background: #fff;
+  border-top: 1rpx solid #e5e5e5;
+  border-bottom: 1rpx solid #e5e5e5;
+  margin-top: 10px;
+  overflow: hidden;
+  padding: 30rpx;
+  width: 690rpx;
+}
+.btn-panel-bottom{
+  width: 690rpx;
+  position: fixed;
+  bottom: 0;
+}
 .weui-loadmore__tips_in-dot{
   background-color: $color-bg-body;
 }

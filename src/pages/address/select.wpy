@@ -13,11 +13,9 @@
       <DisableAddress :address.sync="item" @select.user="select" :disabled.sync="disableValue"/>
     </repeat>
 
-    <view class="zan-panel {{isPageEmpty ? 'zan-panel-bottom' : '' }}">
-      <view class="zan-btns">
-        <button class="zan-btn zan-btn--fill" @tap="add">新增地址</button>
-        <button class="zan-btn" @tap="back">返回</button>
-      </view>
+    <view class="btn-panel {{isPageEmpty ? 'btn-panel-bottom' : '' }}">
+      <button class="weui-btn" type="primary" @tap="add">新增地址</button>
+      <button class="weui-btn" @tap="back">返回</button>
     </view>
 
     <!-- 加载提示 -->

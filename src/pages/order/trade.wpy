@@ -81,7 +81,7 @@
         <text>积分抵扣</text>
         <text class="major">-￥{{trade.bonusPrice}}</text>
       </view>
-      <view class="price-box row-between" >
+      <view class="price-box row-between" wx:if="{{reduceFee > 0}}">
         <view class="row">
           <icon class="reduce" style="color: #F07373" />
           <text>优惠满减</text>
