@@ -6,7 +6,7 @@
   </view>
   <view class="grid-box" wx:for="{{grid.data}}" wx:key="rowIndex" wx:for-item="row" wx:for-index="rowIndex">
     <view class="row-around row-box">
-      <view class="column-center" wx:for="{{row}}" wx:key="cellIndex" wx:for-index="cellIndex" wx:for-item="cell">
+      <view class="column-center cell-box" wx:for="{{row}}" wx:key="cellIndex" wx:for-index="cellIndex" wx:for-item="cell">
         <icon class="{{cell.iconClass}}" style="color: {{cell.iconColor}}; font-size: {{cell.iconSize}}; line-height: {{cell.iconSize}};" />
         <text>{{cell.title}}</text>
       </view>

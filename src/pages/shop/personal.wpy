@@ -82,58 +82,112 @@
           [
             {
               iconClass: 'like',
-              iconColor: 'red',
+              iconColor: '#1296DB',
               iconSize: '24px',
-              title: '我的收藏1',
+              title: '我的收藏',
               explain: '说明文字'
             },
             {
-              iconClass: 'like',
-              iconColor: 'green',
+              iconClass: 'address',
+              iconColor: '#f85',
               iconSize: '24px',
-              title: '我的收藏2',
+              title: '常用地址',
               explain: '说明文字'
             },
             {
-              iconClass: 'like',
-              iconColor: 'blue',
+              iconClass: 'chat',
+              iconColor: '#e33',
               iconSize: '24px',
-              title: '我的收藏3',
+              title: '我的评论',
               explain: '说明文字'
             },
             {
-              iconClass: 'like',
-              iconColor: 'pink',
+              iconClass: 'groups',
+              iconColor: '#008000',
               iconSize: '24px',
-              title: '我的收藏4',
+              title: '拼团活动',
               explain: '说明文字'
             }
           ],
           [
             {
-              iconClass: 'like',
-              iconColor: 'red',
+              iconClass: 'coupon',
+              iconColor: '#e33',
               iconSize: '24px',
-              title: '我的收藏5',
+              title: '优惠券',
               explain: '说明文字'
             },
             {
-              iconClass: 'like',
-              iconColor: 'red',
+              iconClass: 'bouns',
+              iconColor: '#008000',
               iconSize: '24px',
-              title: '我的收藏6'
+              title: '我的积分'
             },
             {
-              iconClass: 'like',
-              iconColor: 'red',
+              iconClass: 'privilege',
+              iconColor: '#f85',
               iconSize: '24px',
-              title: '我的收藏7'
+              title: '积分商城'
             },
             {
-              iconClass: 'like',
-              iconColor: 'red',
+              iconClass: 'distribution',
+              iconColor: '#1296DB',
               iconSize: '24px',
-              title: '我的收藏8'
+              title: '分销中心'
+            }
+          ],
+          [
+            {
+              iconClass: 'home',
+              iconColor: '#e33',
+              iconSize: '24px',
+              title: '在线商城',
+              explain: '说明文字'
+            },
+            {
+              iconClass: 'inquire-store',
+              iconColor: '#1296DB',
+              iconSize: '24px',
+              title: '门店查询'
+            },
+            {
+              iconClass: 'service',
+              iconColor: '#008000',
+              iconSize: '24px',
+              title: '客服中心'
+            },
+            {
+              iconClass: 'call',
+              iconColor: '#e33',
+              iconSize: '24px',
+              title: '电话咨询'
+            }
+          ],
+          [
+            {
+              iconClass: 'share',
+              iconColor: '#1296DB',
+              iconSize: '24px',
+              title: '邀请好友',
+              explain: '说明文字'
+            },
+            {
+              iconClass: 'package',
+              iconColor: '#e33',
+              iconSize: '24px',
+              title: '超值礼包'
+            },
+            {
+              iconClass: 'receive-coupons',
+              iconColor: '#008000',
+              iconSize: '24px',
+              title: '领取优惠券'
+            },
+            {
+              iconClass: 'gift-card',
+              iconColor: '#f85',
+              iconSize: '24px',
+              title: '我的礼品卡'
             }
           ]
         ]
@@ -190,6 +244,9 @@
   .tool-grid-box{
     @extend .tool-box;
     background-color: $bg-white;
+    .cell-box{
+      width: 25%;
+    }
   }
 
 </style>
