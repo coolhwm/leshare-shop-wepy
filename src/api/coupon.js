@@ -18,10 +18,10 @@ export default class coupon extends base {
    */
   static all () {
     const url = `${this.baseUrl}/coupons/all`;
-    return this.get(url).then((owned, show) => {
-      const pickList = this.processCouponsList(show, this._processPickItem.bind(this));
-      const ownList = this.processCouponsList(owned, this._processCouponItem.bind(this));
-      return {pickList, ownList};
+    return this.get(url).then(({owned, show}) => {
+      const pickCoupons = this.processCouponsList(show, this._processPickItem.bind(this));
+      const ownCoupons = this.processCouponsList(owned, this._processCouponItem.bind(this));
+      return {pickCoupons, ownCoupons};
     });
   }
   static processCouponsList(data, func) {

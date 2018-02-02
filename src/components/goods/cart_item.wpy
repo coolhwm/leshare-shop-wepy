@@ -3,7 +3,8 @@
     <view class="cart-item-container" catchlongtap="remove({{index}})" >
       <!--多选按钮-->
       <view class="cart-check-container">
-        <view class="zan-icon zan-icon-{{cart.check ? 'checked' : 'check'}}" @tap="check({{index}})" />
+        <icon wx:if="{{cart.check}}" class="checked" @tap="check({{index}})" />
+        <icon wx:else class="check" color="gray" @tap="check({{index}})" />
       </view>
       <!--商品图片-->
       <image class="cart-item-image" src="{{cart.goodsImage}}"  @tap="detail({{cart.goodsId}})" />

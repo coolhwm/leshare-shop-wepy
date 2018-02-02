@@ -4,7 +4,8 @@
 
       <view class="cart-shop-info-container">
         <view class="cart-check-container" @tap="checkAll">
-          <view class="zan-icon zan-icon-{{cart.all ? 'checked' : 'check'}}" />
+          <icon wx:if="{{cart.all}}" class="checked"/>
+          <icon wx:else class="check" color="gray"/>
         </view>
         <icon class="shop" color="gray" />
         <text class="shop-info-name">{{shop.name}}</text>
@@ -31,14 +32,15 @@
     <view class="cart-bar-container">
 
       <view class="cart-check-all-container" @tap="checkAll">
-        <view class="zan-icon zan-icon-{{cart.all ? 'checked' : 'check'}}" />
+        <icon wx:if="{{cart.all}}" class="checked"/>
+        <icon wx:else class="check" color="gray"/>
         <text>全选</text>
       </view>
 
       <block wx:if="{{cart.batch}}">
-        <view class="cart-batch-btn-container">
-          <button class="zan-btn zan-btn--small" catchtap="onBatchFav">加入收藏</button>
-          <button class="zan-btn zan-btn--small zan-btn--danger" @tap="batchRemove">删除商品</button>
+        <view class="row mr10">
+          <button class="weui-btn mini-btn mr10" size="mini" type="primary" plain catchtap="onBatchFav">加入收藏</button>
+          <button class="weui-btn mini-btn" size="mini"  type="warn" plain @tap="batchRemove">删除商品</button>
         </view>
       </block>
       <block wx:else>
@@ -275,10 +277,5 @@
   .cart-batch-edit{
     font-size: 28rpx;
     color: #A3A3A3;
-  }
-
-  /*批量编辑栏样式*/
-  .cart-batch-btn-container{
-    padding-right: 10rpx;
   }
 </style>

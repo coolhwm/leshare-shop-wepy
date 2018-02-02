@@ -22,6 +22,11 @@
         <ImageBox :param.sync="item" />
       </block>
 
+      <!--热区橱窗-->
+      <block wx:if="{{item.type == 'HOT_AREA_BOX'}}">
+        <HotAreaBox :param.sync="item" />
+      </block>
+
 
       <!--优惠券橱窗-->
       <block wx:if="{{item.type == 'COUPON_BOX'}}">
@@ -84,6 +89,7 @@
   import SkuSelector from '../../components/goods/popup_buy_panel';
   import CartWidget from '../../components/template/cart_widget';
   import NoticeBar from '../../components/template/notice_bar';
+  import HotAreaBox from '../../components/template/hot_area_box';
 
   @connect({
     page: store.get('page'),
@@ -133,6 +139,7 @@
       PopupPanel: SkuSelector,
       CartWidget: CartWidget,
       NoticeBar: NoticeBar,
+      HotAreaBox: HotAreaBox
     };
     computed = {
     };

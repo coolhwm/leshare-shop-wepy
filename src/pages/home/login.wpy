@@ -7,13 +7,10 @@
       <text class="user-desc">购买商品、查看订单需要进行用户信息授权</text>
     </view>
 
-
-    <view class="zan-panel">
-      <view class="zan-btns">
-        <button open-type="getUserInfo" class="zan-btn zan-btn--fill" bindgetuserinfo="confirm" wx:if="{{reInfo}}" >确认授权</button>
-        <button class="zan-btn zan-btn--fill" @tap="tips" wx:else >确认授权</button>
-        <button class="zan-btn" @tap="back">随便逛逛</button>
-      </view>
+    <view class="btn-panel">
+      <button open-type="getUserInfo" class="weui-btn" type="primary" bindgetuserinfo="confirm" wx:if="{{reInfo}}" >确认授权</button>
+      <button class="weui-btn" type="primary"  @tap="tips" wx:else >确认授权</button>
+      <button class="weui-btn" @tap="back">随便逛逛</button>
     </view>
 
     <Copyright />
@@ -41,6 +38,7 @@
       reAuth: null
     };
     async onLoad ({redirect}) {
+      await store.init();
       this.redirect = redirect;
       this.reInfo = WxUtils.canIUse('button.open-type.getUserInfo');
       this.loaded();

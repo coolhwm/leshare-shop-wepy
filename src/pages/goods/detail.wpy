@@ -79,23 +79,25 @@
         </view>
       </view>
 
-      <view class="more-box" @tap="detail" wx:if="{{detail.goodsDetails.length > 0}}">
-        <text class="muted">点击查看图文详情</text>
+      <!--详情区域-->
+      <view class="detail-box" >
+        <!--详情标题-->
+        <view class="detail-title row-center">
+          <text class="primary lg">── 商品详情 ──</text>
+        </view>
+        <!--详情类列表区域/遍历详情-->
+        <view class="detail-list column">
+          <block wx:for="{{detail.goodsDetails}}" wx:key="id">
+            <!--文本-->
+            <text class="mb20 lg" wx:if="{{item.type == 1}}">{{item.content}}</text>
+            <!--图片-->
+            <image src="{{item.content}}" lazy-load mode="widthFix" wx:if="{{item.type == 2}}" @tap="previewDetailImages({{item.content}})"/>
+          </block>
+        </view>
       </view>
     </view>
 
-    <!--详情区域-->
-    <view class="detail-box" wx:if="{{tab.selectedId == 'DETAIL'}}">
-      <!--详情类列表区域/遍历详情-->
-      <view class="detail-list column">
-        <block wx:for="{{detail.goodsDetails}}" wx:key="id">
-          <!--文本-->
-          <text class="mb20 lg" wx:if="{{item.type == 1}}">{{item.content}}</text>
-          <!--图片-->
-          <image src="{{item.content}}" lazy-load mode="widthFix" wx:if="{{item.type == 2}}" @tap="previewDetailImages({{item.content}})"/>
-        </block>
-      </view>
-    </view>
+
 
     <!--评价区域-->
     <view wx:if="{{tab.selectedId == 'COMMENT'}}">
@@ -204,9 +206,6 @@
         selectedId: 'INFO'
       };
       tab.list.push({id: 'INFO', title: '基本信息'});
-      if (this.detail.goodsDetails.length > 0) {
-        tab.list.push({id: 'DETAIL', title: '图文详情'});
-      }
       if (this.isComment) {
         tab.list.push({id: 'COMMENT', title: `评价 (${this.count.ALL})`});
       }
@@ -406,8 +405,13 @@
     text-align: center;
   }
   .detail-box{
+    margin-top: 20rpx;
     background-color: #FFF;
-
+    border-top: $border;
+    .detail-title{
+      height: 90rpx;
+      border-bottom: $border;
+    }
     .detail-list{
       padding-bottom: 20rpx;
       image{

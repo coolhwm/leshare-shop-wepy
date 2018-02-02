@@ -14,10 +14,8 @@
     </view>
   </view>
 
-  <view class="zan-panel">
-    <view class="zan-btns">
-      <button class="zan-btn zan-btn--fill" @tap="confirm">提交评价</button>
-    </view>
+  <view class="btn-panel">
+    <button class="weui-btn" type="primary" @tap="confirm">提交评价</button>
   </view>
 
 </template>

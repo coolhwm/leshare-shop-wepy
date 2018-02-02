@@ -30,10 +30,9 @@
         <view class="buy-panel-sku-title">
           <text class="buy-panel-sku-title-text">{{label.key}}：</text>
         </view>
-        <!--TODO 标签重构-->
         <view class="buy-panel-sku-list">
           <block wx:for-item="skuValue" wx:for="{{label.value}}" wx:key="*this" >
-            <view class="zan-label {{sku.disabledSkuValues[skuValue] ? 'zan-label--disabled' : '' }} {{sku.selected[label.key] == skuValue ? 'zan-label--primary' : ''}}"
+            <view class="label small {{sku.disabledSkuValues[skuValue] ? 'disabled' : '' }} {{sku.selected[label.key] == skuValue ? 'primary' : ''}}"
                   @tap="select({{label.key}}, {{skuValue}})">{{skuValue}}</view>
           </block>
         </view>
