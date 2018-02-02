@@ -51,4 +51,8 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .weui-vcode-btn {
+    color:$color-primary;
+  }
+
 </style>

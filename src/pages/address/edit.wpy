@@ -3,7 +3,6 @@
   <Tips />
   <view class="container" wx:if="{{init}}">
     <form @submit="confirm">
-      <view class="mt20"></view>
       <view class="weui-cells-form">
         <!--联系人-->
         <view class="weui-cell weui-cell_input">
@@ -85,7 +84,6 @@
   import input from '../../mixins/input';
   import Event from '../../utils/Event';
   import FormTips from '../../components/weui/tips';
-  import ActionPanel from '../../components/common/action_panel';
   import address from '../../api/address';
   import Tips from '../../utils/Tips';
   import Loading from '../../components/common/loading';
@@ -200,7 +198,6 @@
     }
     components = {
       Tips: FormTips,
-      ActionPanel: ActionPanel,
       Loading: Loading
     };
     mixins = [base, input];

@@ -3,43 +3,45 @@
   <view class="mt20"></view>
   <view class="container " wx:if="{{init}}">
     <form @submit="add">
-    <view class="weui-cells weui-cells-form registe-box">
-      <view class="weui-cell weui-cell_input weui-cell_vcode">
-        <view class="weui-cell__hd">
-          <view class="weui-label">手机号码</view>
+      <view class="weui-cells weui-cells-form registe-box">
+        <view class="weui-cell weui-cell_input weui-cell_vcode">
+          <view class="weui-cell__hd">
+            <view class="weui-label">手机号码</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input class="weui-input" id="phone" @blur="input" type="number" maxlength="11" placeholder="请输入手机号" />
+          </view>
+          <view class="weui-cell__ft">
+            <VCode  @tap.user="code" />
+          </view>
         </view>
-        <view class="weui-cell__bd">
-          <input class="weui-input" id="phone" @blur="input" type="number" maxlength="11" placeholder="请输入手机号" />
-        </view>
-        <view class="weui-cell__ft">
-          <VCode  @tap.user="code" />
+
+        <view class="weui-cell weui-cell_input weui-cell_vcode">
+          <view class="weui-cell__hd">
+            <view class="weui-label">验证码</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input class="weui-input" type="number"  name="code" maxlength="4"  @input="input" placeholder="请输入短信验证码" />
+          </view>
         </view>
       </view>
 
-      <view class="weui-cell weui-cell_input weui-cell_vcode">
-        <view class="weui-cell__hd">
-          <view class="weui-label">验证码</view>
-        </view>
-        <view class="weui-cell__bd">
-          <input class="weui-input" type="number"  name="code" maxlength="4"  @input="input" placeholder="请输入短信验证码" />
-        </view>
+      <view class="tips-box column" wx:if="{{discountRuleText.length > 0 || bonusRuleText.length > 0}}">
+        <text>加入会员可享受下列特权：</text>
+        <block wx:if="{{discountRuleText.length > 0}}">
+          <text>• 会员折扣</text>
+          <text wx:for="{{discountRuleText}}" class="ml20" wx:key="*this">- {{item}}</text>
+        </block>
+        <block wx:if="{{bonusRuleText.length > 0}}">
+          <text>• 会员积分</text>
+          <text wx:for="{{bonusRuleText}}" class="ml20" wx:key="*this">- {{item}}</text>
+        </block>
       </view>
-    </view>
 
-    <view class="tips-box column" wx:if="{{discountRuleText.length > 0 || bonusRuleText.length > 0}}">
-      <text>加入会员可享受下列特权：</text>
-      <block wx:if="{{discountRuleText.length > 0}}">
-        <text>• 会员折扣</text>
-        <text wx:for="{{discountRuleText}}" class="ml20" wx:key="*this">- {{item}}</text>
-      </block>
-      <block wx:if="{{bonusRuleText.length > 0}}">
-        <text>• 会员积分</text>
-        <text wx:for="{{bonusRuleText}}" class="ml20" wx:key="*this">- {{item}}</text>
-      </block>
-    </view>
-
-    <!--操作栏-->
-    <ActionPanel submitText="注册"/>
+      <!--操作栏-->
+      <view class="btn-panel">
+        <button class="weui-btn" type="primary" form-type="submit">注册</button>
+      </view>
     </form>
   </view>
 
@@ -47,7 +49,6 @@
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
-  import ActionPanel from '../../components/common/action_panel';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import input from '../../mixins/input';
@@ -152,7 +153,6 @@
       }
     };
     components = {
-      ActionPanel: ActionPanel,
       Tips: FormTips,
       VCode: VCode
     };

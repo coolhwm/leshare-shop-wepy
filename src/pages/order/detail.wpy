@@ -37,12 +37,12 @@
     <OrderItem :order.sync="order" action="0"></OrderItem>
 
     <!--订单详情-->
-    <view class="weui-cells weui-cells_after-title weui-cells-merge-top">
+    <view class="weui-cells weui-cells-show mt10">
       <view class="weui-cell">
         <view class="weui-cell__bd">支付方式</view>
         <view class="weui-cell__ft">{{order.paymentText}}</view>
       </view>
-      <view class="weui-cell" wx:if="{{order.orderType == '20'}}">
+      <view class="weui-cell" wx:if="{{order.orderType == '20' || order.orderType == '10'}}">
         <view class="weui-cell__bd">配送方式</view>
         <view class="weui-cell__ft">{{order.deliveryText}}</view>
       </view>

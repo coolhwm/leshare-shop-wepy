@@ -19,7 +19,7 @@
     <OrderItem :order.sync="trade" action="0"></OrderItem>
 
     <!--订单详情-->
-    <view class="weui-cells weui-cells_after-title weui-cells-merge-top" >
+    <view class="weui-cells weui-cells-show" >
 
       <!--堂食/打包才有预约时间-->
       <view class="weui-cell weui-cell_access" @tap="arriveTime"  wx:if="{{trade.isInShop}}">

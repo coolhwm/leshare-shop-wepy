@@ -1,58 +1,29 @@
 @import "variable";
-.form{
-  .weui-vcode-btn {
-    color:$color-primary;
-  }
-  .muted{
-    color:$color-muted;
-  }
-}
-
-%weui-cells-display{
-  view{
+/** 微信列表样式 **/
+.weui-cells-show{
+  margin-top: 0;
+  text, view{
     font-size: $text-nm;
   }
   .weui-cell__ft{
     color: $color-normal;
   }
-}
-.weui-cells-extend::after{
-  border-bottom: $border;
-}
-.weui-cells-extend {
-  @extend %weui-cells-display;
-  border-top: none;
   .weui-cell::before,.weui-cells::after{
     border-top: $border;
   }
-}
-
-.weui-cells-merge-top{
-  @extend .weui-cells-extend;
-  border-bottom: $border;
-  &::after, &::before {
-    content: normal;
+  &::before {
+    border-top: $border;
+  }
+  &::after {
+    border-bottom: $border;
   }
 }
-
-.form {
-  text,view{
-    font-family: 宋体;
+/** 微信表单样式 **/
+.weui-cells-form{
+  @extend .weui-cells-show;
+  text, view{
     font-size: $text-form;
   }
-}
-
-.weui-cells-form{
-  @extend .weui-cells;
-  @extend .form;
-  @extend .weui-cells-merge-top;
-  &{
-    margin-top:0;
-  }
-  .weui-cell__ft{
-    color: #999;
-  }
-  border-top: $border;
 }
 
 /** 重新定义按钮 **/
@@ -70,13 +41,9 @@ button[type="primary"][plain]{
   width: 690rpx;
 }
 .btn-panel-bottom{
-  width: 690rpx;
   position: fixed;
   bottom: 0;
 }
-.weui-loadmore__tips_in-dot{
-  background-color: $color-bg-body;
-}
-.weui-loadmore__tips_in-line {
+.weui-loadmore__tips_in-dot, .weui-loadmore__tips_in-line{
   background-color: $color-bg-body;
 }

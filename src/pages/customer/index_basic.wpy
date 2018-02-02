@@ -9,7 +9,7 @@
 
     <view class="mt20"></view>
 
-    <view class="weui-cells-merge-top bg-white">
+    <view class="weui-cells weui-cells-show">
       <navigator url="/pages/customer/address_list" class="weui-cell weui-cell_access" hover-class="weui-cell_active" >
         <view class="weui-cell__bd">我的地址</view>
         <view class="weui-cell__ft weui-cell__ft_in-access"></view>
