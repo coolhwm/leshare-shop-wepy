@@ -53,7 +53,7 @@
       </view>
     </view>
     <!--工具功能-->
-    <view class="tool-box" wx:if="{{grid.style == 'GRID'}}">
+    <view class="tool-grid-box" wx:if="{{grid.style == 'GRID'}}">
       <PersonalGrid :grid.sync="grid" />
     </view>
     <view class="tool-box" wx:else>
@@ -66,7 +66,6 @@
   import wepy from 'wepy';
   import store from '../../store/utils';
   import base from '../../mixins/base';
-  import pagination from '../../mixins/pagination';
   import VipCard from '../../components/customer/vip_card';
   import Loading from '../../components/common/loading';
   import PersonalGrid from '../../components/shop/personal_grid'
@@ -78,7 +77,7 @@
       balance: 0.0,
       grid: {
         title: '我的工具',
-        style: 'LIST',
+        style: 'GRID',
         data: [
           [
             {
@@ -90,23 +89,23 @@
             },
             {
               iconClass: 'like',
-              iconColor: 'red',
+              iconColor: 'green',
               iconSize: '24px',
-              title: '我的收藏1',
+              title: '我的收藏2',
               explain: '说明文字'
             },
             {
               iconClass: 'like',
-              iconColor: 'red',
+              iconColor: 'blue',
               iconSize: '24px',
-              title: '我的收藏1',
+              title: '我的收藏3',
               explain: '说明文字'
             },
             {
               iconClass: 'like',
-              iconColor: 'red',
+              iconColor: 'pink',
               iconSize: '24px',
-              title: '我的收藏1',
+              title: '我的收藏4',
               explain: '说明文字'
             }
           ],
@@ -115,7 +114,7 @@
               iconClass: 'like',
               iconColor: 'red',
               iconSize: '24px',
-              title: '我的收藏1',
+              title: '我的收藏5',
               explain: '说明文字'
             },
             {
@@ -187,6 +186,10 @@
   .tool-box{
     border: $border;
     margin-top: 10rpx;
+  }
+  .tool-grid-box{
+    @extend .tool-box;
+    background-color: $bg-white;
   }
 
 </style>

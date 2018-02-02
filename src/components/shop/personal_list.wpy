@@ -6,7 +6,7 @@
               <icon class="{{item.iconClass}}" style="color: {{item.iconColor}}; font-size: {{item.iconSize}}; line-height: {{item.iconSize}};" />
               <text>{{item.title}}</text>
             </view>
-            <view class="weui-cell__ft weui-cell__ft_in-access">说明文字</view>
+            <view class="weui-cell__ft weui-cell__ft_in-access">{{item.explain}}</view>
           </navigator>
     </view>
   </view>
