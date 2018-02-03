@@ -32,7 +32,7 @@
         </view>
         <view class="buy-panel-sku-list">
           <block wx:for-item="skuValue" wx:for="{{label.value}}" wx:key="*this" >
-            <view class="label small {{sku.disabledSkuValues[skuValue] ? 'disabled' : '' }} {{sku.selected[label.key] == skuValue ? 'primary' : ''}}"
+            <view class="label{{sku.disabledSkuValues[skuValue] ? 'disabled' : '' }} {{sku.selected[label.key] == skuValue ? 'primary' : ''}}"
                   @tap="select({{label.key}}, {{skuValue}})">{{skuValue}}</view>
           </block>
         </view>
@@ -129,16 +129,14 @@
           return;
         }
         // 增加到购物车
-        if (type == 'cart') {
-          const {skuText, num} = this.sku;
-          this.cartManager.plus(this.goods, skuText, num);
-          if (this.goods.isTips) {
-            Tips.success('已加入购物车');
-          }
+        const {skuText, num} = this.sku;
+        if (this.goods.isTips) {
+          Tips.success('已加入购物车');
         }
         // 关闭面板
         this.skuManager.display = false;
         this.$root.$apply();
+        this.cartManager.plus(this.goods, skuText, num);
       }
     };
     computed = {

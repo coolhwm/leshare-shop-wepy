@@ -38,6 +38,7 @@ export default class Cart {
    * 导出数据
    */
   export () {
+    console.info('[cart] export cart data');
     // 增加计数器对象
     this.carts.forEach((cart, index) => {
       cart.quantity = {

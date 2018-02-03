@@ -240,3 +240,11 @@ button.pain-btn[open-type="share"]::after {
   position: fixed;
   bottom: 0;
 }
+/** loading样式 **/
+.loading-wrap{
+  height: 80%;
+}
+.loading-icon{
+  width: 60px;
+  height: 50px;
+}
