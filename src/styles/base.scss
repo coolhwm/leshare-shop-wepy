@@ -248,3 +248,29 @@ button.pain-btn[open-type="share"]::after {
   width: 60px;
   height: 50px;
 }
+//******图片样式******/
+@mixin icon-image($size){
+  min-height: $size;
+  min-width: $size;
+  height: $size;
+  width: $size;
+  vertical-align: middle;
+}
+.icon-sm {
+  @include icon-image(15px);
+}
+.icon {
+  @include icon-image(20px);
+}
+.icon-lg {
+  @include icon-image(30px);
+}
+.icon-xl {
+  @include icon-image(50px);
+}
+.icon-xxl{
+  @include icon-image(60px);
+}
+.icon-round {
+  border-radius: 50%;
+}

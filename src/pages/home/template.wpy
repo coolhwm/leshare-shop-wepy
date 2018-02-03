@@ -97,7 +97,7 @@
   })
   export default class IndexTemplate extends wepy.page {
     data = {
-      init: false,
+      init: true,
       components: null,
       plugins: null
     };
@@ -107,6 +107,7 @@
       await store.init();
       if (this.page) {
         this.components = this.page.components;
+        this.$apply();
         this.plugins = this.page.plugins;
       }
       wepy.setNavigationBarTitle({
