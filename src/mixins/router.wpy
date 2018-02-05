@@ -182,6 +182,10 @@
             // 注册会员
             this.routeToCustomer();
             break;
+          case 'OFFLINE_PAYMENT':
+            // 离线支付
+            this.$root.$navigate('/pages/shop/pay');
+            break;
         }
       }
     };

@@ -1,6 +1,7 @@
 import base from './base'
 import wepy from 'wepy';
 import store from '../store/utils';
+import WxUtils from '../utils/WxUtils';
 
 /**
  * 权限服务类
@@ -40,7 +41,7 @@ export default class auth extends base {
       // 获取用户信息
       const rawUser = userInfo != null ? userInfo : await wepy.getUserInfo();
       // 检查是否通过
-      await this.checkUserInfo(rawUser);
+      // await this.checkUserInfo(rawUser);
       // 解密信息
       const {user} = await this.decodeUserInfo(rawUser);
       // 保存登录信息
@@ -48,13 +49,13 @@ export default class auth extends base {
       store.save('user', user);
       return true;
     } catch (error) {
-      console.error('授权失败', error);
+      console.error('[auth] 授权失败', error);
       if (param.block) {
         const url = `/pages/home/login?redirect=${param.redirect}`;
         if (param.redirect) {
-          wepy.redirectTo({url});
+          WxUtils.backOrRedirect(url);
         } else {
-          wepy.navigateTo({url});
+          WxUtils.backOrNavigate(url);
         }
       }
       return false;

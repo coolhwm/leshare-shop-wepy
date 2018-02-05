@@ -46,10 +46,11 @@
     methods = {
       async confirm({detail}) {
         if (detail.rawData) {
-          await auth.user({block: false, redirect: false}, detail);
+          const result = await auth.user({block: false, redirect: false}, detail);
+          if (!result) return;
           Tips.success('授权成功');
           if (this.redirect == 'true') {
-            this.$redirect('/pages/customer/index');
+            WxUtils.backOrRedirect('/pages/customer/index');
           } else {
             wepy.navigateBack();
           }
@@ -58,7 +59,11 @@
         }
       },
       back() {
-        wepy.navigateBack();
+        if (this.redirect == 'true') {
+          WxUtils.backOrRedirect('/pages/home/home');
+        } else {
+          wepy.navigateBack();
+        }
       },
       tips() {
         Tips.modal('微信版本过低，请更新微信，或在列表删除小程序后重新访问');

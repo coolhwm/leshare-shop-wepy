@@ -69,6 +69,7 @@
       result: null
     };
     async onLoad () {
+      // 用户信息
       await store.init();
       this.loaded();
       Event.listen(Event.TRADE_COUPON_UPDATE, this.updateCoupon.bind(this), this);

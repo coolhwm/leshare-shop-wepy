@@ -97,7 +97,7 @@
   })
   export default class IndexTemplate extends wepy.page {
     data = {
-      init: true,
+      init: false,
       components: null,
       plugins: null
     };
