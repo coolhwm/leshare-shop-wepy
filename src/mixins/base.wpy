@@ -10,11 +10,11 @@
       }
       const path = this.$root.$wxpage.route;
       const param = params[path];
-      if (param == null) {
-        return;
+      if (param != null) {
+        console.info(`[minxin] page base init path=${path}, param=`, param);
+        Object.assign(this, param);
+        this.$apply();
       }
-      console.info(`[minxin] page base init path=${path}, param=`, param);
-      Object.assign(this, param);
     }
     loaded() {
       this.init = true;

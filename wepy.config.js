@@ -36,7 +36,7 @@ module.exports = {
 if (prod) {
   delete module.exports.compilers.babel.sourcesMap;
   // 压缩sass
-  module.exports.compilers['sass'] = {outputStyle: 'compact'};
+  module.exports.compilers['sass'] = {outputStyle: 'compressed'};
 
   // 压缩js
   module.exports.plugins = {

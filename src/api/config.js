@@ -50,17 +50,31 @@ export default class config extends base {
     }
     const config = JSON.parse(data);
     const components = this.processComponents(config.components);
-    const plugins = this.processPlugins(config.plugins);
+    const {plugins, triggers} = this.processPlugins(config.plugins);
     return {
-      components, plugins
+      components, plugins, triggers
     }
   }
 
   /**
-   * 处理页面的插件
+   * 处理页面的插件与触发器
    */
-  static processPlugins (plugins) {
-    return plugins;
+  static processPlugins (data) {
+    const plugins = [];
+    const triggers = [];
+    data.forEach(item => {
+      if (item.param) {
+        const param = JSON.parse(item.param);
+        Object.assign(item, param);
+        item.param = null;
+      }
+      if (item.type.indexOf('_TRIGGER') != -1) {
+        triggers.push(item);
+      } else {
+        plugins.push(item);
+      }
+    });
+    return {triggers, plugins};
   }
 
   /**
