@@ -1,0 +1,35 @@
+<template>
+  <view class="hot-area-box" style="background-color: {{param.backgroundColor}};width:{{param.width}};height:{{param.height}}">
+    <block wx:for="{{param.data.iamges}}" wx:for-item="image" wx:key="seq">
+      <image class="image" style="width:{{image.width}};height:{{image.height}} " mode="aspectFill" src="{{image.url}}" @tap="routeByAction({{image}})"></image>
+    </block>
+    <block wx:for="{{param.data.hotAreas}}" wx:for-item="area" wx:key="seq">
+      <view class="area" style="width:{{area.width}};height:{{area.height}};top:{{area.yPos}};left:{{area.xPos}}" @tap="routeByAction({{area}})"></view>
+    </block>
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import router from '../../mixins/router';
+  export default class HotAreaBox extends wepy.component {
+    props = {
+      param: {}
+    };
+    mixins = [router]
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .hot-area-box{
+    position: relative;
+    .image {
+      position: absolute;
+    }
+    .area{
+      position: absolute;
+    }
+  }
+</style>

@@ -22,6 +22,11 @@
         <ImageBox :param.sync="item" />
       </block>
 
+      <!--热区橱窗-->
+      <block wx:if="{{item.type == 'HOT_AREA_BOX'}}">
+        <HotAreaBox :param.sync="item" />
+      </block>
+
 
       <!--优惠券橱窗-->
       <block wx:if="{{item.type == 'COUPON_BOX'}}">
@@ -84,16 +89,19 @@
   import SkuSelector from '../../components/goods/popup_buy_panel';
   import CartWidget from '../../components/template/cart_widget';
   import NoticeBar from '../../components/template/notice_bar';
+  import HotAreaBox from '../../components/template/hot_area_box';
 
   @connect({
     page: store.get('page'),
-    shop: store.get('shop')
+    shop: store.get('shop'),
+    campaign: store.get('campaign')
   })
   export default class IndexTemplate extends wepy.page {
     data = {
       init: false,
       components: null,
-      plugins: null
+      plugins: null,
+      triggers: []
     };
     async onLoad () {
       // 登录检查
@@ -102,12 +110,36 @@
       if (this.page) {
         this.components = this.page.components;
         this.plugins = this.page.plugins;
+        this.triggers = this.page.triggers;
       }
       wepy.setNavigationBarTitle({
         title: this.shop.name
       });
       this.loaded();
+      this.runTriggers();
     };
+    /**
+     * 运行触发器
+     */
+    runTriggers() {
+      this.triggers.forEach(trigger => {
+        const methodName = trigger.method;
+        // 执行动态方法
+        if (methodName && typeof this[methodName] === 'function') {
+          const triggerMethod = this[methodName].bind(this);
+          triggerMethod();
+        }
+      });
+    }
+    /**
+     * 活动优惠券触发器
+     */
+    triggerCampaign() {
+      if (this.campaign) {
+        this.$preload('coupon', this.campaign);
+        this.$navigate('/pages/coupon/active');
+      }
+    }
     /**
      * 页面分享
      */
@@ -133,6 +165,7 @@
       PopupPanel: SkuSelector,
       CartWidget: CartWidget,
       NoticeBar: NoticeBar,
+      HotAreaBox: HotAreaBox
     };
     computed = {
     };

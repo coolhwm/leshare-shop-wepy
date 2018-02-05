@@ -86,6 +86,7 @@
   @import "../../styles/variable";
   .zan-quantity {
     color: #666;
+    height: 33px;
   }
   .zan-quantity view {
     display: inline-block;

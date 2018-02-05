@@ -111,9 +111,10 @@
       return text;
     }
     async checkScan() {
-      const {totalCost, bonus, memberPresentDetails} = await member.info();
+      const {totalCost, bonus, memberPresentDetails} = await member._member();
       const isPresentUpdate = this.isPresentUpdate(memberPresentDetails);
       const isCostUpdate = totalCost != this.member.totalCost || bonus != this.member.bonus;
+      console.info(`before: cost=${totalCost}, bonus=${bonus}, current: cost=${this.member.totalCost}, bonus=${this.member.bonus}`);
       if (!isPresentUpdate && !isCostUpdate) return;
       let text = '';
       if (isCostUpdate) {

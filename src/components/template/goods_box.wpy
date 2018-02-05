@@ -1,11 +1,11 @@
 <template>
   <view class="goods-box">
     <!--顶部标题-->
-    <block wx:if="{{param.isTitle}}">
+    <view wx:if="{{param.isTitle}}" @tap="more">
       <repeat for="{{[param]}}" key="i" index="i" item="item">
         <TitleBar :param.sync="item" />
       </repeat>
-    </block>
+    </view>
 
     <!--横向单个布局-->
     <view class="row-box column" wx:if="{{param.layout == 'ROW'}}">
@@ -71,11 +71,6 @@
         </block>
       </repeat>
     </view>
-
-    <!--更多商品-->
-    <view class="box-footer row-center" wx:if="{{param.isMore}}" @tap="more">
-      <text class="weak">{{param.moreText}}</text>
-    </view>
   </view>
 
 </template>
@@ -92,7 +87,8 @@
       param: {}
     };
     methods = {
-      more() {
+      more () {
+        if (this.param.isMore == false) return;
         const {sort, by, content, categoryId} = this.param;
         let url = `/pages/goods/search_list?`;
         if (categoryId != null) {

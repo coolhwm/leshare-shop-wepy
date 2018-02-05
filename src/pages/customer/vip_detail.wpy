@@ -191,9 +191,6 @@
   .info-container {
     width: 500rpx;
   }
-  .zan-btn--mini {
-    background-color: $color-bg-body;
-  }
   .list-panel{
     background-color: white;
     margin-bottom: 20rpx;

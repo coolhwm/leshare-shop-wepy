@@ -2,10 +2,12 @@
   <view class="title-bar-box">
     <view class="left-title row-between" wx:if="{{param.titleStyle == 'LEFT'}}">
       <text class="title-text">{{param.title}}</text>
+      <view class="title-more row" wx:if="{{param.isMore}}">更多></view>
     </view>
 
     <view class="center-title row-center" wx:else>
-      <text class="title-line">────────</text><text class="title-text">{{param.title}}</text><text class="title-line">────────</text>
+      <text class="title-line">──────</text><text class="title-text">{{param.title}}</text><text class="title-line">──────</text>
+      <view class="title-more row" wx:if="{{param.isMore}}">更多></view>
     </view>
   </view>
 </template>
@@ -43,8 +45,14 @@
 
   .center-title{
     height: 80rpx;
+    position: relative;
     background-color: $color-bg-body;
-
+    .title-more{
+      position: absolute;
+      right: 0;
+      color: $color-muted;
+      padding-right: 10rpx;
+    }
     .title-text{
       color: $color-primary;
       margin-left: 20px;

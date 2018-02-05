@@ -44,8 +44,8 @@
           </view>
         </view>
       </view>
-      <view class="zan-btns">
-        <button class="zan-btn" @tap="clearHistory" >清空历史搜索记录</button>
+      <view class="btn-panel">
+        <button class="weui-btn" type="primary" plain @tap="clearHistory" >清空历史搜索记录</button>
       </view>
     </view>
   </view>
