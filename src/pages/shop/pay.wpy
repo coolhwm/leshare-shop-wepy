@@ -37,7 +37,7 @@
         <text class="price-box">￥{{result.finalPrice}}</text>
       </view>
       <view class="button-box">
-        <button class="weui-btn" @tap="finish">完成</button>
+        <button class="weui-btn" type="primary" @tap="finish">完成</button>
       </view>
     </view>
   </view>
@@ -88,7 +88,7 @@
         if (this.selectedCoupon) {
           param.couponPrice = this.selectedCoupon.price;
           param.couponUsedId = this.selectedCoupon.id;
-          param.finalPrice = this.dealPrice * 1 - this.selectedCoupon.price * 1
+          param.finalPrice = (this.dealPrice * 1 - this.selectedCoupon.price * 1).toFixed(2);
         }
         await Tips.confirm(`确认支付${param.finalPrice}元给${this.shop.name}？`);
         try {
@@ -159,7 +159,7 @@
         return this.ownCoupons
           .filter(item => item.supportType != 1)  // 并不能使仅线上使用
           .filter(item => item.type == 'CASH')    // 必须是现金券
-          .filter(item => item.limitPrice <= this.dealPrice); // 金额满足要求
+          .filter(item => item.limitPrice < this.dealPrice); // 金额满足要求
       },
       couponLabel () {
         if (!this.coupons || !this.dealPrice) return;
