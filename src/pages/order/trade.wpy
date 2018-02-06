@@ -95,7 +95,7 @@
     </view>
 
     <!--备注信息-->
-    <view class="remark-box weui-cells weui-cells_after-title weui-cells-merge-top">
+    <view class="remark-box weui-cells weui-cells-show">
       <view class="weui-cell weui-cell_input">
         <view class="weui-cell__hd" >
           <view class="weui-label">订单备注</view>
@@ -601,7 +601,6 @@
   @import "../../styles/variable";
 
   .remark-box{
-    border-top: $border;
     margin-bottom: 10rpx;
   }
 
