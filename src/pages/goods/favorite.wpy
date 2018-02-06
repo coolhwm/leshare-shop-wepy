@@ -1,0 +1,61 @@
+<template>
+  <view class="container" wx:if="{{init}}">
+    <!--列表展现-->
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <FavoriteItem :goods.sync="item" @remove.user="remove"/>
+    </repeat>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+  </view>
+
+  <!--占位符-->
+  <Placeholder :show.sync="isPageEmpty" message="您还没有收藏商品"/>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import favorite from '../../api/favorite';
+  import pagination from '../../mixins/pagination.wpy';
+  import Placeholder from '../../components/common/placeholder';
+  import Loadmore from '../../components/weui/loadmore';
+  import FavoriteItem from '../../components/goods/favorite_item';
+  import Tips from '../../utils/Tips';
+
+  export default class GoodsFavorite extends wepy.page {
+    data = {
+      init: true,
+      page: {
+        list: [
+        ]
+      }
+    };
+    async onLoad () {
+      this.page = favorite.page();
+      await this.next();
+    };
+    methods = {
+      async remove(goodsId) {
+        await Tips.confirm('确认删除该收藏？');
+        await favorite.remove(goodsId);
+        await Tips.success('删除成功');
+        this.reload();
+      }
+    };
+    components = {
+      Placeholder: Placeholder,
+      Loadmore: Loadmore,
+      FavoriteItem: FavoriteItem
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '我的收藏',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

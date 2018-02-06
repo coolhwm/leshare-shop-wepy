@@ -1,7 +1,7 @@
 <template>
-  <view class="coupon-item-container" data-coupon-id="{{coupon.id}}">
+  <view class="coupon-item-container row" data-coupon-id="{{coupon.id}}">
     <!--左侧区域-->
-    <view class="coupon-main-container">
+    <view class="coupon-main-container column-center">
       <view class="coupon-value-container">
         <text class="coupon-value-unit">￥</text>
         <text class="coupon-value-text">{{coupon.price}}</text>
@@ -63,22 +63,15 @@
   /*父容器*/
   .coupon-item-container{
     position: relative;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
     margin:20rpx 20rpx 0 20rpx;
     background-color: #FFF;
     height: 200rpx;
-    border: 1px solid #E7E7E7;
+    border: $border;
     border-radius: 5px;
     overflow: hidden;
   }
   /*左侧容器*/
   .coupon-main-container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     width: 255rpx;
     height: 100%;
     background: linear-gradient(to right, #2F80ED, #1296db);

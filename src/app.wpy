@@ -92,6 +92,7 @@
         'pages/home/login',
         'pages/shop/index',
         'pages/goods/cart',
+        'pages/goods/favorite',
         'pages/goods/detail',
         'pages/goods/comment_list',
         'pages/goods/search',

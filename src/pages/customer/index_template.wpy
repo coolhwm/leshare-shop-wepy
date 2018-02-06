@@ -5,22 +5,27 @@
     <!--组件-->
     <repeat for="{{components}}" key="index" index="index" item="item">
 
+      <!--简单头像-->
       <block wx:if="{{item.type == 'CUSTOMER_AVATAR'}}">
         <CustomerAvatar />
       </block>
 
+      <!--导航栏-->
       <block wx:if="{{item.type == 'NAV_LIST'}}">
         <NavList :param.sync="item" />
       </block>
 
+      <!--订单栏-->
       <block wx:if="{{item.type == 'ORDER_BAR'}}">
         <OrderBar :param.sync="item" />
       </block>
 
+      <!--分隔符-->
       <block wx:if="{{item.type == 'SEPARATOR'}}">
         <Separator :param.sync="item" />
       </block>
 
+      <!--会员卡-->
       <block wx:if="{{item.type == 'VIP_CARD'}}">
         <VipCard />
       </block>

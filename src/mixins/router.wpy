@@ -165,6 +165,14 @@
             // 我的优惠券
             this.$root.$navigate('/pages/coupon/list');
             break;
+          case 'COUPON_PICK':
+            // 领取优惠券
+            this.$root.$navigate('/pages/coupon/pick');
+            break;
+          case 'FAVORITE':
+            // 我的收藏
+            this.$root.$navigate('/pages/goods/favorite');
+            break;
           case 'ADDRESS':
             // 我的地址
             this.$root.$navigate('/pages/customer/address_list');
