@@ -3,30 +3,30 @@
   <view class="column order-box">
     <view>
       <view class="weui-cells weui-cells-show">
-        <view url="" class="weui-cell weui-cell_access" >
+        <view url="" class="weui-cell weui-cell_access" @tap="list(0)">
           <view class="weui-cell__bd">我的订单</view>
           <view class="weui-cell__ft weui-cell__ft_in-access">查看全部订单</view>
         </view>
       </view>
     </view>
     <view class="row-around state-box">
-      <view class="column-center">
+      <view class="column-center" @tap="list(1)">
         <icon class="payment large" color="gray"/>
         <text>待付款</text>
       </view>
-      <view class="column-center">
+      <view class="column-center" @tap="list(2)">
         <icon class="delivery large" color="gray"/>
         <text>待发货</text>
       </view>
-      <view class="column-center">
+      <view class="column-center" @tap="list(3)">
         <icon class="received large" color="gray"/>
         <text>待收货</text>
       </view>
-      <view class="column-center">
+      <view class="column-center" @tap="list(4)">
         <icon class="evaluated large" color="gray"/>
         <text>待评论</text>
       </view>
-      <view class="column-center">
+      <view class="column-center" @tap="list(5)">
         <icon class="refund large" color="gray"/>
         <text>退货/退款</text>
       </view>
@@ -39,10 +39,13 @@
 
   export default class OrderBar extends wepy.component {
     props = {
-      order: {}
     };
     data = {};
-    methods = {};
+    methods = {
+      list(status) {
+        this.$root.$navigate(`/pages/order/list?status=${status}`);
+      }
+    };
     events = {};
     onLoad() {
     }

@@ -103,6 +103,7 @@
         'pages/address/select',
         'pages/address/list',
         'pages/address/search',
+        'pages/order/list',
         'pages/order/trade',
         'pages/order/detail',
         'pages/order/refund_edit',

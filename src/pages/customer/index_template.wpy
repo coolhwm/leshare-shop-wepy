@@ -87,7 +87,7 @@
     };
     mixins = [base];
     config = {
-      navigationBarTitleText: '首页'
+      navigationBarTitleText: '个人中心'
     };
   }
 </script>
