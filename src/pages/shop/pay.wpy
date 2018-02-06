@@ -82,6 +82,8 @@
         if (!this.validate()) return;
         if (this.dealPrice == 0) return;
         const param = {
+          orderType: 40,
+          paymentType: 1,
           dealPrice: this.dealPrice,
           finalPrice: this.dealPrice
         };
