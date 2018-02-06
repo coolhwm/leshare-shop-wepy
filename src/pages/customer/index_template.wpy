@@ -10,9 +10,24 @@
         <CustomerAvatar />
       </block>
 
+      <!--会员卡-->
+      <block wx:if="{{item.type == 'VIP_CARD'}}">
+        <VipCard />
+      </block>
+
+      <!--余额充值-->
+      <block wx:if="{{item.type == 'BALANCE_BAR'}}">
+        <BalanceBar />
+      </block>
+
       <!--导航栏-->
       <block wx:if="{{item.type == 'NAV_LIST'}}">
         <NavList :param.sync="item" />
+      </block>
+
+      <!--导航网格-->
+      <block wx:if="{{item.type == 'NAV_GRID'}}">
+        <NavGrid :param.sync="item" />
       </block>
 
       <!--订单栏-->
@@ -23,11 +38,6 @@
       <!--分隔符-->
       <block wx:if="{{item.type == 'SEPARATOR'}}">
         <Separator :param.sync="item" />
-      </block>
-
-      <!--会员卡-->
-      <block wx:if="{{item.type == 'VIP_CARD'}}">
-        <VipCard />
       </block>
     </repeat>
 
@@ -48,9 +58,11 @@
   import Loading from '../../components/common/loading';
   import CustomerAvatar from '../../components/customer/avatar';
   import NavList from '../../components/customer/nav_list';
+  import NavGrid from '../../components/customer/nav_grid';
   import OrderBar from '../../components/customer/order_bar';
   import Separator from '../../components/template/separator';
   import VipCard from '../../components/customer/vip_card';
+  import BalanceBar from '../../components/customer/balance_bar';
 
   @connect({
   })
@@ -81,7 +93,9 @@
       NavList: NavList,
       OrderBar: OrderBar,
       Separator: Separator,
-      VipCard: VipCard
+      VipCard: VipCard,
+      NavGrid: NavGrid,
+      BalanceBar: BalanceBar
     };
     computed = {
     };

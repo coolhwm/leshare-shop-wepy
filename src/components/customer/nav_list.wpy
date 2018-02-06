@@ -1,5 +1,5 @@
 <template>
-  <view class="grid-box" wx:for="{{param.data}}" wx:key="cellIndex" wx:for-item="cell" wx:for-index="cellIndex">
+  <view class="nav-list-box" wx:for="{{param.data}}" wx:key="cellIndex" wx:for-item="cell" wx:for-index="cellIndex">
     <view class="column cell-box weui-cells weui-cells-show">
       <block wx:for="{{cell}}" wx:key="itemIndex" wx:for-index="itemIndex" wx:for-item="item">
         <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="routeByAction({{item}})">
@@ -17,23 +17,20 @@
 <script>
   import wepy from 'wepy'
   import router from '../../mixins/router';
-  import base from '../../mixins/base';
 
   export default class NavList extends wepy.component {
     props = {
       param: {}
     };
     onLoad () {}
-    mixins = [base, router]
+    mixins = [router]
   }
 </script>
 
 <style lang="scss">
   @import "../../styles/variable";
 
-  .grid-box + .grid-box{
+  .nav-list-box + .nav-list-box{
     margin-top: 10rpx;
-  }
-  .cell-box{
   }
 </style>
