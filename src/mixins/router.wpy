@@ -1,6 +1,7 @@
 <script>
   import wepy from 'wepy';
   import Event from '../utils/Event';
+  import Tips from '../utils/Tips';
 
   /**
    * 分页通用方法
@@ -119,8 +120,14 @@
         console.info(`[router] handle action=${action}, targetId=${targetId}`);
         // 根据动作进行路由
         switch (action) {
+          case 'NONE':
+            // 无动作
+            break;
+          case 'NO_OPEN':
+            Tips.success(targetId != null ? targetId : '敬请期待');
+            break;
           case 'DEBUG':
-            // 某个商品
+            // 调试
             console.info(event);
             break;
           case 'GOODS':
