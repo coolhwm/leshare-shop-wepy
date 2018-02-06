@@ -116,6 +116,7 @@
        */
       routeByAction(event) {
         const {action, targetId} = event;
+        console.info(`[router] handle action=${action}, targetId=${targetId}`);
         // 根据动作进行路由
         switch (action) {
           case 'DEBUG':
@@ -163,6 +164,10 @@
           case 'COUPON_OWN':
             // 我的优惠券
             this.$root.$navigate('/pages/coupon/list');
+            break;
+          case 'ADDRESS':
+            // 我的地址
+            this.$root.$navigate('/pages/customer/address_list');
             break;
           case 'MEMBER_DETAIL':
             // 会员详情

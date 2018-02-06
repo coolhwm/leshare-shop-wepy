@@ -5,9 +5,7 @@
 
       <block wx:if="{{supportMember}}">
         <!-- 会员卡 -->
-        <view class="box-bg">
-          <VipCard @detail.user="gotoDetail"/>
-        </view>
+        <VipCard @detail.user="gotoDetail"/>
 
         <!--功能区域-->
         <view class="function-box row-between">

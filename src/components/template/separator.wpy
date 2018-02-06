@@ -1,0 +1,26 @@
+<template>
+  <!--订单信息-->
+  <view class="{{param.borderTop? 'separator-top': ''}} {{param.borderBottom? 'separator-bottom': ''}}" style="width: 100%; height: {{param.height}}; background-color: {{param.backgroundColor}};">
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class Separator extends wepy.component {
+    props = {
+      param: {}
+    };
+  }
+</script>
+
+<style lang="scss">
+  .separator-top{
+    @import "../../styles/variable";
+     border-top: $border;
+  }
+  .separator-bottom{
+    @import "../../styles/variable";
+    border-bottom: $border;
+  }
+</style>

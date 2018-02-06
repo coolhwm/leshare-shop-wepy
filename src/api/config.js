@@ -11,6 +11,15 @@ export default class config extends base {
   };
 
   static discount = null;
+
+  /**
+   * 获取布局视图
+   */
+  static layout(pageId) {
+    const url = `${this.baseUrl}/layout/pages/${pageId}`;
+    return this.get(url).then(data => this._processPage(data.message));
+  }
+
   /**
    * 获取店铺完整配置信息
    */
