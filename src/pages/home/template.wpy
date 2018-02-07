@@ -43,6 +43,11 @@
         <NoticeBar :param.sync="item" />
       </block>
 
+      <!--版权栏-->
+      <block wx:if="{{item.type == 'COPYRIGHT'}}">
+        <Copyright :param.sync="item" />
+      </block>
+
       <!--间隔-->
       <view class="h-gap" wx:if="{{item.border !== 'none'}}"></view>
     </repeat>
@@ -76,6 +81,7 @@
   import store from '../../store/utils';
   import { connect } from 'wepy-redux';
   import auth from '../../api/auth';
+  import config from '../../api/config';
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import Loading from '../../components/common/loading';
@@ -90,6 +96,7 @@
   import CartWidget from '../../components/template/cart_widget';
   import NoticeBar from '../../components/template/notice_bar';
   import HotAreaBox from '../../components/template/hot_area_box';
+  import Copyright from '../../components/common/copyright';
 
   @connect({
     page: store.get('page'),
@@ -98,26 +105,58 @@
   })
   export default class IndexTemplate extends wepy.page {
     data = {
+      pageId: null,
       init: false,
       components: null,
       plugins: null,
-      triggers: []
+      triggers: [],
+      param: null
     };
-    async onLoad () {
+    async onLoad ({pageId}) {
       // 登录检查
       await auth.login();
       await store.init();
-      if (this.page) {
-        this.components = this.page.components;
-        this.plugins = this.page.plugins;
-        this.triggers = this.page.triggers;
+      if (pageId) {
+        console.info(`[template] load template page id=${pageId}`);
+        this.pageId = pageId;
+        const page = await await config.layout(pageId);
+        this.renderTemplatePage(page);
+      } else if (this.page) {
+        console.info(`[template] load home page`);
+        this.pageId = this.page.id;
+        this.renderTemplatePage(this.page);
       }
-      wepy.setNavigationBarTitle({
-        title: this.shop.name
-      });
       this.loaded();
+      this.renderNavigationBar();
       this.runTriggers();
     };
+    /**
+     * 渲染页面
+     */
+    renderTemplatePage(page) {
+      this.components = page.components;
+      this.plugins = page.plugins;
+      this.triggers = page.triggers;
+      this.param = page.param;
+    }
+    /**
+     * 渲染标题栏
+     */
+    renderNavigationBar() {
+      if (this.param == null) {
+        return;
+      }
+      const {navigationBarTitleText, navigationBarBackgroundColor, navigationBarTextStyle} = this.param;
+      if (navigationBarTitleText) {
+        wepy.setNavigationBarTitle({
+          title: navigationBarTitleText
+        });
+      }
+      wepy.setNavigationBarColor({
+        backgroundColor: navigationBarBackgroundColor,
+        frontColor: navigationBarTextStyle
+      });
+    }
     /**
      * 运行触发器
      */
@@ -165,7 +204,8 @@
       PopupPanel: SkuSelector,
       CartWidget: CartWidget,
       NoticeBar: NoticeBar,
-      HotAreaBox: HotAreaBox
+      HotAreaBox: HotAreaBox,
+      Copyright: Copyright
     };
     computed = {
     };

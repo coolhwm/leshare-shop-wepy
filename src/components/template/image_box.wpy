@@ -1,5 +1,5 @@
 <template>
-  <view class="image-box row-around" style="background-color: {{param.backgroundColor}}">
+  <view class="image-box row-around" style="background-color: {{param.backgroundColor}};padding: {{param.padding}} 0;">
 
 
     <block wx:for="{{param.data}}" wx:for-item="image" wx:key="seq">
@@ -32,8 +32,6 @@
   @import "../../styles/variable";
   .image-box{
     background-color: white;
-    padding-top: 10rpx;
-    padding-bottom: 10rpx;
     .image-title{
       margin-top: 3px;
     }

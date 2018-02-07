@@ -60,8 +60,23 @@ export default class config extends base {
     const config = JSON.parse(data);
     const components = this.processComponents(config.components);
     const {plugins, triggers} = this.processPlugins(config.plugins);
+    const param = this.processPageParam(config.param);
     return {
-      components, plugins, triggers
+      components, plugins, triggers, param
+    }
+  }
+
+  /**
+   * 处理页面的配置参数
+   */
+  static processPageParam(data) {
+    if (data == null) {
+      return {
+        navigationBarBackgroundColor: '#1296DB',
+        navigationBarTextStyle: '#ffffff'
+      };
+    } else {
+      return JSON.parse(data);
     }
   }
 
@@ -108,6 +123,12 @@ export default class config extends base {
             goods._processGoodsDiscount(item, this.discount);
             goods._processGoodsData(item);
           });
+        }
+        // 特殊处理图片窗格
+        if (component.type == 'IMAGE_BOX') {
+          if (component.padding == null) {
+            component.padding = '10rpx;';
+          }
         }
         return this.copyParamToData(component);
       });

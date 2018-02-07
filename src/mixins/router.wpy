@@ -206,6 +206,12 @@
             // 离线支付
             this.$root.$navigate('/pages/shop/pay');
             break;
+          case 'TEMPLATE':
+            // 模板页面
+            this.$root.$navigate(`/pages/home/template?pageId=${targetId}`);
+            break;
+          default:
+            console.info(`[router] unsupport action=${action}, targetId=${targetId}`)
         }
       }
     };
