@@ -35,10 +35,16 @@
         <OrderBar :param.sync="item" />
       </block>
 
+      <!--版权栏-->
+      <block wx:if="{{item.type == 'COPYRIGHT'}}">
+        <Copyright :param.sync="item" />
+      </block>
+
       <!--分隔符-->
       <block wx:if="{{item.type == 'SEPARATOR'}}">
         <Separator :param.sync="item" />
       </block>
+
     </repeat>
 
     <!--插件-->
@@ -63,6 +69,7 @@
   import Separator from '../../components/template/separator';
   import VipCard from '../../components/customer/vip_card';
   import BalanceBar from '../../components/customer/balance_bar';
+  import Copyright from '../../components/common/copyright';
 
   @connect({
     customPageId: store.get('customPageId')
@@ -96,7 +103,8 @@
       Separator: Separator,
       VipCard: VipCard,
       NavGrid: NavGrid,
-      BalanceBar: BalanceBar
+      BalanceBar: BalanceBar,
+      Copyright: Copyright
     };
     computed = {
     };

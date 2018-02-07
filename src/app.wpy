@@ -123,7 +123,6 @@
         'pages/customer/sign_in',
         'pages/customer/index_shop',
         'pages/coupon/use',
-        'pages/shop/contact',
         'pages/shop/pay'
       ],
       window: {

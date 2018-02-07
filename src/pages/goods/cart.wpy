@@ -91,6 +91,11 @@
     async onLoad () {
       this.loaded();
     };
+    onShow () {
+      if (this.init && this.cartManager.batch) {
+        this.cartManager.toggleBatch();
+      }
+    }
     methods = {
       // 修改商品数量
       num({componentId, quantity}) {

@@ -16,7 +16,7 @@
     <view class="column-center number-box">
       <view class="column-center mt20 mb20">
         <text class="number-text mb20">{{numberText}}</text>
-        <text class="muted mt10 mb20">{{card.description}}</text>
+        <text class="muted mt10 mb20" wx:if="{{card.description}}">{{card.description}}</text>
       </view>
       <view class="dash-line"/>
       <view wx:if="{{success}}">
