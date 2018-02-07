@@ -65,6 +65,7 @@
   import BalanceBar from '../../components/customer/balance_bar';
 
   @connect({
+    customPageId: store.get('customPageId')
   })
   export default class IndexTemplate extends wepy.page {
     data = {
@@ -77,7 +78,7 @@
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;
       await store.init();
-      const page = await config.layout(61);
+      const page = await config.layout(this.customPageId);
       if (page) {
         this.components = page.components;
         this.plugins = page.plugins;

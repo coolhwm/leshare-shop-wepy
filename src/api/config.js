@@ -27,6 +27,8 @@ export default class config extends base {
     const url = `${this.baseUrl}/shops/full`;
     return this.get(url).then(data => {
       return {
+        homePageId: data.homePageId,
+        customPageId: data.customPageId,
         page: data.homePageConfig,
         card: data.memberCard,
         member: data.member,
