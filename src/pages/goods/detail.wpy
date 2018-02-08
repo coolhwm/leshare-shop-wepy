@@ -98,7 +98,6 @@
     </view>
 
 
-
     <!--评价区域-->
     <view wx:if="{{tab.selectedId == 'COMMENT'}}">
       <!--列表展现-->

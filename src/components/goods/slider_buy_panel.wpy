@@ -53,10 +53,10 @@
 
     <block wx:if="{{status.open}}">
       <view class="buy-panel-next {{sku.next ? '' : 'buy-panel-empty'}}" @tab="confirm('buy')" wx:if="{{sku.action =='buy'}}">
-        <text>下一步</text>
+        <text>立即购买</text>
       </view>
       <view class="buy-panel-next {{sku.next ? '' : 'buy-panel-empty'}}" @tap="confirm('cart')" wx:if="{{sku.action =='cart'}}">
-        <text>确定</text>
+        <text>加入购物车</text>
       </view>
     </block>
     <block wx:else>
