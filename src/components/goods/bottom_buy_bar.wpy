@@ -11,11 +11,11 @@
       <icon class="cart" color="gray"/>
       <text>购物车</text>
     </view>
-    <view class="column-center btn-buy" @tap="handleBuy({{goods}})">
-      <text>立即购买</text>
-    </view>
     <view class="column-center btn-cart" @tap="handlePlusCart({{goods}})">
       <text>加入购物车</text>
+    </view>
+    <view class="column-center btn-buy" @tap="handleBuy({{goods}})">
+      <text>立即购买</text>
     </view>
   </view>
 </template>

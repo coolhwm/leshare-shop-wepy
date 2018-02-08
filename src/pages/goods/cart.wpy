@@ -40,7 +40,7 @@
 
       <block wx:if="{{cart.batch}}">
         <view class="row mr10">
-          <button class="weui-btn mini-btn mr10" size="mini" type="primary" plain catchtap="onBatchFav">加入收藏</button>
+          <button class="weui-btn mini-btn mr10" size="mini" type="primary" plain @tap="fav">加入收藏</button>
           <button class="weui-btn mini-btn" size="mini"  type="warn" plain @tap="batchRemove">删除商品</button>
         </view>
       </block>
@@ -73,6 +73,7 @@
   import base from '../../mixins/base';
   import order from '../../api/order';
   import auth from '../../api/auth';
+  import favorite from '../../api/favorite';
   import Cart from '../../utils/Cart';
   import CartItem from '../../components/goods/cart_item';
   import Tips from '../../utils/Tips';
@@ -134,9 +135,19 @@
         // 订单类型 TODO 订单类型
         param.orderType = 10;
         const trade = order.createCartTrade(this.cartManager.getCheckedCarts(), param);
-        // shop.reportFormId(param.formId);
         this.$preload('trade', trade);
         this.$navigate(`../order/trade`);
+      },
+      /**
+       * 批量收藏
+       */
+      async fav() {
+        await Tips.confirm('是否将商品移入收藏？');
+        const carts = this.cartManager.getCheckedCarts();
+        await favorite.addBatch(carts);
+        this.cartManager.removeChecked();
+        this.$apply();
+        await Tips.success('操作成功');
       }
     };
     components = {
