@@ -315,12 +315,12 @@
         this.cartManager.clear();
         // 卡券领取更新
         if (trade.couponUsedId) {
-          await store.reflesh('coupon', 'member');
+          await store.refresh('coupon', 'member');
         }
         // 刷新列表
         Event.emit(Event.ORDER_LIST_UPDATE);
         // TODO 这个可能在TAB里
-        WxUtils.backOrRedirect('/pages/customer/index');
+        WxUtils.backOrRedirect('/pages/customer/index_template');
       }
     };
     /**

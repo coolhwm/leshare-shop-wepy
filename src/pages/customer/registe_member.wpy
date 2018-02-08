@@ -113,7 +113,7 @@
           Tips.loading();
           await member.regist(this.registeInfo, detail.value.code);
           await Tips.success('注册成功');
-          await store.reflesh('member');
+          await store.refresh('member');
           WxUtils.backOrRedirect('/pages/customer/index');
         } catch (error) {
           this.tips(error.message);

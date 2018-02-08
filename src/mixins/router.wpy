@@ -188,6 +188,14 @@
             // 会员详情
             this.$root.$navigate('/pages/customer/vip_detail');
             break;
+          case 'MEMBER_CODE':
+            // 会员码
+            this.$root.$navigate('/pages/customer/vip_info');
+            break;
+          case 'MEMBER_BONUS':
+            // 会员积分
+            this.$root.$navigate('/pages/customer/bonus_list');
+            break;
           case 'PHONE':
             // 拨打电话
             wepy.makePhoneCall({

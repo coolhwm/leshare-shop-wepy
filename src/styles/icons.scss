@@ -1,11 +1,11 @@
 @import "variable";
 @font-face {
   font-family: 'iconfont';  /* project id 553949 */
-  src: url('//at.alicdn.com/t/font_553949_cov8f66h9lrtfbt9.eot');
-  src: url('//at.alicdn.com/t/font_553949_cov8f66h9lrtfbt9.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_553949_cov8f66h9lrtfbt9.woff') format('woff'),
-  url('//at.alicdn.com/t/font_553949_cov8f66h9lrtfbt9.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_553949_cov8f66h9lrtfbt9.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_553949_hu0wou5ptf8yqfr.eot');
+  src: url('//at.alicdn.com/t/font_553949_hu0wou5ptf8yqfr.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_553949_hu0wou5ptf8yqfr.woff') format('woff'),
+  url('//at.alicdn.com/t/font_553949_hu0wou5ptf8yqfr.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_553949_hu0wou5ptf8yqfr.svg#iconfont') format('svg');
 }
 @mixin icon-size($size){
   line-height: $size;
@@ -37,6 +37,7 @@ icon[color="white"]{color: white}
 icon[color="gray"]{color: #8a8a8a}
 
 icon.shop:before { content: "\e601"; }
+icon.more-dot:before { content: "\e679"; }
 icon.call:before { content: "\e614"; }
 icon.receive-coupons:before { content: "\e627"; }
 icon.more:before { content: "\e6a7"; }
@@ -44,7 +45,11 @@ icon.edit:before { content: "\e642"; }
 icon.status-8:before { content: "\e689"; }
 icon.error:before { content: "\e613"; }
 icon.alert:before { content: "\e6fc"; }
+icon.recommend:before { content: "\e64a"; }
+icon.payment:before { content: "\e60c"; }
+icon.scan:before { content: "\e64b"; }
 icon.privilege:before { content: "\e6b2"; }
+icon.wechart:before { content: "\e7e5"; }
 icon.empty:before { content: "\e66f"; }
 icon.cart-fill:before { content: "\e600"; }
 icon.confirm:before { content: "\e612"; }
@@ -64,14 +69,12 @@ icon.onsale:before { content: "\e61b"; }
 icon.onclose:before { content: "\e606"; }
 icon.bouns:before { content: "\e60a"; }
 icon.chat:before { content: "\e7a8"; }
+icon.evaluated:before { content: "\e61d"; }
 icon.service:before { content: "\e657"; }
 icon.category:before { content: "\e628"; }
 icon.status-2:before { content: "\e62f"; }
 icon.picked:before { content: "\e618"; }
-icon.delivery:before { content: "\e6b7"; }
-icon.payment:before { content: "\e6b8"; }
-icon.evaluated:before { content: "\e6b9"; }
-icon.received:before { content: "\e6ba"; }
+icon.order:before { content: "\e60b"; }
 icon.checked:before { content: "\e684"; }
 icon.status-7:before { content: "\e603"; }
 icon.recharge:before { content: "\e626"; }
@@ -80,26 +83,36 @@ icon.status-1:before { content: "\e6b5"; }
 icon.gift-card:before { content: "\e664"; }
 icon.check:before { content: "\e65a"; }
 icon.customer:before { content: "\e643"; }
+icon.bottom:before { content: "\e609"; }
 icon.star-fill:before { content: "\e6b0"; }
+icon.car:before { content: "\e634"; }
 icon.plus-square:before { content: "\e640"; }
 icon.notice:before { content: "\e615"; }
 icon.plus:before { content: "\e60e"; }
 icon.package:before { content: "\e6ad"; }
 icon.coupon:before { content: "\e60f"; }
+icon.delivery:before { content: "\e61e"; }
 icon.share:before { content: "\e622"; }
 icon.expiring:before { content: "\e6ca"; }
+icon.order-none:before { content: "\e617"; }
 icon.status-5:before { content: "\e66c"; }
 icon.status-3:before { content: "\e602"; }
+icon.vip-card:before { content: "\e633"; }
 icon.inshop:before { content: "\e8b2"; }
 icon.fork:before { content: "\e616"; }
 icon.star:before { content: "\e630"; }
+icon.idcard:before { content: "\e706"; }
 icon.sender:before { content: "\e607"; }
 icon.minus:before { content: "\e636"; }
 icon.expired:before { content: "\e64e"; }
 icon.used:before { content: "\e64f"; }
 icon.new:before { content: "\e60d"; }
 icon.modify:before { content: "\e63c"; }
+icon.received:before { content: "\e63f"; }
 icon.inquire-store:before { content: "\e67d"; }
+icon.down-arrow:before { content: "\e61a"; }
+icon.up-arrow:before { content: "\e61c"; }
+icon.top:before { content: "\e635"; }
 icon.groups:before { content: "\e610"; }
 icon.qrcode:before { content: "\e668"; }
 icon.sign:before { content: "\e641"; }
@@ -107,7 +120,7 @@ icon.back-round:before { content: "\e884"; }
 icon.vip:before { content: "\e94f"; }
 icon.sale:before { content: "\e885"; }
 icon.address:before { content: "\e766"; }
-icon.refund:before { content: "\e608"; }
+icon.phone:before { content: "\e76e"; }
 icon.distribution:before { content: "\e619"; }
+icon.refund:before { content: "\e61f"; }
 icon.camera:before { content: "\e733"; }
-icon.more-dot:before { content: "\e679"; }

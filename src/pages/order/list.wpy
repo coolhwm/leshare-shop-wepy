@@ -27,8 +27,9 @@
   import OrderItem from '../../components/order/order_item';
   import Loadmore from '../../components/weui/loadmore';
   import Loading from '../../components/common/loading';
+  import Event from '../../utils/Event';
 
-  export default class NoticeIndex extends wepy.page {
+  export default class OrderList extends wepy.page {
     def = {
       init: true,
       page: {
@@ -54,6 +55,7 @@
       }
       this.page = order.page();
       await this.next();
+      Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
     };
     params() {
       return {status: this.tab.selectedId};

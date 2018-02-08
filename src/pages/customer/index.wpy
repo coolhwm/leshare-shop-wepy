@@ -130,7 +130,7 @@
       }
     };
     async onPullDownRefresh() {
-      await store.reflesh('member');
+      await store.refresh('member');
       this.loaded();
       wepy.stopPullDownRefresh();
     }

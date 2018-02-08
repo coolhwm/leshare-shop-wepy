@@ -44,7 +44,7 @@
           Tips.loading();
           await coupon.pick(item.id);
           await Tips.success('领取成功');
-          await store.reflesh('coupon');
+          await store.refresh('coupon');
           this.$root.$apply();
         } catch (e) {
           await Tips.alert('已达领取上限');

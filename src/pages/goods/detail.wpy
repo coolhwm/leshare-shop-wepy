@@ -80,7 +80,7 @@
       </view>
 
       <!--详情区域-->
-      <view class="detail-box" >
+      <view class="detail-box" wx:if="{{detail.goodsDetails.length > 0}}">
         <!--详情标题-->
         <view class="detail-title row-center">
           <text class="primary lg">── 商品详情 ──</text>

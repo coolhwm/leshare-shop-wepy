@@ -137,7 +137,7 @@
       this.success = true;
       await Tips.success('扫描成功！');
       // 刷新缓存
-      await store.reflesh('member');
+      await store.refresh('member');
       clearInterval(interval);
       this.loaded();
       setTimeout(async () => WxUtils.backOrRedirect('/pages/customer/index'), 2000);

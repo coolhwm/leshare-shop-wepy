@@ -72,6 +72,7 @@
   import Copyright from '../../components/common/copyright';
 
   @connect({
+    shop: store.get('shop'),
     customPageId: store.get('customPageId')
   })
   export default class IndexTemplate extends wepy.page {
@@ -93,6 +94,26 @@
       }
       this.loaded();
     };
+    /**
+     * 下拉刷新
+     */
+    async onPullDownRefresh() {
+      await store.refresh('member');
+      this.$broadcast('refresh');
+      this.loaded();
+      wepy.stopPullDownRefresh();
+    }
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {name, avatar} = this.shop;
+      console.info(`${avatar}/5x4`);
+      return {
+        title: `${name} 欢迎光临`,
+        imageUrl: `${avatar}/5x4`
+      };
+    }
     methods = {
     };
     components = {
@@ -110,7 +131,8 @@
     };
     mixins = [base];
     config = {
-      navigationBarTitleText: '个人中心'
+      navigationBarTitleText: '个人中心',
+      enablePullDownRefresh: true
     };
   }
 </script>
