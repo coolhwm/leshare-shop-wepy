@@ -98,6 +98,40 @@ export default class Cart {
   }
 
   /**
+   * 根据商品构造购物车对象
+   */
+  createCart(goods, skuText, num = 1) {
+    // 购物车中不存在，新增对象
+    let goodsPrice, originalPrice;
+    if (skuText) {
+      // 商品有规格的情况
+      const skuInfo = goods.goodsSkuInfo.goodsSkuDetails.find(item => item.sku == skuText);
+      goodsPrice = skuInfo.goodsSkuDetailBase.price;
+      originalPrice = skuInfo.goodsSkuDetailBase.originalPrice;
+    } else {
+      // 商品没有规格的情况
+      goodsPrice = goods.sellPrice;
+      originalPrice = goods.originalPrice;
+    }
+    return {
+      goodsId: goods.id,
+      goodsSku: skuText,
+      goodsName: goods.name,
+      innerCid: goods.innerCid,
+      goodsImage: goods.imageUrl,
+      goodsPrice: goodsPrice,
+      goodsNum: num,
+      totalPrice: goodsPrice,
+      originalPrice: originalPrice,
+      // 购物车相关属性
+      check: true,
+      // 折扣相关属性
+      discount: goods.discount,
+      discountRate: goods.discountRate,
+      discountText: goods.discountText
+    };
+  }
+  /**
    * 新增购物车数据
    */
   plus(goods, skuText, num = 1) {
@@ -109,37 +143,9 @@ export default class Cart {
       cart.goodsNum = cart.goodsNum + num;
       cart.totalPrice = (cart.goodsNum * cart.goodsPrice).toFixed(2);
     } else {
-      // 购物车中不存在，新增对象
-      let goodsPrice, originalPrice;
-      if (skuText) {
-        // 商品有规格的情况
-        const skuInfo = goods.goodsSkuInfo.goodsSkuDetails.find(item => item.sku == skuText);
-        goodsPrice = skuInfo.goodsSkuDetailBase.price;
-        originalPrice = skuInfo.goodsSkuDetailBase.originalPrice;
-      } else {
-        // 商品没有规格的情况
-        goodsPrice = goods.sellPrice;
-        originalPrice = goods.originalPrice;
-      }
-      // TODO 折扣的情况需要处理
+      const cart = this.createCart(goods, skuText, num);
       // 新增对象
-      this.carts.push({
-        goodsId: goods.id,
-        goodsSku: skuText,
-        goodsName: goods.name,
-        innerCid: goods.innerCid,
-        goodsImage: goods.imageUrl,
-        goodsPrice: goodsPrice,
-        goodsNum: num,
-        totalPrice: goodsPrice,
-        originalPrice: originalPrice,
-        // 购物车相关属性
-        check: true,
-        // 折扣相关属性
-        discount: goods.discount,
-        discountRate: goods.discountRate,
-        discountText: goods.discountText
-      });
+      this.carts.push(cart);
     }
     // 保存
     this.save();

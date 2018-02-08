@@ -200,6 +200,9 @@
       this.tab = this.createTab();
       this.loaded();
     };
+    onUnload() {
+      this.$invoke('SilderPanel', 'clear');
+    }
     createTab() {
       const tab = {
         list: [

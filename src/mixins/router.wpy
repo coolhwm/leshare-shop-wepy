@@ -9,12 +9,25 @@
   export default class router extends wepy.mixin {
     config = {};
     components = {};
+    /**
+     * 直接购买商品
+     */
+    buy(goods) {
+      // 只能在SLIDER模式下触发，否则会降级为购物车购买
+      const source = this.$root.$wxpage.route;
+      const action = 'buy';
+      Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
+    }
+    /**
+     * 加入购物车
+     */
     plusCart(goods, goodsSku = '') {
       const source = this.$root.$wxpage.route;
       const mode = this.getMode(goods);
+      const action = 'cart';
       switch (mode) {
         case 'SLIDER':
-          Event.emit(Event.GOODS_PANEL_OPEN, {goods, source});
+          Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
           break;
         case 'POPUP':
           Event.emit(Event.GOODS_PANEL_PLUS, {goods, goodsSku, source});
@@ -105,6 +118,12 @@
        */
       handlePlusCart(goods) {
         this.plusCart(goods);
+      },
+      /**
+       * 处理加入购物车事件
+       */
+      handleBuy(goods) {
+        this.buy(goods);
       },
       /**
        * 处理跳转到购物车页面

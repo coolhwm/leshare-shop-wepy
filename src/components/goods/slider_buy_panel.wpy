@@ -52,7 +52,7 @@
     </view>
 
     <block wx:if="{{status.open}}">
-      <view class="buy-panel-next {{sku.next ? '' : 'buy-panel-empty'}}" @tab="confirm('buy')" wx:if="{{sku.action =='buy'}}">
+      <view class="buy-panel-next {{sku.next ? '' : 'buy-panel-empty'}}" @tap="confirm('buy')" wx:if="{{sku.action =='buy'}}">
         <text>立即购买</text>
       </view>
       <view class="buy-panel-next {{sku.next ? '' : 'buy-panel-empty'}}" @tap="confirm('cart')" wx:if="{{sku.action =='cart'}}">
@@ -70,6 +70,7 @@
 
 <script>
   import wepy from 'wepy';
+  import order from '../../api/order';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import ZanQuantity from '../../components/zanui/quantity';
@@ -87,7 +88,8 @@
     };
     data = {
       goods: {},
-      source: null
+      source: null,
+      action: 'cart'
     };
     skuManager = null;
     cartManager = Cart.create();
@@ -96,15 +98,22 @@
       // 监听购物面板打开的事件
       Event.listen(Event.GOODS_PANEL_OPEN, this.open.bind(this), this);
     }
-    open({goods, source}) {
+    open({goods, source, action}) {
       if (source != this.source) {
         return;
       }
       this.goods = goods;
+      this.action = action;
       this.skuManager = new Sku(goods);
-      this.skuManager.action = 'cart';
+      this.skuManager.action = action;
       this.skuManager.display = true;
       this.$apply();
+    }
+    clear () {
+      console.info('[SilderPanel] clear');
+      this.goods = null;
+      this.action = 'cart';
+      this.skuManager.display = false;
     }
     methods = {
       // 选择SKU
@@ -116,8 +125,7 @@
       },
       // 关闭SKU
       close() {
-        this.goods = null;
-        this.skuManager.display = false;
+        this.clear();
       },
       // 改变SKU数量
       num({quantity}) {
@@ -128,15 +136,25 @@
         if (!this.sku.next) {
           return;
         }
+        console.info(type);
         // 增加到购物车
         const {skuText, num} = this.sku;
-        if (this.goods.isTips) {
-          Tips.success('已加入购物车');
+        if (type == 'cart') {
+          if (this.goods.isTips) {
+            Tips.success('已加入购物车');
+          }
+          // 关闭面板
+          this.skuManager.display = false;
+          this.$root.$apply();
+          this.cartManager.plus(this.goods, skuText, num);
+        } else {
+          const cart = this.cartManager.createCart(this.goods, skuText, num);
+          // 订单类型 TODO 订单类型
+          const trade = order.createCartTrade([cart], {orderType: 10});
+          this.$root.$preload('trade', trade);
+          this.$root.$navigate(`../order/trade`);
         }
-        // 关闭面板
-        this.skuManager.display = false;
-        this.$root.$apply();
-        this.cartManager.plus(this.goods, skuText, num);
+        this.clear();
       }
     };
     computed = {
@@ -160,7 +178,12 @@
       ZanQuantity: ZanQuantity,
       DiscountBadge: DiscountBadge
     };
-    events = {};
+    events = {
+      clear() {
+        console.info('[SilderPanel] clear');
+        this.clear();
+      }
+    };
   }
 </script>
 
