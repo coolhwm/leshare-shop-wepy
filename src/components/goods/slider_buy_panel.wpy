@@ -1,9 +1,9 @@
 <template>
   <!--TODO 滑出面板可以重构-->
-  <view class="goods-buy-panel-cover" @tap="close" wx:if="{{sku.display}}"></view>
+  <view class="goods-buy-panel-cover" @tap="close" wx:if="{{display}}"></view>
 
   <!--购买面板-->
-  <view class="goods-buy-panel-container {{ sku.display ? 'goods-buy-panel-show' : '' }}" >
+  <view class="goods-buy-panel-container {{ display ? 'goods-buy-panel-show' : '' }}" >
     <!--信息面板-->
     <view class="buy-panel-info-container">
       <!--商品图-->
@@ -89,7 +89,8 @@
     data = {
       goods: {},
       source: null,
-      action: 'cart'
+      action: 'cart',
+      display: false
     };
     skuManager = null;
     cartManager = Cart.create();
@@ -106,14 +107,14 @@
       this.action = action;
       this.skuManager = new Sku(goods);
       this.skuManager.action = action;
-      this.skuManager.display = true;
+      this.display = true;
       this.$apply();
     }
     clear () {
       console.info('[SilderPanel] clear');
       this.goods = null;
       this.action = 'cart';
-      this.skuManager.display = false;
+      this.display = false;
     }
     methods = {
       // 选择SKU
@@ -140,16 +141,13 @@
         // 增加到购物车
         const {skuText, num} = this.sku;
         if (type == 'cart') {
-          if (this.goods.isTips) {
-            Tips.success('已加入购物车');
-          }
+          Tips.success('已加入购物车');
           // 关闭面板
-          this.skuManager.display = false;
-          this.$root.$apply();
+          this.display = false;
+          this.$apply();
           this.cartManager.plus(this.goods, skuText, num);
         } else {
           const cart = this.cartManager.createCart(this.goods, skuText, num);
-          // 订单类型 TODO 订单类型
           const trade = order.createCartTrade([cart], {orderType: 10});
           this.$root.$preload('trade', trade);
           this.$root.$navigate(`../order/trade`);
