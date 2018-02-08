@@ -52,11 +52,8 @@
     </view>
 
     <block wx:if="{{status.open}}">
-      <view class="buy-panel-next {{sku.next ? '' : 'buy-panel-empty'}}" @tap="confirm('buy')" wx:if="{{sku.action =='buy'}}">
-        <text>立即购买</text>
-      </view>
-      <view class="buy-panel-next {{sku.next ? '' : 'buy-panel-empty'}}" @tap="confirm('cart')" wx:if="{{sku.action =='cart'}}">
-        <text>加入购物车</text>
+      <view class="buy-panel-next {{sku.next ? '' : 'buy-panel-empty'}}" @tap="confirm({{action}})">
+        <text>{{buttonText}}</text>
       </view>
     </block>
     <block wx:else>
@@ -159,6 +156,16 @@
       sku() {
         if (this.skuManager == null) return;
         return this.skuManager.export();
+      },
+      buttonText() {
+        if (this.goods == null || this.sku == null) return;
+        if (this.goods.totalStock < 1) {
+          return '已售罄';
+        } else if (this.action == 'cart') {
+          return '加入购物车'
+        } else if (this.action == 'buy') {
+          return '立即购买';
+        }
       },
       quantity() {
         if (this.sku == null) {

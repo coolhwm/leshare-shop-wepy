@@ -19,7 +19,11 @@
           <text class=" lg major" >￥{{goods.priceLable}}</text>
         </view>
         <!--加入购物车按钮-->
-        <icon class="plus" wx:if="{{goods.isCart || goods.isCart == null}}" @tap="handlePlusCart({{goods}})" />
+        <block wx:if="{{goods.isCart || goods.isCart == null}}">
+          <icon class="plus"  @tap="handlePlusCart({{goods}})" wx:if="{{goods.totalStock > 0}}"/>
+          <text class="xxs muted" wx:else>已售罄</text>
+        </block>
+
       </view>
     </view>
   </view>
