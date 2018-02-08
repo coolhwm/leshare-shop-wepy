@@ -18,7 +18,7 @@
       pageParams: null,
       componentsParams: null,
       baseUrl: null,
-      version: 'v3.0.2'
+      version: 'v3.0.5'
     };
     constructor () {
       super();
@@ -114,14 +114,12 @@
         'pages/coupon/pick',
         'pages/customer/index_template',
         'pages/customer/index',
-        'pages/customer/index_basic',
         'pages/customer/registe_member',
         'pages/customer/vip_detail',
         'pages/customer/address_list',
         'pages/customer/bonus_list',
         'pages/customer/vip_info',
         'pages/customer/sign_in',
-        'pages/customer/index_shop',
         'pages/coupon/use',
         'pages/shop/pay'
       ],
