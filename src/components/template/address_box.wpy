@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <view>
     <!--店铺图片轮播-->
     <swiper indicator-dots="{{indicatorDots}}"
             autoplay="{{autoplay}}"
@@ -16,33 +16,33 @@
     </swiper>
 
     <!--店铺信息-->
-    <div class="column shop-box">
-      <div class="row-between">
-        <div class="column shop-column-box border-bottom-box">
-          <div class="row title-box">
+    <view class="column shop-box">
+      <view class="row-between">
+        <view class="column shop-column-box border-bottom-box">
+          <view class="row title-box">
             <text class="sm muted mr20">地址</text>
             <text class="sm muted">Address</text>
-          </div>
+          </view>
           <text class="detail-box lg">{{shop.address}}</text>
-        </div>
-        <div>
+        </view>
+        <view>
           <icon class="address" @tap="chooseLocation"/>
-        </div>
-      </div>
-      <div class="row-between next-box">
-        <div class="column shop-column-box">
-          <div class="row title-box">
+        </view>
+      </view>
+      <view class="row-between next-box">
+        <view class="column shop-column-box">
+          <view class="row title-box">
             <text class="sm muted mr20">电话</text>
             <text class="sm muted">Telephone</text>
-          </div>
+          </view>
           <text class="detail-box">{{shop.phone}}</text>
-        </div>
-        <div>
+        </view>
+        <view>
           <icon class="phone" />
-        </div>
-      </div>
-    </div>
-  </div>
+        </view>
+      </view>
+    </view>
+  </view>
 </template>
 
 <script>

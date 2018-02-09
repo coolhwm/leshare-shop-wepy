@@ -5,7 +5,17 @@
   <AddressBar class="address-bar"/>
   <AddressBar class="address-bar"/>
   <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
 
+
+  <ShareWidget />
 
 </template>
 
@@ -16,6 +26,7 @@
   import store from '../../store/utils';
   import AddressBox from '../../components/template/address_box'
   import AddressBar from '../../components/template/address_bar'
+  import ShareWidget from '../../components/template/share_widget'
 
   @connect({
     shop: store.get('shop')
@@ -29,7 +40,8 @@
     };
     components = {
       AddressBox: AddressBox,
-      AddressBar: AddressBar
+      AddressBar: AddressBar,
+      ShareWidget: ShareWidget
     };
     mixins = [base]
   }

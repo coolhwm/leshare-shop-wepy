@@ -1,15 +1,15 @@
 <template>
-    <div class="row-between bar-box">
-      <div class="column">
-        <div class="name-box">
+    <view class="row-between bar-box">
+      <view class="column">
+        <view class="name-box">
           {{shop.name}}
-        </div>
-        <div @tap.stop="chooseLocation">
+        </view>
+        <view @tap.stop="chooseLocation">
           <icon class="address" color="gray"/><text class="muted sm">{{shop.address}}</text>
-        </div>
-      </div>
+        </view>
+      </view>
       <icon class="call call-box" color="gray" @tap.stop="phone"/>
-    </div>
+    </view>
 </template>
 
 <script>
