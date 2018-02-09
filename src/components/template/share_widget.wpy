@@ -1,0 +1,51 @@
+<template>
+  <view class="column box">
+    <button wx:if="{{isShare}}" plain="true" open-type="share"><icon class="share xlarge" color="gray"/></button>
+    <button wx:if="{{isContact}}" plain="true" open-type="contact"><icon class="service xlarge" color="gray"/></button>
+    <button wx:if="{{isTop}}" @tap.stop="top" plain="true"><icon class="up-arrow xlarge" color="gray"/></button>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+
+  export default class ShareWidget extends wepy.component {
+    data = {
+      isShare: true,
+      isContact: true,
+      isTop: false
+    };
+    onPageScroll (res) {
+      if (res.scrollTop >= 300) {
+        this.isTop = true
+      } else {
+        this.isTop = false
+      }
+    };
+    methods = {
+      top () {
+        this.isTop = false;
+        wx.pageScrollTo({
+          scrollTop: 0,
+          duration: 300
+        })
+      }
+    };
+    mixins = [base]
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .box {
+    position: fixed;
+    right: 10rpx;
+    bottom: 10rpx;
+    icon{
+      border: 1px solid #A3A3A3;
+      border-radius: 50%;
+    }
+  }
+</style>

@@ -1,0 +1,56 @@
+<template>
+  <AddressBox/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+  <AddressBar class="address-bar"/>
+
+
+  <ShareWidget />
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import AddressBox from '../../components/template/address_box'
+  import AddressBar from '../../components/template/address_bar'
+  import ShareWidget from '../../components/template/share_widget'
+
+  @connect({
+    shop: store.get('shop')
+  })
+  export default class AboutUs extends wepy.page {
+    data = {
+    };
+    async onLoad () {
+    };
+    methods = {
+    };
+    components = {
+      AddressBox: AddressBox,
+      AddressBar: AddressBar,
+      ShareWidget: ShareWidget
+    };
+    mixins = [base]
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .address-bar{
+    margin: 40rpx;
+  }
+
+</style>

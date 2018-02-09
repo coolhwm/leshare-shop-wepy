@@ -1,0 +1,39 @@
+<template>
+  <view class="weui-cells weui-cells_after-title">
+    <view class="weui-cell weui-cell_access">
+      <view class="weui-cell__bd">{{grid.title}}</view>
+    </view>
+  </view>
+  <view class="grid-box" wx:for="{{grid.data}}" wx:key="rowIndex" wx:for-item="row" wx:for-index="rowIndex">
+    <view class="row-around row-box">
+      <view class="column-center cell-box" wx:for="{{row}}" wx:key="cellIndex" wx:for-index="cellIndex" wx:for-item="cell">
+        <icon class="{{cell.iconClass}}" style="color: {{cell.iconColor}}; font-size: {{cell.iconSize}}; line-height: {{cell.iconSize}};" />
+        <text>{{cell.title}}</text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from '../../mixins/base';
+
+  export default class PersonalGrid extends wepy.component {
+    props = {
+      grid: {}
+    };
+    onLoad () {}
+    mixins = [base]
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .grid-box + .grid-box{
+    border-top: $border;
+  }
+  .row-box{
+    padding: 10rpx 0;
+  }
+</style>

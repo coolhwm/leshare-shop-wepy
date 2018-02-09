@@ -121,7 +121,8 @@
         'pages/customer/vip_info',
         'pages/customer/sign_in',
         'pages/coupon/use',
-        'pages/shop/pay'
+        'pages/shop/pay',
+        'pages/shop/about_us'
       ],
       window: {
         backgroundTextStyle: 'dark',

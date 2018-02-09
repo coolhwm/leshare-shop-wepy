@@ -1,0 +1,136 @@
+<template>
+  <view>
+    <!--店铺图片轮播-->
+    <swiper indicator-dots="{{indicatorDots}}"
+            autoplay="{{autoplay}}"
+            interval="{{interval}}"
+            circular="{{circular}}"
+            indicator-dots="{{indicatorDots}}"
+            style="height: 200px;"
+    >
+      <block wx:for="{{shop.images}}" wx:key="key">
+        <swiper-item>
+          <image src="{{item.url}}" class="slide-image" width="375" height="200" @tap="image({{item.url}})"/>
+        </swiper-item>
+      </block>
+    </swiper>
+
+    <!--店铺信息-->
+    <view class="column shop-box">
+      <view class="row-between">
+        <view class="column shop-column-box border-bottom-box">
+          <view class="row title-box">
+            <text class="sm muted mr20">地址</text>
+            <text class="sm muted">Address</text>
+          </view>
+          <text class="detail-box lg">{{shop.address}}</text>
+        </view>
+        <view>
+          <icon class="address" @tap="chooseLocation"/>
+        </view>
+      </view>
+      <view class="row-between next-box">
+        <view class="column shop-column-box">
+          <view class="row title-box">
+            <text class="sm muted mr20">电话</text>
+            <text class="sm muted">Telephone</text>
+          </view>
+          <text class="detail-box">{{shop.phone}}</text>
+        </view>
+        <view>
+          <icon class="phone" />
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+
+  @connect({
+    shop: store.get('shop')
+  })
+  export default class AddressBox extends wepy.component {
+    data = {
+      autoplay: true,
+      interval: 3000,
+      circular: true,
+      indicatorDots: true
+    };
+    async onLoad () {
+      await store.init();
+      this.loaded();
+      console.info(this.shop)
+    };
+    methods = {
+      image (src) {
+        wepy.previewImage({
+          current: 'src', // 当前显示图片的http链接
+          urls: [src] // 需要预览的图片http链接列表
+        })
+      },
+      chooseLocation () {
+        wepy.chooseLocation({
+          type: 'wgs84'
+        }).then(res => {
+          this.shop.latitude = res.latitude;
+          this.shop.longitude = res.longitude;
+          let location = res.location;
+          if (location == '' || location == undefined) {
+            location = '请选择店铺地址';
+          }
+          this.shop.location = location;
+          this.$apply();
+        });
+      }
+    };
+    mixins = [base]
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  page{
+    background: white;
+    image{
+      width: 100%;
+      height: 100%;
+    }
+    .shop-box{
+      margin: 40rpx;
+      border-bottom: 1px solid  #A3A3A3;
+      .shop-column-box{
+        padding-bottom: 26rpx;
+      }
+      .border-bottom-box{
+        border-bottom: 1px solid  #A3A3A3;
+      }
+      .detail-box{
+        margin-bottom: 10rpx;
+      }
+      icon{
+        padding: 0 20rpx;
+        border-left: 1px solid  #A3A3A3;
+      }
+      .title-box{
+        text{
+          line-height: $text-sm;
+          margin-bottom: 10rpx;
+        }
+        text + text{
+          border-left: 1px solid  #A3A3A3;
+          padding-left: 20rpx;
+        }
+      }
+      .next-box{
+        margin-top: 40rpx;
+      }
+    }
+  }
+
+</style>

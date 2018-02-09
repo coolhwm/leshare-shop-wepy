@@ -1,6 +1,7 @@
 const prod = process.env.NODE_ENV === 'production';
 module.exports = {
   wpyExt: '.wpy',
+  cliLogs: true,
   build: {
     web: {
     }
