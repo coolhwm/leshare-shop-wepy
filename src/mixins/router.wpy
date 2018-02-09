@@ -149,6 +149,10 @@
             // 调试
             console.info(event);
             break;
+          case 'URL':
+            // 跳转指定页面
+            this.$root.$navigate(targetId);
+            break;
           case 'GOODS':
             // 某个商品
             this.$root.$navigate(`/pages/goods/detail?goodsId=${targetId}`);
@@ -236,6 +240,10 @@
           case 'TEMPLATE':
             // 模板页面
             this.$root.$navigate(`/pages/home/template?pageId=${targetId}`);
+            break;
+          case 'SHOP_INFO':
+            // 店铺信息
+            this.$root.$navigate(`/pages/shop/about_us`);
             break;
           default:
             console.info(`[router] unsupport action=${action}, targetId=${targetId}`)

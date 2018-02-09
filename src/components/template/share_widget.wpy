@@ -17,16 +17,12 @@
       isTop: false
     };
     onPageScroll (res) {
-      if (res.scrollTop >= 300) {
-        this.isTop = true
-      } else {
-        this.isTop = false
-      }
+      this.isTop = res.scrollTop >= 300;
     };
     methods = {
       top () {
         this.isTop = false;
-        wx.pageScrollTo({
+        wepy.pageScrollTo({
           scrollTop: 0,
           duration: 300
         })

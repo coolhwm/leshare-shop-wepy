@@ -1,48 +1,47 @@
 <template>
-  <view>
+  <view class="address-box">
     <!--店铺图片轮播-->
-    <swiper indicator-dots="{{indicatorDots}}"
-            autoplay="{{autoplay}}"
-            interval="{{interval}}"
-            circular="{{circular}}"
-            indicator-dots="{{indicatorDots}}"
-            style="height: 200px;"
-    >
+    <swiper class="shop-swiper" indicator-dots autoplay interval="3000" circular>
       <block wx:for="{{shop.images}}" wx:key="key">
         <swiper-item>
-          <image src="{{item.url}}" class="slide-image" width="375" height="200" @tap="image({{item.url}})"/>
+          <image src="{{item.url}}" mode="aspectFill" class="shop-image" @tap="image({{item.url}})"/>
         </swiper-item>
       </block>
     </swiper>
 
     <!--店铺信息-->
-    <view class="column shop-box">
-      <view class="row-between">
-        <view class="column shop-column-box border-bottom-box">
-          <view class="row title-box">
-            <text class="sm muted mr20">地址</text>
-            <text class="sm muted">Address</text>
-          </view>
-          <text class="detail-box lg">{{shop.address}}</text>
-        </view>
-        <view>
-          <icon class="address" @tap="chooseLocation"/>
+
+    <view class="info-box">
+      <view class="info-item column">
+        <text class="muted">店铺名称 | Name</text>
+        <view class="row-between">
+          <text class="mt10 xxl">{{shop.name}}</text>
         </view>
       </view>
-      <view class="row-between next-box">
-        <view class="column shop-column-box">
-          <view class="row title-box">
-            <text class="sm muted mr20">电话</text>
-            <text class="sm muted">Telephone</text>
+
+      <view class="info-item column">
+        <text class="muted">联系地址 | Address</text>
+        <view class="row-between">
+          <text class="mt10 xxl">{{shop.address}}</text>
+          <view class="icon-box" @tap="location">
+            <icon class="address"></icon>
           </view>
-          <text class="detail-box">{{shop.phone}}</text>
         </view>
-        <view>
-          <icon class="phone" />
+      </view>
+
+      <view class="info-item column">
+        <text class="muted">联系电话 | Telephone</text>
+        <view class="row-between">
+          <text class="mt10 xxl">{{shop.phone}}</text>
+          <view class="icon-box" @tap="phone">
+            <icon class="phone"></icon>
+          </view>
         </view>
       </view>
     </view>
+
   </view>
+
 </template>
 
 <script>
@@ -56,15 +55,9 @@
   })
   export default class AddressBox extends wepy.component {
     data = {
-      autoplay: true,
-      interval: 3000,
-      circular: true,
-      indicatorDots: true
+      init: false
     };
     async onLoad () {
-      await store.init();
-      this.loaded();
-      console.info(this.shop)
     };
     methods = {
       image (src) {
@@ -73,18 +66,17 @@
           urls: [src] // 需要预览的图片http链接列表
         })
       },
-      chooseLocation () {
-        wepy.chooseLocation({
-          type: 'wgs84'
-        }).then(res => {
-          this.shop.latitude = res.latitude;
-          this.shop.longitude = res.longitude;
-          let location = res.location;
-          if (location == '' || location == undefined) {
-            location = '请选择店铺地址';
-          }
-          this.shop.location = location;
-          this.$apply();
+      phone() {
+        wepy.makePhoneCall({phoneNumber: this.shop.phone});
+      },
+      location () {
+        const longitude = this.shop.longitude;
+        const latitude = this.shop.latitude;
+        wepy.openLocation({
+          latitude: Number(latitude),
+          longitude: Number(longitude),
+          name: this.shop.name,
+          address: this.shop.describe
         });
       }
     };
@@ -94,43 +86,22 @@
 
 <style lang="scss">
   @import "../../styles/variable";
-
-  page{
-    background: white;
-    image{
-      width: 100%;
-      height: 100%;
+  .address-box{
+    background-color: white;
+    .shop-swiper, .shop-image{
+      width: 750rpx;
+      height: 480rpx;
     }
-    .shop-box{
-      margin: 40rpx;
-      border-bottom: 1px solid  #A3A3A3;
-      .shop-column-box{
-        padding-bottom: 26rpx;
-      }
-      .border-bottom-box{
-        border-bottom: 1px solid  #A3A3A3;
-      }
-      .detail-box{
-        margin-bottom: 10rpx;
-      }
-      icon{
-        padding: 0 20rpx;
-        border-left: 1px solid  #A3A3A3;
-      }
-      .title-box{
-        text{
-          line-height: $text-sm;
-          margin-bottom: 10rpx;
-        }
-        text + text{
-          border-left: 1px solid  #A3A3A3;
-          padding-left: 20rpx;
-        }
-      }
-      .next-box{
-        margin-top: 40rpx;
-      }
+    .info-box{
+      padding: 0 30rpx;
+    }
+    .info-item{
+      padding: 20rpx 0;
+      border-bottom: $border;
+    }
+    .icon-box{
+      padding-left: 20rpx;
+      border-left: $border;
     }
   }
-
 </style>

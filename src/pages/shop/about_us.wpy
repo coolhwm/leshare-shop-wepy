@@ -1,21 +1,8 @@
 <template>
-  <AddressBox/>
-  <AddressBar class="address-bar"/>
-  <AddressBar class="address-bar"/>
-  <AddressBar class="address-bar"/>
-  <AddressBar class="address-bar"/>
-  <AddressBar class="address-bar"/>
-  <AddressBar class="address-bar"/>
-  <AddressBar class="address-bar"/>
-  <AddressBar class="address-bar"/>
-  <AddressBar class="address-bar"/>
-  <AddressBar class="address-bar"/>
-  <AddressBar class="address-bar"/>
-  <AddressBar class="address-bar"/>
-  <AddressBar class="address-bar"/>
-
-
-  <ShareWidget />
+  <view wx:if="{{init}}">
+    <AddressBox/>
+    <Copyright buttom="true"/>
+  </view>
 
 </template>
 
@@ -24,33 +11,37 @@
   import base from '../../mixins/base';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
+  import Copyright from '../../components/common/copyright';
   import AddressBox from '../../components/template/address_box'
-  import AddressBar from '../../components/template/address_bar'
-  import ShareWidget from '../../components/template/share_widget'
 
   @connect({
     shop: store.get('shop')
   })
   export default class AboutUs extends wepy.page {
     data = {
+      init: false
     };
     async onLoad () {
+      await store.init();
+      this.loaded();
     };
     methods = {
     };
     components = {
       AddressBox: AddressBox,
-      AddressBar: AddressBar,
-      ShareWidget: ShareWidget
+      Copyright: Copyright
     };
-    mixins = [base]
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '联系我们'
+    };
   }
 </script>
 
 <style lang="scss">
   @import "../../styles/variable";
-  .address-bar{
-    margin: 40rpx;
+  page{
+    background-color: white;
   }
 
 </style>

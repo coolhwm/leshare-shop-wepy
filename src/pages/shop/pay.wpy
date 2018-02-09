@@ -191,6 +191,7 @@
     };
     mixins = [base, input];
     config = {
+      navigationBarTitleText: '微信支付'
     };
   }
 </script>
