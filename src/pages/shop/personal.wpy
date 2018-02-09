@@ -74,7 +74,7 @@
   export default class CustomerIndex extends wepy.page {
     data = {
       init: false,
-      balance: 0.0,
+      balance: 0.00,
       grid: {
         title: '我的工具',
         style: 'GRID',
@@ -209,7 +209,7 @@
     };
     mixins = [base];
     config = {
-      navigationBarTitleText: '个人中心',
+      navigationBarTitleText: '个人中心'
     };
   }
 </script>

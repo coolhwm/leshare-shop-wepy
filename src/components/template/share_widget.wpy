@@ -1,0 +1,12 @@
+<template>
+
+</template>
+
+<script>
+ export default class ShareWidget extends wepy.component {
+ }
+</script>
+
+<style lange="scss">
+
+</style>

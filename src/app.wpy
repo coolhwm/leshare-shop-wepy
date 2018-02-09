@@ -127,7 +127,8 @@ export default class extends wepy.app {
       'pages/home/template',
       'pages/shop/icons',
       'pages/shop/pay',
-      'pages/shop/personal'
+      'pages/shop/personal',
+      'pages/shop/about_us'
     ],
     window: {
       backgroundTextStyle: 'dark',
