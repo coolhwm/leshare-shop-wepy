@@ -127,7 +127,9 @@
         this.renderTemplatePage(this.page);
       }
       this.loaded();
+      // 渲染导航栏
       this.renderNavigationBar();
+      // 执行触发器
       this.runTriggers();
     };
     /**
@@ -143,18 +145,16 @@
      * 渲染标题栏
      */
     renderNavigationBar() {
-      if (this.param == null) {
+      if (this.param.navigation == null) {
         return;
       }
-      const {navigationBarTitleText, navigationBarBackgroundColor, navigationBarTextStyle} = this.param;
-      if (navigationBarTitleText) {
-        wepy.setNavigationBarTitle({
-          title: navigationBarTitleText
-        });
-      }
+      const {titleText, backgroundColor, textStyle} = this.param.navigation;
+      wepy.setNavigationBarTitle({
+        title: titleText
+      });
       wepy.setNavigationBarColor({
-        backgroundColor: navigationBarBackgroundColor,
-        frontColor: navigationBarTextStyle
+        backgroundColor: backgroundColor,
+        frontColor: textStyle
       });
     }
     /**
@@ -183,12 +183,15 @@
      * 页面分享
      */
     onShareAppMessage () {
-      const {name, avatar} = this.shop;
-      console.info(`${avatar}/5x4`);
-      return {
-        title: `${name} 欢迎光临`,
-        imageUrl: `${avatar}/5x4`
-      };
+      if (this.param.share == null) {
+        const {name, avatar} = this.shop;
+        return {
+          title: `${name} 欢迎光临`,
+          imageUrl: `${avatar}/5x4`
+        };
+      } else {
+        return this.param.share;
+      }
     }
     methods = {
     };

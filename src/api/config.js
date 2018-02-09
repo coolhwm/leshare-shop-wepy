@@ -73,10 +73,7 @@ export default class config extends base {
    */
   static processPageParam(data) {
     if (data == null) {
-      return {
-        navigationBarBackgroundColor: '#1296DB',
-        navigationBarTextStyle: '#ffffff'
-      };
+      return {};
     } else {
       return JSON.parse(data);
     }
