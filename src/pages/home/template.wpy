@@ -85,6 +85,7 @@
   import store from '../../store/utils';
   import { connect } from 'wepy-redux';
   import auth from '../../api/auth';
+  import shop from '../../api/shop';
   import config from '../../api/config';
   import wepy from 'wepy';
   import base from '../../mixins/base';
@@ -115,12 +116,14 @@
       components: null,
       plugins: null,
       triggers: [],
-      param: null
+      param: null,
+      sence: null
     };
-    async onLoad ({pageId}) {
+    async onLoad ({pageId, sence}) {
       // 登录检查
       await auth.login();
       await store.init();
+      this.sence = sence;
       if (pageId) {
         console.info(`[template] load template page id=${pageId}`);
         this.pageId = pageId;
@@ -179,10 +182,20 @@
      * 活动优惠券触发器
      */
     triggerCampaign() {
+      console.info(`[trigger] check campaign coupon`);
       if (this.campaign) {
         this.$preload('coupon', this.campaign);
         this.$navigate('/pages/coupon/active');
       }
+    }
+    /**
+     * 活动优惠券触发器
+     */
+    triggerVisitLog() {
+      const wxSence = wepy.$instance.globalData.scene;
+      console.info(`[trigger] visit log, custom_sence=${this.sence}, wx_sence=${wxSence}`);
+      shop.visit(this.sence, wxSence);
+      wepy.$instance.globalData.scene = '';
     }
     /**
      * 页面分享
