@@ -1,12 +1,12 @@
 <template>
   <!--余额、充值-->
-  <view class="row blance-bar-box" @tap="tap">
+  <view class="row blance-bar-box">
     <view class="column-center">
       <text class="major xxl">￥0.00</text>
       <text>我的余额</text>
     </view>
-    <view class="column-center">
-      <icon class="recharge normal"/>
+    <view class="column-center" @tap="pay">
+      <icon class="recharge normal" color="major"/>
       <text>充值</text>
     </view>
   </view>
@@ -14,15 +14,14 @@
 
 <script>
   import wepy from 'wepy';
-  import Tips from '../../utils/Tips';
 
   export default class BalanceBar extends wepy.component {
     props = {
     };
     data = {};
     methods = {
-      tap() {
-        Tips.success('敬请期待');
+      pay() {
+        this.$root.$navigate('/pages/customer/balance');
       }
     };
   }

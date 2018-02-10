@@ -122,7 +122,9 @@
         'pages/customer/sign_in',
         'pages/coupon/use',
         'pages/shop/pay',
-        'pages/shop/about_us'
+        'pages/shop/about_us',
+        'pages/customer/comment_list',
+        'pages/customer/balance'
       ],
       window: {
         backgroundTextStyle: 'dark',

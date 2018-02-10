@@ -114,7 +114,7 @@
           await member.regist(this.registeInfo, detail.value.code);
           await Tips.success('注册成功');
           await store.refresh('member');
-          WxUtils.backOrRedirect('/pages/customer/index');
+          WxUtils.backOrRedirect('/pages/customer/index_template');
         } catch (error) {
           this.tips(error.message);
           Tips.loaded();
