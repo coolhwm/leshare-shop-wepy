@@ -10,12 +10,14 @@
     </swiper>
 
     <!--店铺信息-->
-
     <view class="info-box">
       <view class="info-item column">
         <text class="muted">店铺名称 | Name</text>
         <view class="row-between">
           <text class="mt10 xxl">{{shop.name}}</text>
+          <button plain class="icon-box" open-type="share" >
+            <icon class="share"></icon>
+          </button>
         </view>
       </view>
 
@@ -41,7 +43,6 @@
     </view>
 
   </view>
-
 </template>
 
 <script>
@@ -49,6 +50,7 @@
   import base from '../../mixins/base';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
+  import ShareWidget from '../../components/template/share_widget';
 
   @connect({
     shop: store.get('shop')
@@ -62,9 +64,9 @@
     methods = {
       image (src) {
         wepy.previewImage({
-          current: 'src', // 当前显示图片的http链接
-          urls: [src] // 需要预览的图片http链接列表
-        })
+          current: src,
+          urls: this.shop.images.map(item => item.url)
+        });
       },
       phone() {
         wepy.makePhoneCall({phoneNumber: this.shop.phone});
@@ -79,6 +81,9 @@
           address: this.shop.describe
         });
       }
+    };
+    components = {
+      ShareWidget: ShareWidget
     };
     mixins = [base]
   }
@@ -100,6 +105,8 @@
       border-bottom: $border;
     }
     .icon-box{
+      padding: 0;
+      line-height: 1.5;
       padding-left: 20rpx;
       border-left: $border;
     }

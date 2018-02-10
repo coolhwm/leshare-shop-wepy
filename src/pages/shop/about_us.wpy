@@ -1,4 +1,6 @@
 <template>
+  <Loading :init.sync="init" />
+
   <view wx:if="{{init}}">
     <AddressBox/>
     <Copyright buttom="true"/>
@@ -13,6 +15,7 @@
   import store from '../../store/utils';
   import Copyright from '../../components/common/copyright';
   import AddressBox from '../../components/template/address_box'
+  import Loading from '../../components/common/loading';
 
   @connect({
     shop: store.get('shop')
@@ -29,7 +32,8 @@
     };
     components = {
       AddressBox: AddressBox,
-      Copyright: Copyright
+      Copyright: Copyright,
+      Loading: Loading
     };
     mixins = [base];
     config = {

@@ -1,46 +1,45 @@
 <template>
-  <view class="column box">
-    <button wx:if="{{isShare}}" plain="true" open-type="share"><icon class="share xlarge" color="gray"/></button>
-    <button wx:if="{{isContact}}" plain="true" open-type="contact"><icon class="service xlarge" color="gray"/></button>
-    <button wx:if="{{isTop}}" @tap.stop="top" plain="true"><icon class="up-arrow xlarge" color="gray"/></button>
+  <view class="column share-box" style="bottom: {{bottom}}">
+    <button wx:if="{{isShare}}" hover-class="none" plain open-type="share"><icon class="share" color="gray"/></button>
+    <button wx:if="{{isContact}}" hover-class="none" plain open-type="contact"><icon class="service" color="gray"/></button>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy';
-  import base from '../../mixins/base';
 
   export default class ShareWidget extends wepy.component {
-    data = {
-      isShare: true,
-      isContact: true,
-      isTop: false
-    };
-    onPageScroll (res) {
-      this.isTop = res.scrollTop >= 300;
-    };
-    methods = {
-      top () {
-        this.isTop = false;
-        wepy.pageScrollTo({
-          scrollTop: 0,
-          duration: 300
-        })
+    props = {
+      isShare: {
+        default: true
+      },
+      isContact: {
+        default: true
+      },
+      bottom: {
+        default: '100rpx'
       }
     };
-    mixins = [base]
   }
 </script>
 
 <style lang="scss">
   @import "../../styles/variable";
 
-  .box {
+  .share-box {
+    z-index: 1000;
     position: fixed;
-    right: 10rpx;
-    bottom: 10rpx;
-    icon{
-      border: 1px solid #A3A3A3;
+    right: 25rpx;
+
+    button{
+      display: flex;
+      background-color: white;
+      justify-content: center;
+      align-items: center;
+      margin-top: 15rpx;
+      width: 80rpx;
+      height: 80rpx;
+      border: $border;
       border-radius: 50%;
     }
   }
