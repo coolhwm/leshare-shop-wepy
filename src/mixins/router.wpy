@@ -149,9 +149,21 @@
             // 调试
             console.info(event);
             break;
-          case 'URL':
+          case 'PAGE_NAVIGAET':
             // 跳转指定页面
             this.$root.$navigate(targetId);
+            break;
+          case 'PAGE_REDIRECT':
+            // 跳转指定页面
+            this.$root.$redirect(targetId);
+            break;
+          case 'PAGE_SWITCH':
+            // 跳转指定页面
+            this.$root.$switch(targetId);
+            break;
+          case 'PAGE_BACK':
+            // 跳转指定页面
+            wepy.navigateBack();
             break;
           case 'GOODS':
             // 某个商品
@@ -160,6 +172,10 @@
           case 'CATEGORY':
             // 某个分类
             this.$root.$navigate(`/pages/goods/search_list?categoryId=${targetId}`);
+            break;
+          case 'HOME':
+            // 首页
+            this.routeToHome();
             break;
           case 'USER':
             // 用户首页

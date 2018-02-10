@@ -73,6 +73,10 @@
       <block wx:if="{{item.type == 'STATUS_WIDGET'}}" >
         <StatusWidget />
       </block>
+
+      <block wx:if="{{item.type == 'BUTTON_WIDGET'}}" >
+        <ButtonWidget :param="item" />
+      </block>
     </repeat>
   </view>
 </template>
@@ -97,6 +101,7 @@
   import NoticeBar from '../../components/template/notice_bar';
   import HotAreaBox from '../../components/template/hot_area_box';
   import Copyright from '../../components/common/copyright';
+  import ButtonWidget from '../../components/template/button_widget';
 
   @connect({
     page: store.get('page'),
@@ -208,7 +213,8 @@
       CartWidget: CartWidget,
       NoticeBar: NoticeBar,
       HotAreaBox: HotAreaBox,
-      Copyright: Copyright
+      Copyright: Copyright,
+      ButtonWidget: ButtonWidget
     };
     computed = {
     };
