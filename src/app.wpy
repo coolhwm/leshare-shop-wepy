@@ -124,7 +124,8 @@
         'pages/customer/vip_info',
         'pages/customer/sign_in',
         'pages/coupon/use',
-        'pages/shop/contact'
+        'pages/shop/contact',
+        'pages/customer/comment_list'
       ],
       window: {
         backgroundTextStyle: 'dark',
