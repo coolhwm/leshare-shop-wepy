@@ -1,0 +1,151 @@
+<template>
+  <view class="container" wx:if="{{init}}">
+    <view class="b1" hidden="{{modalHidden2}}">
+      <view class="t_w">
+        <view id="share-box" class="b2">
+          <canvas @longtap="savaCanvasAsImage" style="width: 100%; height: {{windowHeight}}px;" canvas-id="firstCanvas"></canvas>
+          <!--<button type="default" class="ml20" style="width: {{windowWidth - 20}}px;" @tap="savaCanvasAsImage">保存</button>-->
+        </view>
+      </view>
+    </view>
+    <button type="default" @tap="modalTap2">点击弹出modal</button>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import store from '../../store/utils';
+  import code from '../../api/code';
+  import { connect } from 'wepy-redux';
+  @connect({
+    shop: store.get('shop')
+  })
+  export default class Share extends wepy.page {
+    def = {
+      init: false,
+      modalHidden2: true,
+      windowWidth: 0,
+      windowHeight: 0,
+      shop: {},
+      code: ''
+    };
+    data = {...this.def};
+    async onLoad () {
+      // 初始化Store
+      await store.init();
+      const system = JSON.stringify(wepy.getSystemInfoSync());
+      this.windowWidth = JSON.parse(system).windowWidth * 0.8;
+      this.windowHeight = JSON.parse(system).windowHeight * 0.5;
+      this.shop.images[0] = 'http://www.taopic.com/uploads/allimg/140729/240450-140HZP45790.jpg';
+      // this.code = await code.getCode('oTOYP0fh9-HnAHvu2niBI3s4h0LU', '/pages/home/home');
+      this.ccc();
+      this.loaded();
+    };
+    ccc() {
+      const that = this;
+      wx.downloadFile({
+        url: 'http://www.taopic.com/uploads/allimg/140729/240450-140HZP45790.jpg',
+        success(res) {
+          const param = {};
+          param.image = res.tempFilePath;
+          param.name = that.shop.name;
+          param.address = that.shop.address;
+          param.phone = that.shop.phone;
+          console.log(param.name.length);
+          that.drawCanvas(param);
+        }
+      });
+    }
+
+    drawCanvas(param) {
+      const context = wepy.createCanvasContext('firstCanvas');
+      const imageWidth = this.windowWidth / 1.1;
+      const imageHeight = this.windowHeight / 1.8;
+      const leftMargin = (this.windowWidth - imageWidth) / 2;
+      const pixelRatio = 2;
+
+      context.drawImage(param.image, leftMargin, leftMargin, imageWidth, imageHeight);
+
+      context.setFillStyle('#454545');
+      context.setTextAlign('left');
+      context.setFontSize(29 / pixelRatio);
+      context.fillText(param.name, leftMargin, this.windowHeight / 1.6);
+
+      context.setFillStyle('#454545');
+      context.setTextAlign('left');
+      context.setFontSize(22 / pixelRatio);
+      context.fillText(param.address, leftMargin, this.windowHeight / 1.4);
+
+      context.setFillStyle('#454545');
+      context.setTextAlign('left');
+      context.setFontSize(22 / pixelRatio);
+      context.fillText(param.phone, leftMargin, this.windowHeight / 1.3);
+
+      context.draw();
+    }
+    methods = {
+      modalTap2() {
+        this.modalHidden2 = false;
+      },
+      modalChange2() {
+        this.modalHidden2 = true;
+      },
+      modalChange() {
+        this.modalHidden2 = true;
+      },
+      savaCanvasAsImage () {
+        // 调用 wx.canvasToTempFilePath方法
+        wx.canvasToTempFilePath({
+          // 通过id 指定是哪个canvas
+          canvasId: 'firstCanvas',
+          success(res) {
+            // 成功之后保存到本地
+            wx.saveImageToPhotosAlbum({
+
+              filePath: res.tempFilePath,
+              success: function (res) {
+                wx.showToast({
+                  title: '保存成功',
+                  icon: 'success',
+                  duration: 2000
+                })
+              },
+              fail: function (res) {
+                console.log(res)
+              }
+            })
+          }
+        })
+      }
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '分享'
+    }
+  }
+</script>
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .b1 {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    background: rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .t_w {
+    position: relative;
+  }
+
+  .b2 {
+    width: 80%;
+    margin: 35% auto;
+    overflow: hidden;
+    background-color: #fff;
+    border-radius: 10rpx;
+  }
+</style>
