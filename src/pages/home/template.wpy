@@ -105,7 +105,7 @@
   import ButtonWidget from '../../components/template/button_widget';
 
   @connect({
-    page: store.get('page'),
+    homePageId: store.get('homePageId'),
     shop: store.get('shop'),
     campaign: store.get('campaign')
   })
@@ -127,13 +127,13 @@
       if (pageId) {
         console.info(`[template] load template page id=${pageId}`);
         this.pageId = pageId;
-        const page = await await config.layout(pageId);
-        this.renderTemplatePage(page);
-      } else if (this.page) {
+      } else if (this.homePageId) {
         console.info(`[template] load home page`);
-        this.pageId = this.page.id;
-        this.renderTemplatePage(this.page);
+        this.pageId = this.homePageId;
       }
+      const page = await await config.layout(this.pageId);
+      this.renderTemplatePage(page);
+      console.info(`[template] render template page success`);
       this.loaded();
       // 渲染导航栏
       this.renderNavigationBar();
