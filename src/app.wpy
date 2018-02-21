@@ -126,7 +126,8 @@
         'pages/coupon/use',
         'pages/shop/contact',
         'pages/customer/comment_list',
-        'pages/customer/balance'
+        'pages/customer/balance',
+        'pages/shop/distribution'
       ],
       window: {
         backgroundTextStyle: 'dark',
