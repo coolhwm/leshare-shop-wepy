@@ -32,7 +32,7 @@
     </view>
   </view>
 
-  <Notice />
+  <Notice @close.user="close" wx:if="{{check}}" />
 
   <Copyright buttom="true" />
 </template>
@@ -100,6 +100,9 @@
       this.loaded();
     };
     methods = {
+      close() {
+        this.check = false;
+      }
     };
     components = {
       Copyright: Copyright,

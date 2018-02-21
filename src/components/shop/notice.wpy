@@ -8,7 +8,7 @@
       </view>
       <view class="column notice-content-box">
         <text class="lg">迎新特大喜讯迎新特大喜讯迎新特大喜讯迎新特大喜讯迎新特大喜讯迎新特大喜讯迎新特大喜讯迎新特大喜讯迎新特大喜讯</text>
-        <button>我知道了</button>
+        <button @tap="close">我知道了</button>
       </view>
     </view>
   </view>
@@ -21,6 +21,9 @@
   export default class Notice extends wepy.component {
     props = {};
     methods = {
+      close() {
+        this.$emit('close')
+      }
     }
   }
 </script>
