@@ -124,7 +124,8 @@
         'pages/shop/pay',
         'pages/shop/about_us',
         'pages/customer/comment_list',
-        'pages/customer/balance'
+        'pages/customer/balance',
+        'pages/group/index'
       ],
       window: {
         backgroundTextStyle: 'dark',
