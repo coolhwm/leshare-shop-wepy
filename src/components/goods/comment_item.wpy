@@ -1,23 +1,21 @@
 <template>
   <view class="score-box">
-    <view class="header-box">
-      <view class="info-box">
-        <icon class="customer large" color="gray"/>
-
-        <view class="name-box">
-          <text class="username">匿名用户</text>
-          <text class="date">{{comment.createTime}}</text>
+    <view class="info-box mb10">
+      <view class="name-box row-between">
+        <view class="row-center">
+          <image wx:if="{{comment.avatar}}" src="{{comment.avatar}}"/>
+          <icon wx:else class="customer large" color="gray"/>
+          <text class="username xl ml20">{{comment.nickName}}</text>
+          <text class="muted xs ml20">{{comment.createTime}}</text>
+        </view>
+        <view class="star-box row">
+          <block wx:for="{{comment.starArr}}" wx:key="*this">
+            <icon class="star{{item == 1 ? '-fill' : ''}} xsmall" color="{{item == 1 ? 'major' : 'gray'}}"/>
+          </block>
         </view>
       </view>
-      <view class="star-box row">
-        <block wx:for="{{comment.starArr}}" wx:key="*this">
-          <icon class="star{{item == 1 ? '-fill' : ''}}" color="{{item == 1 ? 'major' : 'gray'}}"/>
-        </block>
-      </view>
     </view>
-    <view class="content-box">
-      {{comment.comment ? comment.comment : '好评！'}}
-    </view>
+    <text class="content-box lg mb10">{{comment.comment ? comment.comment : '好评！'}}</text>
   </view>
 </template>
 
@@ -46,18 +44,14 @@
     border-bottom: 1px solid #EDEDED;
   }
 
-
-  .header-box{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-
   .info-box{
     display: flex;
-    flex-direction: row;
     flex: 1;
+    image{
+      width: 30px;
+      height: 30px;
+      border-radius: 15px;
+    }
   }
 
   .info-box .avatar{
@@ -67,32 +61,12 @@
     vertical-align: middle;
   }
 
-  .info-box .username{
-    font-size:28rpx;
-    color: #262626;
-  }
-
-  .info-box .date{
-    font-size:26rpx;
-    color: #A3A3A3;
-  }
-
   .name-box{
-    display: flex;
-    flex-direction: column;
-    margin-left: 20rpx;
+    flex: 1;
   }
 
   .star-box icon{
-    height: 40rpx;
-    width: 40rpx;
+    padding: 0;
     vertical-align: middle;
-  }
-
-  .content-box{
-    padding-left: 90rpx;
-    margin-top: 20rpx;
-    font-size: 28rpx;
-    color: #262626;
   }
 </style>

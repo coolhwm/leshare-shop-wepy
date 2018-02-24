@@ -1,0 +1,149 @@
+<template>
+  <view class="column-center status-box">
+    <view class="row">
+      <view class="status-avatar-box" wx:for="{{participants}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+        <view  wx:if="{{item.isChief}}" class="weui-badge">团长</view>
+        <image class="{{item.isChief ? 'chief-box':'participants-box'}}" wx:if="{{item.avatar}}" src="{{item.avatar}}"/>
+        <icon wx:else class="question"/>
+      </view>
+    </view>
+    <view class="status-spare-box">
+      <text>仅剩</text><span>{{num}}</span><text>人，即可成团！</text>
+    </view>
+    <view class="row-center">
+      <view class="status-line-box mr10" style="width: 140rpx;"></view>
+      <view class="status-time-box">
+        <text>剩余</text><span>{{content.hour}}</span><text>:</text><span>{{content.min}}</span><text>:</text><span>{{content.sec}}</span>
+      </view>
+      <view class="status-line-box ml10" style="width: 140rpx;"></view>
+    </view>
+    <view class="status-btn-box row-center">邀请好友参团</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class StatusBar extends wepy.component {
+    props = {
+      endTime: {
+        default: ''
+      }
+    };
+    data = {
+      content: {},
+      participants: [
+        {
+          avatar: '../../images/icons/test.jpeg',
+          isChief: true
+        },
+        {},
+        {}
+      ]
+    };
+    countdowm(timestamp) {
+      let timer = setInterval(async () => {
+        const time = new Date(timestamp) - new Date();
+        if (time > 0) {
+          let hour = Math.floor(time / 3600000);
+          let min = Math.floor((time / 60000) % 60);
+          let sec = Math.floor((time / 1000) % 60);
+          hour = hour < 10 ? '0' + hour : hour;
+          min = min < 10 ? '0' + min : min;
+          sec = sec < 10 ? '0' + sec : sec;
+          this.content = {
+            hour: hour,
+            min: min,
+            sec: sec
+          };
+        } else {
+          clearInterval(timer);
+        }
+        this.$apply();
+      }, 1000);
+    };
+    methods = {
+    };
+    computed = {
+      num () {
+        return this.participants.filter(item => !item.avatar).length
+      }
+    };
+    watch = {
+      endTime(endTime) {
+        this.countdowm(endTime);
+      }
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .status-box{
+    background: white;
+    margin-bottom: 10rpx;
+    padding: 40rpx 0;
+  }
+  .status-avatar-box{
+    position: relative;
+    .participants-box, .chief-box{
+      width: 80rpx;
+      height: 80rpx;
+      border-radius: 40rpx;
+      margin: 0 20rpx;
+    }
+    .participants-box{
+      border: $border;
+    }
+    .chief-box{
+      border: 1px solid #e64340;
+    }
+    icon{
+      font-size: 80rpx;
+      line-height: 80rpx;
+      color: $color-muted;
+      margin: 0 20rpx 14rpx 20rpx;
+    }
+    .weui-badge{
+      position: absolute;
+      top: -5px;
+      right: 0;
+      font-size: 20rpx;
+    }
+  }
+  .status-spare-box{
+    margin: 20rpx 0 36rpx;
+    span{
+      color: #e64340;
+      margin: 0 10rpx;
+    }
+  }
+  .status-line-box{
+    height: 1px;
+    background-color: #D5D5D5;
+  }
+  .status-time-box{
+    text{
+      font-size: $text-lg;
+      color: $color-muted;
+    }
+    span{
+      padding: 0 4rpx;
+      margin: 0 10rpx;
+      border-radius: 5rpx;
+      background-color: #000;
+      color: #fff;
+      font-size: $text-lg;
+      line-height: $text-lg;
+    }
+  }
+  .status-btn-box{
+    background: #e64340;
+    color:white;
+    width: 560rpx;
+    padding: 16rpx 0;
+    border-radius: 5rpx;
+    margin-top: 36rpx;
+  }
+
+</style>

@@ -128,6 +128,7 @@
   .group-info-box{
     background-color: white;
     padding: 0 20rpx;
+    margin-bottom: 10rpx;
     .top-box{
       border-bottom: $border;
       padding: 20rpx 0;
