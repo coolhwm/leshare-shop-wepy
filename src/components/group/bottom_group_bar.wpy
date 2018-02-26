@@ -10,11 +10,11 @@
       <icon class="like{{!isFav ? '' : '-fill'}} normal" style="color: {{!isFav ? 'gray' : 'red'}}" />
       <text class="xs">收藏</text>
     </view>
-    <view class="column-center btn-buy" @tap="handlePlusCart({{goods}})">
+    <view class="column-center btn-buy" @tap="handlePlusCart({{rules.goods}})">
       <text class="xxl money-box">￥{{rules.goods.sellPrice}}</text>
       <text>单独购买</text>
     </view>
-    <view class="column-center btn-group" @tap="handleBuy({{goods}})">
+    <view class="column-center btn-group" @tap="handleBuy({{rules.goods}})">
       <text class="xxl money-box">￥{{rules.price}}</text>
       <text>一键开团</text>
     </view>
@@ -38,9 +38,9 @@
       async fav() {
         if (this.isFav) {
           await Tips.confirm('确认取消收藏?');
-          await favorite.remove(this.goods.id);
+          await favorite.remove(this.rules.goods.id);
         } else {
-          await favorite.add(this.goods.id);
+          await favorite.add(this.rules.goods.id);
           await Tips.success('收藏成功');
         }
         this.isFav = !this.isFav;
@@ -48,9 +48,9 @@
       }
     };
     watch = {
-      async goods(current, origin) {
+      async rules(current, origin) {
         if (origin != null && origin.id != null) return;
-        const result = await favorite.is(current.id);
+        const result = await favorite.is(current.goods.id);
         this.isFav = result.isFavorite == 1;
         this.$apply();
       }

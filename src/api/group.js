@@ -19,6 +19,14 @@ export default class group extends base {
     return this.get(url).then(data => this._processGroupDetail(data));
   }
 
+  /***
+   * 开团/参团
+   */
+  static goodsGroup (param) {
+    const url = `${this.baseUrl}/goods_group`;
+    return this.post(url, param);
+  }
+
   /**
    * 处理商品详情
    */
@@ -119,6 +127,7 @@ export default class group extends base {
   static _processGroupDetail (detail) {
     // 筛选团长
     detail.forEach(item => {
+      if (!item.list) return;
       item.header = item.list.find(item => item.head === true);
     });
 

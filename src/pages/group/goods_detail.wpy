@@ -56,6 +56,11 @@
     <!--拼团栏-->
     <GroupInfoBar :processing.sync="processing" />
 
+    <!--滑出购物面板-->
+    <block >
+      <SilderPanel :rules.sync="rules" :ruleId.sync="ruleId"/>
+    </block>
+
     <!--底栏-->
     <GroupBar :rules.sync="rules" />
   </view>
@@ -70,11 +75,13 @@
   import TimeOutBar from '../../components/group/timeout_bar';
   import CommentPreview from '../../components/goods/comment_preview';
   import GroupInfoBar from '../../components/group/group_info_bar';
+  import SilderPanel from '../../components/goods/slider_buy_panel';
   import group from '../../api/group'
 
   export default class GroupGoodsDetail extends wepy.page {
     data = {
       init: false,
+      buyPanelType: 'POPUP',
       endTime: '',
       goodsId: '',
       groupTime: '',
@@ -122,6 +129,7 @@
       TimeOutBar: TimeOutBar,
       CommentPreview: CommentPreview,
       GroupInfoBar: GroupInfoBar,
+      SilderPanel: SilderPanel,
       Loading: Loading
     };
     mixins = [base, pagination];
