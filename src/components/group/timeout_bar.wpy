@@ -7,13 +7,13 @@
     <view class="column-center time-box">
       <text class="danger xs">距结束仅剩</text>
       <view class="row">
-        <span>{{content.day}}</span>
+        <view class="time-num-box">{{content.day}}</view>
         <text class="xs">天</text>
-        <span>{{content.hour}}</span>
+        <view class="time-num-box">{{content.hour}}</view>
         <text class="xs">时</text>
-        <span>{{content.min}}</span>
+        <view class="time-num-box">{{content.min}}</view>
         <text class="xs">分</text>
-        <span>{{content.sec}}</span>
+        <view class="time-num-box">{{content.sec}}</view>
         <text class="xs">秒</text>
       </view>
     </view>
@@ -42,7 +42,7 @@
       content: {}
     };
     countdowm(timestamp) {
-      let timer = setInterval(async () => {
+      let timer = setInterval(() => {
         const time = new Date(timestamp) - new Date();
         if (time > 0) {
           let day = Math.floor(time / 86400000);
@@ -78,7 +78,7 @@
 <style lang="scss">
   @import "../../styles/variable";
   .timeout-box{
-    background:-webkit-gradient(linear, 0% 0%, 100% 0%,from(#FD4B49), to(#FFCC59));
+    background:-webkit-gradient(linear, 0% 0%, 100% 0%,from($color-primary), to(#FFCC59));
     .title-box{
       padding: 10rpx 0 10rpx 20rpx;
       text{
@@ -97,7 +97,7 @@
     }
     .time-box{
       padding: 10rpx 20rpx;
-      span{
+      .time-num-box{
         padding: 4rpx 8rpx;
         margin: 0 8rpx;
         background-color: #000;

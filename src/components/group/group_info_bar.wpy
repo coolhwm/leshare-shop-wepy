@@ -37,9 +37,11 @@
         <view class="row">
           <view class="column-center">
             <view class="row" wx:if="{{limitCustomer > item.list.length}}">
-              <text class="lg">还差</text><span>{{limitCustomer - item.list.length}}人</span><text class="lg">拼成</text>
+              <text class="lg">还差</text>
+              <view class="customer-num-box">{{limitCustomer - item.list.length}}人</view>
+              <text class="lg">拼成</text>
             </view>
-            <text class="muted sm">{{time}}</text>
+            <text class="muted sm">{{item.time}}</text>
           </view>
           <text class="ml20 btn-box xl">去参团</text>
         </view>
@@ -61,23 +63,6 @@
       isFav: false,
       time: {}
     };
-    countdowm(timestamp) {
-      let timer = setInterval(async () => {
-        const time = new Date(timestamp) - new Date() + 1000 * 60 * 60 * 72;
-        if (time > 0) {
-          let hour = Math.floor(time / 3600000);
-          let min = Math.floor((time / 60000) % 60);
-          let sec = Math.floor((time / 1000) % 60);
-          hour = hour < 10 ? '0' + hour : hour;
-          min = min < 10 ? '0' + min : min;
-          sec = sec < 10 ? '0' + sec : sec;
-          this.time = `还剩${hour}:${min}:${sec}`
-        } else {
-          clearInterval(timer);
-        }
-        this.$apply();
-      }, 1000);
-    };
     methods = {
     };
     computed = {
@@ -85,9 +70,6 @@
       }
     };
     watch ={
-      groupTime (time) {
-        this.countdowm(time);
-      }
     };
   }
 </script>
@@ -122,12 +104,12 @@
         height: 80rpx;
         border-radius: 40rpx;
       }
-      span{
-        color: #FD4B49;
+      .customer-num-box{
+        color: $color-primary;
         font-size: $text-lg;
       }
       .btn-box{
-        background-color: #FD4B49;
+        background-color: $color-primary;
         color: white;
         padding:10rpx 36rpx;
         border-radius: 10rpx;

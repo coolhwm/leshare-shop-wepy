@@ -36,15 +36,15 @@
     </view>
     <view class="row-between goods-des-box">
       <view class="row">
-        <icon class="status-6 xsmall" style="color: #FD4B49;"/>
+        <icon class="status-6 xsmall"/>
         <text class="xs ml10">全场包邮</text>
       </view>
       <view class="row">
-        <icon class="status-6 xsmall" style="color: #FD4B49;"/>
+        <icon class="status-6 xsmall"/>
         <text class="xs ml10">七天退换</text>
       </view>
       <view class="row">
-        <icon class="status-6 xsmall" style="color: #FD4B49;"/>
+        <icon class="status-6 xsmall"/>
         <text class="xs ml10">假一赔十</text>
       </view>
       <icon class="more xsmall" color="gray"/>
@@ -54,7 +54,7 @@
     <CommentPreview :goodsId.sync="goodsId"/>
 
     <!--拼团栏-->
-    <GroupInfoBar :processing.sync="processing" :groupTime.sync="groupTime" />
+    <GroupInfoBar :processing.sync="processing" />
 
     <!--底栏-->
     <GroupBar :rules.sync="rules" />
@@ -126,8 +126,7 @@
     };
     mixins = [base, pagination];
     config = {
-      navigationBarTitleText: '商品详情',
-      navigationBarBackgroundColor: '#FD4B49'
+      navigationBarTitleText: '商品详情'
     };
   }
 </script>
@@ -163,5 +162,8 @@
     padding: 20rpx;
     border-top:$border;
     margin-bottom: 10rpx;
+    icon{
+      color: $color-primary;
+    }
   }
 </style>

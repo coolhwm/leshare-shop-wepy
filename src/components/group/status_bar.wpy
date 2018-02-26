@@ -7,13 +7,18 @@
         <icon wx:else class="question"/>
       </view>
     </view>
-    <view class="status-spare-box">
-      <text>仅剩</text><span>{{num}}</span><text>人，即可成团！</text>
+    <view class="status-spare-box row">
+      <text>仅剩</text><view class="num-box"><text>{{num}}</text></view><text>人，即可成团！</text>
     </view>
     <view class="row-center">
       <view class="status-line-box mr10" style="width: 140rpx;"></view>
-      <view class="status-time-box">
-        <text>剩余</text><span>{{content.hour}}</span><text>:</text><span>{{content.min}}</span><text>:</text><span>{{content.sec}}</span>
+      <view class="status-time-box row">
+        <text>剩余</text>
+        <view class="time-num-box">{{content.hour}}</view>
+        <text>:</text>
+        <view class="time-num-box">{{content.min}}</view>
+        <text>:</text>
+        <view class="time-num-box">{{content.sec}}</view>
       </view>
       <view class="status-line-box ml10" style="width: 140rpx;"></view>
     </view>
@@ -86,11 +91,11 @@
   }
   .status-avatar-box{
     position: relative;
+    margin-right: 20rpx;
     .participants-box, .chief-box{
       width: 80rpx;
       height: 80rpx;
       border-radius: 40rpx;
-      margin: 0 20rpx;
     }
     .participants-box{
       border: $border;
@@ -102,7 +107,6 @@
       font-size: 80rpx;
       line-height: 80rpx;
       color: $color-muted;
-      margin: 0 20rpx 14rpx 20rpx;
     }
     .weui-badge{
       position: absolute;
@@ -113,9 +117,11 @@
   }
   .status-spare-box{
     margin: 20rpx 0 36rpx;
-    span{
-      color: #e64340;
-      margin: 0 10rpx;
+    text{
+      margin-right: 10rpx;
+    }
+    .num-box{
+      color: $color-primary;
     }
   }
   .status-line-box{
@@ -127,7 +133,7 @@
       font-size: $text-lg;
       color: $color-muted;
     }
-    span{
+    .time-num-box{
       padding: 0 4rpx;
       margin: 0 10rpx;
       border-radius: 5rpx;
@@ -138,7 +144,7 @@
     }
   }
   .status-btn-box{
-    background: #e64340;
+    background: $color-primary;
     color:white;
     width: 560rpx;
     padding: 16rpx 0;

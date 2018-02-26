@@ -123,7 +123,7 @@ export default class group extends base {
     });
 
     // 处理开团时间
-    // this._processGroupTime(detail);
+    this._processGroupTime(detail);
 
     return detail
   }
@@ -133,24 +133,18 @@ export default class group extends base {
    */
   static _processGroupTime (detail) {
     for (let item of detail) {
-      let timer = setInterval(async () => {
-        const time = new Date(item.groupTime) - new Date() + 1000 * 60 * 60 * 72;
-        if (time > 0) {
-          let hour = Math.floor(time / 3600000);
-          let min = Math.floor((time / 60000) % 60);
-          let sec = Math.floor((time / 1000) % 60);
-          hour = hour < 10 ? '0' + hour : hour;
-          min = min < 10 ? '0' + min : min;
-          sec = sec < 10 ? '0' + sec : sec;
-          item.time = {
-            hour: hour,
-            min: min,
-            sec: sec
-          };
-        } else {
-          clearInterval(timer);
-        }
-      }, 1000);
+      const time = new Date(item.groupTime) - new Date() + 1000 * 60 * 60 * 24;
+      if (time > 0) {
+        let hour = Math.floor(time / 3600000);
+        let min = Math.floor((time / 60000) % 60);
+        let sec = Math.floor((time / 1000) % 60);
+        hour = hour < 10 ? '0' + hour : hour;
+        min = min < 10 ? '0' + min : min;
+        sec = sec < 10 ? '0' + sec : sec;
+        item.time = `还剩${hour}:${min}:${sec}`;
+      } else {
+        item.time = `已结束`;
+      }
     }
   }
 }
