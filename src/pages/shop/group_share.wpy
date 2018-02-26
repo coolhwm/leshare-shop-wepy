@@ -44,14 +44,16 @@
       canvas.createCanvasContext('groupShare');
       // 绘制图片
       canvas.canvasImage(shareBg);
+
       const fillRectParams = {
         color: '#FFFFFF',
-        x: this.canvasWidth * 0.1 / 2,
-        y: this.canvasWidth * 0.1 / 2,
+        x: this.canvasWidth * 0.05,
+        y: this.canvasWidth * 0.05,
         width: this.canvasWidth * 0.9,
         height: this.canvasHeight * 0.93
       };
       canvas.fillRect(fillRectParams);
+
       // 图片
       const goodsImage = await wepy.downloadFile({url: 'http://static.pig66.com/uploadfile/2017/0509/20170509080749841.jpg'});
       goodsImage.x = this.canvasWidth * 0.15;
@@ -59,29 +61,33 @@
       goodsImage.imageWidth = this.canvasWidth / 3.5;
       goodsImage.imageHeight = this.canvasWidth / 3.5;
       canvas.canvasImage(goodsImage);
+
       canvas.canvasTextCenter('团分享-测试', this.canvasWidth * 0.043, '#000000', this.canvasWidth * 0.6, this.canvasHeight * 0.13);
       canvas.canvasTextCenter('￥ 0.01', this.canvasWidth * 0.04, '#ff3644', this.canvasWidth * 0.545, this.canvasHeight * 0.18);
       canvas.canvasTextCenter('原价: ￥ 1', this.canvasWidth * 0.027, '#c7c7c7', this.canvasWidth * 0.545, this.canvasHeight * 0.21);
       canvas.canvasTextCenter('2人成团', this.canvasWidth * 0.035, '#ff3644', this.canvasWidth * 0.545, this.canvasHeight * 0.28);
-      canvas.canvasTextCenter('成团截止日期 02-25 18:30', this.canvasWidth * 0.04, '#ff3644', this.canvasWidth / 2, this.canvasHeight * 0.4);
+      canvas.canvasTextCenter('成团截止日期 02-25 18:30', this.canvasWidth * 0.04, '#ff3644', this.canvasWidth * 0.5, this.canvasHeight * 0.4);
+
       const lineParams = {
         color: '#ff3644',
-        x: this.canvasWidth * 0.5 / 2,
-        y: this.canvasHeight * 0.85 / 2,
+        x: this.canvasWidth * 0.25,
+        y: this.canvasHeight * 0.425,
         width: this.canvasWidth * 0.5,
         height: this.canvasHeight * 0.002
       };
       canvas.fillRect(lineParams);
-      canvas.canvasTextCenter('已有1人参加，剩余1个名额。', this.canvasWidth * 0.03, '#454545', this.canvasWidth / 2, this.canvasHeight * 0.47);
-      canvas.canvasTextCenter('快来参加吧！', this.canvasWidth * 0.03, '#454545', this.canvasWidth / 2, this.canvasHeight * 0.5);
+
+      canvas.canvasTextCenter('已有1人参加，剩余1个名额。', this.canvasWidth * 0.03, '#454545', this.canvasWidth * 0.5, this.canvasHeight * 0.47);
+      canvas.canvasTextCenter('快来参加吧！', this.canvasWidth * 0.03, '#454545', this.canvasWidth * 0.5, this.canvasHeight * 0.5);
+
       // 二维码
       const code = await wepy.downloadFile({url: this.code.message});
       code.x = this.canvasWidth * 0.25;
       code.y = this.canvasHeight * 0.55;
       code.imageWidth = this.canvasWidth * 0.5;
       code.imageHeight = this.canvasWidth * 0.5;
-      // 绘制二维码
       canvas.canvasImage(code);
+
       canvas.draw();
     }
 
