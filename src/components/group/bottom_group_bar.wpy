@@ -11,11 +11,11 @@
       <text class="xs">收藏</text>
     </view>
     <view class="column-center btn-buy" @tap="handlePlusCart({{goods}})">
-      <text class="xxl money-box">￥75</text>
+      <text class="xxl money-box">￥{{rules.goods.sellPrice}}</text>
       <text>单独购买</text>
     </view>
     <view class="column-center btn-group" @tap="handleBuy({{goods}})">
-      <text class="xxl money-box">￥68</text>
+      <text class="xxl money-box">￥{{rules.price}}</text>
       <text>一键开团</text>
     </view>
   </view>
@@ -29,6 +29,7 @@
 
   export default class GroupBar extends wepy.component {
     props = {
+      rules: {}
     };
     data = {
       isFav: false

@@ -78,7 +78,7 @@
 <style lang="scss">
   @import "../../styles/variable";
   .timeout-box{
-    background:-webkit-gradient(linear, 0% 0%, 100% 0%,from(#FFAB2E), to(#FFCC59));
+    background:-webkit-gradient(linear, 0% 0%, 100% 0%,from(#FD4B49), to(#FFCC59));
     .title-box{
       padding: 10rpx 0 10rpx 20rpx;
       text{

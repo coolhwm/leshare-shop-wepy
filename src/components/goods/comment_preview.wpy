@@ -1,25 +1,35 @@
 <template>
   <view class="column comment-preview-box" wx:if="{{init}}">
-    <view class="row-between mb20">
+    <view class="row-between">
       <text class="xxl">客户评价({{count.ALL}})</text>
       <view>
-        <text class="mr10">好评率</text>
-        <text class="comment-text-box">{{commentText}}</text>
+        <view wx:if="{{!this.detail || !this.count}}">
+          <text>{{commentText}}</text>
+        </view>
+        <view wx:elif="{{this.count.ALL == 0}}">
+          <text>{{commentText}}</text>
+        </view>
+        <view wx:else>
+          <text class="mr10">好评率</text>
+          <text class="comment-text-box">{{commentText}}</text>
+        </view>
       </view>
     </view>
 
-    <view class="row comment-tags-box mb10">
-      <text class="xs">好评({{count.GOOD}})</text>
-      <text class="xs bad-box">中评({{count.NORMAL}})</text>
-      <text class="xs bad-box">差评({{count.BAD}})</text>
-    </view>
+    <view wx:if="{{this.detail && this.count.ALL > 0}}">
+      <view class="row comment-tags-box mt20 mb10">
+        <text class="xs">好评({{count.GOOD}})</text>
+        <text class="xs bad-box">中评({{count.NORMAL}})</text>
+        <text class="xs bad-box">差评({{count.BAD}})</text>
+      </view>
 
-    <repeat for="{{comment}}" key="index" index="index" item="item">
-      <CommentItem :comment.sync="item" />
-    </repeat>
+      <repeat for="{{comment}}" key="index" index="index" item="item">
+        <CommentItem :comment.sync="item" />
+      </repeat>
 
-    <view class="column-center">
-      <text class="comment-preview-btn">查看全部评价</text>
+      <view class="column-center">
+        <text class="comment-preview-btn mt10">查看全部评价</text>
+      </view>
     </view>
   </view>
 </template>
@@ -79,7 +89,6 @@
     };
     watch = {
       async goodsId (id) {
-        console.info(id);
         this.count = await comment.count(id);
         this.detail = await goods.getInfo(id, this.discount);
         this.page = await comment.page();
