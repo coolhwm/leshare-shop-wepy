@@ -10,28 +10,17 @@
       <image class="buy-panel-icon" src="{{sku.isReady ? sku.detail.imageUrl : goods.imageUrl}}" />
       <!--文字 -->
       <view class="buy-panel-title-price">
-        <view wx:if="{{rules}}">
-          <text class="buy-panel-title">{{goods.name}}</text>
-          <view class="panel-price-box row">
-            <text class="buy-panel-price">￥{{rules.price}}</text>
-            <text class="cancel ml10" wx:if="{{goods.discount}}">￥{{goods.originalPrice}}</text>
-            <DiscountBadge :goods.sync="goods" />
-          </view>
-        </view>
-        <view wx:else>
-          <text class="buy-panel-title">{{goods.name}}</text>
-          <view class="panel-price-box row">
-            <text class="buy-panel-price">￥{{sku.isReady ? sku.detail.price : goods.priceLable}}</text>
-            <text class="cancel ml10" wx:if="{{goods.discount}}">￥{{goods.originalPrice}}</text>
-            <DiscountBadge :goods.sync="goods" />
-          </view>
+        <text class="buy-panel-title">{{goods.name}}</text>
+        <view class="panel-price-box row">
+          <text class="buy-panel-price">￥{{sku.isReady ? sku.detail.price : goods.priceLable}}</text>
+          <text class="cancel ml10" wx:if="{{goods.discount}}">￥{{goods.originalPrice}}</text>
+          <DiscountBadge :goods.sync="goods" />
         </view>
       </view>
       <!--关闭按钮-->
       <view class="buy-panel-close-container">
         <icon class="close" color="gray" @tap="close"/>
       </view>
-
     </view>
 
     <!--SKU展示 -->
@@ -61,16 +50,16 @@
       </view>
     </view>
 
-    <!--<block wx:if="{{status.open}}">-->
+    <block wx:if="{{status.open}}">
       <view class="buy-panel-next {{sku.next ? '' : 'buy-panel-empty'}}" @tap="confirm({{action}})">
         <text>{{buttonText}}</text>
       </view>
-    <!--</block>-->
-    <!--<block wx:else>-->
-      <!--<view class="buy-panel-next buy-panel-empty" catchtap="onCloseTap" >-->
-        <!--<text>未营业</text>-->
-      <!--</view>-->
-    <!--</block>-->
+    </block>
+    <block wx:else>
+      <view class="buy-panel-next buy-panel-empty" catchtap="onCloseTap" >
+        <text>未营业</text>
+      </view>
+    </block>
 
   </view>
 </template>
@@ -86,16 +75,11 @@
   import Event from '../../utils/Event';
   import Cart from '../../utils/Cart';
   import DiscountBadge from './discount_badge';
-  import group from '../../api/group'
 
   @connect({
     status: store.get('status')
   })
   export default class GoodsPanel extends wepy.component {
-    props = {
-      rules: {},
-      ruleId: {}
-    };
     data = {
       goods: {},
       source: null,
@@ -115,6 +99,7 @@
       }
       this.goods = goods;
       this.action = action;
+      // 构造SKU对象
       this.skuManager = new Sku(goods);
       this.skuManager.action = action;
       this.display = true;
@@ -158,14 +143,14 @@
           this.$apply();
           this.cartManager.plus(this.goods, skuText, num);
         } else if (type == 'group') {
-          const cart = this.cartManager.createCart(this.goods, skuText, num);
-          const trade = await order.createCartTrade([cart], {orderType: 10});
-          const param = {
-            ruleId: this.ruleId,
-            order: trade,
-            id: 0
-          };
-          await group.goodsGroup(param)
+          // const cart = this.cartManager.createCart(this.goods, skuText, num);
+          // const trade = await order.createCartTrade([cart], {orderType: 10});
+          // const param = {
+          //   ruleId: this.ruleId,
+          //   order: trade,
+          //   id: 0
+          // };
+          // await group.goodsGroup(param)
         } else {
           const cart = this.cartManager.createCart(this.goods, skuText, num);
           const trade = order.createCartTrade([cart], {orderType: 10});
@@ -188,6 +173,8 @@
           return '加入购物车'
         } else if (this.action == 'buy') {
           return '立即购买';
+        } else if (this.action == 'group') {
+          return '一键开团';
         }
       },
       quantity() {

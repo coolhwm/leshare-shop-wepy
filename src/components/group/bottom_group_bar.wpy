@@ -10,12 +10,12 @@
       <icon class="like{{!isFav ? '' : '-fill'}} normal" style="color: {{!isFav ? 'gray' : 'red'}}" />
       <text class="xs">收藏</text>
     </view>
-    <view class="column-center btn-buy" @tap="handlePlusCart({{rules.goods}})">
-      <text class="xxl money-box">￥{{rules.goods.sellPrice}}</text>
+    <view class="column-center btn-buy" @tap="handleBuy({{rule.goods}})">
+      <text class="xxl money-box">￥{{rule.goods.sellPrice}}</text>
       <text>单独购买</text>
     </view>
-    <view class="column-center btn-group" @tap="handleBuy({{rules.goods}})">
-      <text class="xxl money-box">￥{{rules.price}}</text>
+    <view class="column-center btn-group" @tap="handleGroup({{rule.goods}}, {{rule.goodsGroupSkuDetails}})">
+      <text class="xxl money-box">￥{{rule.price}}</text>
       <text>一键开团</text>
     </view>
   </view>
@@ -29,7 +29,7 @@
 
   export default class GroupBar extends wepy.component {
     props = {
-      rules: {}
+      rule: {}
     };
     data = {
       isFav: false
@@ -38,9 +38,9 @@
       async fav() {
         if (this.isFav) {
           await Tips.confirm('确认取消收藏?');
-          await favorite.remove(this.rules.goods.id);
+          await favorite.remove(this.rule.goods.id);
         } else {
-          await favorite.add(this.rules.goods.id);
+          await favorite.add(this.rule.goods.id);
           await Tips.success('收藏成功');
         }
         this.isFav = !this.isFav;
@@ -48,7 +48,7 @@
       }
     };
     watch = {
-      async rules(current, origin) {
+      async rule(current, origin) {
         if (origin != null && origin.id != null) return;
         const result = await favorite.is(current.goods.id);
         this.isFav = result.isFavorite == 1;
@@ -69,6 +69,7 @@
     bottom: 0;
     height: 105rpx;
     width: 100%;
+    border-top: $border;
     background-color: white;
     .btn-fav{
       border-left: $border;

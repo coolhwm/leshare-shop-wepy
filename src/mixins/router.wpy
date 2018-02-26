@@ -19,6 +19,28 @@
       Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
     }
     /**
+     * 拼团
+     */
+    group(goods, details) {
+      // 只能在SLIDER模式下触发，否则会降级为购物车购买
+      // 处理规格替换拼团价格
+      if (goods.goodsSkuInfo && details) {
+        const originDetails = goods.goodsSkuInfo.goodsSkuDetails;
+        originDetails.forEach(detail => {
+          const {sku, goodsSkuDetailBase: base} = detail;
+          const groupDetail = details.find(item => item.sku == sku);
+          if (groupDetail) {
+            base.price = groupDetail.price
+          } else {
+            console.warn(`[group] can not find group price, sku=${sku}`)
+          }
+        })
+      }
+      const source = this.$root.$wxpage.route;
+      const action = 'group';
+      Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
+    }
+    /**
      * 加入购物车
      */
     plusCart(goods, goodsSku = '') {
@@ -124,6 +146,12 @@
        */
       handleBuy(goods) {
         this.buy(goods);
+      },
+      /**
+       * 处理拼团事件
+       */
+      handleGroup(goods, detail) {
+        this.group(goods, detail);
       },
       /**
        * 处理跳转到购物车页面
