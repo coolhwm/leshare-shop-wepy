@@ -2,6 +2,7 @@
   import wepy from 'wepy';
   import Event from '../utils/Event';
   import Tips from '../utils/Tips';
+  import api from '../api/goods';
 
   /**
    * 分页通用方法
@@ -34,6 +35,9 @@
           } else {
             console.warn(`[group] can not find group price, sku=${sku}`)
           }
+          // 重新计算标签
+          api._processGoodsPriceRange(goods);
+          api._processGoodsPriceLabel(goods);
         })
       }
       const source = this.$root.$wxpage.route;

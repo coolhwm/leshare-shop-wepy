@@ -182,7 +182,7 @@ export default class goods extends base {
       // priceLable = `${detail.minPrice}~${detail.maxPrice}`;
       priceLable = detail.minPrice;
     }
-    detail.priceLable = isNaN(detail.priceLable) ? priceLable : priceLable.toFixed.toFixed(2);
+    detail.priceLable = isNaN(detail.priceLable) ? priceLable : priceLable.toFixed(2);
   }
 
   /**
