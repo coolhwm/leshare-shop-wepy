@@ -120,8 +120,9 @@
         'pages/customer/sign_in',
         'pages/coupon/use',
         'pages/shop/contact',
-        'pages/shop/pay',
-        'pages/shop/share'
+        'pages/shop/share',
+        'pages/shop/group_share',
+        'pages/shop/pay'
       ],
       window: {
         backgroundTextStyle: 'dark',

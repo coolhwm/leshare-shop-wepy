@@ -1,9 +1,9 @@
 <template>
   <view class="container" wx:if="{{init}}">
-    <view class="canvas-box" hidden="{{canvasHidden}}">
+    <view class="canvas-box" wx:if="{{canvasHidden}}">
       <view class="column-center">
-        <view id="share-box" class="canvas">
-          <canvas style="width: 100%; height: {{windowHeight}}px;" canvas-id="firstCanvas"></canvas>
+        <view class="canvas">
+          <canvas style="width: 100%; height: {{canvasHeight}}px;" canvas-id="firstCanvas"></canvas>
         </view>
         <button class="btn" @tap="savaCanvasAsImage">保存图片</button>
         <text class="mt20 xs white">点击按钮保存图片到相册</text>
@@ -17,7 +17,7 @@
   import base from '../../mixins/base';
   import store from '../../store/utils';
   import code from '../../api/code';
-  import tips from '../../utils/Tips';
+  import canvas from '../../utils/Canvas';
   import { connect } from 'wepy-redux';
   @connect({
     shop: store.get('shop')
@@ -25,91 +25,61 @@
   export default class Share extends wepy.page {
     def = {
       init: false,
-      canvasHidden: true,
-      windowWidth: 0,
-      windowHeight: 0,
+      canvasHidden: false,
       shop: {},
-      code: ''
+      code: '',
+      canvasWidth: null,
+      canvasHeight: null,
+      user: {}
     };
     data = {...this.def};
     async onLoad () {
       // 初始化Store
       await store.init();
       const system = JSON.stringify(wepy.getSystemInfoSync());
-      this.windowWidth = JSON.parse(system).windowWidth * 0.9;
-      this.windowHeight = JSON.parse(system).windowHeight * 0.6;
+      this.canvasWidth = JSON.parse(system).windowWidth * 0.9;
+      this.canvasHeight = JSON.parse(system).windowHeight * 0.7;
       this.shop.images[0] = 'http://pic2.ooopic.com/12/58/16/15bOOOPICae.jpg';
-      this.code = await code.getCode('oTOYP0fh9-HnAHvu2niBI3s4h0LU', 'pages/home/home');
-      this.loadCanvas();
+      this.user = wepy.getStorageSync('user');
+      this.code = await code.getCode(this.user.openId, 'pages/home/home');
       this.loaded();
     };
-    loadCanvas() {
-      const param = {};
-      const that = this;
-      wx.downloadFile({
-        url: this.shop.images[0],
-        success(res) {
-          param.image = res.tempFilePath;
-        }
-      });
-      wx.downloadFile({
-        url: this.code.message,
-        success(res) {
-          param.code = res.tempFilePath;
-          that.drawCanvas(param);
-        }
-      });
-    }
 
-    drawCanvas(param) {
-      const context = wepy.createCanvasContext('firstCanvas');
-      const imageWidth = this.windowWidth - 20;
-      const imageHeight = this.windowHeight * 0.65;
-      const margin = 10;
-
-      context.setFillStyle('#FFFFFF');
-      context.fillRect(0, 0, this.windowWidth, this.windowHeight);
-
-      context.drawImage(param.image, margin, margin, imageWidth, imageHeight);
-
-      context.setFillStyle('#000000');
-      context.setTextAlign('left');
-      context.setFontSize(20);
-      context.fillText(this.shop.name, margin, imageHeight + margin + 30);
-
-      context.setFillStyle('#454545');
-      context.setTextAlign('left');
-      context.setFontSize(15);
-      context.fillText(this.shop.address, margin, imageHeight + margin + 55);
-
-      context.setFillStyle('#454545');
-      context.setTextAlign('left');
-      context.setFontSize(15);
-      context.fillText(this.shop.phone, margin, imageHeight + margin + 75);
-
-      context.drawImage(param.code, this.windowWidth - 95 - margin, imageHeight + margin * 2, 95, 95);
-      context.draw();
+    async drawCanva() {
+      // 图片
+      const image = await wepy.downloadFile({url: this.shop.images[0]});
+      image.x = 10;
+      image.y = 10;
+      image.imageWidth = this.canvasWidth - 20;
+      image.imageHeight = this.canvasHeight * 0.7;
+      // 二维码
+      const code = await wepy.downloadFile({url: this.code.message});
+      code.x = this.canvasWidth * 0.7;
+      code.y = this.canvasHeight * 0.75;
+      code.imageWidth = this.canvasWidth * 0.25;
+      code.imageHeight = this.canvasWidth * 0.25;
+      // 创建基本画布
+      canvas.createCanvasContext('firstCanvas');
+      // 绘制画布
+      canvas.setCanvas('#FFFFFF', this.canvasWidth, this.canvasHeight);
+      // 绘制图片
+      canvas.canvasImage(image);
+      // 绘制店铺名称
+      canvas.canvasTextLeft(this.shop.name, this.canvasWidth * 0.06, '#000000', 10, this.canvasHeight * 0.8);
+      canvas.canvasTextLeft(this.shop.address, this.canvasWidth * 0.04, '#454545', 10, this.canvasHeight * 0.85);
+      canvas.canvasTextLeft(this.shop.phone, this.canvasWidth * 0.04, '#454545', 10, this.canvasHeight * 0.9);
+      // 绘制二维码
+      canvas.canvasImage(code);
+      canvas.draw();
     }
     methods = {
-      modalTap2() {
-        this.canvasHidden = false;
+      async modalTap2() {
+        this.drawCanva();
+        this.canvasHidden = true;
       },
       savaCanvasAsImage () {
-        // 调用 wx.canvasToTempFilePath方法
-        wx.canvasToTempFilePath({
-          // 通过id 指定是哪个canvas
-          canvasId: 'firstCanvas',
-          success(res) {
-            // 成功之后保存到本地
-            wx.saveImageToPhotosAlbum({
-              filePath: res.tempFilePath,
-              success: function (res) {
-                tips.success('保存成功');
-              }
-            })
-          }
-        });
-        this.canvasHidden = true;
+        canvas.saveImage('firstCanvas');
+        this.canvasHidden = false;
       }
     };
     mixins = [base];
@@ -129,18 +99,19 @@
     background: rgba(0, 0, 0, 0.4);
     overflow: hidden;
     z-index: 1;
+
+    .canvas {
+      margin-top: 20%;
+      width: 90%;
+      overflow: hidden;
+      background-color: #fff;
+    }
+
+    .btn{
+      width: 90%;
+      margin-top: 20rpx;
+    }
   }
 
-  .canvas {
-    margin-top: 20%;
-    width: 90%;
-    overflow: hidden;
-    background-color: #fff;
-  }
-
-  .btn{
-    width: 90%;
-    margin-top: 10rpx;
-  }
 
 </style>

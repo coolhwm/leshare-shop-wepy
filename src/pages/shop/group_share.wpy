@@ -1,0 +1,108 @@
+<template>
+  <view class="container" wx:if="{{init}}">
+    <view class="column-center">
+      <canvas  class="canvas-box" style="width: {{canvasWidth}}px; height: {{canvasHeight}}px;" canvas-id="groupShare" @longtap="saveCanvas"></canvas>
+    </view>
+    <text class="mt20 column-center">邀请卡说明</text>
+    <view class="explain column">
+      <text class="muted xs">1.长按上图，保存图片到相册</text>
+      <text class="muted xs">2.在相册中找到图片，分享到朋友圈或微信好友</text>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import canvas from '../../utils/Canvas';
+  import code from '../../api/code';
+
+  export default class GroupShare extends wepy.page {
+    def = {
+      init: false,
+      canvasWidth: null,
+      canvasHeight: null,
+      user: {}
+    };
+    data = {...this.def};
+
+    async onLoad() {
+      const system = JSON.stringify(wepy.getSystemInfoSync());
+      this.canvasWidth = JSON.parse(system).windowWidth * 0.9;
+      this.canvasHeight = JSON.parse(system).windowHeight * 0.8;
+      this.user = wepy.getStorageSync('user');
+      this.code = await code.getCode(this.user.openId, 'pages/home/home');
+      await this.drawCanva();
+      this.loaded();
+    };
+    async drawCanva() {
+      // 图片
+      const shareBg = {};
+      shareBg.tempFilePath = '/images/icons/share-bg.jpg';
+      shareBg.imageWidth = this.canvasWidth;
+      shareBg.imageHeight = this.canvasHeight;
+      // 创建基本画布
+      canvas.createCanvasContext('groupShare');
+      // 绘制图片
+      canvas.canvasImage(shareBg);
+      const fillRectParams = {
+        color: '#FFFFFF',
+        x: this.canvasWidth * 0.1 / 2,
+        y: this.canvasWidth * 0.1 / 2,
+        width: this.canvasWidth * 0.9,
+        height: this.canvasHeight * 0.93
+      };
+      canvas.fillRect(fillRectParams);
+      // 图片
+      const goodsImage = await wepy.downloadFile({url: 'http://static.pig66.com/uploadfile/2017/0509/20170509080749841.jpg'});
+      goodsImage.x = this.canvasWidth * 0.15;
+      goodsImage.y = this.canvasHeight * 0.1;
+      goodsImage.imageWidth = this.canvasWidth / 3.5;
+      goodsImage.imageHeight = this.canvasWidth / 3.5;
+      canvas.canvasImage(goodsImage);
+      canvas.canvasTextCenter('团分享-测试', this.canvasWidth * 0.043, '#000000', this.canvasWidth * 0.6, this.canvasHeight * 0.13);
+      canvas.canvasTextCenter('￥ 0.01', this.canvasWidth * 0.04, '#ff3644', this.canvasWidth * 0.545, this.canvasHeight * 0.18);
+      canvas.canvasTextCenter('原价: ￥ 1', this.canvasWidth * 0.027, '#c7c7c7', this.canvasWidth * 0.545, this.canvasHeight * 0.21);
+      canvas.canvasTextCenter('2人成团', this.canvasWidth * 0.035, '#ff3644', this.canvasWidth * 0.545, this.canvasHeight * 0.28);
+      canvas.canvasTextCenter('成团截止日期 02-25 18:30', this.canvasWidth * 0.04, '#ff3644', this.canvasWidth / 2, this.canvasHeight * 0.4);
+      const lineParams = {
+        color: '#ff3644',
+        x: this.canvasWidth * 0.5 / 2,
+        y: this.canvasHeight * 0.85 / 2,
+        width: this.canvasWidth * 0.5,
+        height: this.canvasHeight * 0.002
+      };
+      canvas.fillRect(lineParams);
+      canvas.canvasTextCenter('已有1人参加，剩余1个名额。', this.canvasWidth * 0.03, '#454545', this.canvasWidth / 2, this.canvasHeight * 0.47);
+      canvas.canvasTextCenter('快来参加吧！', this.canvasWidth * 0.03, '#454545', this.canvasWidth / 2, this.canvasHeight * 0.5);
+      // 二维码
+      const code = await wepy.downloadFile({url: this.code.message});
+      code.x = this.canvasWidth * 0.25;
+      code.y = this.canvasHeight * 0.55;
+      code.imageWidth = this.canvasWidth * 0.5;
+      code.imageHeight = this.canvasWidth * 0.5;
+      // 绘制二维码
+      canvas.canvasImage(code);
+      canvas.draw();
+    }
+
+    methods = {
+      saveCanvas() {
+        canvas.saveImage('groupShare');
+      }
+    };
+
+    config = {
+      navigationBarTitleText: '生成邀请卡'
+    };
+    mixins = [base];
+  }
+</script>
+<style lang="scss">
+  @import "../../styles/variable";
+  .canvas-box{
+    margin-top: 40rpx;
+  }
+  .explain{
+    margin-left: 80rpx;
+  }
+</style>

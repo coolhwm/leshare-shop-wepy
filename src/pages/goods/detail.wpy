@@ -26,11 +26,12 @@
             <view class="small label primary" wx:if="{{detail.isRecommend == 1}}">推荐</view>
             <text class="name">{{detail.name}}</text>
           </view>
-          <view class="share-box">
-            <button open-type="share" plain class="column-center"  wx:if="{{isShare}}">
-              <icon class="share small" />
-              <text class="sm">分享</text>
-            </button>
+          <view class="share-box column-center" @tap="shareGoods">
+            <!--<button open-type="share" plain class="column-center"  wx:if="{{isShare}}">-->
+
+            <!--</button>-->
+            <icon class="share small" />
+            <text class="sm">分享</text>
           </view>
         </view>
 
@@ -138,6 +139,16 @@
     <block wx:if="{{isContact}}">
       <ContactWidget />
     </block>
+
+    <view class="canvas-box" wx:if="{{canvasHidden}}">
+      <view class="column-center">
+        <view id="share-box" class="canvas">
+          <canvas style="width: 100%; height: {{canvasHeight}}px;" canvas-id="goodsShare"></canvas>
+        </view>
+        <button class="btn" @tap="savaCanvasAsImage">保存图片</button>
+        <text class="mt20 xs white">点击按钮保存图片到相册</text>
+      </view>
+    </view>
   </view>
 
 </template>
@@ -164,6 +175,8 @@
   import BuyBar from '../../components/goods/bottom_buy_bar';
   import CouponPickPanel from '../../components/coupons/pick_panel';
   import CartWidget from '../../components/template/cart_widget';
+  import canvas from '../../utils/Canvas';
+  import code from '../../api/code';
 
   @connect({
     pickCoupons: store.get('pickCoupons'),
@@ -188,7 +201,11 @@
       isComment: true,
       isSales: true,
       isContact: true,
-      isShare: true
+      isShare: true,
+      canvasHidden: false,
+      canvasHeight: null,
+      canvasWidth: null,
+      code: ''
     };
     async onLoad ({goodsId}) {
       await store.init();
@@ -197,6 +214,11 @@
       this.count = await comment.count(goodsId);
       this.page = comment.page();
       this.tab = this.createTab();
+      const system = JSON.stringify(wepy.getSystemInfoSync());
+      this.canvasWidth = JSON.parse(system).windowWidth * 0.8;
+      this.canvasHeight = JSON.parse(system).windowHeight * 0.75;
+      this.user = wepy.getStorageSync('user');
+      this.code = await code.getCode(this.user.openId, `pages/goods/detail`);
       this.loaded();
     };
     createTab() {
@@ -231,7 +253,44 @@
         path: `/pages/goods/detail?goodsId=${id}`
       };
     }
+
+    async drawCanvas() {
+      // 图片
+      const image = await wepy.downloadFile({url: this.detail.imageUrl});
+      image.x = 10;
+      image.y = 10;
+      image.imageWidth = this.canvasWidth - 20;
+      image.imageHeight = this.canvasWidth - 20;
+      // 二维码
+      const code = await wepy.downloadFile({url: this.code.message});
+      code.x = this.canvasWidth * 0.7;
+      code.y = this.canvasHeight * 0.75;
+      code.imageWidth = this.canvasWidth * 0.25;
+      code.imageHeight = this.canvasWidth * 0.25;
+      // 创建基本画布
+      canvas.createCanvasContext('goodsShare');
+      // 绘制画布
+      canvas.setCanvas('#ffffff', this.canvasWidth, this.canvasHeight);
+      // 绘制图片
+      canvas.canvasImage(image);
+      // 绘制店铺名称
+      canvas.canvasTextLeft(this.detail.name, this.canvasWidth * 0.05, '#3b3a3a', 10, this.canvasHeight * 0.7);
+      canvas.canvasTextLeft(this.detail.feeText, this.canvasWidth * 0.04, '#454545', 10, this.canvasHeight * 0.76);
+      canvas.canvasTextLeft('￥' + this.detail.sellPrice, this.canvasWidth * 0.07, '#ff3b3b', 10, this.canvasHeight * 0.9);
+      canvas.canvasTextCenter('扫描二维码进入商品详情', this.canvasWidth * 0.03, '#454545', this.canvasWidth / 2, this.canvasHeight * 0.96);
+      // 绘制二维码
+      canvas.canvasImage(code);
+      canvas.draw();
+    }
+
     methods = {
+      savaCanvasAsImage() {
+        canvas.saveImage('goodsShare');
+      },
+      async shareGoods () {
+        this.drawCanvas();
+        this.canvasHidden = true;
+      },
       /**
        * 打开领取优惠券面板
        */
@@ -421,5 +480,27 @@
         padding: 20rpx;
       }
     }
+  }
+  .canvas-box {
+       position: fixed;
+       width: 100%;
+       height: 100%;
+       top: 0rpx;
+       background: rgba(0, 0, 0, 0.4);
+       overflow: hidden;
+       z-index: 1;
+     }
+
+  .canvas {
+    margin-top: 17%;
+    width: 80%;
+    height: 90%;
+    overflow: hidden;
+    background-color: #fff;
+  }
+
+  .btn{
+    width: 80%;
+    margin-top: 10rpx;
   }
 </style>
