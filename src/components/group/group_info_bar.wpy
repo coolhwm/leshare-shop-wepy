@@ -22,11 +22,8 @@
   </view>
   <view class="column group-info-box" wx:else>
     <view class="row-between top-box">
-      <text class="xl">{{processing.length}}人在开团，可直接参与</text>
-      <view class="row">
-        <text class="muted">查看更多</text>
-        <icon class="more" color="gray"/>
-      </view>
+      <text class="xl">查看全部开团情况，可直接参与</text>
+      <icon class="more" color="gray"/>
     </view>
     <view class="column">
       <view class="row-between info-item-box" wx:for="{{processing}}" wx:for-index="index" wx:for-item="item" wx:key="index">
@@ -43,7 +40,12 @@
             </view>
             <text class="muted sm">{{item.time}}</text>
           </view>
-          <text class="ml20 btn-box xl">去参团</text>
+          <view wx:if="item.isPar">
+            <text class="ml20 btn-box xl">已参团</text>
+          </view>
+          <view wx:else  @tap="handleGroup({{item.rule.goods}}, {{item.rule.goodsGroupSkuDetails}}, {{item.rule.id}})">
+            <text class="ml20 btn-box xl">去参团</text>
+          </view>
         </view>
       </view>
     </view>
@@ -53,24 +55,26 @@
 
 <script>
   import wepy from 'wepy';
+  import router from '../../mixins/router';
 
   export default class GroupInfoBar extends wepy.component {
     props = {
-      processing: {},
-      groupTime: {}
+      processing: {}
     };
     data = {
       isFav: false,
       time: {}
     };
     methods = {
+      add (info) {
+        console.info(info)
+      }
     };
     computed = {
-      header () {
-      }
     };
     watch ={
     };
+    mixins = [router];
   }
 </script>
 

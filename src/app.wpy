@@ -126,7 +126,9 @@
         'pages/customer/comment_list',
         'pages/customer/balance',
         'pages/group/index',
-        'pages/group/goods_detail'
+        'pages/group/goods_detail',
+        'pages/group/list',
+        'pages/group/group_detail'
       ],
       window: {
         backgroundTextStyle: 'dark',

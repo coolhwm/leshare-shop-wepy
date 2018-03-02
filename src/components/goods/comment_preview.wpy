@@ -1,7 +1,7 @@
 <template>
   <view class="column comment-preview-box" wx:if="{{init}}">
     <view class="row-between">
-      <text class="xxl">客户评价({{count.ALL}})</text>
+      <text class="xl">客户评价({{count.ALL}})</text>
       <view>
         <view wx:if="{{!this.detail || !this.count}}">
           <text>{{commentText}}</text>

@@ -1,0 +1,70 @@
+<template>
+  <view class="row group-detail-box">
+    <view class="group-goods-image">
+      <image src="../../images/icons/test.jpeg" mode="aspectFill"/>
+    </view>
+    <view class="column ml20 group-goods-msg-box">
+      <text class="group-goods-name lg">{{rule.goods.name}}</text>
+      <view>
+        <view class="mb20">
+          <text class="weak xs mr10">2人拼团</text>
+          <text class="weak">·</text>
+          <text class="weak xs ml10">拼团立省10.00</text>
+        </view>
+        <view>
+          <text class="group-price-box">￥0.01</text>
+          <text class="muted sellPrice-box">￥9.9</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class GroupGoodsDetail extends wepy.component {
+    props = {
+      detail: {}
+    };
+    data = {
+    };
+    methods = {
+    };
+    watch = {
+    };
+    mixins = [];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  $img-height: 220rpx;
+  .group-detail-box{
+    background: white;
+    border-bottom: $border;
+    padding: 20rpx;
+    align-items: flex-start;
+  }
+  .group-goods-image{
+    width: $img-height;
+    height: $img-height;
+    image{
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .group-goods-msg-box{
+    flex: 1;
+    height: $img-height;
+    justify-content: space-between;
+    .group-price-box{
+      font-size: 46rpx;
+      line-height: 46rpx;
+      color: #e64340;
+    }
+    .sellPrice-box{
+      text-decoration: line-through;
+    }
+  }
+</style>

@@ -132,8 +132,6 @@
         if (!this.sku.next) {
           return;
         }
-        type = 'group';
-        console.info(type);
         // 增加到购物车
         const {skuText, num} = this.sku;
         if (type == 'cart') {
@@ -142,19 +140,15 @@
           this.display = false;
           this.$apply();
           this.cartManager.plus(this.goods, skuText, num);
-        } else if (type == 'group') {
-          // const cart = this.cartManager.createCart(this.goods, skuText, num);
-          // const trade = await order.createCartTrade([cart], {orderType: 10});
-          // const param = {
-          //   ruleId: this.ruleId,
-          //   order: trade,
-          //   id: 0
-          // };
-          // await group.goodsGroup(param)
         } else {
           const cart = this.cartManager.createCart(this.goods, skuText, num);
           const trade = order.createCartTrade([cart], {orderType: 10});
-          this.$root.$preload('trade', trade);
+          const ruleId = this.goods.ruleId;
+          if (type == 'buy') {
+            this.$root.$preload('trade', {trade, type});
+          } else {
+            this.$root.$preload('trade', {trade, type, ruleId});
+          }
           this.$root.$navigate(`../order/trade`);
         }
         this.clear();

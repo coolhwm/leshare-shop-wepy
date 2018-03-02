@@ -20,7 +20,7 @@
         <view class="row mb20">
           <text class="xl">￥</text><text class="price-box">{{rules.price}}</text>
           <view class="column ml20">
-            <text class="muted sellPrice-box sm">￥{{rules.goods.sellPrice}}</text>
+            <text class="muted sellPrice-box sm">￥{{rules.goods.maxPrice}}</text>
             <view class="price-rule-box">
               <text class="xxs">{{rules.limitCustomer}}人拼团</text>
               <text class="ml10 xxs">{{save}}</text>
@@ -53,7 +53,7 @@
     <CommentPreview :goodsId.sync="goodsId"/>
 
     <!--拼团栏-->
-    <GroupInfoBar :processing.sync="processing" />
+    <GroupInfoBar :processing.sync="processing" :info.sync="info"/>
 
     <!--滑出购物面板-->
     <block >
@@ -69,7 +69,6 @@
   import auth from '../../api/auth';
   import store from '../../store/utils';
   import base from '../../mixins/base';
-  import pagination from '../../mixins/pagination'
   import Loading from '../../components/common/loading';
   import GroupBar from '../../components/group/bottom_group_bar';
   import TimeOutBar from '../../components/group/timeout_bar';
@@ -85,7 +84,7 @@
       endTime: '',
       goodsId: '',
       groupTime: '',
-      ruleId: 3,
+      ruleId: 25,
       rules: {},
       processing: {}
     };
@@ -120,8 +119,8 @@
     };
     computed = {
       save () {
-        if (this.rules.price && this.rules.goods.sellPrice) {
-          const num = (this.rules.goods.sellPrice * 1 - this.rules.price * 1).toFixed(2);
+        if (this.rules.price && this.rules.goods.maxPrice) {
+          const num = (this.rules.goods.maxPrice * 1 - this.rules.price * 1).toFixed(2);
           return `拼团立省￥${num}`
         }
       }
@@ -134,7 +133,7 @@
       SilderPanel: SilderPanel,
       Loading: Loading
     };
-    mixins = [base, pagination];
+    mixins = [base];
     config = {
       navigationBarTitleText: '商品详情'
     };

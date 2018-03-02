@@ -22,9 +22,11 @@
     /**
      * 拼团
      */
-    group(goods, details) {
+    group(goods, details, id) {
+      console.info(goods, details, id)
       // 只能在SLIDER模式下触发，否则会降级为购物车购买
       // 处理规格替换拼团价格
+      goods.ruleId = id;
       if (goods.goodsSkuInfo && details) {
         const originDetails = goods.goodsSkuInfo.goodsSkuDetails;
         originDetails.forEach(detail => {
@@ -42,6 +44,7 @@
       }
       const source = this.$root.$wxpage.route;
       const action = 'group';
+      console.info(goods, source);
       Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
     }
     /**
@@ -154,8 +157,8 @@
       /**
        * 处理拼团事件
        */
-      handleGroup(goods, detail) {
-        this.group(goods, detail);
+      handleGroup(goods, detail, id) {
+        this.group(goods, detail, id);
       },
       /**
        * 处理跳转到购物车页面

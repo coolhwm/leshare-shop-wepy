@@ -1,6 +1,7 @@
 import base from './base';
 import wepy from 'wepy';
 import Page from '../utils/Page';
+import { TYPE, ACTION, orderUtils as utils } from './order_const';
 
 export default class group extends base {
   /***
@@ -12,20 +13,44 @@ export default class group extends base {
   }
 
   /***
-   * 获取正在拼团信息
+   * 获取商品详情中所展示的拼团信息(3条)
    */
   static processing (ruleId) {
     const url = `${this.baseUrl}/goods_group/processing?rule_id=${ruleId}`;
-    return this.get(url).then(data => this._processGroupDetail(data));
+    return this.get(url).then(data => this._processGroupProcessingDetail(data));
   }
 
   /***
    * 开团/参团
    */
-  static goodsGroup (param) {
+  static goodsGroup (trade, address, ruleId, id) {
     const url = `${this.baseUrl}/goods_group`;
+    this._processOrderAddress(trade, address);
+    const param = {
+      ruleId: ruleId,
+      order: trade,
+      id: id
+    };
     return this.post(url, param);
   }
+
+  /**
+   * 返回参团列表
+   */
+  static list (status) {
+    const url = `${this.baseUrl}/goods_group/list?status=${status}`;
+    return new Page(url, this._processOrderListItem.bind(this));
+  }
+
+  /***
+   * 根据拼团ID查找拼团详情
+   */
+  static groupDetail (groupId) {
+    const url = `${this.baseUrl}/goods_group/${groupId}`;
+    return this.get(url).then(data => this._processGroupDetail(data));
+  }
+
+  // *** 数据处理方法
 
   /**
    * 处理商品详情
@@ -44,6 +69,43 @@ export default class group extends base {
     this._processGoodsPriceLabel(detail);
 
     return detail;
+  }
+
+  /***
+   * 拼团团长信息处理
+   */
+  static _processGroupProcessingDetail (detail) {
+    // 筛选团长
+    this._processGroupHeader(detail);
+    // 判断是否已开团
+    this._processGroupParticipated(detail);
+
+    // 处理开团时间
+    this._processGroupTime(detail);
+
+    return detail.slice(0, 3);
+  }
+
+  /***
+   * 拼团详情处理
+   */
+  static _processGroupDetail (data) {
+    const rule = data.rule;
+    // 解析预览图
+    this._processGoodsPreview(rule);
+
+    // 解析SKU规格
+    this._processSkuLable(rule);
+
+    // 处理价格范围区间
+    this._processGoodsPriceRange(rule);
+
+    // 处理价格标签
+    this._processGoodsPriceLabel(rule);
+    // 处理list.length和参团人数一致
+    const list = data.list;
+    this._processGroupListLength(list, rule);
+    return data;
   }
 
   /**
@@ -122,19 +184,13 @@ export default class group extends base {
   }
 
   /***
-   * 拼团团长信息处理
+   * 团长信息处理
    */
-  static _processGroupDetail (detail) {
-    // 筛选团长
+  static _processGroupHeader (detail) {
     detail.forEach(item => {
       if (!item.list) return;
       item.header = item.list.find(item => item.head === true);
     });
-
-    // 处理开团时间
-    this._processGroupTime(detail);
-
-    return detail
   }
 
   /***
@@ -155,5 +211,148 @@ export default class group extends base {
         item.time = `已结束`;
       }
     }
+  }
+
+  /***
+   * 判断是否已开团
+   */
+  static _processGroupParticipated (detail) {
+    const user = wepy.getStorageSync('user');
+    detail.forEach(group => {
+      group.list.forEach(item => {
+        group.isPar = item.customerId == user.id;
+      });
+    });
+  }
+
+  /**
+   * 处理订单地址
+   */
+  static _processOrderAddress (order, address) {
+    if (utils.isDeliveryOrder(order.orderType)) {
+      order.receiveName = `${address.name} ${address.sexText}`;
+      order.receivePhone = address.phone;
+      order.address = address.fullAddress;
+    }
+  }
+
+  /**
+   * 处理订单列表数据
+   */
+  static async _processOrderListItem (detail) {
+    const order = detail.detail.order;
+    order.shopName = this.shopName;
+    // 处理订单状态
+    this._processOrderStatusDesc(order);
+    // 处理订单价格
+    this._processOrderPrice(order);
+    // 处理订单动作
+    this._processOrderAction(order, true);
+    // 处理商品信息
+    const goods = order.orderGoodsInfos;
+    this._processOrderGoods(goods);
+    // 处理离线支付
+    this._processOfflinePayment(order);
+  }
+
+  /**
+   * 处理状态描述文本
+   */
+  static _processOrderStatusDesc (order) {
+    const {status, orderType} = order;
+    order.statusText = utils.statusName(orderType, status);
+    order.statusDesc = utils.statusDesc(order, status);
+    // 订单关闭增加关闭原因
+    if (order.status == 7 && order.orderCloseNote) {
+      const reason = order.orderCloseNote;
+      order.statusDesc = `订单已关闭，关闭原因：${reason.note}`;
+    }
+  }
+
+  /**
+   * 处理订单状态
+   */
+  static _processOrderPrice (order) {
+    order.postFee = this._fixedPrice(order.postFee);
+    order.dealPrice = this._fixedPrice(order.dealPrice);
+    order.finalPrice = this._fixedPrice(order.finalPrice);
+    order.couponPrice = this._fixedPrice(order.couponPrice);
+    order.reduceFee = this._fixedPrice(order.reduceFee);
+    order.bonusPrice = this._fixedPrice(order.bonusPrice);
+  }
+
+  static _fixedPrice (price) {
+    if (price == null || isNaN(Number(price))) {
+      return null;
+    }
+    return price.toFixed(2);
+  }
+
+  /**
+   * 处理订单动作
+   */
+  static _processOrderAction (order, inner = false) {
+    const basic = [];
+    // 有退款的情况
+    if (order.curRefund) {
+      basic.push(ACTION.REFUND_DETAIL);
+    }
+    const {orderType, paymentType, status} = order;
+    const actions = utils.statusActions(orderType, paymentType, status);
+    if (actions) {
+      const display = inner ? actions.filter(v => v.inner != true) : actions;
+      order.actions = basic.concat(display);
+    } else {
+      order.actions = basic;
+    }
+  }
+
+  /**
+   * 处理订单商品信息
+   */
+  static _processOrderGoods (goods) {
+    if (goods == null || goods.length < 1) return;
+    goods.forEach(item => {
+      item.imageUrl += '/small';
+    });
+    if (goods == null || goods.length < 1) {
+      return;
+    }
+    goods.forEach(item => {
+      // 处理SKU描述
+      const sku = item.goodsSku;
+      item.skuText = this._processOrderSku(sku);
+    });
+  }
+
+  /**
+   * 处理SKU的默认值
+   */
+
+  static _processOrderSku (goodsSku) {
+    let skuText = '';
+    if (goodsSku && goodsSku != '') {
+      skuText = goodsSku.replace(/:/g, ',');
+    }
+    return skuText;
+  }
+
+  static _processOfflinePayment (order) {
+    const orderType = order.orderType;
+    if (orderType != TYPE.OFFLINE) return;
+    order.orderGoodsInfos = [{
+      imageUrl: 'http://img.leshare.shop/shop/other/wechat_pay.png',
+      goodsName: `微信支付 ${order.finalPrice}元`,
+      goodsPrice: order.finalPrice,
+      count: 1
+    }];
+    return order;
+  }
+
+  /***
+   * 处理参团list
+   */
+  static _processGroupListLength (list, rule) {
+    for (let i = 1; i < rule.limitCustomer; i++) list.push({})
   }
 }

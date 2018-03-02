@@ -1,0 +1,63 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view class="container column" wx:if="{{init}}">
+    <!--商品详情栏-->
+    <GoodsDetail : detail.sync="detail"/>
+
+    <!--拼团状态-->
+    <StatusBar :endTime.sync="endTime" />
+
+    <!--拼团栏-->
+    <GroupInfoBar />
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import GroupGoodsDetail from '../../components/group/group_goods_detail'
+  import GroupInfoBar from '../../components/group/group_info_bar';
+  import StatusBar from '../../components/group/status_bar';
+  import base from '../../mixins/base';
+  import group from '../../api/group'
+  import Loading from '../../components/common/loading';
+
+  export default class GroupDetail extends wepy.page {
+    data = {
+      init: false,
+      groupId: 38,
+      detail: {},
+      rule: {}
+    };
+    async onLoad () {
+      this.detail = await group.groupDetail(this.groupId);
+      this.rule = this.detail.rule
+      this.loaded();
+    };
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      return {};
+    }
+    methods = {
+    };
+    computed = {
+    };
+    components = {
+      GoodsDetail: GroupGoodsDetail,
+      GroupInfoBar: GroupInfoBar,
+      StatusBar: StatusBar,
+      Loading: Loading
+    };
+    mixins = [base];
+    config = {
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+</style>
