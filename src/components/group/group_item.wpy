@@ -82,7 +82,7 @@
         console.warn(e);
         await Tips.success('关闭失败');
       }
-      Event.emit(Event.ORDER_LIST_UPDATE);
+      Event.emit(Event.GROUP_LIST_UPDATE);
     }
     /**
      * 订单支付
@@ -98,7 +98,7 @@
         console.warn(e);
         await Tips.success('支付取消');
       }
-      Event.emit(Event.ORDER_LIST_UPDATE);
+      Event.emit(Event.GROUP_LIST_UPDATE);
     }
     /**
      * 订单收货
@@ -113,7 +113,7 @@
         console.warn(e);
         await Tips.success('操作失败');
       }
-      Event.emit(Event.ORDER_LIST_UPDATE);
+      Event.emit(Event.GROUP_LIST_UPDATE);
     }
     /**
      * 再来一单

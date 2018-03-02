@@ -3,10 +3,10 @@
 
   <view class="container column" wx:if="{{init}}">
     <!--商品详情栏-->
-    <GoodsDetail : detail.sync="detail"/>
+    <GoodsDetail :rule.sync="rule"/>
 
     <!--拼团状态-->
-    <StatusBar :endTime.sync="endTime" />
+    <StatusBar :groupTime.sync="groupTime" :detail.sync="detail" />
 
     <!--拼团栏-->
     <GroupInfoBar />
@@ -28,11 +28,13 @@
       init: false,
       groupId: 38,
       detail: {},
-      rule: {}
+      rule: {},
+      groupTime: ''
     };
     async onLoad () {
       this.detail = await group.groupDetail(this.groupId);
-      this.rule = this.detail.rule
+      this.rule = this.detail.rule;
+      this.groupTime = this.detail.groupTime;
       this.loaded();
     };
     /**
@@ -53,6 +55,7 @@
     };
     mixins = [base];
     config = {
+      navigationBarTitleText: '拼团详情'
     };
   }
 </script>

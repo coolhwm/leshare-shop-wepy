@@ -1,14 +1,14 @@
 <template>
   <view class="column-center status-box">
-    <view class="row">
-      <view class="status-avatar-box" wx:for="{{participants}}" wx:for-index="index" wx:for-item="item" wx:key="index">
-        <view  wx:if="{{item.isChief}}" class="weui-badge">团长</view>
-        <image class="{{item.isChief ? 'chief-box':'participants-box'}}" wx:if="{{item.avatar}}" src="{{item.avatar}}"/>
+    <view class="row customer-box">
+      <view class="status-avatar-box" wx:for="{{detail.list}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+        <view  wx:if="{{item.head}}" class="weui-badge">团长</view>
+        <image class="{{item.head ? 'head-box':'participants-box'}}" wx:if="{{item.customer}}" src="{{item.customer.avatarUrl}}"/>
         <icon wx:else class="question"/>
       </view>
     </view>
     <view class="status-spare-box row">
-      <text>仅剩</text><view class="num-box"><text>{{num}}</text></view><text>人，即可成团！</text>
+      <text>仅剩</text><view class="num-box"><text>{{detail.rule.limitCustomer}}</text></view><text>人，即可成团！</text>
     </view>
     <view class="row-center">
       <view class="status-line-box mr10" style="width: 140rpx;"></view>
@@ -31,24 +31,17 @@
 
   export default class StatusBar extends wepy.component {
     props = {
-      endTime: {
+      groupTime: {
         default: ''
-      }
+      },
+      detail: {}
     };
     data = {
-      content: {},
-      participants: [
-        {
-          avatar: '../../images/icons/test.jpeg',
-          isChief: true
-        },
-        {},
-        {}
-      ]
+      content: {}
     };
     countdowm(timestamp) {
       let timer = setInterval(async () => {
-        const time = new Date(timestamp) - new Date();
+        const time = new Date(timestamp) - new Date() + 1000 * 60 * 60 * 72;
         if (time > 0) {
           let hour = Math.floor(time / 3600000);
           let min = Math.floor((time / 60000) % 60);
@@ -70,13 +63,10 @@
     methods = {
     };
     computed = {
-      num () {
-        return this.participants.filter(item => !item.avatar).length
-      }
     };
     watch = {
-      endTime(endTime) {
-        this.countdowm(endTime);
+      groupTime(groupTime) {
+        this.countdowm(groupTime);
       }
     };
   }
@@ -89,10 +79,13 @@
     margin-bottom: 10rpx;
     padding: 40rpx 0;
   }
+  .customer-box{
+    align-items: flex-start;
+  }
   .status-avatar-box{
     position: relative;
     margin-right: 20rpx;
-    .participants-box, .chief-box{
+    .participants-box, .head-box{
       width: 80rpx;
       height: 80rpx;
       border-radius: 40rpx;
@@ -100,8 +93,11 @@
     .participants-box{
       border: $border;
     }
-    .chief-box{
+    .head-box{
       border: 1px solid #e64340;
+    }
+    image{
+      margin: 4rpx;
     }
     icon{
       font-size: 80rpx;

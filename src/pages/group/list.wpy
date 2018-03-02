@@ -48,15 +48,15 @@
     };
     data = {...this.def};
     async onLoad ({status}) {
-      if (status != null && status != '' && status != 'null') {
+      if (status != null && status !== '' && status !== 'null') {
         this.tab.selectedId = status;
       }
       this.page = group.list();
       await this.next();
-      Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
+      Event.listen(Event.GROUP_LIST_UPDATE, this.update.bind(this), this);
     };
     params() {
-      const status = this.tab.list.find(item => item.id == this.tab.selectedId);
+      const status = this.tab.list.find(item => item.id === this.tab.selectedId);
       return {status: status.status};
     }
     methods = {

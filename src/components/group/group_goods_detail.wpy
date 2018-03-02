@@ -1,19 +1,19 @@
 <template>
   <view class="row group-detail-box">
     <view class="group-goods-image">
-      <image src="../../images/icons/test.jpeg" mode="aspectFill"/>
+      <image src="{{rule.goods.imageUrl}}" mode="aspectFill"/>
     </view>
     <view class="column ml20 group-goods-msg-box">
       <text class="group-goods-name lg">{{rule.goods.name}}</text>
       <view>
         <view class="mb20">
-          <text class="weak xs mr10">2人拼团</text>
+          <text class="weak xs mr10">{{rule.limitCustomer}}人拼团</text>
           <text class="weak">·</text>
-          <text class="weak xs ml10">拼团立省10.00</text>
+          <text class="weak xs ml10">拼团立省{{rule.goods.maxPrice * 1 - rule.price * 1}}</text>
         </view>
         <view>
-          <text class="group-price-box">￥0.01</text>
-          <text class="muted sellPrice-box">￥9.9</text>
+          <text class="group-price-box">￥{{rule.price}}</text>
+          <text class="muted sellPrice-box">￥{{rule.goods.maxPrice}}</text>
         </view>
       </view>
     </view>
@@ -25,7 +25,7 @@
 
   export default class GroupGoodsDetail extends wepy.component {
     props = {
-      detail: {}
+      rule: {}
     };
     data = {
     };
@@ -41,8 +41,8 @@
   @import "../../styles/variable";
   $img-height: 220rpx;
   .group-detail-box{
+    margin-bottom: 10rpx;
     background: white;
-    border-bottom: $border;
     padding: 20rpx;
     align-items: flex-start;
   }
