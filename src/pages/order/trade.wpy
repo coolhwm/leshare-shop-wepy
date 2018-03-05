@@ -262,7 +262,7 @@
        * 选择付款方式
        */
       async paymentType () {
-        if (this.shop.offPay == 0 || this.isForhearOrPack) {
+        if (this.shop.offPay === 0 || this.isForhearOrPack) {
           return;
         }
         const trade = this.trade;
@@ -292,21 +292,21 @@
           return;
         }
         // 数据准备
-        if (this.trade.orderType == TYPE.TAKEAWAY) {
+        if (this.trade.orderType === TYPE.TAKEAWAY) {
           this.trade.deliveryType = 'CITY';
         }
         // 表单ID
         this.trade.formId = detail.formId;
         // 创建订单
-        const order = this.type == 'buy' ? await this.requestCreateOrder(this.trade, this.selectedAddress) : await this.requestCreateGroup(this.trade, this.selectedAddress, this.ruleId, 0);
-        const trade = this.type == 'buy' ? order : order.list[0];
+        const order = this.type === 'buy' ? await this.requestCreateOrder(this.trade, this.selectedAddress) : await this.requestCreateGroup(this.trade, this.selectedAddress, this.ruleId, 0);
+        const trade = this.type === 'buy' ? order : order.list[0];
         // 检查是否下单成功
         if (trade == null) {
           Tips.alert('下单失败');
           return;
         }
         // 检查是否为离线订单
-        if (trade.paymentType == PAYMENT.OFFLINE) {
+        if (trade.paymentType === PAYMENT.OFFLINE) {
           Tips.success('下单成功');
         } else {
 //           发起支付
@@ -326,7 +326,11 @@
         // 刷新列表
         Event.emit(Event.ORDER_LIST_UPDATE);
         // TODO 这个可能在TAB里
-        WxUtils.backOrRedirect('/pages/customer/index_template');
+        if (this.type === 'buy') {
+          WxUtils.backOrRedirect('/pages/customer/index_template');
+        } else {
+          WxUtils.backOrRedirect('/pages/group/list');
+        }
       }
     };
     /**

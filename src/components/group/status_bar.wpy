@@ -8,7 +8,7 @@
       </view>
     </view>
     <view class="status-spare-box row">
-      <text>仅剩</text><view class="num-box"><text>{{detail.rule.limitCustomer}}</text></view><text>人，即可成团！</text>
+      <text>仅剩</text><view class="num-box"><text>{{detail.rule.limitCustomer - detail.joinCount}}</text></view><text>人，即可成团！</text>
     </view>
     <view class="row-center">
       <view class="status-line-box mr10" style="width: 140rpx;"></view>
@@ -22,7 +22,7 @@
       </view>
       <view class="status-line-box ml10" style="width: 140rpx;"></view>
     </view>
-    <view class="status-btn-box row-center">邀请好友参团</view>
+    <view class="status-btn-box row-center" @tap="invite">邀请好友参团</view>
   </view>
 </template>
 
@@ -41,7 +41,7 @@
     };
     countdowm(timestamp) {
       let timer = setInterval(async () => {
-        const time = new Date(timestamp) - new Date() + 1000 * 60 * 60 * 72;
+        const time = new Date(timestamp) - new Date() + 1000 * 60 * 60 * 24;
         if (time > 0) {
           let hour = Math.floor(time / 3600000);
           let min = Math.floor((time / 60000) % 60);
@@ -61,6 +61,9 @@
       }, 1000);
     };
     methods = {
+      invite () {
+        console.info('邀请')
+      }
     };
     computed = {
     };
@@ -74,6 +77,7 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  $avatar-width: 80rpx;
   .status-box{
     background: white;
     margin-bottom: 10rpx;
@@ -86,9 +90,9 @@
     position: relative;
     margin-right: 20rpx;
     .participants-box, .head-box{
-      width: 80rpx;
-      height: 80rpx;
-      border-radius: 40rpx;
+      width: $avatar-width;
+      height: $avatar-width;
+      border-radius: $avatar-width / 2;
     }
     .participants-box{
       border: $border;
@@ -100,8 +104,8 @@
       margin: 4rpx;
     }
     icon{
-      font-size: 80rpx;
-      line-height: 80rpx;
+      font-size: $avatar-width;
+      line-height: $avatar-width;
       color: $color-muted;
     }
     .weui-badge{

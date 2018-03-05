@@ -26,13 +26,12 @@
   export default class GroupDetail extends wepy.page {
     data = {
       init: false,
-      groupId: 38,
       detail: {},
       rule: {},
       groupTime: ''
     };
-    async onLoad () {
-      this.detail = await group.groupDetail(this.groupId);
+    async onLoad ({groupId}) {
+      this.detail = await group.groupDetail(groupId);
       this.rule = this.detail.rule;
       this.groupTime = this.detail.groupTime;
       this.loaded();

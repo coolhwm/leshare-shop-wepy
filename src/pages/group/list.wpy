@@ -6,7 +6,7 @@
 
     <!--列表展现-->
     <repeat for="{{page.list}}" key="index" index="index" item="item">
-       <GroupItem :order.sync="item" @tap.user="detail"/>
+       <GroupItem :group.sync="item" @tap.user="detail"/>
     </repeat>
 
     <!-- 加载提示 -->
@@ -74,7 +74,7 @@
     };
     mixins = [base, pagination];
     config = {
-      navigationBarTitleText: '我的订单',
+      navigationBarTitleText: '我的拼团',
       enablePullDownRefresh: true
     };
   }

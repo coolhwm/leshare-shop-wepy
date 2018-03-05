@@ -39,7 +39,9 @@ export default class group extends base {
    */
   static list (status) {
     const url = `${this.baseUrl}/goods_group/list?status=${status}`;
-    return new Page(url, this._processOrderListItem.bind(this));
+    return new Page(url, item => {
+      this._processGroupListItem(item);
+    });
   }
 
   /***
@@ -220,7 +222,7 @@ export default class group extends base {
     const user = wepy.getStorageSync('user');
     detail.forEach(group => {
       group.list.forEach(item => {
-        group.isPar = item.customerId == user.id;
+        group.isPar = item.customerId === user.id;
       });
     });
   }
@@ -239,7 +241,7 @@ export default class group extends base {
   /**
    * 处理订单列表数据
    */
-  static async _processOrderListItem (detail) {
+  static async _processGroupListItem (detail) {
     const order = detail.detail.order;
     order.shopName = this.shopName;
     // 处理订单状态
@@ -253,6 +255,8 @@ export default class group extends base {
     this._processOrderGoods(goods);
     // 处理离线支付
     this._processOfflinePayment(order);
+
+    return detail;
   }
 
   /**
@@ -263,7 +267,7 @@ export default class group extends base {
     order.statusText = utils.statusName(orderType, status);
     order.statusDesc = utils.statusDesc(order, status);
     // 订单关闭增加关闭原因
-    if (order.status == 7 && order.orderCloseNote) {
+    if (order.status === 7 && order.orderCloseNote) {
       const reason = order.orderCloseNote;
       order.statusDesc = `订单已关闭，关闭原因：${reason.note}`;
     }
