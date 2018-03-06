@@ -357,6 +357,7 @@ export default class group extends base {
    * 处理参团list
    */
   static _processGroupListLength (list, rule) {
+    rule.spareCustomer = rule.limitCustomer - list.length;
     for (let i = 1; i < rule.limitCustomer; i++) list.push({})
   }
 }
