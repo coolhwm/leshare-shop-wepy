@@ -22,7 +22,7 @@
   </view>
   <view class="column group-info-box" wx:else>
     <view class="row-between top-box">
-      <text class="xl">查看全部开团情况，可直接参与</text>
+      <text class="xl">以下小伙伴已发起拼团，您可以直接参加</text>
       <icon class="more" color="gray"/>
     </view>
     <view class="column">
@@ -33,18 +33,18 @@
         </view>
         <view class="row">
           <view class="column-center">
-            <view class="row" wx:if="{{limitCustomer > item.list.length}}">
+            <view class="row" wx:if="{{item.rule.limitCustomer > item.list.length}}">
               <text class="lg">还差</text>
-              <view class="customer-num-box">{{limitCustomer - item.list.length}}人</view>
+              <view class="customer-num-box">{{item.rule.limitCustomer - item.list.length}}人</view>
               <text class="lg">拼成</text>
             </view>
             <text class="muted sm">{{item.time}}</text>
           </view>
-          <view wx:if="item.isPar">
-            <text class="ml20 btn-box xl">已参团</text>
+          <view wx:if="{{item.isPar}}" @tap="joined">
+            <text class="ml20 btn-box">已参团</text>
           </view>
           <view wx:else  @tap="handleGroup({{item.rule.goods}}, {{item.rule.goodsGroupSkuDetails}}, {{item.rule.id}})">
-            <text class="ml20 btn-box xl">去参团</text>
+            <text class="ml20 btn-box">去参团</text>
           </view>
         </view>
       </view>
@@ -66,8 +66,8 @@
       time: {}
     };
     methods = {
-      add (info) {
-        console.info(info)
+      joined () {
+
       }
     };
     computed = {
@@ -115,7 +115,7 @@
       .btn-box{
         background-color: $color-primary;
         color: white;
-        padding:10rpx 36rpx;
+        padding:9rpx 25rpx;
         border-radius: 10rpx;
       }
     }
