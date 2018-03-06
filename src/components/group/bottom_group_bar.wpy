@@ -1,0 +1,103 @@
+<template>
+  <view class="buy-bar-placeholder">
+  </view>
+  <view class="row group-bar-box">
+    <view class="column-center btn-home">
+      <icon class="home normal" color="gray"/>
+      <text class="xs">首页</text>
+    </view>
+    <view class="column-center btn-fav" @tap="fav">
+      <icon class="like{{!isFav ? '' : '-fill'}} normal" style="color: {{!isFav ? 'gray' : 'red'}}" />
+      <text class="xs">收藏</text>
+    </view>
+    <view class="column-center btn-buy" @tap="handlePlusCart({{goods}})">
+      <text class="xxl money-box">￥{{rules.goods.sellPrice}}</text>
+      <text>单独购买</text>
+    </view>
+    <view class="column-center btn-group" @tap="handleBuy({{goods}})">
+      <text class="xxl money-box">￥{{rules.price}}</text>
+      <text>一键开团</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import favorite from '../../api/favorite';
+  import router from '../../mixins/router';
+  import wepy from 'wepy';
+  import Tips from '../../utils/Tips';
+
+  export default class GroupBar extends wepy.component {
+    props = {
+      rules: {}
+    };
+    data = {
+      isFav: false
+    };
+    methods = {
+      async fav() {
+        if (this.isFav) {
+          await Tips.confirm('确认取消收藏?');
+          await favorite.remove(this.goods.id);
+        } else {
+          await favorite.add(this.goods.id);
+          await Tips.success('收藏成功');
+        }
+        this.isFav = !this.isFav;
+        this.$apply();
+      }
+    };
+    watch = {
+      async goods(current, origin) {
+        if (origin != null && origin.id != null) return;
+        const result = await favorite.is(current.id);
+        this.isFav = result.isFavorite == 1;
+        this.$apply();
+      }
+    };
+    mixins = [router];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  $btn-width: 260rpx;
+  $btn-sm-width: (750rpx - $btn-width * 2) / 2;
+  .group-bar-box{
+    position: fixed;
+    bottom: 0;
+    height: 105rpx;
+    width: 100%;
+    background-color: white;
+    .btn-fav{
+      border-left: $border;
+    }
+    .btn-fav, .btn-home{
+      width: $btn-sm-width;
+      height: inherit;
+    }
+    .btn-buy, .btn-group{
+      height: 100%;
+      width: $btn-width;
+      background-color: white;
+      border-left: $border;
+      text{
+        color: #FD4B49;
+      }
+      .money-box{
+        font-weight: bold;
+      }
+    }
+    .btn-group{
+      background-color: #FD4B49;
+      text{
+        color: #fff;
+      }
+    }
+  }
+  .buy-bar-placeholder{
+    height: 105rpx;
+    width: 100%;
+  }
+</style>

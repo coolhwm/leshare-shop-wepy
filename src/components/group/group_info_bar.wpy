@@ -1,0 +1,137 @@
+<template>
+  <view class="column group-info-box" wx:if="{{!processing}}">
+    <text class="top-box xl">拼团玩法</text>
+    <view class="row-around content-box">
+      <view class="column-center info-rule-box">
+        <icon class="payment large" color="gray"/>
+        <text class="xs muted">支付开团或者参团</text>
+      </view>
+      <view class="column-center info-rule-box">
+        <icon class="groups large" color="gray"/>
+        <text class="xs muted">邀请好友参团</text>
+      </view>
+      <view class="column-center info-rule-box">
+        <icon class="car large" color="gray"/>
+        <text class="xs muted">人数达到分别发货</text>
+      </view>
+      <view class="column-center info-rule-box">
+        <icon class="refund large" color="gray"/>
+        <text class="xs muted">人数不够自动退款</text>
+      </view>
+    </view>
+  </view>
+  <view class="column group-info-box" wx:else>
+    <view class="row-between top-box">
+      <text class="xl">{{processing.length}}人在开团，可直接参与</text>
+      <view class="row">
+        <text class="muted">查看更多</text>
+        <icon class="more" color="gray"/>
+      </view>
+    </view>
+    <view class="column">
+      <view class="row-between info-item-box" wx:for="{{processing}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+        <view class="row">
+          <image src="{{item.header.customer.avatarUrl}}"/>
+          <text class="ml20 lg">{{item.header.customer.nickName}}</text>
+        </view>
+        <view class="row">
+          <view class="column-center">
+            <view class="row" wx:if="{{limitCustomer > item.list.length}}">
+              <text class="lg">还差</text><span>{{limitCustomer - item.list.length}}人</span><text class="lg">拼成</text>
+            </view>
+            <text class="muted sm">{{time}}</text>
+          </view>
+          <text class="ml20 btn-box xl">去参团</text>
+        </view>
+      </view>
+    </view>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class GroupInfoBar extends wepy.component {
+    props = {
+      processing: {},
+      groupTime: {}
+    };
+    data = {
+      isFav: false,
+      time: {}
+    };
+    countdowm(timestamp) {
+      let timer = setInterval(async () => {
+        const time = new Date(timestamp) - new Date() + 1000 * 60 * 60 * 72;
+        if (time > 0) {
+          let hour = Math.floor(time / 3600000);
+          let min = Math.floor((time / 60000) % 60);
+          let sec = Math.floor((time / 1000) % 60);
+          hour = hour < 10 ? '0' + hour : hour;
+          min = min < 10 ? '0' + min : min;
+          sec = sec < 10 ? '0' + sec : sec;
+          this.time = `还剩${hour}:${min}:${sec}`
+        } else {
+          clearInterval(timer);
+        }
+        this.$apply();
+      }, 1000);
+    };
+    methods = {
+    };
+    computed = {
+      header () {
+      }
+    };
+    watch ={
+      groupTime (time) {
+        this.countdowm(time);
+      }
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .group-info-box{
+    background-color: white;
+    padding: 0 20rpx;
+    margin-bottom: 10rpx;
+    .top-box{
+      border-bottom: $border;
+      padding: 20rpx 0;
+    }
+    .content-box{
+      text{
+        text-align: center;
+        height: 76rpx;
+      }
+    }
+    .info-rule-box{
+      width: 25%;
+      padding: 20rpx 10rpx;
+    }
+    .info-item-box + .info-item-box{
+      border-top: $border;
+    }
+    .info-item-box{
+      padding: 20rpx 0;
+      image{
+        width: 80rpx;
+        height: 80rpx;
+        border-radius: 40rpx;
+      }
+      span{
+        color: #FD4B49;
+        font-size: $text-lg;
+      }
+      .btn-box{
+        background-color: #FD4B49;
+        color: white;
+        padding:10rpx 36rpx;
+        border-radius: 10rpx;
+      }
+    }
+  }
+</style>

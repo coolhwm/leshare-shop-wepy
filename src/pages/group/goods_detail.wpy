@@ -1,0 +1,167 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <!--轮播展示图-->
+  <view class="container column" wx:if="{{init}}">
+    <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" @tap="previewDetailSwiper">
+      <block wx:for="{{rules.goods.images}}" wx:key="id">
+        <swiper-item>
+          <image src="{{item.url}}/preview" mode="aspectFill" style="width: 100%"></image>
+        </swiper-item>
+      </block>
+    </swiper>
+
+    <!--拼团倒计时栏-->
+    <TimeOutBar :endTime.sync="endTime" :callback="callback" />
+
+    <!--商品基本信息展示-->
+    <view class="row-between goods-msg-box">
+      <view class="column">
+        <view class="row mb20">
+          <text class="xl">￥</text><text class="price-box">{{rules.price}}</text>
+          <view class="column ml20">
+            <text class="muted sellPrice-box sm">￥{{rules.goods.sellPrice}}</text>
+            <view class="price-rule-box">
+              <text class="xxs">{{rules.limitCustomer}}人拼团</text>
+              <text class="ml10 xxs">{{save}}</text>
+            </view>
+          </view>
+        </view>
+        <text class="goods-name-box">{{rules.goods.name}}</text>
+      </view>
+      <view class="column-center">
+        <icon class="share small" color="gray"/>
+        <text class="muted sm">分享有惊喜</text>
+      </view>
+    </view>
+    <view class="row-between goods-des-box">
+      <view class="row">
+        <icon class="status-6 xsmall" style="color: #FD4B49;"/>
+        <text class="xs ml10">全场包邮</text>
+      </view>
+      <view class="row">
+        <icon class="status-6 xsmall" style="color: #FD4B49;"/>
+        <text class="xs ml10">七天退换</text>
+      </view>
+      <view class="row">
+        <icon class="status-6 xsmall" style="color: #FD4B49;"/>
+        <text class="xs ml10">假一赔十</text>
+      </view>
+      <icon class="more xsmall" color="gray"/>
+    </view>
+
+    <!--评论预览-->
+    <CommentPreview :goodsId.sync="goodsId"/>
+
+    <!--拼团栏-->
+    <GroupInfoBar :processing.sync="processing" :groupTime.sync="groupTime" />
+
+    <!--底栏-->
+    <GroupBar :rules.sync="rules" />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import pagination from '../../mixins/pagination'
+  import Loading from '../../components/common/loading';
+  import GroupBar from '../../components/group/bottom_group_bar';
+  import TimeOutBar from '../../components/group/timeout_bar';
+  import CommentPreview from '../../components/goods/comment_preview';
+  import GroupInfoBar from '../../components/group/group_info_bar';
+  import group from '../../api/group'
+
+  export default class GroupGoodsDetail extends wepy.page {
+    data = {
+      init: false,
+      endTime: '',
+      goodsId: '',
+      groupTime: '',
+      ruleId: 3,
+      rules: {},
+      processing: {}
+    };
+    async onLoad () {
+      this.rules = await group.rules(this.ruleId);
+      this.processing = await group.processing(this.ruleId);
+      this.endTime = this.rules.endTime;
+      this.goodsId = this.rules.goodsId;
+      this.groupTime = this.processing.map(item => {
+        return item.groupTime
+      });
+      this.loaded();
+    };
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      return {};
+    }
+    methods = {
+      /**
+       * 预览轮播图
+       */
+      previewDetailSwiper() {
+        const urls = this.rules.goods.images.map(value => value.url);
+        wepy.previewImage({
+          urls: urls
+        });
+      }
+    };
+    computed = {
+      save () {
+        if (this.rules.price && this.rules.goods.sellPrice) {
+          const num = (this.rules.goods.sellPrice * 1 - this.rules.price * 1).toFixed(2);
+          return `拼团立省￥${num}`
+        }
+      }
+    };
+    components = {
+      GroupBar: GroupBar,
+      TimeOutBar: TimeOutBar,
+      CommentPreview: CommentPreview,
+      GroupInfoBar: GroupInfoBar,
+      Loading: Loading
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '商品详情',
+      navigationBarBackgroundColor: '#FD4B49'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .goods-msg-box{
+    background: white;
+    padding: 20rpx;
+    .price-box{
+      font-size: 80rpx;
+      line-height: 80rpx;
+    }
+    .sellPrice-box{
+      text-decoration: line-through;
+      line-height: $text-sm;
+    }
+    .price-rule-box{
+      text{
+        background: #FEE7EF;
+        color: #FB4578;
+        padding: 0 4rpx;
+      }
+    }
+    .goods-name-box{
+      font-size: 30rpx;
+      line-height: 30rpx;
+    }
+  }
+  .goods-des-box{
+    background: white;
+    padding: 20rpx;
+    border-top:$border;
+    margin-bottom: 10rpx;
+  }
+</style>

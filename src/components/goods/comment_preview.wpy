@@ -1,0 +1,138 @@
+<template>
+  <view class="column comment-preview-box" wx:if="{{init}}">
+    <view class="row-between">
+      <text class="xxl">客户评价({{count.ALL}})</text>
+      <view>
+        <view wx:if="{{!this.detail || !this.count}}">
+          <text>{{commentText}}</text>
+        </view>
+        <view wx:elif="{{this.count.ALL == 0}}">
+          <text>{{commentText}}</text>
+        </view>
+        <view wx:else>
+          <text class="mr10">好评率</text>
+          <text class="comment-text-box">{{commentText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{this.detail && this.count.ALL > 0}}">
+      <view class="row comment-tags-box mt20 mb10">
+        <text class="xs">好评({{count.GOOD}})</text>
+        <text class="xs bad-box">中评({{count.NORMAL}})</text>
+        <text class="xs bad-box">差评({{count.BAD}})</text>
+      </view>
+
+      <repeat for="{{comment}}" key="index" index="index" item="item">
+        <CommentItem :comment.sync="item" />
+      </repeat>
+
+      <view class="column-center">
+        <text class="comment-preview-btn mt10">查看全部评价</text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import goods from '../../api/goods';
+  import comment from '../../api/comment';
+  import pagination from '../../mixins/pagination.wpy';
+  import CommentItem from '../../components/goods/comment_item'
+
+  @connect({
+    discount: store.get('discount')
+  })
+  export default class CommentPreview extends wepy.component {
+    props = {
+      goodsId: {}
+    };
+    data = {
+      init: false,
+      page: {
+        list: [
+        ]
+      },
+      count: {},
+      detail: {}
+    };
+    params() {
+      return {
+        status: 'ALL',
+        goods_id: this.goodsId
+      };
+    }
+    methods = {
+    };
+    computed = {
+      commentText() {
+        if (!this.detail) {
+          return '用户评价加载中...';
+        }
+        const count = this.count;
+        if (!count) {
+          return '用户评价加载中...';
+        } else if (count.ALL == 0) {
+          return '该商品暂无评价';
+        } else {
+          const rate = (count.GOOD / count.ALL * 100).toFixed(0);
+          return `${rate}%`;
+        }
+      },
+      comment () {
+        if (this.page.list.length <= 0) return;
+        return this.page.list.splice(0, 2);
+      }
+    };
+    watch = {
+      async goodsId (id) {
+        this.count = await comment.count(id);
+        this.detail = await goods.getInfo(id, this.discount);
+        this.page = await comment.page();
+        this.next();
+      }
+    };
+    components = {
+      CommentItem: CommentItem
+    };
+    mixins = [pagination]
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .comment-preview-box{
+    background: white;
+    margin-bottom: 10rpx;
+    padding: 20rpx 30rpx;
+    .comment-text-box{
+      color: #E02F25;
+    }
+    .comment-tags-box{
+      text{
+        padding: 6rpx 16rpx;
+        border-radius: 26rpx;
+        margin-right: 10rpx;
+        background: #FEECEE;
+      }
+      .bad-box{
+        background: $color-border;
+      }
+    }
+  }
+  .score-box{
+    border-bottom: none;
+    padding: 20rpx 0;
+  }
+  .score-box + .score-box{
+    border-top: $border;
+  }
+  .comment-preview-btn{
+    padding: 8rpx 30rpx;
+    border: $border;
+    border-radius: 30rpx;
+  }
+</style>
