@@ -1,4 +1,5 @@
 <template>
+  <!--没有正在成团-->
   <view class="column group-info-box" wx:if="{{!processing}}">
     <text class="top-box xl">拼团玩法</text>
     <view class="row-around content-box">
@@ -20,9 +21,11 @@
       </view>
     </view>
   </view>
+
+  <!--正在成团列表-->
   <view class="column group-info-box" wx:else>
     <view class="row-between top-box">
-      <text class="xl">查看全部开团情况，可直接参与</text>
+      <text>查看全部开团情况，可直接参与</text>
       <icon class="more" color="gray"/>
     </view>
     <view class="column">
@@ -34,17 +37,17 @@
         <view class="row">
           <view class="column-center">
             <view class="row" wx:if="{{limitCustomer > item.list.length}}">
-              <text class="lg">还差</text>
+              <text class="">还差</text>
               <view class="customer-num-box">{{limitCustomer - item.list.length}}人</view>
-              <text class="lg">拼成</text>
+              <text class="">拼成</text>
             </view>
             <text class="muted sm">{{item.time}}</text>
           </view>
           <view wx:if="item.isPar">
-            <text class="ml20 btn-box xl">已参团</text>
+            <text class="ml20 btn-box ">已参团</text>
           </view>
           <view wx:else  @tap="handleGroup({{item.rule.goods}}, {{item.rule.goodsGroupSkuDetails}}, {{item.rule.id}})">
-            <text class="ml20 btn-box xl">去参团</text>
+            <text class="ml20 btn-box ">去参团</text>
           </view>
         </view>
       </view>
@@ -85,7 +88,7 @@
     padding: 0 20rpx;
     margin-bottom: 10rpx;
     .top-box{
-      border-bottom: $border;
+      border-bottom: $border-line;
       padding: 20rpx 0;
     }
     .content-box{
@@ -99,7 +102,7 @@
       padding: 20rpx 10rpx;
     }
     .info-item-box + .info-item-box{
-      border-top: $border;
+      border-top: $border-line;
     }
     .info-item-box{
       padding: 20rpx 0;

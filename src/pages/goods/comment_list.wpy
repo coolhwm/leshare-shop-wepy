@@ -36,7 +36,7 @@
       tab: null,
       goodsId: null
     };
-    async onLoad ({goodsId}) {
+    async onLoad ({goodsId, status = 'GOOD'}) {
       this.goodsId = goodsId;
       this.page = comment.page();
       const count = await comment.count(goodsId);
@@ -46,7 +46,7 @@
           { 'id': 'NORMAL', 'title': `一般(${count.NORMAL})` },
           { 'id': 'BAD', 'title': `不满意(${count.BAD})` }
         ],
-        'selectedId': 'GOOD',
+        'selectedId': status,
         'scroll': false
       };
       await this.next();
