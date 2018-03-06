@@ -94,6 +94,7 @@
       Event.listen(Event.GOODS_PANEL_OPEN, this.open.bind(this), this);
     }
     open({goods, source, action}) {
+      console.info(goods, source, action);
       if (source != this.source) {
         return;
       }
@@ -134,7 +135,7 @@
         }
         // 增加到购物车
         const {skuText, num} = this.sku;
-        if (type == 'cart') {
+        if (type === 'cart') {
           Tips.success('已加入购物车');
           // 关闭面板
           this.display = false;
@@ -144,7 +145,7 @@
           const cart = this.cartManager.createCart(this.goods, skuText, num);
           const trade = order.createCartTrade([cart], {orderType: 10});
           const ruleId = this.goods.ruleId;
-          if (type == 'buy') {
+          if (type === 'buy') {
             this.$root.$preload('trade', {trade, type});
           } else {
             this.$root.$preload('trade', {trade, type, ruleId});
@@ -163,12 +164,14 @@
         if (this.goods == null || this.sku == null) return;
         if (this.goods.totalStock < 1) {
           return '已售罄';
-        } else if (this.action == 'cart') {
+        } else if (this.action === 'cart') {
           return '加入购物车'
-        } else if (this.action == 'buy') {
+        } else if (this.action === 'buy') {
           return '立即购买';
-        } else if (this.action == 'group') {
+        } else if (this.action === 'group') {
           return '一键开团';
+        } else if (this.action === 'join') {
+          return '一键参团';
         }
       },
       quantity() {

@@ -22,8 +22,7 @@
     /**
      * 拼团
      */
-    group(goods, details, id) {
-      console.info(goods, details, id)
+    group(goods, details, id, state) {
       // 只能在SLIDER模式下触发，否则会降级为购物车购买
       // 处理规格替换拼团价格
       goods.ruleId = id;
@@ -31,7 +30,7 @@
         const originDetails = goods.goodsSkuInfo.goodsSkuDetails;
         originDetails.forEach(detail => {
           const {sku, goodsSkuDetailBase: base} = detail;
-          const groupDetail = details.find(item => item.sku == sku);
+          const groupDetail = details.find(item => item.sku === sku);
           if (groupDetail) {
             base.price = groupDetail.price
           } else {
@@ -43,8 +42,7 @@
         })
       }
       const source = this.$root.$wxpage.route;
-      const action = 'group';
-      console.info(goods, source);
+      const action = state;
       Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
     }
     /**
@@ -157,8 +155,8 @@
       /**
        * 处理拼团事件
        */
-      handleGroup(goods, detail, id) {
-        this.group(goods, detail, id);
+      handleGroup(goods, detail, id, state) {
+        this.group(goods, detail, id, state);
       },
       /**
        * 处理跳转到购物车页面

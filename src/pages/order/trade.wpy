@@ -298,7 +298,8 @@
         // 表单ID
         this.trade.formId = detail.formId;
         // 创建订单
-        const order = this.type === 'buy' ? await this.requestCreateOrder(this.trade, this.selectedAddress) : await this.requestCreateGroup(this.trade, this.selectedAddress, this.ruleId, 0);
+        const id = this.type === 'group' ? 0 : 1;
+        const order = this.type === 'buy' ? await this.requestCreateOrder(this.trade, this.selectedAddress) : await this.requestCreateGroup(this.trade, this.selectedAddress, this.ruleId, id);
         const trade = this.type === 'buy' ? order : order.list[0];
         // 检查是否下单成功
         if (trade == null) {

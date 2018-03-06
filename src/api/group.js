@@ -77,6 +77,19 @@ export default class group extends base {
    * 拼团团长信息处理
    */
   static _processGroupProcessingDetail (detail) {
+    detail.forEach(item => {
+      // 解析预览图
+      this._processGoodsPreview(item.rule);
+
+      // 解析SKU规格
+      this._processSkuLable(item.rule);
+
+      // 处理价格范围区间
+      this._processGoodsPriceRange(item.rule);
+
+      // 处理价格标签
+      this._processGoodsPriceLabel(item.rule);
+    });
     // 筛选团长
     this._processGroupHeader(detail);
     // 判断是否已开团

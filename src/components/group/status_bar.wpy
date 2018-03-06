@@ -10,7 +10,7 @@
     <view class="status-spare-box row">
       <text>仅剩</text><view class="num-box"><text>{{detail.rule.spareCustomer}}</text></view><text>人，即可成团！</text>
     </view>
-    <view class="row-center">
+    <view class="row-center" wx:if="{{content.hour}}">
       <view class="status-line-box mr10"></view>
       <view class="status-time-box row">
         <text>剩余</text>
@@ -22,7 +22,7 @@
       </view>
       <view class="status-line-box ml10"></view>
     </view>
-    <button class="status-btn-box row-center" open-type="share">邀请好友参团{{num}}</button>
+    <button class="status-btn-box row-center" open-type="share">邀请好友参团</button>
   </view>
 </template>
 
@@ -37,7 +37,7 @@
       detail: {}
     };
     data = {
-      content: {}
+      content: {},
     };
     countdowm(timestamp) {
       let timer = setInterval(async () => {

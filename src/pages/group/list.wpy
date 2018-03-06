@@ -14,7 +14,7 @@
   </view>
 
   <!--占位符-->
-  <Placeholder :show.sync="isPageEmpty" message="您还没有相关订单"/>
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关拼团信息"/>
 </template>
 
 <script>

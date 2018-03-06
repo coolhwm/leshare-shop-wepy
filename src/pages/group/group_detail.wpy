@@ -8,6 +8,17 @@
     <!--拼团状态-->
     <StatusBar :groupTime.sync="groupTime" :detail.sync="detail" />
 
+    <!--订单信息栏-->
+    <view class="row-between group-order-box">
+      <text>订单信息</text>
+      <view @tap="order({{detail}})">
+        <text class="muted sm">· 收件人</text>
+        <text class="muted sm ml10">· 收货地址 </text>
+        <text class="muted sm ml10">· 成团时间</text>
+        <icon class="more ml10" color="gray"/>
+      </view>
+    </view>
+
     <!--拼团栏-->
     <GroupInfoBar />
 
@@ -40,9 +51,20 @@
      * 页面分享
      */
     onShareAppMessage () {
-      return {};
+      const {name, id, imageUrl} = this.detail.rule.goods;
+      return {
+        title: name,
+        imageUrl: imageUrl,
+        path: `/pages/group/goods_detail?goodsId=${id}`
+      };
     }
     methods = {
+      order(detail) {
+        const user = wepy.getStorageSync('user');
+        const userId = user.id;
+        const orderId = detail.list.find(item => item.customerId === userId).orderId;
+        this.$navigate(`/pages/order/detail?orderId=${orderId}`);
+      }
     };
     computed = {
     };
@@ -61,5 +83,9 @@
 
 <style lang="scss">
   @import "../../styles/variable";
-
+  .group-order-box{
+    background-color: white;
+    margin-bottom: 10rpx;
+    padding: 20rpx;
+  }
 </style>

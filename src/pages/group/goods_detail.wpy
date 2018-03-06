@@ -142,6 +142,10 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .goods-swiper{
+    width: 750rpx;
+    height:480rpx;
+  }
 
   .goods-msg-box{
     background: white;
