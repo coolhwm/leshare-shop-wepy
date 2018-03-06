@@ -1,22 +1,19 @@
 <template>
-  <view class="column comment-preview-box" wx:if="{{init}}">
+  <view class="column comment-preview-box">
     <view class="row-between">
-      <text class="xl">客户评价({{count.ALL}})</text>
+      <text>客户评价({{count.ALL}})</text>
       <view>
-        <view wx:if="{{!this.detail || !this.count}}">
-          <text>{{commentText}}</text>
-        </view>
-        <view wx:elif="{{this.count.ALL == 0}}">
-          <text>{{commentText}}</text>
+        <view wx:if="{{count.ALL == 0}}">
+          <text class="comment-text-box">{{commentText}}</text>
         </view>
         <view wx:else>
-          <text class="mr10">好评率</text>
+          <text class="mr10" wx:if="{{init}}">好评率</text>
           <text class="comment-text-box">{{commentText}}</text>
         </view>
       </view>
     </view>
 
-    <view wx:if="{{this.detail && this.count.ALL > 0}}">
+    <view wx:if="{{count.ALL > 0}}">
       <view class="row comment-tags-box mt20 mb10">
         <text class="xs">好评({{count.GOOD}})</text>
         <text class="xs bad-box">中评({{count.NORMAL}})</text>
@@ -56,8 +53,7 @@
         list: [
         ]
       },
-      count: {},
-      detail: {}
+      count: null
     };
     params() {
       return {
@@ -69,11 +65,8 @@
     };
     computed = {
       commentText() {
-        if (!this.detail) {
-          return '用户评价加载中...';
-        }
         const count = this.count;
-        if (!count) {
+        if (!this.init) {
           return '用户评价加载中...';
         } else if (count.ALL == 0) {
           return '该商品暂无评价';
@@ -90,7 +83,6 @@
     watch = {
       async goodsId (id) {
         this.count = await comment.count(id);
-        this.detail = await goods.getInfo(id, this.discount);
         this.page = await comment.page();
         this.next();
       }
@@ -107,9 +99,9 @@
   .comment-preview-box{
     background: white;
     margin-bottom: 10rpx;
-    padding: 20rpx 30rpx;
+    padding: 20rpx;
     .comment-text-box{
-      color: #E02F25;
+      color: $color-muted;
     }
     .comment-tags-box{
       text{
