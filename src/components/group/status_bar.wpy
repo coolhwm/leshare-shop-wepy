@@ -7,20 +7,25 @@
         <icon wx:else class="question"/>
       </view>
     </view>
-    <view class="status-spare-box row">
+    <view class="status-spare-box row" wx:if="{{detail.rule.spareCustomer > 0}}">
       <text>仅剩</text><view class="num-box"><text>{{detail.rule.spareCustomer}}</text></view><text>人，即可成团！</text>
     </view>
-    <view class="row-center" wx:if="{{content.hour}}">
-      <view class="status-line-box mr10"></view>
-      <view class="status-time-box row">
-        <text>剩余</text>
-        <view class="time-num-box">{{content.hour}}</view>
-        <text>:</text>
-        <view class="time-num-box">{{content.min}}</view>
-        <text>:</text>
-        <view class="time-num-box">{{content.sec}}</view>
+    <view wx:else class="status-spare-box">
+      <text>该团已成团，快邀请小伙伴一起拼团</text>
+    </view>
+    <view>
+      <view class="row-center" wx:if="{{content.hour}}">
+        <view class="status-line-box mr10"></view>
+        <view class="status-time-box row">
+          <text>剩余</text>
+          <view class="time-num-box">{{content.hour}}</view>
+          <text>:</text>
+          <view class="time-num-box">{{content.min}}</view>
+          <text>:</text>
+          <view class="time-num-box">{{content.sec}}</view>
+        </view>
+        <view class="status-line-box ml10"></view>
       </view>
-      <view class="status-line-box ml10"></view>
     </view>
     <button class="status-btn-box row-center" open-type="share">邀请好友参团</button>
   </view>

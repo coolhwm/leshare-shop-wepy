@@ -16,7 +16,7 @@
     </view>
     <view class="column-center btn-group" @tap="handleGroup({{rule.goods}}, {{rule.goodsGroupSkuDetails}}, {{rule.id}}, {{state}}, 0)">
       <text class="xxl money-box">￥{{rule.price}}</text>
-      <text>一键开团</text>
+      <text>{{groupText}}</text>
     </view>
   </view>
 </template>
@@ -29,7 +29,10 @@
 
   export default class GroupBar extends wepy.component {
     props = {
-      rule: {}
+      rule: {},
+      groupText: {
+        default: '一键开团'
+      }
     };
     data = {
       isFav: false,

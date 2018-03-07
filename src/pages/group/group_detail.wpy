@@ -39,11 +39,13 @@
       init: false,
       detail: {},
       rule: {},
-      groupTime: ''
+      groupTime: '',
+      ruleId: ''
     };
     async onLoad ({groupId}) {
       this.detail = await group.groupDetail(groupId);
       this.rule = this.detail.rule;
+      this.ruleId = this.rule.ruleId;
       this.groupTime = this.detail.groupTime;
       this.loaded();
     };
