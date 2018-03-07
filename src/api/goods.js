@@ -75,9 +75,10 @@ export default class goods extends base {
         };
       }));
     }
+    const selectedId = list.length > 0 ? list[0].id : null;
     return {
-      list: list,
-      selectedId: list[0].id,
+      list,
+      selectedId,
       scroll: false
     };
   }
