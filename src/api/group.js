@@ -19,6 +19,15 @@ export default class group extends base {
     const url = `${this.baseUrl}/goods_group/processing?rule_id=${ruleId}`;
     return this.get(url).then(data => this._processGroupProcessingDetail(data));
   }
+  /***
+   * 获取正在拼团的拼团信息
+   */
+  static processingList (ruleId) {
+    const url = `${this.baseUrl}/goods_group/processing?rule_id=${ruleId}`;
+    return new Page(url, item => {
+      this._processGroupProcessingListDetail(item);
+    });
+  }
 
   /***
    * 开团/参团
@@ -74,7 +83,7 @@ export default class group extends base {
   }
 
   /***
-   * 拼团团长信息处理
+   * 拼团栏信息处理
    */
   static _processGroupProcessingDetail (detail) {
     detail.forEach(item => {
@@ -89,16 +98,44 @@ export default class group extends base {
 
       // 处理价格标签
       this._processGoodsPriceLabel(item.rule);
+
+      // 处理开团时间
+      this._processGroupTime(item);
+
+      // 筛选团长
+      this._processGroupHeader(item);
+
+      // 判断是否已开团
+      this._processGroupParticipated(item);
     });
-    // 筛选团长
-    this._processGroupHeader(detail);
+    return detail.slice(0, 3);
+  }
+  /***
+   * 正在拼团信息处理
+   */
+  static _processGroupProcessingListDetail (detail) {
+    // 解析预览图
+    this._processGoodsPreview(detail.rule);
+
+    // 解析SKU规格
+    this._processSkuLable(detail.rule);
+
+    // 处理价格范围区间
+    this._processGoodsPriceRange(detail.rule);
+
+    // 处理价格标签
+    this._processGoodsPriceLabel(detail.rule);
+
     // 判断是否已开团
     this._processGroupParticipated(detail);
 
     // 处理开团时间
     this._processGroupTime(detail);
 
-    return detail.slice(0, 3);
+    // 筛选团长
+    this._processGroupHeader(detail);
+
+    return detail;
   }
 
   /***
@@ -202,29 +239,25 @@ export default class group extends base {
    * 团长信息处理
    */
   static _processGroupHeader (detail) {
-    detail.forEach(item => {
-      if (!item.list) return;
-      item.header = item.list.find(item => item.head === true);
-    });
+    if (!detail.list) return;
+    detail.header = detail.list.find(item => item.head === true);
   }
 
   /***
    * 开团时间处理
    */
   static _processGroupTime (detail) {
-    for (let item of detail) {
-      const time = new Date(item.groupTime) - new Date() + 1000 * 60 * 60 * 24;
-      if (time > 0) {
-        let hour = Math.floor(time / 3600000);
-        let min = Math.floor((time / 60000) % 60);
-        let sec = Math.floor((time / 1000) % 60);
-        hour = hour < 10 ? '0' + hour : hour;
-        min = min < 10 ? '0' + min : min;
-        sec = sec < 10 ? '0' + sec : sec;
-        item.time = `还剩${hour}:${min}:${sec}`;
-      } else {
-        item.time = `已结束`;
-      }
+    const time = new Date(detail.groupTime) - new Date() + 1000 * 60 * 60 * 24;
+    if (time > 0) {
+      let hour = Math.floor(time / 3600000);
+      let min = Math.floor((time / 60000) % 60);
+      let sec = Math.floor((time / 1000) % 60);
+      hour = hour < 10 ? '0' + hour : hour;
+      min = min < 10 ? '0' + min : min;
+      sec = sec < 10 ? '0' + sec : sec;
+      detail.time = `还剩${hour}:${min}:${sec}`;
+    } else {
+      detail.time = `已结束`;
     }
   }
 
@@ -233,10 +266,8 @@ export default class group extends base {
    */
   static _processGroupParticipated (detail) {
     const user = wepy.getStorageSync('user');
-    detail.forEach(group => {
-      group.list.forEach(item => {
-        group.isPar = item.customerId === user.id;
-      });
+    detail.list.forEach(item => {
+      detail.isPar = item.customerId === user.id;
     });
   }
 

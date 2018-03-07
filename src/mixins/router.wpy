@@ -22,10 +22,11 @@
     /**
      * 拼团
      */
-    group(goods, details, id, state) {
+    group(goods, details, id, state, groupId) {
       // 只能在SLIDER模式下触发，否则会降级为购物车购买
       // 处理规格替换拼团价格
       goods.ruleId = id;
+      goods.groupId = groupId;
       if (goods.goodsSkuInfo && details) {
         const originDetails = goods.goodsSkuInfo.goodsSkuDetails;
         originDetails.forEach(detail => {
@@ -155,8 +156,8 @@
       /**
        * 处理拼团事件
        */
-      handleGroup(goods, detail, id, state) {
-        this.group(goods, detail, id, state);
+      handleGroup(goods, detail, id, state, groupId) {
+        this.group(goods, detail, id, state, groupId);
       },
       /**
        * 处理跳转到购物车页面

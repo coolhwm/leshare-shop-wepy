@@ -21,7 +21,7 @@
     </view>
   </view>
   <view class="column group-info-box" wx:else>
-    <view class="row-between top-box">
+    <view class="row-between top-box" @tap="moreGroup({{processing.length > 0 ? processing[0].rule.id : ''}})">
       <text>以下小伙伴已发起拼团，您可以直接参加</text>
       <icon class="more" color="gray"/>
     </view>
@@ -43,7 +43,7 @@
           <view wx:if="{{item.isPar}}" @tap="joined({{item}})">
             <text class="ml20 btn-box">已参团</text>
           </view>
-          <view wx:else  @tap="handleGroup({{item.rule.goods}}, {{item.rule.goodsGroupSkuDetails}}, {{item.rule.id}}, {{state}})">
+          <view wx:else  @tap="handleGroup({{item.rule.goods}}, {{item.rule.goodsGroupSkuDetails}}, {{item.rule.id}}, {{state}}, {{item.id}})">
             <text class="ml20 btn-box">去参团</text>
           </view>
         </view>
@@ -62,7 +62,6 @@
       processing: {}
     };
     data = {
-      isFav: false,
       time: {},
       state: 'join'
     };
@@ -72,6 +71,10 @@
         const userId = user.id;
         const groupId = item.list.find(item => item.customerId === userId).groupId;
         this.$root.$navigate(`/pages/group/group_detail?groupId=${groupId}`);
+      },
+      moreGroup (ruleId) {
+        if (ruleId === null) return;
+        this.$root.$navigate(`/pages/group/group_info_list?ruleId=${ruleId}`)
       }
     };
     computed = {

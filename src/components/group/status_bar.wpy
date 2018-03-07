@@ -37,7 +37,7 @@
       detail: {}
     };
     data = {
-      content: {},
+      content: {}
     };
     countdowm(timestamp) {
       let timer = setInterval(async () => {

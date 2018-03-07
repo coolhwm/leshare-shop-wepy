@@ -75,7 +75,8 @@
   import CommentPreview from '../../components/goods/comment_preview';
   import GroupInfoBar from '../../components/group/group_info_bar';
   import SilderPanel from '../../components/goods/slider_buy_panel';
-  import group from '../../api/group'
+  import group from '../../api/group';
+  import Event from '../../utils/Event';
 
   export default class GroupGoodsDetail extends wepy.page {
     data = {
@@ -89,6 +90,10 @@
       processing: {}
     };
     async onLoad () {
+      this.upProcessingList();
+      Event.listen(Event.GROUP_LIST_UPDATE, this.upProcessingList.bind(this), this)
+    };
+    async upProcessingList () {
       await auth.login();
       await store.init();
       this.rules = await group.rules(this.ruleId);
@@ -99,7 +104,7 @@
         return item.groupTime
       });
       this.loaded();
-    };
+    }
     /**
      * 页面分享
      */

@@ -94,7 +94,6 @@
       Event.listen(Event.GOODS_PANEL_OPEN, this.open.bind(this), this);
     }
     open({goods, source, action}) {
-      console.info(goods, source, action);
       if (source != this.source) {
         return;
       }
@@ -145,10 +144,11 @@
           const cart = this.cartManager.createCart(this.goods, skuText, num);
           const trade = order.createCartTrade([cart], {orderType: 10});
           const ruleId = this.goods.ruleId;
+          const groupId = this.goods.groupId;
           if (type === 'buy') {
             this.$root.$preload('trade', {trade, type});
           } else {
-            this.$root.$preload('trade', {trade, type, ruleId});
+            this.$root.$preload('trade', {trade, type, ruleId, groupId});
           }
           this.$root.$navigate(`../order/trade`);
         }

@@ -128,7 +128,8 @@
         'pages/group/index',
         'pages/group/goods_detail',
         'pages/group/list',
-        'pages/group/group_detail'
+        'pages/group/group_detail',
+        'pages/group/group_info_list'
       ],
       window: {
         backgroundTextStyle: 'dark',

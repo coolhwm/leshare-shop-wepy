@@ -14,7 +14,7 @@
       <text class="xxl money-box">￥{{rule.goods.sellPrice}}</text>
       <text>单独购买</text>
     </view>
-    <view class="column-center btn-group" @tap="handleGroup({{rule.goods}}, {{rule.goodsGroupSkuDetails}}, {{rule.id}}, {{state}})">
+    <view class="column-center btn-group" @tap="handleGroup({{rule.goods}}, {{rule.goodsGroupSkuDetails}}, {{rule.id}}, {{state}}, 0)">
       <text class="xxl money-box">￥{{rule.price}}</text>
       <text>一键开团</text>
     </view>

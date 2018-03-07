@@ -170,7 +170,8 @@
       bonusPicker: null,
       selectedBonus: null,
       type: '',
-      ruleId: ''
+      ruleId: '',
+      groupId: ''
     };
     cartManager = Cart.create();
     async onLoad (params, {preload}) {
@@ -181,6 +182,7 @@
       this.trade = preload.trade.trade;
       this.type = preload.trade.type;
       this.ruleId = preload.trade.ruleId;
+      this.groupId = preload.trade.groupId;
       this.goodsList = this.trade.orderGoodsInfos;
       if (orderUtils.isDeliveryOrder(this.trade.orderType)) {
         // 默认地址
@@ -298,8 +300,7 @@
         // 表单ID
         this.trade.formId = detail.formId;
         // 创建订单
-        const id = this.type === 'group' ? 0 : 1;
-        const order = this.type === 'buy' ? await this.requestCreateOrder(this.trade, this.selectedAddress) : await this.requestCreateGroup(this.trade, this.selectedAddress, this.ruleId, id);
+        const order = this.type === 'buy' ? await this.requestCreateOrder(this.trade, this.selectedAddress) : await this.requestCreateGroup(this.trade, this.selectedAddress, this.ruleId, this.groupId);
         const trade = this.type === 'buy' ? order : order.list[0];
         // 检查是否下单成功
         if (trade == null) {
@@ -310,7 +311,7 @@
         if (trade.paymentType === PAYMENT.OFFLINE) {
           Tips.success('下单成功');
         } else {
-//           发起支付
+        // 发起支付
           const isPay = await this.requestWxPayment(trade);
           if (isPay) {
             Tips.success('支付成功');
@@ -501,9 +502,9 @@
             const fee = this.selectedDelivery.fee > 0 ? `￥${this.selectedDelivery.fee}` : '免配送费';
             deliveryText = `${this.selectedDelivery.name} ${fee}`;
             confirmStatus = true;
-            if (this.type == 'group') {
+            if (this.type === 'group') {
               confirmText = '一键开团';
-            } else if (this.type == 'buy') {
+            } else if (this.type === 'buy') {
               confirmText = '立即下单';
             } else {
               confirmText = '立即参团';
@@ -536,7 +537,7 @@
           return false;
         } else {
           const {supplyBonus, bonusRule} = this.card;
-          return supplyBonus == 1 && bonusRule.isCost == 1 && this.member;
+          return supplyBonus === 1 && bonusRule.isCost === 1 && this.member;
         }
       },
       // 积分使用文字
