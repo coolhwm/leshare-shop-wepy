@@ -22,17 +22,28 @@
     <!--拼团栏-->
     <GroupInfoBar />
 
+    <!--滑出购物面板-->
+    <block >
+      <SilderPanel :rules.sync="rules" :ruleId.sync="ruleId"/>
+    </block>
+
+    <!--底栏-->
+    <GroupBar :rule.sync="rule" :groupId.sync="groupId" :detail.sync="detail"/>
+
   </view>
 </template>
 
 <script>
   import wepy from 'wepy';
+  import store from '../../store/utils';
   import GroupGoodsDetail from '../../components/group/group_goods_detail'
   import GroupInfoBar from '../../components/group/group_info_bar';
   import StatusBar from '../../components/group/status_bar';
   import base from '../../mixins/base';
   import group from '../../api/group'
   import Loading from '../../components/common/loading';
+  import GroupBar from '../../components/group/bottom_group_bar';
+  import SilderPanel from '../../components/goods/slider_buy_panel';
 
   export default class GroupDetail extends wepy.page {
     data = {
@@ -40,24 +51,27 @@
       detail: {},
       rule: {},
       groupTime: '',
-      ruleId: ''
+      ruleId: '',
+      groupId: ''
     };
     async onLoad ({groupId}) {
+      await store.init();
       this.detail = await group.groupDetail(groupId);
       this.rule = this.detail.rule;
       this.ruleId = this.rule.ruleId;
       this.groupTime = this.detail.groupTime;
+      this.groupId = this.detail.list[0].groupId;
       this.loaded();
     };
     /**
      * 页面分享
      */
     onShareAppMessage () {
-      const {name, id, imageUrl} = this.detail.rule.goods;
+      const {name, imageUrl} = this.detail.rule.goods;
       return {
         title: name,
         imageUrl: imageUrl,
-        path: `/pages/group/goods_detail?goodsId=${id}`
+        path: `/pages/group/group_detail?groupId=${this.groupId}`
       };
     }
     methods = {
@@ -74,6 +88,8 @@
       GoodsDetail: GroupGoodsDetail,
       GroupInfoBar: GroupInfoBar,
       StatusBar: StatusBar,
+      GroupBar: GroupBar,
+      SilderPanel: SilderPanel,
       Loading: Loading
     };
     mixins = [base];

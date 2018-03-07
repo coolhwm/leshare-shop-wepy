@@ -300,7 +300,8 @@
         // 表单ID
         this.trade.formId = detail.formId;
         // 创建订单
-        const trade = this.type === 'buy' ? await this.requestCreateOrder(this.trade, this.selectedAddress) : await this.requestCreateGroup(this.trade, this.selectedAddress, this.ruleId, this.groupId);
+        const order = this.type === 'buy' ? await this.requestCreateOrder(this.trade, this.selectedAddress) : await this.requestCreateGroup(this.trade, this.selectedAddress, this.ruleId, this.groupId);
+        const trade = this.type === 'buy' ? order : order.order;
         // 检查是否下单成功
         if (trade == null) {
           Tips.alert('下单失败');
