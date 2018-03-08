@@ -6,12 +6,12 @@
     <GoodsDetail :rule.sync="rule"/>
 
     <!--拼团状态-->
-    <StatusBar :groupTime.sync="groupTime" :detail.sync="detail" />
+    <StatusBar :groupTime.sync="groupTime" :detail.sync="detail"  :groupId.sync="groupId"/>
 
     <!--订单信息栏-->
-    <view class="row-between group-order-box">
+    <view class="row-between group-order-box" wx:if="{{userInfo}}">
       <text>订单信息</text>
-      <view @tap="order({{detail}})">
+      <view @tap="order">
         <text class="muted sm">· 收件人</text>
         <text class="muted sm ml10">· 收货地址 </text>
         <text class="muted sm ml10">· 成团时间</text>
@@ -23,12 +23,9 @@
     <GroupInfoBar />
 
     <!--滑出购物面板-->
-    <block >
-      <SilderPanel :rules.sync="rules" :ruleId.sync="ruleId"/>
+    <block>
+      <SilderPanel />
     </block>
-
-    <!--底栏-->
-    <GroupBar :rule.sync="rule" :groupId.sync="groupId" :detail.sync="detail"/>
 
   </view>
 </template>
@@ -42,7 +39,6 @@
   import base from '../../mixins/base';
   import group from '../../api/group'
   import Loading from '../../components/common/loading';
-  import GroupBar from '../../components/group/bottom_group_bar';
   import SilderPanel from '../../components/goods/slider_buy_panel';
 
   export default class GroupDetail extends wepy.page {
@@ -52,7 +48,8 @@
       rule: {},
       groupTime: '',
       ruleId: '',
-      groupId: ''
+      groupId: '',
+      userInfo: ''
     };
     async onLoad ({groupId}) {
       await store.init();
@@ -75,20 +72,17 @@
       };
     }
     methods = {
-      order(detail) {
-        const user = wepy.getStorageSync('user');
-        const userId = user.id;
-        const orderId = detail.list.find(item => item.customerId === userId).orderId;
-        this.$navigate(`/pages/order/detail?orderId=${orderId}`);
+      order() {
+        this.$navigate(`/pages/order/detail?orderId=${this.userInfo.orderId}`);
       }
     };
     computed = {
     };
+    watch = {};
     components = {
       GoodsDetail: GroupGoodsDetail,
       GroupInfoBar: GroupInfoBar,
       StatusBar: StatusBar,
-      GroupBar: GroupBar,
       SilderPanel: SilderPanel,
       Loading: Loading
     };

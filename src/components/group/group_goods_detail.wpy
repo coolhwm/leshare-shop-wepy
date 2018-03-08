@@ -1,5 +1,5 @@
 <template>
-  <view class="row group-detail-box">
+  <view class="row group-detail-box" @tap="detail({{rule.id}})">
     <view class="group-goods-image">
       <image src="{{rule.goods.imageUrl}}" mode="aspectFill"/>
     </view>
@@ -30,6 +30,9 @@
     data = {
     };
     methods = {
+      detail (id) {
+        this.$root.$navigate(`/pages/group/goods_detail?ruleId=${id}`)
+      }
     };
     watch = {
     };

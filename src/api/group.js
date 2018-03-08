@@ -247,7 +247,7 @@ export default class group extends base {
    * 开团时间处理
    */
   static _processGroupTime (detail) {
-    const time = new Date(detail.groupTime) - new Date() + 1000 * 60 * 60 * 24;
+    const time = new Date(detail.groupTime.replace(/-/g, '/')) - new Date() + 1000 * 60 * 60 * 24;
     if (time > 0) {
       let hour = Math.floor(time / 3600000);
       let min = Math.floor((time / 60000) % 60);
