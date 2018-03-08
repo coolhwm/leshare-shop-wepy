@@ -60,7 +60,6 @@
     countdowm(timestamp) {
       let timer = setInterval(async () => {
         const time = new Date(timestamp) - new Date() + 1000 * 60 * 60 * 24;
-        this.isGroup = time > 0;
         if (time > 0) {
           let hour = Math.floor(time / 3600000);
           let min = Math.floor((time / 60000) % 60);
@@ -92,6 +91,7 @@
     };
     watch = {
       groupTime(groupTime) {
+        this.isGroup = (new Date(groupTime.replace(/-/g, '/')) - new Date() + 1000 * 60 * 60 * 24) > 0;
         this.countdowm(groupTime.replace(/-/g, '/'));
       },
       detail (detail) {
