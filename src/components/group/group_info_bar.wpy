@@ -1,5 +1,5 @@
 <template>
-  <view class="column group-info-box" wx:if="{{!processing}}">
+  <view class="column group-info-box" wx:if="{{!processing || processing.length < 1}}">
     <text class="top-box">拼团玩法</text>
     <view class="row-around content-box">
       <view class="column-center info-rule-box">
@@ -42,18 +42,11 @@
     props = {
       processing: {}
     };
-    data = {
-      time: {}
-    };
     methods = {
       moreGroup (ruleId) {
         if (ruleId === null) return;
         this.$root.$navigate(`/pages/group/group_info_list?ruleId=${ruleId}`)
       }
-    };
-    computed = {
-    };
-    watch ={
     };
     components = {
       ProcessItem: ProcessItem

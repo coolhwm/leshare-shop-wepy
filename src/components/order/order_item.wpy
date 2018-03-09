@@ -113,7 +113,7 @@
      * 订单收货
      */
     async receive({orderId}) {
-      await Tips.confirm('是否已收到外卖？');
+      await Tips.confirm('确认收货？');
       try {
         Tips.loading();
         await order.confirmOrder(orderId);

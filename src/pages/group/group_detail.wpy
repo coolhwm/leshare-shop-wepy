@@ -6,10 +6,10 @@
     <GoodsDetail :rule.sync="rule"/>
 
     <!--拼团状态-->
-    <StatusBar :groupTime.sync="groupTime" :detail.sync="detail"  :groupId.sync="groupId"/>
+    <StatusBar :detail.sync="detail" />
 
     <!--订单信息栏-->
-    <view class="row-between group-order-box" wx:if="{{userInfo}}">
+    <view class="row-between group-order-box" wx:if="{{isJoined}}">
       <text>订单信息</text>
       <view @tap="order">
         <text class="muted sm">· 收件人</text>
@@ -33,6 +33,7 @@
 <script>
   import wepy from 'wepy';
   import store from '../../store/utils';
+  import auth from '../../api/auth';
   import GroupGoodsDetail from '../../components/group/group_goods_detail'
   import GroupInfoBar from '../../components/group/group_info_bar';
   import StatusBar from '../../components/group/status_bar';
@@ -46,22 +47,27 @@
       init: false,
       detail: {},
       rule: {},
-      groupTime: '',
-      ruleId: '',
-      groupId: '',
-      userInfo: ''
+      isJoined: false,
+      userGroup: null
     };
     async onLoad ({groupId}) {
+      await auth.login();
       await store.init();
       this.detail = await group.groupDetail(groupId);
       this.rule = this.detail.rule;
-      this.ruleId = this.rule.ruleId;
-      this.groupTime = this.detail.groupTime;
-      this.groupId = this.detail.list[0].groupId;
+      this.isJoined = this.isUserJoined();
+      this.detail.isJoined = this.isJoined;
       this.loaded();
     };
     onUnload() {
       this.$invoke('StatusBar', 'clear');
+    }
+    isUserJoined() {
+      const user = wepy.getStorageSync('user');
+      if (user == null || user.id == null) return false;
+      if (this.detail == null || this.detail.list == null) return false;
+      this.userGroup = this.detail.list.find(item => item.customerId === user.id);
+      return this.userGroup != null;
     }
     /**
      * 页面分享
@@ -76,19 +82,7 @@
     }
     methods = {
       order() {
-        this.$navigate(`/pages/order/detail?orderId=${this.userInfo.orderId}`);
-      }
-    };
-    computed = {
-      userInfo () {
-        const user = wepy.getStorageSync('user');
-        const userId = user ? user.id : '';
-        if (!this.detail.list) return;
-        for (let item of this.detail.list) {
-          if (item.customerId === userId) {
-            return item;
-          }
-        }
+        this.$navigate(`/pages/order/detail?orderId=${this.userGroup.orderId}`);
       }
     };
     watch = {};
