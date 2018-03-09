@@ -22,7 +22,8 @@
 
 <script>
   import wepy from 'wepy';
-  let timer = null;
+  import router from '../../mixins/router'
+
   export default class TimeOutBar extends wepy.component {
     props = {
       endTime: {
@@ -42,45 +43,16 @@
       content: {}
     };
     clear() {
-      if (timer != null) {
-        console.info(`[inerval] destory interval id=${timer}`);
-        clearInterval(timer);
-        timer = null;
-      }
+      this.clearTime()
     }
-    countdowm(timestamp) {
-      this.clear();
-      timer = setInterval(() => {
-        const time = new Date(timestamp) - new Date();
-        if (time > 0) {
-          let day = Math.floor(time / 86400000);
-          let hour = Math.floor((time / 3600000) % 24);
-          let min = Math.floor((time / 60000) % 60);
-          let sec = Math.floor((time / 1000) % 60);
-          day = day < 0 ? '0' : day;
-          hour = hour < 10 ? '0' + hour : hour;
-          min = min < 10 ? '0' + min : min;
-          sec = sec < 10 ? '0' + sec : sec;
-          this.content = {
-            day: day,
-            hour: hour,
-            min: min,
-            sec: sec
-          };
-        } else {
-          this.clear();
-        }
-        this.$apply();
-      }, 1000);
-      console.info(`[inerval] create interval id=${timer}`);
-    };
     methods = {
     };
     watch = {
       endTime(endTime) {
-        this.countdowm(endTime.replace(/-/g, '/'));
+        this.countdowm(endTime.replace(/-/g, '/'), 'endTime');
       }
     };
+    mixins = [router];
   }
 </script>
 

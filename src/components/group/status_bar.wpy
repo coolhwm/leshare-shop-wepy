@@ -55,7 +55,7 @@
 <script>
   import wepy from 'wepy';
   import router from '../../mixins/router';
-  let timer = null;
+
   export default class StatusBar extends wepy.component {
     props = {
       detail: {
@@ -78,45 +78,13 @@
       }
     };
     clear() {
-      if (timer != null) {
-        console.info(`[inerval] destory interval id=${timer}`);
-        clearInterval(timer);
-        timer = null;
-      }
-      this.content = {
-        hour: '00',
-        min: '00',
-        sec: '00'
-      };
+      this.clearTime()
     }
-    countdowm(timestamp) {
-      this.clear();
-      timer = setInterval(async () => {
-        const time = new Date(timestamp) - new Date() + 1000 * 60 * 60 * 24;
-        if (time > 0) {
-          let hour = Math.floor(time / 3600000);
-          let min = Math.floor((time / 60000) % 60);
-          let sec = Math.floor((time / 1000) % 60);
-          hour = hour < 10 ? '0' + hour : hour;
-          min = min < 10 ? '0' + min : min;
-          sec = sec < 10 ? '0' + sec : sec;
-          this.content = {
-            hour: hour,
-            min: min,
-            sec: sec
-          };
-        } else {
-          this.clear();
-        }
-        this.$apply();
-      }, 1000);
-      console.info(`[inerval] create interval id=${timer}`);
-    };
     watch = {
       detail (detail) {
         // 初始化定时器
         if (detail !== null && this.init === false) {
-          this.countdowm(detail.groupTime.replace(/-/g, '/'));
+          this.countdowm(detail.groupTime.replace(/-/g, '/'), 'groupTime');
           this.init = true;
         }
       }
