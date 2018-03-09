@@ -77,6 +77,16 @@
       }
     };
     computed = {
+      userInfo () {
+        const user = wepy.getStorageSync('user');
+        const userId = user ? user.id : '';
+        if (!this.detail.list) return;
+        for (let item of this.detail.list) {
+          if (item.customerId === userId) {
+            return item;
+          }
+        }
+      }
     };
     watch = {};
     components = {

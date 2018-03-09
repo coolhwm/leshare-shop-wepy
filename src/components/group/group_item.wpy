@@ -159,7 +159,6 @@
        * 跳转拼团详情
        */
       group (status, groupId) {
-        console.info(status);
         this.$root.$navigate(`/pages/group/group_detail?groupId=${groupId}`);
       }
     };

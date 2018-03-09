@@ -85,7 +85,10 @@
         if (this.state === 'group') {
           return '立即开团'
         } else if (this.state === 'join') {
-          return '立即参团'
+          if (!this.isGroup) return '立即开团';
+          if (!this.detail) return;
+          if (this.detail === 'SUCCESS') return
+          return '立即参团';
         }
       }
     };
