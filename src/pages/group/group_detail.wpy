@@ -60,6 +60,9 @@
       this.groupId = this.detail.list[0].groupId;
       this.loaded();
     };
+    onUnload() {
+      this.$invoke('StatusBar', 'clear');
+    }
     /**
      * 页面分享
      */

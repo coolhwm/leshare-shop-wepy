@@ -42,6 +42,8 @@
   import wepy from 'wepy';
   import router from '../../mixins/router';
 
+  let timer = null;
+
   export default class StatusBar extends wepy.component {
     props = {
       groupTime: {
@@ -54,17 +56,29 @@
       }
     };
     data = {
-      content: {
-        hour: '00',
-        min: '00',
-        sec: '00'
-      },
+      content: {},
       state: 'join',
       userInfo: null,
       isGroup: true
     };
+    onLoad() {
+      this.clear();
+    }
+    clear() {
+      if (timer != null) {
+        console.info(`[inerval] destory interval id=${timer}`);
+        clearInterval(timer);
+        timer = null;
+      }
+      this.content = {
+        hour: '00',
+        min: '00',
+        sec: '00'
+      };
+    }
     countdowm(timestamp) {
-      let timer = setInterval(async () => {
+      this.clear();
+      timer = setInterval(async () => {
         const time = new Date(timestamp) - new Date() + 1000 * 60 * 60 * 24;
         if (time > 0) {
           let hour = Math.floor(time / 3600000);
@@ -79,12 +93,11 @@
             sec: sec
           };
         } else {
-          clearInterval(timer);
+          this.clear();
         }
         this.$apply();
       }, 1000);
-    };
-    methods = {
+      console.info(`[inerval] create interval id=${timer}`);
     };
     computed = {
       buttonText () {

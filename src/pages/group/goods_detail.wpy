@@ -23,7 +23,7 @@
             <text class="muted sellPrice-box sm">￥{{rules.goods.maxPrice}}</text>
             <view class="price-rule-box">
               <text class="xxs">{{rules.limitCustomer}}人拼团</text>
-              <text class="ml10 xxs">{{save}}</text>
+              <text class="ml10 xxs">{{saveText}}</text>
             </view>
           </view>
         </view>
@@ -77,7 +77,6 @@
   import GroupInfoBar from '../../components/group/group_info_bar';
   import SilderPanel from '../../components/goods/slider_buy_panel';
   import group from '../../api/group';
-  import Event from '../../utils/Event';
 
   export default class GroupGoodsDetail extends wepy.page {
     data = {
@@ -91,12 +90,18 @@
       processing: {}
     };
     async onLoad () {
-      this.upProcessingList();
-      Event.listen(Event.GROUP_LIST_UPDATE, this.upProcessingList.bind(this), this)
-    };
-    async upProcessingList () {
       await auth.login();
       await store.init();
+      await this.update();
+    };
+    onUnload() {
+      this.$invoke('TimeOutBar', 'clear');
+    };
+    async onPullDownRefresh () {
+      await this.update();
+      wepy.stopPullDownRefresh();
+    }
+    async update () {
       this.rules = await group.rules(this.ruleId);
       this.processing = await group.processing(this.ruleId);
       this.endTime = this.rules.endTime;
@@ -124,7 +129,7 @@
       }
     };
     computed = {
-      save () {
+      saveText () {
         if (this.rules.price && this.rules.goods.maxPrice) {
           const num = (this.rules.goods.maxPrice * 1 - this.rules.price * 1).toFixed(2);
           return `拼团立省￥${num}`
@@ -141,6 +146,7 @@
     };
     mixins = [base];
     config = {
+      enablePullDownRefresh: true,
       navigationBarTitleText: '商品详情'
     };
   }

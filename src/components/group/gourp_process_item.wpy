@@ -25,6 +25,8 @@
 </template>
 <script>
   import wepy from 'wepy';
+  import router from '../../mixins/router';
+
   export default class GroupProcessItem extends wepy.component {
     props = {
       item: {}
@@ -36,6 +38,7 @@
         this.$root.$navigate(`/pages/group/group_detail?groupId=${item.id}`);
       }
     };
+    mixins = [router];
   }
 </script>
 

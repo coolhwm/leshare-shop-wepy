@@ -36,7 +36,6 @@
 
 <script>
   import wepy from 'wepy';
-  import router from '../../mixins/router';
   import ProcessItem from '../../components/group/gourp_process_item';
 
   export default class GroupInfoBar extends wepy.component {
@@ -59,7 +58,6 @@
     components = {
       ProcessItem: ProcessItem
     };
-    mixins = [router];
   }
 </script>
 

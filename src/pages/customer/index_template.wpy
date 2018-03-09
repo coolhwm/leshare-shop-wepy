@@ -108,7 +108,6 @@
      */
     onShareAppMessage () {
       const {name, avatar} = this.shop;
-      console.info(`${avatar}/5x4`);
       return {
         title: `${name} 欢迎光临`,
         imageUrl: `${avatar}/5x4`

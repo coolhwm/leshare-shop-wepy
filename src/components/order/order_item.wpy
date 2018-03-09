@@ -43,6 +43,7 @@
       <view>
         <view class="small label primary ml20" wx:if="{{order.orderType == 30}}">堂食</view>
         <view class="small label primary ml20" wx:if="{{order.orderType == 33}}">打包</view>
+        <view class="small label primary ml20" wx:if="{{order.orderType == 50}}">拼团</view>
       </view>
       <view class="row">
         <block wx:for="{{order.actions}}" wx:for-item="action" wx:key="index">

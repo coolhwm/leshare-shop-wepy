@@ -181,7 +181,7 @@
             break;
           case 'DEBUG':
             // 调试
-            console.info(event);
+            console.info('[router] debug action', event);
             break;
           case 'PAGE_NAVIGATE':
             // 跳转指定页面
