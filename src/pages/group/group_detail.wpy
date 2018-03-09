@@ -6,12 +6,12 @@
     <GoodsDetail :rule.sync="rule"/>
 
     <!--拼团状态-->
-    <StatusBar :groupTime.sync="groupTime" :detail.sync="detail" />
+    <StatusBar :groupTime.sync="groupTime" :detail.sync="detail"  :groupId.sync="groupId"/>
 
     <!--订单信息栏-->
-    <view class="row-between group-order-box">
+    <view class="row-between group-order-box" wx:if="{{userInfo}}">
       <text>订单信息</text>
-      <view @tap="order({{detail}})">
+      <view @tap="order">
         <text class="muted sm">· 收件人</text>
         <text class="muted sm ml10">· 收货地址 </text>
         <text class="muted sm ml10">· 成团时间</text>
@@ -22,56 +22,78 @@
     <!--拼团栏-->
     <GroupInfoBar />
 
+    <!--滑出购物面板-->
+    <block>
+      <SilderPanel />
+    </block>
+
   </view>
 </template>
 
 <script>
   import wepy from 'wepy';
+  import store from '../../store/utils';
   import GroupGoodsDetail from '../../components/group/group_goods_detail'
   import GroupInfoBar from '../../components/group/group_info_bar';
   import StatusBar from '../../components/group/status_bar';
   import base from '../../mixins/base';
   import group from '../../api/group'
   import Loading from '../../components/common/loading';
+  import SilderPanel from '../../components/goods/slider_buy_panel';
 
   export default class GroupDetail extends wepy.page {
     data = {
       init: false,
       detail: {},
       rule: {},
-      groupTime: ''
+      groupTime: '',
+      ruleId: '',
+      groupId: '',
+      userInfo: ''
     };
     async onLoad ({groupId}) {
+      await store.init();
       this.detail = await group.groupDetail(groupId);
       this.rule = this.detail.rule;
+      this.ruleId = this.rule.ruleId;
       this.groupTime = this.detail.groupTime;
+      this.groupId = this.detail.list[0].groupId;
       this.loaded();
     };
     /**
      * 页面分享
      */
     onShareAppMessage () {
-      const {name, id, imageUrl} = this.detail.rule.goods;
+      const {name, imageUrl} = this.detail.rule.goods;
       return {
         title: name,
         imageUrl: imageUrl,
-        path: `/pages/group/goods_detail?goodsId=${id}`
+        path: `/pages/group/group_detail?groupId=${this.groupId}`
       };
     }
     methods = {
-      order(detail) {
-        const user = wepy.getStorageSync('user');
-        const userId = user.id;
-        const orderId = detail.list.find(item => item.customerId === userId).orderId;
-        this.$navigate(`/pages/order/detail?orderId=${orderId}`);
+      order() {
+        this.$navigate(`/pages/order/detail?orderId=${this.userInfo.orderId}`);
       }
     };
     computed = {
+      userInfo () {
+        const user = wepy.getStorageSync('user');
+        const userId = user ? user.id : '';
+        if (!this.detail.list) return;
+        for (let item of this.detail.list) {
+          if (item.customerId === userId) {
+            return item;
+          }
+        }
+      }
     };
+    watch = {};
     components = {
       GoodsDetail: GroupGoodsDetail,
       GroupInfoBar: GroupInfoBar,
       StatusBar: StatusBar,
+      SilderPanel: SilderPanel,
       Loading: Loading
     };
     mixins = [base];

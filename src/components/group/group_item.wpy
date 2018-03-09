@@ -14,7 +14,7 @@
     </view>
 
     <!--商品区域-->
-    <view class="order-goods-list-container" @tap="detail({{liat.detail.order.orderId}})">
+    <view class="order-goods-list-container" @tap="group({{group.status}}, {{group.detail.groupId}})">
       <repeat for="{{group.detail.order.orderGoodsInfos}}" key="goodsId" index="index" item="item">
         <view class="{{!group.detail.order.orderGoodsInfos || index == 0 || expand[group.detail.order.orderId] ? '' : 'order-goods-fold'}}">
           <OrderGoods :goods="item"></OrderGoods>
@@ -38,7 +38,7 @@
 
     <!--操作栏-->
     <view wx:if="{{group.status === 'PROCESSING'}}" class="group-bottom-box row">
-      <view class="group-btn-box" @tap="group({{group.detail.groupId}})">邀请参团</view>
+      <view class="group-btn-box" @tap="group({{group.status}}, {{group.detail.groupId}})">邀请参团</view>
     </view>
   </view>
 </template>
@@ -158,7 +158,7 @@
       /**
        * 跳转拼团详情
        */
-      group (groupId) {
+      group (status, groupId) {
         this.$root.$navigate(`/pages/group/group_detail?groupId=${groupId}`);
       }
     };

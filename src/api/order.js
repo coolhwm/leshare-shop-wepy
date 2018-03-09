@@ -269,6 +269,7 @@ export default class order extends base {
     }
     const {orderType, paymentType, status} = order;
     const actions = utils.statusActions(orderType, paymentType, status);
+    console.info(actions);
     if (actions) {
       const display = inner ? actions.filter(v => v.inner != true) : actions;
       order.actions = basic.concat(display);

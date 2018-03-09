@@ -14,9 +14,9 @@
       <text class="xxl money-box">￥{{rule.goods.sellPrice}}</text>
       <text>单独购买</text>
     </view>
-    <view class="column-center btn-group" @tap="handleGroup({{rule.goods}}, {{rule.goodsGroupSkuDetails}}, {{rule.id}}, {{state}}, 0)">
+    <view class="column-center btn-group" @tap="handleGroup({{rule.goods}}, {{rule.goodsGroupSkuDetails}}, {{rule.id}}, {{state}}, {{groupId}})">
       <text class="xxl money-box">￥{{rule.price}}</text>
-      <text>一键开团</text>
+      <text>{{groupText}}</text>
     </view>
   </view>
 </template>
@@ -29,11 +29,15 @@
 
   export default class GroupBar extends wepy.component {
     props = {
-      rule: {}
+      rule: {},
+      detail: {},
+      groupId: {
+        default: 0
+      }
     };
     data = {
       isFav: false,
-      state: 'group'
+      state: ''
     };
     methods = {
       async fav() {
@@ -48,11 +52,26 @@
         this.$apply();
       }
     };
+    computed = {
+      groupText () {
+        if (!this.detail) return '一键开团';
+        if (this.detail.status === 'PROCESSING') {
+          return '一键参团'
+        } else {
+          return '一键开团'
+        }
+      }
+    };
     watch = {
       async rule(current, origin) {
+        if (this.groupText === '一键开团') {
+          this.state = 'group'
+        } else {
+          this.state = 'join'
+        }
         if (origin != null && origin.id != null) return;
         const result = await favorite.is(current.goods.id);
-        this.isFav = result.isFavorite == 1;
+        this.isFav = result.isFavorite === 1;
         this.$apply();
       }
     };

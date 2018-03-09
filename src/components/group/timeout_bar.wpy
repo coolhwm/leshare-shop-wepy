@@ -69,7 +69,7 @@
     };
     watch = {
       endTime(endTime) {
-        this.countdowm(endTime);
+        this.countdowm(endTime.replace(/-/g, '/'));
       }
     };
   }

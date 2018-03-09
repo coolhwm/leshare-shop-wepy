@@ -57,7 +57,7 @@
 
     <!--滑出购物面板-->
     <block >
-      <SilderPanel :rules.sync="rules" :ruleId.sync="ruleId"/>
+      <SilderPanel />
     </block>
 
     <!--底栏-->
