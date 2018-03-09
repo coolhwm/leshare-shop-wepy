@@ -32,13 +32,13 @@ export default class group extends base {
   /***
    * 开团/参团
    */
-  static goodsGroup (trade, address, ruleId, id) {
+  static goodsGroup (trade, address) {
     const url = `${this.baseUrl}/goods_group`;
     this._processOrderAddress(trade, address);
     const param = {
-      ruleId: ruleId,
+      ruleId: trade.ruleId,
       order: trade,
-      id: id
+      id: trade.groupId
     };
     return this.post(url, param);
   }

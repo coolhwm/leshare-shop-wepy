@@ -17,7 +17,7 @@
       <text>该团已成团，快邀请小伙伴一起拼团</text>
     </view>
     <view wx:if="{{isGroup}}">
-      <view class="row-center" wx:if="{{content.hour}}">
+      <view class="row-center">
         <view class="status-line-box mr10"></view>
         <view class="status-time-box row">
           <text>剩余</text>
@@ -26,6 +26,7 @@
           <view class="time-num-box">{{content.min}}</view>
           <text>:</text>
           <view class="time-num-box">{{content.sec}}</view>
+          <text>结束</text>
         </view>
         <view class="status-line-box ml10"></view>
       </view>
@@ -46,13 +47,18 @@
       groupTime: {
         default: ''
       },
-      detail: {},
+      detail: {
+      },
       groupId: {
         default: 0
       }
     };
     data = {
-      content: {},
+      content: {
+        hour: '00',
+        min: '00',
+        sec: '00'
+      },
       state: 'join',
       userInfo: null,
       isGroup: true
@@ -87,7 +93,7 @@
         } else if (this.state === 'join') {
           if (!this.isGroup) return '立即开团';
           if (!this.detail) return;
-          if (this.detail === 'SUCCESS') return
+          if (this.detail === 'SUCCESS') return;
           return '立即参团';
         }
       }

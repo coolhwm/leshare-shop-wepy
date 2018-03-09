@@ -1,10 +1,10 @@
 <template>
-  <view class="timeout-box row-between" wx:if="{{content.day}}">
+  <view class="timeout-box row-between" >
     <view class="title-box row">
       <view class="title mr20 ">{{title}}</view>
       <view class="sm describe-box">{{describe}}</view>
     </view>
-    <view class="column-center time-box">
+    <view class="column-center time-box" wx:if="{{content.day}}">
       <text class="danger xs">距结束仅剩</text>
       <view class="row">
         <view class="time-num-box">{{content.day}}</view>

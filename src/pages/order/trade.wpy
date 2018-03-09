@@ -169,9 +169,7 @@
       goodsList: null,
       bonusPicker: null,
       selectedBonus: null,
-      type: '',
-      ruleId: '',
-      groupId: ''
+      type: '' // buy/group/join
     };
     cartManager = Cart.create();
     async onLoad (params, {preload}) {
@@ -181,8 +179,6 @@
       // 订单数据
       this.trade = preload.trade.trade;
       this.type = preload.trade.type;
-      this.ruleId = preload.trade.ruleId;
-      this.groupId = preload.trade.groupId;
       this.goodsList = this.trade.orderGoodsInfos;
       if (orderUtils.isDeliveryOrder(this.trade.orderType)) {
         // 默认地址
@@ -300,8 +296,7 @@
         // 表单ID
         this.trade.formId = detail.formId;
         // 创建订单
-        const order = this.type === 'buy' ? await this.requestCreateOrder(this.trade, this.selectedAddress) : await this.requestCreateGroup(this.trade, this.selectedAddress, this.ruleId, this.groupId);
-        const trade = this.type === 'buy' ? order : order.order;
+        const trade = await this.requestCreateOrder(this.trade, this.selectedAddress);
         // 检查是否下单成功
         if (trade == null) {
           Tips.alert('下单失败');
@@ -327,11 +322,10 @@
         }
         // 刷新列表
         Event.emit(Event.ORDER_LIST_UPDATE);
-        // TODO 这个可能在TAB里
-        if (this.type === 'buy') {
-          WxUtils.backOrRedirect('/pages/customer/index_template');
-        } else {
+        if (this.type === 'join' || this.type === 'group') {
           WxUtils.backOrRedirect('/pages/group/list');
+        } else {
+          WxUtils.backOrRedirect('/pages/customer/index_template');
         }
       }
     };
@@ -341,19 +335,14 @@
     async requestCreateOrder(trade, address) {
       try {
         // 创建订单
-        return await order.createOrder(trade, address);
-      } catch (e) {
-        console.error(e);
-        return null;
-      }
-    }
-    /**
-     * 请求创建订单
-     */
-    async requestCreateGroup(trade, address, ruleId, id) {
-      try {
-        // 创建订单
-        return await group.goodsGroup(trade, address, ruleId, id);
+        if (this.type === 'join' || this.type === 'group') {
+          // 拼团订单
+          const result = await group.goodsGroup(trade, address);
+          return result.order;
+        } else {
+          // 普通订单
+          return await order.createOrder(trade, address);
+        }
       } catch (e) {
         console.error(e);
         return null;
@@ -504,10 +493,10 @@
             confirmStatus = true;
             if (this.type === 'group') {
               confirmText = '一键开团';
-            } else if (this.type === 'buy') {
-              confirmText = '立即下单';
-            } else {
+            } else if (this.type === 'join') {
               confirmText = '立即参团';
+            } else {
+              confirmText = '立即下单';
             }
           }
         }

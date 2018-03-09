@@ -49,11 +49,12 @@
       </view>
       <icon class="more xsmall" color="gray"/>
     </view>
-    <!--评论预览-->
-    <CommentPreview :goodsId.sync="goodsId"/>
 
     <!--拼团栏-->
     <GroupInfoBar :processing.sync="processing" :info.sync="info"/>
+
+    <!--评论预览-->
+    <CommentPreview :goodsId.sync="goodsId"/>
 
     <!--滑出购物面板-->
     <block >
@@ -180,7 +181,7 @@
     padding: 20rpx;
     border-top:$border;
     margin-bottom: 10rpx;
-    icon{
+    .row icon{
       color: $color-primary;
     }
   }
