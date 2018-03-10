@@ -24,7 +24,7 @@
   import pagination from '../../mixins/pagination.wpy';
   import Placeholder from '../../components/common/placeholder';
   import ZanTab from '../../components/zanui/tab';
-  import GroupItem from '../../components/group/group_item';
+  import GroupItem from '../../components/group/group_list_item';
   import Loadmore from '../../components/weui/loadmore';
   import Loading from '../../components/common/loading';
   import Event from '../../utils/Event';

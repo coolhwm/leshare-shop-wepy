@@ -1,5 +1,7 @@
 <template>
   <view class="column-center status-box">
+
+    <!--参团人员列表-->
     <view class="row customer-box">
       <view class="status-avatar-box" wx:for="{{detail.list}}" wx:for-index="index" wx:for-item="item" wx:key="index">
         <view  wx:if="{{item.head}}" class="weui-badge">团长</view>
@@ -7,17 +9,21 @@
         <icon wx:else class="question"/>
       </view>
     </view>
-    <view class="status-spare-box row" wx:if="{{detail.rule.spareCustomer > 0 && isGroup}}">
-      <text>仅剩</text><view class="num-box"><text>{{detail.rule.spareCustomer}}</text></view><text>人，即可成团！</text>
+
+    <!--文本描述-->
+    <view class="status-spare-box row"  wx:if="{{detail.status == 'PROCESSING'}}">
+      <text>仅剩</text><view class="num-box">{{detail.rule.spareCustomer}}</view><text> 人，即可成团！</text>
     </view>
-    <view wx:elif="{{!isGroup}}" class="status-spare-box">
-      <text>该团已结束，请重新开团</text>
+    <view wx:if="{{detail.status == 'SUCCESS'}}">
+      <text>{{detail.joinCount}}人拼团已达成，可点击再次开团</text>
     </view>
-    <view wx:else class="status-spare-box">
-      <text>该团已拼团成功</text>
+    <view wx:if="{{detail.status == 'FAILURE'}}">
+      <text>该团已结束，可点击再次开团</text>
     </view>
-    <view wx:if="{{isGroup && detail.status === 'PROCESSING'}}">
-      <view class="row-center" wx:if="{{content.hour}}">
+
+    <!--倒计时-->
+    <view wx:if="{{detail.status == 'PROCESSING'}}">
+      <view class="row-center">
         <view class="status-line-box mr10"></view>
         <view class="status-time-box row">
           <text>剩余</text>
@@ -26,13 +32,22 @@
           <view class="time-num-box">{{content.min}}</view>
           <text>:</text>
           <view class="time-num-box">{{content.sec}}</view>
+          <text>结束</text>
         </view>
         <view class="status-line-box ml10"></view>
       </view>
     </view>
-    <view wx:if="{{detail.status != 'SUCCESS'}}">
-      <button class="status-btn-box row-center" open-type="share" wx:if="{{userInfo && isGroup}}">邀请好友参团</button>
-      <button class="status-btn-box row-center" wx:else @tap="handleGroup({{detail.rule.goods}}, {{detail.rule.goodsGroupSkuDetails}}, {{detail.rule.id}}, {{state}}, {{groupId}})">{{buttonText}}</button>
+
+    <!--操作栏-->
+    <view>
+      <!--正在团-->
+      <block wx:if="{{detail.status == 'PROCESSING'}}">
+        <!--在团中-->
+        <button class="status-btn-box row-center" wx:if="{{detail.isJoined}}" open-type="share" >邀请好友参团</button>
+        <!--不在团中-->
+        <button class="status-btn-box row-center" wx:else @tap="join">立即参团</button>
+      </block>
+      <button class="status-btn-box row-center" wx:else  @tap="open" >再次开团</button>
     </view>
   </view>
 </template>
@@ -43,66 +58,34 @@
 
   export default class StatusBar extends wepy.component {
     props = {
-      groupTime: {
-        default: ''
-      },
-      detail: {},
-      groupId: {
-        default: 0
+      detail: {
       }
     };
     data = {
-      content: {},
-      state: 'join',
-      userInfo: null,
-      isGroup: true
+      init: false,
+      content: {}
     };
-    countdowm(timestamp) {
-      let timer = setInterval(async () => {
-        const time = new Date(timestamp) - new Date() + 1000 * 60 * 60 * 24;
-        if (time > 0) {
-          let hour = Math.floor(time / 3600000);
-          let min = Math.floor((time / 60000) % 60);
-          let sec = Math.floor((time / 1000) % 60);
-          hour = hour < 10 ? '0' + hour : hour;
-          min = min < 10 ? '0' + min : min;
-          sec = sec < 10 ? '0' + sec : sec;
-          this.content = {
-            hour: hour,
-            min: min,
-            sec: sec
-          };
-        } else {
-          clearInterval(timer);
-        }
-        this.$apply();
-      }, 1000);
-    };
+    onLoad() {
+      this.clear();
+    }
     methods = {
-    };
-    computed = {
-      buttonText () {
-        if (this.state === 'group') {
-          return '立即开团'
-        } else if (this.state === 'join') {
-          if (!this.isGroup) return '立即开团';
-          return '立即参团';
-        }
+      open() {
+        this.$root.$navigate(`/pages/group/goods_detail?ruldId=${this.detail.rule.id}`);
+      },
+      join() {
+        const {goods, goodsGroupSkuDetails, id} = this.detail.rule;
+        this.group(goods, goodsGroupSkuDetails, id, 'join', this.detail.id)
       }
     };
+    clear() {
+      this.clearTime()
+    }
     watch = {
-      groupTime(groupTime) {
-        this.isGroup = (new Date(groupTime.replace(/-/g, '/')) - new Date() + 1000 * 60 * 60 * 24) > 0;
-        this.countdowm(groupTime.replace(/-/g, '/'));
-      },
       detail (detail) {
-        const user = wepy.getStorageSync('user');
-        const userId = user ? user.id : '';
-        for (let item of detail.list) {
-          if (item.customerId === userId) {
-            this.userInfo = item;
-            this.state = 'group'
-          }
+        // 初始化定时器
+        if (detail !== null && this.init === false) {
+          this.countdowm(detail.groupTime.replace(/-/g, '/'), 'groupTime');
+          this.init = true;
         }
       }
     };
@@ -153,11 +136,8 @@
   }
   .status-spare-box{
     margin: 20rpx 0 36rpx;
-    text{
-      margin-right: 10rpx;
-    }
     .num-box{
-      color: $color-primary;
+      color: $color-major;
     }
   }
   .status-line-box{

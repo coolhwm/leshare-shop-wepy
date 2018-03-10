@@ -1,10 +1,10 @@
 <template>
-  <view class="timeout-box row-between" wx:if="{{content.day}}">
+  <view class="timeout-box row-between" >
     <view class="title-box row">
       <view class="title mr20 ">{{title}}</view>
       <view class="sm describe-box">{{describe}}</view>
     </view>
-    <view class="column-center time-box">
+    <view class="column-center time-box" wx:if="{{content.day}}">
       <text class="danger xs">距结束仅剩</text>
       <view class="row">
         <view class="time-num-box">{{content.day}}</view>
@@ -22,6 +22,7 @@
 
 <script>
   import wepy from 'wepy';
+  import router from '../../mixins/router'
 
   export default class TimeOutBar extends wepy.component {
     props = {
@@ -41,37 +42,17 @@
     data = {
       content: {}
     };
-    countdowm(timestamp) {
-      let timer = setInterval(() => {
-        const time = new Date(timestamp) - new Date();
-        if (time > 0) {
-          let day = Math.floor(time / 86400000);
-          let hour = Math.floor((time / 3600000) % 24);
-          let min = Math.floor((time / 60000) % 60);
-          let sec = Math.floor((time / 1000) % 60);
-          day = day < 0 ? '0' : day;
-          hour = hour < 10 ? '0' + hour : hour;
-          min = min < 10 ? '0' + min : min;
-          sec = sec < 10 ? '0' + sec : sec;
-          this.content = {
-            day: day,
-            hour: hour,
-            min: min,
-            sec: sec
-          };
-        } else {
-          clearInterval(timer);
-        }
-        this.$apply();
-      }, 1000);
-    };
+    clear() {
+      this.clearTime()
+    }
     methods = {
     };
     watch = {
       endTime(endTime) {
-        this.countdowm(endTime.replace(/-/g, '/'));
+        this.countdowm(endTime.replace(/-/g, '/'), 'endTime');
       }
     };
+    mixins = [router];
   }
 </script>
 

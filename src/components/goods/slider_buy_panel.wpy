@@ -143,12 +143,13 @@
         } else {
           const cart = this.cartManager.createCart(this.goods, skuText, num);
           const trade = order.createCartTrade([cart], {orderType: 10});
-          const ruleId = this.goods.ruleId;
-          const groupId = this.goods.groupId;
-          if (type === 'buy') {
+          if (type === 'join' || type === 'group') {
+            const {groupId, ruleId} = this.goods;
+            Object.assign(trade, {ruleId, groupId});
             this.$root.$preload('trade', {trade, type});
           } else {
-            this.$root.$preload('trade', {trade, type, ruleId, groupId});
+            // 直接购买
+            this.$root.$preload('trade', {trade, type});
           }
           this.$root.$navigate(`../order/trade`);
         }

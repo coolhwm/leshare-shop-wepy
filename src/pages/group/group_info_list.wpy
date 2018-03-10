@@ -1,29 +1,10 @@
 <template>
   <Loading :init.sync="init"/>
 
-  <view class="column group_info_box">
-    <view class="row-between info-item-box" wx:for="{{page.list}}" wx:for-index="index" wx:for-item="item" wx:key="index">
-      <view class="row">
-        <image src="{{item.header.customer.avatarUrl}}"/>
-        <text class="ml20 lg">{{item.header.customer.nickName}}</text>
-      </view>
-      <view class="row">
-        <view class="column-center">
-          <view class="row" wx:if="{{item.rule.limitCustomer > item.list.length}}">
-            <text>还差</text>
-            <view class="customer-num-box">{{item.rule.limitCustomer - item.list.length}}人</view>
-            <text>拼成</text>
-          </view>
-          <text class="muted xs">{{item.time}}</text>
-        </view>
-        <view wx:if="{{item.isPar}}" @tap="joined({{item}})">
-          <text class="ml20 btn-box">已参团</text>
-        </view>
-        <view wx:else  @tap="handleGroup({{item.rule.goods}}, {{item.rule.goodsGroupSkuDetails}}, {{item.rule.id}}, 'join',{{item.id}})">
-          <text class="ml20 btn-box">去参团</text>
-        </view>
-      </view>
-    </view>
+  <view class="column group-info-box">
+    <repeat for="{{page.list}}" index="index" item="item" key="index">
+      <ProcessItem :item.sync="item"/>
+    </repeat>
   </view>
 
   <!--滑出购物面板-->
@@ -40,6 +21,7 @@
   import SilderPanel from '../../components/goods/slider_buy_panel';
   import group from '../../api/group';
   import router from '../../mixins/router';
+  import ProcessItem from '../../components/group/gourp_process_item';
 
   export default class GroupInfoList extends wepy.page {
     data = {
@@ -50,18 +32,11 @@
       this.page = await group.processingList(ruleId);
       await this.next();
     };
-    methods = {
-      joined (item) {
-        const user = wepy.getStorageSync('user');
-        const userId = user.id;
-        const groupId = item.list.find(item => item.customerId === userId).groupId;
-        this.$navigate(`/pages/group/group_detail?groupId=${groupId}`);
-      }
-    };
     computed = {};
     components = {
       SilderPanel: SilderPanel,
-      Loading: Loading
+      Loading: Loading,
+      ProcessItem: ProcessItem
     };
     mixins = [base, pagination, router];
     config = {
@@ -72,26 +47,7 @@
 
 <style lang="scss">
   @import "../../styles/variable";
-  .info-item-box + .info-item-box{
-    border-top: $border;
-  }
   .info-item-box{
-    background-color: white;
     padding: 20rpx;
-    image{
-      width: 80rpx;
-      height: 80rpx;
-      border-radius: 40rpx;
-    }
-    .customer-num-box{
-      color: $color-primary;
-      font-size: $text-lg;
-    }
-    .btn-box{
-      background-color: $color-primary;
-      color: white;
-      padding:9rpx 25rpx;
-      border-radius: 10rpx;
-    }
   }
 </style>

@@ -16,7 +16,7 @@ export default class group extends base {
    * 获取商品详情中所展示的拼团信息(3条)
    */
   static processing (ruleId) {
-    const url = `${this.baseUrl}/goods_group/processing?rule_id=${ruleId}`;
+    const url = `${this.baseUrl}/goods_group/processing?rule_id=${ruleId}&sort=asc&by=group_time&limit=3`;
     return this.get(url).then(data => this._processGroupProcessingDetail(data));
   }
   /***
@@ -32,13 +32,13 @@ export default class group extends base {
   /***
    * 开团/参团
    */
-  static goodsGroup (trade, address, ruleId, id) {
+  static goodsGroup (trade, address) {
     const url = `${this.baseUrl}/goods_group`;
     this._processOrderAddress(trade, address);
     const param = {
-      ruleId: ruleId,
+      ruleId: trade.ruleId,
       order: trade,
-      id: id
+      id: trade.groupId
     };
     return this.post(url, param);
   }
@@ -86,6 +86,7 @@ export default class group extends base {
    * 拼团栏信息处理
    */
   static _processGroupProcessingDetail (detail) {
+    if (detail === null) return [];
     detail.forEach(item => {
       // 解析预览图
       this._processGoodsPreview(item.rule);
@@ -108,7 +109,7 @@ export default class group extends base {
       // 判断是否已开团
       this._processGroupParticipated(item);
     });
-    return detail.slice(0, 3);
+    return detail;
   }
   /***
    * 正在拼团信息处理
@@ -285,7 +286,7 @@ export default class group extends base {
   /**
    * 处理订单列表数据
    */
-  static async _processGroupListItem (detail) {
+  static _processGroupListItem (detail) {
     const order = detail.detail.order;
     order.shopName = this.shopName;
     // 处理订单状态
