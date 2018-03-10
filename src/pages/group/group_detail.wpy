@@ -22,6 +22,8 @@
     <!--拼团栏-->
     <GroupInfoBar />
 
+
+
     <!--滑出购物面板-->
     <block>
       <SilderPanel />
@@ -57,7 +59,12 @@
       this.rule = this.detail.rule;
       this.ruleId = this.rule.ruleId;
       this.groupTime = this.detail.groupTime;
-      this.groupId = this.detail.list[0].groupId;
+      this.isGroup = (new Date(this.groupTime.replace(/-/g, '/')) - new Date() + 1000 * 60 * 60 * 24) > 0;
+      if (!this.isGroup) {
+        this.groupId = 0;
+      } else {
+        this.groupId = this.detail.list[0].groupId;
+      }
       this.loaded();
     };
     /**

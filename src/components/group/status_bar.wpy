@@ -14,9 +14,9 @@
       <text>该团已结束，请重新开团</text>
     </view>
     <view wx:else class="status-spare-box">
-      <text>该团已成团，快邀请小伙伴一起拼团</text>
+      <text>该团已拼团成功</text>
     </view>
-    <view wx:if="{{isGroup}}">
+    <view wx:if="{{isGroup && detail.status === 'PROCESSING'}}">
       <view class="row-center" wx:if="{{content.hour}}">
         <view class="status-line-box mr10"></view>
         <view class="status-time-box row">
@@ -30,7 +30,7 @@
         <view class="status-line-box ml10"></view>
       </view>
     </view>
-    <view>
+    <view wx:if="{{detail.status != 'SUCCESS'}}">
       <button class="status-btn-box row-center" open-type="share" wx:if="{{userInfo && isGroup}}">邀请好友参团</button>
       <button class="status-btn-box row-center" wx:else @tap="handleGroup({{detail.rule.goods}}, {{detail.rule.goodsGroupSkuDetails}}, {{detail.rule.id}}, {{state}}, {{groupId}})">{{buttonText}}</button>
     </view>
@@ -86,8 +86,6 @@
           return '立即开团'
         } else if (this.state === 'join') {
           if (!this.isGroup) return '立即开团';
-          if (!this.detail) return;
-          if (this.detail === 'SUCCESS') return
           return '立即参团';
         }
       }
