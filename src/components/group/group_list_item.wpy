@@ -44,10 +44,6 @@
 </template>
 <script>
   import wepy from 'wepy';
-  import order from '../../api/order';
-  import Tips from '../../utils/Tips';
-  import Event from '../../utils/Event';
-  import Route from '../../utils/WxUtils';
   import OrderGoods from '../order/order_goods';
   export default class GroupItem extends wepy.component {
     props = {

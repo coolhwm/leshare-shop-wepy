@@ -34,6 +34,8 @@
         <text class="muted sm">分享有惊喜</text>
       </view>
     </view>
+
+    <!--服务标签-->
     <view class="row-between goods-des-box">
       <view class="row">
         <icon class="status-6 xsmall"/>
@@ -56,6 +58,9 @@
     <!--评论预览-->
     <CommentPreview :goodsId.sync="goodsId"/>
 
+    <!--商品详情-->
+    <DetailList :detail.sync="detail" />
+
     <!--滑出购物面板-->
     <block >
       <SilderPanel />
@@ -77,6 +82,7 @@
   import GroupInfoBar from '../../components/group/group_info_bar';
   import SilderPanel from '../../components/goods/slider_buy_panel';
   import group from '../../api/group';
+  import DetailList from '../../components/goods/detail_list';
 
   export default class GroupGoodsDetail extends wepy.page {
     data = {
@@ -115,6 +121,8 @@
      * 页面分享
      */
     onShareAppMessage () {
+      // 图片分享
+      // 【拼团】商品名称，X人成团仅需XXX元
       return {};
     }
     methods = {
@@ -129,6 +137,10 @@
       }
     };
     computed = {
+      detail() {
+        if (this.rules == null) return;
+        return this.rules.goods;
+      },
       saveText () {
         if (this.rules.price && this.rules.goods.maxPrice) {
           const num = (this.rules.goods.maxPrice * 1 - this.rules.price * 1).toFixed(2);
@@ -142,7 +154,8 @@
       CommentPreview: CommentPreview,
       GroupInfoBar: GroupInfoBar,
       SilderPanel: SilderPanel,
-      Loading: Loading
+      Loading: Loading,
+      DetailList: DetailList
     };
     mixins = [base];
     config = {

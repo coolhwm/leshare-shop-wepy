@@ -1,0 +1,19 @@
+<template>
+  {{param.type}}
+</template>
+<script>
+  import wepy from 'wepy';
+
+  export default class GroupBox extends wepy.component {
+    props = {
+      param: {}
+    };
+    async onLoad () {
+    }
+    methods = {
+    };
+  }
+</script>
+
+<style lang="scss">
+</style>

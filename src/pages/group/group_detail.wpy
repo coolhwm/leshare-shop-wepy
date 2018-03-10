@@ -74,10 +74,11 @@
      */
     onShareAppMessage () {
       const {name, imageUrl} = this.detail.rule.goods;
+      // 【拼团】商品名称 还剩X人成团，快来一起参团
       return {
         title: name,
         imageUrl: imageUrl,
-        path: `/pages/group/group_detail?groupId=${this.groupId}`
+        path: `/pages/group/group_detail?groupId=${this.detail.id}`
       };
     }
     methods = {

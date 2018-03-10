@@ -48,6 +48,11 @@
         <Copyright :param.sync="item" />
       </block>
 
+      <!--拼团橱窗-->
+      <block wx:if="{{item.type == 'GROUP_BOX'}}">
+        <GroupBox :param.sync="item" />
+      </block>
+
       <!--间隔-->
       <view class="h-gap" wx:if="{{item.border !== 'none'}}"></view>
     </repeat>
@@ -103,6 +108,7 @@
   import HotAreaBox from '../../components/template/hot_area_box';
   import Copyright from '../../components/common/copyright';
   import ButtonWidget from '../../components/template/button_widget';
+  import GroupBox from '../../components/template/group_box';
 
   @connect({
     homePageId: store.get('homePageId'),
@@ -227,7 +233,8 @@
       NoticeBar: NoticeBar,
       HotAreaBox: HotAreaBox,
       Copyright: Copyright,
-      ButtonWidget: ButtonWidget
+      ButtonWidget: ButtonWidget,
+      GroupBox: GroupBox
     };
     computed = {
     };
