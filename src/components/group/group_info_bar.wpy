@@ -1,6 +1,6 @@
 <template>
-  <view class="column group-info-box" wx:if="{{!processing}}">
-    <text class="top-box xl">拼团玩法</text>
+  <view class="column group-info-box" wx:if="{{!processing || processing.length < 1}}">
+    <text class="top-box">拼团玩法</text>
     <view class="row-around content-box">
       <view class="column-center info-rule-box">
         <icon class="payment large" color="gray"/>
@@ -21,29 +21,14 @@
     </view>
   </view>
   <view class="column group-info-box" wx:else>
-    <view class="row-between top-box">
-      <text class="xl">{{processing.length}}人在开团，可直接参与</text>
-      <view class="row">
-        <text class="muted">查看更多</text>
-        <icon class="more" color="gray"/>
-      </view>
+    <view class="row-between top-box" @tap="moreGroup({{processing.length > 0 ? processing[0].rule.id : ''}})">
+      <text>以下小伙伴已发起拼团，您可以直接参加</text>
+      <icon class="more xsmall" color="gray"/>
     </view>
     <view class="column">
-      <view class="row-between info-item-box" wx:for="{{processing}}" wx:for-index="index" wx:for-item="item" wx:key="index">
-        <view class="row">
-          <image src="{{item.header.customer.avatarUrl}}"/>
-          <text class="ml20 lg">{{item.header.customer.nickName}}</text>
-        </view>
-        <view class="row">
-          <view class="column-center">
-            <view class="row" wx:if="{{limitCustomer > item.list.length}}">
-              <text class="lg">还差</text><span>{{limitCustomer - item.list.length}}人</span><text class="lg">拼成</text>
-            </view>
-            <text class="muted sm">{{time}}</text>
-          </view>
-          <text class="ml20 btn-box xl">去参团</text>
-        </view>
-      </view>
+      <repeat for="{{processing}}" index="index" item="item" key="index">
+        <ProcessItem :item.sync="item"/>
+      </repeat>
     </view>
 
   </view>
@@ -51,43 +36,20 @@
 
 <script>
   import wepy from 'wepy';
+  import ProcessItem from '../../components/group/gourp_process_item';
 
   export default class GroupInfoBar extends wepy.component {
     props = {
-      processing: {},
-      groupTime: {}
-    };
-    data = {
-      isFav: false,
-      time: {}
-    };
-    countdowm(timestamp) {
-      let timer = setInterval(async () => {
-        const time = new Date(timestamp) - new Date() + 1000 * 60 * 60 * 72;
-        if (time > 0) {
-          let hour = Math.floor(time / 3600000);
-          let min = Math.floor((time / 60000) % 60);
-          let sec = Math.floor((time / 1000) % 60);
-          hour = hour < 10 ? '0' + hour : hour;
-          min = min < 10 ? '0' + min : min;
-          sec = sec < 10 ? '0' + sec : sec;
-          this.time = `还剩${hour}:${min}:${sec}`
-        } else {
-          clearInterval(timer);
-        }
-        this.$apply();
-      }, 1000);
+      processing: {}
     };
     methods = {
-    };
-    computed = {
-      header () {
+      moreGroup (ruleId) {
+        if (ruleId === null) return;
+        this.$root.$navigate(`/pages/group/group_info_list?ruleId=${ruleId}`)
       }
     };
-    watch ={
-      groupTime (time) {
-        this.countdowm(time);
-      }
+    components = {
+      ProcessItem: ProcessItem
     };
   }
 </script>
@@ -111,27 +73,6 @@
     .info-rule-box{
       width: 25%;
       padding: 20rpx 10rpx;
-    }
-    .info-item-box + .info-item-box{
-      border-top: $border;
-    }
-    .info-item-box{
-      padding: 20rpx 0;
-      image{
-        width: 80rpx;
-        height: 80rpx;
-        border-radius: 40rpx;
-      }
-      span{
-        color: #FD4B49;
-        font-size: $text-lg;
-      }
-      .btn-box{
-        background-color: #FD4B49;
-        color: white;
-        padding:10rpx 36rpx;
-        border-radius: 10rpx;
-      }
     }
   }
 </style>

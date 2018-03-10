@@ -12,7 +12,7 @@
       <view class="buy-panel-title-price">
         <text class="buy-panel-title">{{goods.name}}</text>
         <view class="panel-price-box row">
-          <text class="buy-panel-price">￥{{sku.isReady ? sku.detail.price: goods.priceLable}}</text>
+          <text class="buy-panel-price">￥{{sku.isReady ? sku.detail.price : goods.priceLable}}</text>
           <text class="cancel ml10" wx:if="{{goods.discount}}">￥{{goods.originalPrice}}</text>
           <DiscountBadge :goods.sync="goods" />
         </view>
@@ -21,7 +21,6 @@
       <view class="buy-panel-close-container">
         <icon class="close" color="gray" @tap="close"/>
       </view>
-
     </view>
 
     <!--SKU展示 -->
@@ -81,8 +80,6 @@
     status: store.get('status')
   })
   export default class GoodsPanel extends wepy.component {
-    props = {
-    };
     data = {
       goods: {},
       source: null,
@@ -102,6 +99,7 @@
       }
       this.goods = goods;
       this.action = action;
+      // 构造SKU对象
       this.skuManager = new Sku(goods);
       this.skuManager.action = action;
       this.display = true;
@@ -130,14 +128,13 @@
         this.skuManager.setNum(quantity);
       },
       // 确认选择
-      confirm(type) {
+      async confirm(type) {
         if (!this.sku.next) {
           return;
         }
-        console.info(type);
         // 增加到购物车
         const {skuText, num} = this.sku;
-        if (type == 'cart') {
+        if (type === 'cart') {
           Tips.success('已加入购物车');
           // 关闭面板
           this.display = false;
@@ -146,7 +143,14 @@
         } else {
           const cart = this.cartManager.createCart(this.goods, skuText, num);
           const trade = order.createCartTrade([cart], {orderType: 10});
-          this.$root.$preload('trade', trade);
+          if (type === 'join' || type === 'group') {
+            const {groupId, ruleId} = this.goods;
+            Object.assign(trade, {ruleId, groupId});
+            this.$root.$preload('trade', {trade, type});
+          } else {
+            // 直接购买
+            this.$root.$preload('trade', {trade, type});
+          }
           this.$root.$navigate(`../order/trade`);
         }
         this.clear();
@@ -161,10 +165,14 @@
         if (this.goods == null || this.sku == null) return;
         if (this.goods.totalStock < 1) {
           return '已售罄';
-        } else if (this.action == 'cart') {
+        } else if (this.action === 'cart') {
           return '加入购物车'
-        } else if (this.action == 'buy') {
+        } else if (this.action === 'buy') {
           return '立即购买';
+        } else if (this.action === 'group') {
+          return '一键开团';
+        } else if (this.action === 'join') {
+          return '一键参团';
         }
       },
       quantity() {

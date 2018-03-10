@@ -2,11 +2,16 @@
   import wepy from 'wepy';
   import Event from '../utils/Event';
   import Tips from '../utils/Tips';
+  import api from '../api/goods';
 
   /**
    * 分页通用方法
    */
+  let timer = null;
   export default class router extends wepy.mixin {
+    data = {
+      content: {}
+    }
     config = {};
     components = {};
     /**
@@ -16,6 +21,33 @@
       // 只能在SLIDER模式下触发，否则会降级为购物车购买
       const source = this.$root.$wxpage.route;
       const action = 'buy';
+      Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
+    }
+    /**
+     * 拼团
+     */
+    group(goods, details, id, state, groupId) {
+      // 只能在SLIDER模式下触发，否则会降级为购物车购买
+      // 处理规格替换拼团价格
+      goods.ruleId = id;
+      goods.groupId = groupId;
+      if (goods.goodsSkuInfo && details) {
+        const originDetails = goods.goodsSkuInfo.goodsSkuDetails;
+        originDetails.forEach(detail => {
+          const {sku, goodsSkuDetailBase: base} = detail;
+          const groupDetail = details.find(item => item.sku === sku);
+          if (groupDetail) {
+            base.price = groupDetail.price
+          } else {
+            console.warn(`[group] can not find group price, sku=${sku}`)
+          }
+          // 重新计算标签
+          api._processGoodsPriceRange(goods);
+          api._processGoodsPriceLabel(goods);
+        })
+      }
+      const source = this.$root.$wxpage.route;
+      const action = state;
       Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
     }
     /**
@@ -94,6 +126,50 @@
         this.$root.$navigate(`/pages/customer/index`);
       }
     }
+    /***
+     * 拼团倒计时计算
+     */
+    countdowm (timestamp, status) {
+      this.clear();
+      timer = setInterval(() => {
+        const time = status === 'groupTime' ? new Date(timestamp) - new Date() + 1000 * 60 * 60 * 24 : new Date(timestamp) - new Date();
+        if (time > 0) {
+          let day = status === 'groupTime' ? '' : Math.floor(time / 86400000);
+          let hour = status === 'groupTime' ? Math.floor(time / 3600000) : Math.floor((time / 3600000) % 24);
+          let min = Math.floor((time / 60000) % 60);
+          let sec = Math.floor((time / 1000) % 60);
+          day = day < 0 ? '0' : day;
+          hour = hour < 10 ? '0' + hour : hour;
+          min = min < 10 ? '0' + min : min;
+          sec = sec < 10 ? '0' + sec : sec;
+          this.content = {
+            day: day,
+            hour: hour,
+            min: min,
+            sec: sec
+          };
+        } else {
+          this.clear();
+        }
+        this.$apply();
+      }, 1000);
+      console.info(`[inerval] create interval id=${timer}`);
+    }
+    /***
+     * 拼团时间清除方法
+     */
+    clearTime() {
+      if (timer != null) {
+        console.info(`[inerval] destory interval id=${timer}`);
+        clearInterval(timer);
+        timer = null;
+      }
+      this.content = {
+        hour: '00',
+        min: '00',
+        sec: '00'
+      };
+    }
     methods = {
       routeToCart() {
         this.routeToCart();
@@ -126,6 +202,12 @@
         this.buy(goods);
       },
       /**
+       * 处理拼团事件
+       */
+      handleGroup(goods, detail, id, state, groupId) {
+        this.group(goods, detail, id, state, groupId);
+      },
+      /**
        * 处理跳转到购物车页面
        */
       routeToGoods(goodsId) {
@@ -147,9 +229,9 @@
             break;
           case 'DEBUG':
             // 调试
-            console.info(event);
+            console.info('[router] debug action', event);
             break;
-          case 'PAGE_NAVIGAET':
+          case 'PAGE_NAVIGATE':
             // 跳转指定页面
             this.$root.$navigate(targetId);
             break;

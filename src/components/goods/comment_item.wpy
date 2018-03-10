@@ -5,7 +5,7 @@
         <view class="row-center">
           <image wx:if="{{comment.avatar}}" src="{{comment.avatar}}"/>
           <icon wx:else class="customer large" color="gray"/>
-          <text class="username xl ml20">{{comment.nickName}}</text>
+          <text class="username lg ml20">{{comment.nickName}}</text>
           <text class="muted xs ml20">{{comment.createTime}}</text>
         </view>
         <view class="star-box row">
@@ -15,7 +15,7 @@
         </view>
       </view>
     </view>
-    <text class="content-box lg mb10">{{comment.comment ? comment.comment : '好评！'}}</text>
+    <text class="content-box mb10">{{comment.comment ? comment.comment : '好评！'}}</text>
   </view>
 </template>
 

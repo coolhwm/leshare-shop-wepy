@@ -1,33 +1,32 @@
 <template>
-  <view class="column comment-preview-box" wx:if="{{init}}">
+  <view class="column comment-preview-box">
     <view class="row-between">
-      <text class="xxl">客户评价({{count.ALL}})</text>
+      <text>商品评价 ({{count.ALL}})</text>
       <view>
-        <view wx:if="{{!this.detail || !this.count}}">
-          <text>{{commentText}}</text>
-        </view>
-        <view wx:elif="{{this.count.ALL == 0}}">
-          <text>{{commentText}}</text>
+        <view wx:if="{{count.ALL == 0}}">
+          <text class="comment-text-box">{{commentText}}</text>
         </view>
         <view wx:else>
-          <text class="mr10">好评率</text>
+          <text class="mr10" wx:if="{{init}}">好评率</text>
           <text class="comment-text-box">{{commentText}}</text>
         </view>
       </view>
     </view>
 
-    <view wx:if="{{this.detail && this.count.ALL > 0}}">
+    <view class="comment-list-box" wx:if="{{count.ALL > 0}}">
       <view class="row comment-tags-box mt20 mb10">
-        <text class="xs">好评({{count.GOOD}})</text>
-        <text class="xs bad-box">中评({{count.NORMAL}})</text>
-        <text class="xs bad-box">差评({{count.BAD}})</text>
+        <text class="xs" @tap="all('GOOD')">满意({{count.GOOD}})</text>
+        <text class="xs bad-box" @tap="all('NORMAL')">一般({{count.NORMAL}})</text>
+        <text class="xs bad-box" @tap="all('BAD')">不满意({{count.BAD}})</text>
       </view>
 
-      <repeat for="{{comment}}" key="index" index="index" item="item">
-        <CommentItem :comment.sync="item" />
-      </repeat>
+      <view @tap="all('GOOD')">
+        <repeat for="{{comment}}" key="index" index="index" item="item">
+          <CommentItem :comment.sync="item" />
+        </repeat>
+      </view>
 
-      <view class="column-center">
+      <view class="column-center" @tap="all('GOOD')">
         <text class="comment-preview-btn mt10">查看全部评价</text>
       </view>
     </view>
@@ -38,7 +37,6 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
-  import goods from '../../api/goods';
   import comment from '../../api/comment';
   import pagination from '../../mixins/pagination.wpy';
   import CommentItem from '../../components/goods/comment_item'
@@ -56,8 +54,7 @@
         list: [
         ]
       },
-      count: {},
-      detail: {}
+      count: null
     };
     params() {
       return {
@@ -66,14 +63,14 @@
       };
     }
     methods = {
+      all(status) {
+        this.$root.$navigate(`/pages/goods/comment_list?goodsId=${this.goodsId}&status=${status}`)
+      }
     };
     computed = {
       commentText() {
-        if (!this.detail) {
-          return '用户评价加载中...';
-        }
         const count = this.count;
-        if (!count) {
+        if (!this.init) {
           return '用户评价加载中...';
         } else if (count.ALL == 0) {
           return '该商品暂无评价';
@@ -90,7 +87,6 @@
     watch = {
       async goodsId (id) {
         this.count = await comment.count(id);
-        this.detail = await goods.getInfo(id, this.discount);
         this.page = await comment.page();
         this.next();
       }
@@ -107,9 +103,9 @@
   .comment-preview-box{
     background: white;
     margin-bottom: 10rpx;
-    padding: 20rpx 30rpx;
+    padding: 20rpx;
     .comment-text-box{
-      color: #E02F25;
+      color: $color-muted;
     }
     .comment-tags-box{
       text{
@@ -123,6 +119,10 @@
       }
     }
   }
+  .comment-list-box{
+    border-top: $border;
+    margin-top: 20rpx;
+  }
   .score-box{
     border-bottom: none;
     padding: 20rpx 0;
@@ -131,6 +131,7 @@
     border-top: $border;
   }
   .comment-preview-btn{
+    font-size: $text-xs;
     padding: 8rpx 30rpx;
     border: $border;
     border-radius: 30rpx;
