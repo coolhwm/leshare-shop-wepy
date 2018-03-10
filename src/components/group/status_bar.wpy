@@ -55,6 +55,7 @@
 <script>
   import wepy from 'wepy';
   import router from '../../mixins/router';
+  import countdown from '../../mixins/countdown';
 
   export default class StatusBar extends wepy.component {
     props = {
@@ -62,12 +63,8 @@
       }
     };
     data = {
-      init: false,
-      content: {}
+      init: false
     };
-    onLoad() {
-      this.clear();
-    }
     methods = {
       open() {
         this.$root.$navigate(`/pages/group/goods_detail?ruldId=${this.detail.rule.id}`);
@@ -77,9 +74,6 @@
         this.group(goods, goodsGroupSkuDetails, id, 'join', this.detail.id)
       }
     };
-    clear() {
-      this.clearTime()
-    }
     watch = {
       detail (detail) {
         // 初始化定时器
@@ -89,7 +83,7 @@
         }
       }
     };
-    mixins = [router];
+    mixins = [router, countdown];
   }
 </script>
 

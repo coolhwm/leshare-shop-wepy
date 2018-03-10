@@ -3,15 +3,10 @@
   import Event from '../utils/Event';
   import Tips from '../utils/Tips';
   import api from '../api/goods';
-
   /**
    * 分页通用方法
    */
-  let timer = null;
   export default class router extends wepy.mixin {
-    data = {
-      content: {}
-    }
     config = {};
     components = {};
     /**
@@ -125,50 +120,6 @@
       } else {
         this.$root.$navigate(`/pages/customer/index`);
       }
-    }
-    /***
-     * 拼团倒计时计算
-     */
-    countdowm (timestamp, status) {
-      this.clear();
-      timer = setInterval(() => {
-        const time = status === 'groupTime' ? new Date(timestamp) - new Date() + 1000 * 60 * 60 * 24 : new Date(timestamp) - new Date();
-        if (time > 0) {
-          let day = status === 'groupTime' ? '' : Math.floor(time / 86400000);
-          let hour = status === 'groupTime' ? Math.floor(time / 3600000) : Math.floor((time / 3600000) % 24);
-          let min = Math.floor((time / 60000) % 60);
-          let sec = Math.floor((time / 1000) % 60);
-          day = day < 0 ? '0' : day;
-          hour = hour < 10 ? '0' + hour : hour;
-          min = min < 10 ? '0' + min : min;
-          sec = sec < 10 ? '0' + sec : sec;
-          this.content = {
-            day: day,
-            hour: hour,
-            min: min,
-            sec: sec
-          };
-        } else {
-          this.clear();
-        }
-        this.$apply();
-      }, 1000);
-      console.info(`[inerval] create interval id=${timer}`);
-    }
-    /***
-     * 拼团时间清除方法
-     */
-    clearTime() {
-      if (timer != null) {
-        console.info(`[inerval] destory interval id=${timer}`);
-        clearInterval(timer);
-        timer = null;
-      }
-      this.content = {
-        hour: '00',
-        min: '00',
-        sec: '00'
-      };
     }
     methods = {
       routeToCart() {

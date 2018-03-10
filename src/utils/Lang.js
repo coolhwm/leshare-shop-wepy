@@ -41,6 +41,8 @@ export default class Lang {
   static convertTimestapeToDay(timestape) {
     return timestape.substring(0, timestape.indexOf(' ')).replace(/-/g, '.');
   }
+
+  // 格式化日期
   static dateFormate (date, fmt) {
     const o = {
       'M+': date.getMonth() + 1,
