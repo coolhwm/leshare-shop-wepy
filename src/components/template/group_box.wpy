@@ -1,8 +1,21 @@
 <template>
-  {{param.type}}
+  <!--顶部标题-->
+  <view wx:if="{{param.title}}" @tap="more">
+    <repeat for="{{[param]}}" key="i" index="i" item="item">
+      <TitleBar :param.sync="item" />
+    </repeat>
+  </view>
+  <scroll-view scroll-x class="mini-box" wx:if="{{param.layout == 'TIGHT'}}">
+    <repeat for="{{param.data}}" key="index" index="index" item="item">
+      <!--限制数量-->
+      <MiniItem :goods.sync="item" />
+    </repeat>
+  </scroll-view>
 </template>
 <script>
   import wepy from 'wepy';
+  import MiniItem from './group_mini';
+  import TitleBar from './title_bar';
 
   export default class GroupBox extends wepy.component {
     props = {
@@ -11,9 +24,38 @@
     async onLoad () {
     }
     methods = {
+      more () {
+        if (this.param.isMore == false) return;
+        const {sort, by, content, categoryId} = this.param;
+        let url = `/pages/goods/search_list?`;
+        if (categoryId != null) {
+          url += `&categoryId=${categoryId}`;
+        }
+        if (sort != null) {
+          url += `&sort=${sort}`;
+        }
+        if (by != null) {
+          url += `&by=${by}`;
+        }
+        if (content != null) {
+          url += `&keyword=${content}`;
+        }
+        this.$root.$navigate(url);
+      }
+    };
+    components = {
+      MiniItem: MiniItem,
+      TitleBar: TitleBar
     };
   }
 </script>
 
 <style lang="scss">
+  @import "../../styles/variable";
+
+   .mini-box{
+    width: 750rpx;
+    height: 300rpx;
+    white-space: nowrap;
+  }
 </style>
