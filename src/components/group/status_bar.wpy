@@ -2,11 +2,13 @@
   <view class="column-center status-box">
 
     <!--参团人员列表-->
-    <view class="row customer-box">
-      <view class="status-avatar-box" wx:for="{{detail.list}}" wx:for-index="index" wx:for-item="item" wx:key="index">
-        <view  wx:if="{{item.head}}" class="weui-badge">团长</view>
-        <image class="{{item.head ? 'head-box':'participants-box'}}" wx:if="{{item.customer}}" src="{{item.customer.avatarUrl}}"/>
-        <icon wx:else class="question"/>
+    <view class="column customer-box">
+      <view class="row" wx:for="{{detail.avatarList}}" wx:for-index="columnIndex" wx:for-item="columnItem" wx:key="columnIndex">
+        <view class="status-avatar-box" wx:for="{{columnItem}}" wx:for-index="rowIndex" wx:for-item="item" wx:key="rowIndex">
+          <view  wx:if="{{item.head}}" class="weui-badge">团长</view>
+          <image class="{{item.head ? 'head-box':'participants-box'}}" wx:if="{{item.customer}}" src="{{item.customer.avatarUrl}}"/>
+          <icon wx:else class="question"/>
+        </view>
       </view>
     </view>
 
