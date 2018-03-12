@@ -2,7 +2,7 @@
   <view class="column-center status-box">
 
     <!--参团人员列表-->
-    <view class="row customer-box">
+    <view class="row-center customer-box">
       <view class="status-avatar-box" wx:for="{{detail.list}}" wx:for-index="index" wx:for-item="item" wx:key="index">
         <view  wx:if="{{item.head}}" class="weui-badge">团长</view>
         <image class="{{item.head ? 'head-box':'participants-box'}}" wx:if="{{item.customer}}" src="{{item.customer.avatarUrl}}"/>
@@ -98,6 +98,7 @@
   }
   .customer-box{
     align-items: flex-start;
+    flex-wrap: wrap;
   }
   .status-avatar-box{
     position: relative;
