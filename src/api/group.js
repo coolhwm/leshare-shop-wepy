@@ -410,5 +410,6 @@ export default class group extends base {
       if (i % 5 == 0) data.avatarList.push([]);
       data.avatarList[parseInt(i / 5)].push(data.list[i])
     }
+
   }
 }
