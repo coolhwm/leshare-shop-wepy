@@ -1,6 +1,6 @@
 <template>
   <view class="group-box">
-    <view class="row-between mb10">
+    <view class="row-between mb20">
       <view class="row group-title-box">
         <text class="title-box">拼团</text>
         <text class="muted ml20 xs">限量拼团，每日必逛</text>

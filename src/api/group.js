@@ -405,11 +405,5 @@ export default class group extends base {
     if (rule.limitCustomer > data.list.length) {
       for (let i = 1; i < rule.limitCustomer; i++) data.list.push({})
     }
-    data.avatarList = [];
-    for (let i = 0; i < data.list.length; i++) {
-      if (i % 5 == 0) data.avatarList.push([]);
-      data.avatarList[parseInt(i / 5)].push(data.list[i])
-    }
-
   }
 }
