@@ -253,6 +253,7 @@ export default class goods extends base {
    * 处理预览图
    */
   static _processGoodsPreview (item) {
+    console.info(item)
     const images = item.images;
     // 图片处理
     if (images == null || images.length < 1) {

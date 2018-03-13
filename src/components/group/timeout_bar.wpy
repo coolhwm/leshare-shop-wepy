@@ -2,19 +2,19 @@
   <view class="timeout-box row-between" >
     <view class="title-box row">
       <view class="title mr20 ">{{title}}</view>
-      <view class="sm describe-box">{{describe}}</view>
+      <view class="describe-box">{{describe}}</view>
     </view>
     <view class="column-center time-box" wx:if="{{content.day}}">
-      <text class="danger xs">距结束仅剩</text>
+      <text class="danger xxs">距结束仅剩</text>
       <view class="row">
         <view class="time-num-box">{{content.day}}</view>
-        <text class="xs">天</text>
+        <text class="xxs">天</text>
         <view class="time-num-box">{{content.hour}}</view>
-        <text class="xs">时</text>
+        <text class="xxs">时</text>
         <view class="time-num-box">{{content.min}}</view>
-        <text class="xs">分</text>
+        <text class="xxs">分</text>
         <view class="time-num-box">{{content.sec}}</view>
-        <text class="xs">秒</text>
+        <text class="xxs">秒</text>
       </view>
     </view>
   </view>
@@ -56,6 +56,7 @@
   @import "../../styles/variable";
   .timeout-box{
     background:-webkit-gradient(linear, 0% 0%, 100% 0%,from($color-primary), to(#FFCC59));
+    padding: 6rpx 0;
     .title-box{
       padding: 10rpx 0 10rpx 20rpx;
       text{
@@ -63,7 +64,9 @@
       }
     }
     .title{
-      font-size: 50rpx;
+      $title-size: 48rpx;
+      font-size: $title-size;
+      line-height: $title-size;
       font-weight: bold;
       color: white;
       margin-top: 10rpx;
@@ -71,6 +74,8 @@
     .describe-box{
       margin-top: 36rpx;
       color: white;
+      font-size: $text-xs;
+      line-height: $text-xs;
     }
     .time-box{
       padding: 10rpx 20rpx;
@@ -79,8 +84,8 @@
         margin: 0 8rpx;
         background-color: #000;
         color: #fff;
-        font-size: $text-xs;
-        line-height: $text-xs;
+        font-size: $text-xxs;
+        line-height: $text-xxs;
       }
     }
     .end-box{

@@ -46,6 +46,18 @@
       Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
     }
     /**
+     * 砍价
+     */
+    bargain(goods, details, id, state, groupId) {
+      // 只能在SLIDER模式下触发，否则会降级为购物车购买
+      // 处理规格替换拼团价格
+      goods.ruleId = id;
+      goods.groupId = groupId;
+      const source = this.$root.$wxpage.route;
+      const action = state;
+      Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
+    }
+    /**
      * 加入购物车
      */
     plusCart(goods, goodsSku = '') {
@@ -157,6 +169,12 @@
        */
       handleGroup(goods, detail, id, state, groupId) {
         this.group(goods, detail, id, state, groupId);
+      },
+      /**
+       * 处理砍价事件
+       */
+      handleBargain(goods, detail, id, state, groupId) {
+        this.bargain(goods, detail, id, state, groupId);
       },
       /**
        * 处理跳转到购物车页面

@@ -4,7 +4,7 @@
   <!--轮播展示图-->
   <view class="container column" wx:if="{{init}}">
     <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" @tap="previewDetailSwiper">
-      <block wx:for="{{rules.goods.images}}" wx:key="id">
+      <block wx:for="{{rule.goods.images}}" wx:key="id">
         <swiper-item>
           <image src="{{item.url}}/preview" mode="aspectFill" style="width: 100%"></image>
         </swiper-item>
@@ -12,13 +12,13 @@
     </swiper>
 
     <!--拼团倒计时栏-->
-    <TimeOutBar :endTime.sync="endTime" :callback="callback" />
+    <TimeOutBar :endTime.sync="endTime" :callback="callback" describe="邀请好友帮砍 低价购" title="砍价" />
 
     <!--商品基本信息展示及服务信息-->
-    <GoodsMsgBar :rule.sync="rules"/>
+    <GoodsMsgBar :rule.sync="rule"/>
 
     <!--拼团栏-->
-    <GroupInfoBar :processing.sync="processing" :info.sync="info"/>
+    <BargainInfoBar :processing.sync="processing" :info.sync="info"/>
 
     <!--评论预览-->
     <CommentPreview :goodsId.sync="goodsId"/>
@@ -32,7 +32,7 @@
     </block>
 
     <!--底栏-->
-    <GroupBar :rule.sync="rules" />
+    <BargainBar :rule.sync="rule" />
   </view>
 </template>
 <script>
@@ -41,14 +41,14 @@
   import store from '../../store/utils';
   import base from '../../mixins/base';
   import Loading from '../../components/common/loading';
-  import GroupBar from '../../components/group/bottom_group_bar';
+  import BargainBar from '../../components/bargain/bottom_bargain_bar';
   import TimeOutBar from '../../components/group/timeout_bar';
   import CommentPreview from '../../components/goods/comment_preview';
-  import GroupInfoBar from '../../components/group/group_info_bar';
+  import BargainInfoBar from '../../components/bargain/bargain_info_bar';
   import SilderPanel from '../../components/goods/slider_buy_panel';
-  import group from '../../api/group';
+  import bargain from '../../api/bargain';
   import DetailList from '../../components/goods/detail_list';
-  import GoodsMsgBar from '../../components/group/goods_msg_bar'
+  import GoodsMsgBar from '../../components/bargain/goods_msg_bar'
 
   export default class BargainGoodsDetail extends wepy.page {
     data = {
@@ -57,9 +57,8 @@
       endTime: '',
       goodsId: '',
       groupTime: '',
-      ruleId: 25,
-      rules: {},
-      processing: {}
+      ruleId: 33,
+      rule: {}
     };
     async onLoad () {
       await auth.login();
@@ -74,22 +73,23 @@
       wepy.stopPullDownRefresh();
     }
     async update () {
-      this.rules = await group.rules(this.ruleId);
-      this.processing = await group.processing(this.ruleId);
-      this.endTime = this.rules.endTime;
-      this.goodsId = this.rules.goodsId;
-      this.groupTime = this.processing.map(item => {
-        return item.groupTime
-      });
+      this.rule = await bargain.rule(this.ruleId);
+      this.endTime = this.rule.endTime;
+      this.goodsId = this.rule.goodsId;
       this.loaded();
     }
     /**
      * 页面分享
      */
     onShareAppMessage () {
-      // 图片分享
-      // 【拼团】商品名称，X人成团仅需XXX元
-      return {};
+      const {name, imageUrl} = this.rules.goods;
+      const shareName = `${name}，仅需${this.rules.limitCustomer}人即可成团，快来一起开团吧！`;
+      // 【拼团】商品名称 还剩X人成团，快来一起参团
+      return {
+        title: shareName,
+        imageUrl: imageUrl,
+        path: `/pages/group/goods_detail?groupId=${this.ruleId}`
+      };
     }
     methods = {
       /**
@@ -105,20 +105,14 @@
     computed = {
       detail() {
         if (this.rules == null) return;
-        return this.rules.goods;
-      },
-      saveText () {
-        if (this.rules.price && this.rules.goods.maxPrice) {
-          const num = (this.rules.goods.maxPrice * 1 - this.rules.price * 1).toFixed(2);
-          return `拼团立省￥${num}`
-        }
+        return this.rule.goods;
       }
     };
     components = {
-      GroupBar: GroupBar,
+      BargainBar: BargainBar,
       TimeOutBar: TimeOutBar,
       CommentPreview: CommentPreview,
-      GroupInfoBar: GroupInfoBar,
+      BargainInfoBar: BargainInfoBar,
       SilderPanel: SilderPanel,
       Loading: Loading,
       DetailList: DetailList,

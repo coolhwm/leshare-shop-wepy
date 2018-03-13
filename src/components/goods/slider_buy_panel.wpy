@@ -140,6 +140,8 @@
           this.display = false;
           this.$apply();
           this.cartManager.plus(this.goods, skuText, num);
+        } else if (type === 'begin' || type === 'help') {
+          this.$root.$navigate(`../bargain/bargain_detail`);
         } else {
           const cart = this.cartManager.createCart(this.goods, skuText, num);
           const trade = order.createCartTrade([cart], {orderType: 10});
@@ -173,6 +175,8 @@
           return '一键开团';
         } else if (this.action === 'join') {
           return '一键参团';
+        } else if (this.action === 'begin') {
+          return '发起砍价';
         }
       },
       quantity() {
