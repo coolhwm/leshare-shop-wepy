@@ -2,7 +2,7 @@
   import wepy from 'wepy';
   import Event from '../utils/Event';
   import Tips from '../utils/Tips';
-
+  import api from '../api/goods';
   /**
    * 分页通用方法
    */
@@ -19,12 +19,40 @@
       Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
     }
     /**
+     * 拼团
+     */
+    group(goods, details, id, state, groupId) {
+      // 只能在SLIDER模式下触发，否则会降级为购物车购买
+      // 处理规格替换拼团价格
+      goods.ruleId = id;
+      goods.groupId = groupId;
+      if (goods.goodsSkuInfo && details) {
+        const originDetails = goods.goodsSkuInfo.goodsSkuDetails;
+        originDetails.forEach(detail => {
+          const {sku, goodsSkuDetailBase: base} = detail;
+          const groupDetail = details.find(item => item.sku === sku);
+          if (groupDetail) {
+            base.price = groupDetail.price
+          } else {
+            console.warn(`[group] can not find group price, sku=${sku}`)
+          }
+          // 重新计算标签
+          api._processGoodsPriceRange(goods);
+          api._processGoodsPriceLabel(goods);
+        })
+      }
+      const source = this.$root.$wxpage.route;
+      const action = state;
+      Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
+    }
+    /**
      * 加入购物车
      */
     plusCart(goods, goodsSku = '') {
       const source = this.$root.$wxpage.route;
       const mode = this.getMode(goods);
       const action = 'cart';
+      console.info(`[router] goodId=${goods.id},source=${source}, action=${action}`);
       switch (mode) {
         case 'SLIDER':
           Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
@@ -39,6 +67,7 @@
     }
     minusCart(goodsId, goodsSku = '') {
       const source = this.$root.$wxpage.route;
+      console.info(`[router] goodId=${goodsId},source=${source}`);
       Event.emit(Event.GOODS_PANEL_MINUS, {goodsId, goodsSku, source});
     }
     getMode(goods) {
@@ -126,6 +155,12 @@
         this.buy(goods);
       },
       /**
+       * 处理拼团事件
+       */
+      handleGroup(goods, detail, id, state, groupId) {
+        this.group(goods, detail, id, state, groupId);
+      },
+      /**
        * 处理跳转到购物车页面
        */
       routeToGoods(goodsId) {
@@ -147,9 +182,9 @@
             break;
           case 'DEBUG':
             // 调试
-            console.info(event);
+            console.info('[router] debug action', event);
             break;
-          case 'PAGE_NAVIGAET':
+          case 'PAGE_NAVIGATE':
             // 跳转指定页面
             this.$root.$navigate(targetId);
             break;

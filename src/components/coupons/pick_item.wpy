@@ -152,9 +152,9 @@
 
   /*领取*/
   .coupon-item-pick{
-    border: 1px solid #1296db;
+    border: 1px solid $color-primary;
     border-radius: 10px;
-    color: #1296db;
+    color: $color-primary;
     font-size: 26rpx;
     display: inline-block;
     padding: 10rpx;

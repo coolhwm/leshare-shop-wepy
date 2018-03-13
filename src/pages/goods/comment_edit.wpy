@@ -66,7 +66,7 @@
         await comment.add(data);
         await Tips.success('评价成功');
         Event.emit(Event.ORDER_LIST_UPDATE);
-        Route.backOrRedirect('/pages/customer/index');
+        Route.backOrRedirect('/pages/order/list');
       }
     };
     components = {};

@@ -181,7 +181,11 @@ const STATUS_ACTIONS = {
   '10-1-5': [ACTION.UNREFUND],
   // 离线支付
   '40-1-1': [ACTION.CLOSE, ACTION.PAY],
-  '40-0-1': [ACTION.CLOSE, ACTION.PAY]
+  '40-0-1': [ACTION.CLOSE, ACTION.PAY],
+  // 拼团
+  '50-1-1': [ACTION.CLOSE, ACTION.PAY],
+  '50-1-3': [ACTION.RECEIVE],
+  '50-1-4': [ACTION.COMMENT]
 };
 
 /**  内部方法 **/

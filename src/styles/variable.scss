@@ -1,6 +1,6 @@
 //******字体颜色变量******/
 $color-major: #FF6200;
-$color-primary: #1296DB;
+$color-primary: #EE0000;
 $color-primary-darken: darken($color-primary, 5%);
 $color-muted: #A3A3A3;
 $color-weak: #626E7A;
@@ -18,7 +18,9 @@ $text-xxs: 22rpx;
 $text-form: 17px;
 //******边框样式******/
 $color-border: #EDEDED;
+$color-line: #EEEEEE;
 $border: 1px solid $color-border;
+$border-line: 1px solid $color-line;
 $border-dot: 1px dotted #EFF0F2;
 //******背景样式******/
 $color-bg-body: #F5F5F5;

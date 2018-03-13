@@ -199,7 +199,7 @@
      * 订单收货
      */
     async receive({orderId}) {
-      await Tips.confirm('是否已收到外卖？');
+      await Tips.confirm('确认收货？');
       try {
         Tips.loading();
         await order.confirmOrder(orderId);
@@ -293,8 +293,8 @@
   //状态栏
   .order-status-bar{
     background-color: #FFF;
-    height: 70rpx;
-    padding: 40rpx 30rpx;
+    min-height: 70rpx;
+    padding: 20rpx 30rpx;
     border-bottom: $border;
 
     .status-box{
