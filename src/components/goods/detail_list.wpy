@@ -1,0 +1,62 @@
+<template>
+  <view class="detail-box" wx:if="{{detail.goodsDetails.length > 0}}">
+    <!--详情标题-->
+    <view class="detail-title row-center">
+      <text class="primary lg">── 商品详情 ──</text>
+    </view>
+    <!--详情类列表区域/遍历详情-->
+    <view class="detail-list column">
+      <block wx:for="{{detail.goodsDetails}}" wx:key="id">
+        <!--文本-->
+        <text class="mb20 lg" wx:if="{{item.type == 1}}">{{item.content}}</text>
+        <!--图片-->
+        <image src="{{item.content}}" lazy-load mode="widthFix" wx:if="{{item.type == 2}}" @tap="previewDetailImages({{item.content}})"/>
+      </block>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class OrderGoods extends wepy.component {
+    props = {
+      detail: {}
+    };
+    methods = {
+      /**
+       * 预览详情页面
+       */
+      previewDetailImages(current) {
+        const urls = this.detail.goodsDetails.filter(v => v.type == 2).map(v => v.content);
+        wepy.previewImage({
+          urls: urls,
+          current: current
+        });
+      }
+    };
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .detail-box{
+    margin-top: 20rpx;
+    background-color: #FFF;
+    border-top: $border;
+    .detail-title{
+      height: 90rpx;
+      border-bottom: $border;
+    }
+    .detail-list{
+      padding-bottom: 20rpx;
+      image{
+        width: 100%;
+      }
+      text{
+        padding: 20rpx;
+      }
+    }
+  }
+</style>
