@@ -94,6 +94,7 @@
       Event.listen(Event.GOODS_PANEL_OPEN, this.open.bind(this), this);
     }
     open({goods, source, action}) {
+      console.info(`[slider] open goodId=${goods.id}, listen_source=${this.source} source=${source}, action=${action}`);
       if (source != this.source) {
         return;
       }

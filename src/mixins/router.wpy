@@ -67,7 +67,7 @@
     }
     minusCart(goodsId, goodsSku = '') {
       const source = this.$root.$wxpage.route;
-      console.info(`[router] goodId=${goodsId},source=${source}, action=${action}`);
+      console.info(`[router] goodId=${goodsId},source=${source}`);
       Event.emit(Event.GOODS_PANEL_MINUS, {goodsId, goodsSku, source});
     }
     getMode(goods) {

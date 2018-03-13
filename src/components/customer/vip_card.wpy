@@ -159,7 +159,7 @@
     padding: 30rpx;
     margin: 20rpx;
     height: 300rpx;
-    background-color: #509FC9;
+    background-color: $color-primary;
     border-radius: 15rpx;
     text {
       color: white;
