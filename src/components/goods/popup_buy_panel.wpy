@@ -80,10 +80,10 @@
         this.display = true;
       } else {
         // 没有SKU，直接加入购物车
-        this.cartManager.plus(goods, goodsSku);
         if (goods.isTips || goods.isTips == null) {
           Tips.success('已加入购物车');
         }
+        this.cartManager.plus(goods, goodsSku);
         this.clear();
       }
       this.$apply();
