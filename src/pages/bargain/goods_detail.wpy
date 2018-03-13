@@ -50,7 +50,7 @@
   import DetailList from '../../components/goods/detail_list';
   import GoodsMsgBar from '../../components/group/goods_msg_bar'
 
-  export default class GroupGoodsDetail extends wepy.page {
+  export default class BargainGoodsDetail extends wepy.page {
     data = {
       init: false,
       buyPanelType: 'POPUP',
@@ -87,14 +87,9 @@
      * 页面分享
      */
     onShareAppMessage () {
-      const {name, imageUrl} = this.rules.goods;
-      const shareName = `${name}，仅需${this.rules.limitCustomer}人即可成团，快来一起开团吧！`;
-      // 【拼团】商品名称 还剩X人成团，快来一起参团
-      return {
-        title: shareName,
-        imageUrl: imageUrl,
-        path: `/pages/group/goods_detail?groupId=${this.ruleId}`
-      };
+      // 图片分享
+      // 【拼团】商品名称，X人成团仅需XXX元
+      return {};
     }
     methods = {
       /**
@@ -111,6 +106,12 @@
       detail() {
         if (this.rules == null) return;
         return this.rules.goods;
+      },
+      saveText () {
+        if (this.rules.price && this.rules.goods.maxPrice) {
+          const num = (this.rules.goods.maxPrice * 1 - this.rules.price * 1).toFixed(2);
+          return `拼团立省￥${num}`
+        }
       }
     };
     components = {
@@ -136,38 +137,5 @@
   .goods-swiper{
     width: 750rpx;
     height:480rpx;
-  }
-
-  .goods-msg-box{
-    background: white;
-    padding: 20rpx;
-    .price-box{
-      font-size: 80rpx;
-      line-height: 80rpx;
-    }
-    .sellPrice-box{
-      text-decoration: line-through;
-      line-height: $text-sm;
-    }
-    .price-rule-box{
-      text{
-        background: #FEE7EF;
-        color: #FB4578;
-        padding: 0 4rpx;
-      }
-    }
-    .goods-name-box{
-      font-size: 30rpx;
-      line-height: 30rpx;
-    }
-  }
-  .goods-des-box{
-    background: white;
-    padding: 20rpx;
-    border-top:$border;
-    margin-bottom: 10rpx;
-    .row icon{
-      color: $color-primary;
-    }
   }
 </style>

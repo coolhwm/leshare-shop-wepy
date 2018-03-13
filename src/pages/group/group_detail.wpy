@@ -74,9 +74,10 @@
      */
     onShareAppMessage () {
       const {name, imageUrl} = this.detail.rule.goods;
+      const shareName = `${name}，还剩${this.rule.spareCustomer}人成团，快来一起参团吧！`;
       // 【拼团】商品名称 还剩X人成团，快来一起参团
       return {
-        title: name,
+        title: shareName,
         imageUrl: imageUrl,
         path: `/pages/group/group_detail?groupId=${this.detail.id}`
       };
