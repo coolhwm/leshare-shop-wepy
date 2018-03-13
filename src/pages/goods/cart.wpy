@@ -227,7 +227,7 @@
     justify-content: center;
     height: 100%;
     width: 250rpx;
-    background-color: #1296db;
+    background-color: $color-primary;
     color: #FFF;
   }
   /*购买按钮*/

@@ -348,7 +348,7 @@
 
   /*购买栏底部*/
   .buy-panel-next{
-    background-color: #1296db;
+    background-color: $color-primary;
     height: 100rpx;
     width: 100%;
     display: flex;

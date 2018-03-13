@@ -52,6 +52,7 @@
       const source = this.$root.$wxpage.route;
       const mode = this.getMode(goods);
       const action = 'cart';
+      console.info(`[router] goodId=${goods.id},source=${source}, action=${action}`);
       switch (mode) {
         case 'SLIDER':
           Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
@@ -66,6 +67,7 @@
     }
     minusCart(goodsId, goodsSku = '') {
       const source = this.$root.$wxpage.route;
+      console.info(`[router] goodId=${goodsId},source=${source}, action=${action}`);
       Event.emit(Event.GOODS_PANEL_MINUS, {goodsId, goodsSku, source});
     }
     getMode(goods) {
