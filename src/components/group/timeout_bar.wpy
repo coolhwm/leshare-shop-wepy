@@ -34,7 +34,7 @@
         default: '已结束'
       },
       describe: {
-        default: '限时火拼.超值底价'
+        default: '限时火拼·超值底价'
       },
       title: {
         default: '拼团'
