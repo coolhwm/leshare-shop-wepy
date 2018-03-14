@@ -27,16 +27,6 @@ export default class goods extends base {
   }
 
   /**
-   * 新的分页方法
-   */
-  static list () {
-    let url = `${this.baseUrl}/goods/list`;
-    return new Page(url, item => {
-      this._processGoodsData(item);
-    });
-  }
-
-  /**
    * 获取商品库存
    */
   static stock (goodsId, sku = '') {

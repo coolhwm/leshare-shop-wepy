@@ -93,6 +93,7 @@
         'pages/shop/index',
         'pages/goods/cart',
         'pages/goods/favorite',
+        'pages/goods/history',
         'pages/goods/detail',
         'pages/goods/comment_list',
         'pages/goods/search',
