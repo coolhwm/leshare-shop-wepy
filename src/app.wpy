@@ -130,7 +130,7 @@
         'pages/group/group_detail',
         'pages/group/group_info_list',
         'pages/customer/balance',
-        'pages/shop/distribution'
+        'pages/distribution/index'
       ],
       window: {
         backgroundTextStyle: 'dark',
