@@ -143,7 +143,7 @@
           }
           // 跳转订单
           const trade = order.createCartTrade(this.carts, param);
-          this.$root.$preload('trade', trade);
+          this.$root.$preload('params', {trade});
           this.$root.$navigate(`../order/trade`);
         }
       }

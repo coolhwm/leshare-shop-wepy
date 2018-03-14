@@ -31,7 +31,9 @@ export default class Cart {
       data: this
     });
     // 保存到Store
+    console.time('[cart] save cart store');
     store.save('cart', this.export());
+    console.timeEnd('[cart] save cart store');
   }
 
   /**

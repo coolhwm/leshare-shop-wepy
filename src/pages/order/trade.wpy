@@ -173,12 +173,13 @@
     };
     cartManager = Cart.create();
     async onLoad (params, {preload}) {
+      console.info(preload);
       const isOpen = await this.checkShopStatus();
       const result = await auth.user({block: true, redirect: true});
       if (!result || !isOpen) { return; }
       // 订单数据
-      this.trade = preload.trade.trade;
-      this.type = preload.trade.type;
+      this.trade = preload.params.trade;
+      this.type = preload.params.type;
       this.goodsList = this.trade.orderGoodsInfos;
       if (orderUtils.isDeliveryOrder(this.trade.orderType)) {
         // 默认地址
@@ -302,12 +303,13 @@
           Tips.alert('下单失败');
           return;
         }
+        let isPay = false;
         // 检查是否为离线订单
-        if (trade.paymentType === PAYMENT.OFFLINE) {
+        if (trade.paymentType == PAYMENT.OFFLINE) {
           Tips.success('下单成功');
         } else {
         // 发起支付
-          const isPay = await this.requestWxPayment(trade);
+          isPay = await this.requestWxPayment(trade);
           if (isPay) {
             Tips.success('支付成功');
           } else {
@@ -322,7 +324,7 @@
         }
         // 刷新列表
         Event.emit(Event.ORDER_LIST_UPDATE);
-        if (this.type === 'join' || this.type === 'group') {
+        if (isPay && (this.type === 'join' || this.type === 'group') ) {
           WxUtils.backOrRedirect('/pages/group/list');
         } else {
           WxUtils.backOrRedirect('/pages/customer/index_template');
@@ -544,6 +546,10 @@
           this.clearSelectedBonus();
           return false;
         }
+        const {bonus} = member;
+        if (bonus == 0) {
+          return `暂无积分`;
+        }
         // 每使用costBonusUnit积分，抵扣reduceMoney元，最多使用maxReduceBonus积分，订单需满limitMoney元
         const {costBonusUnit, reduceMoney, maxReduceBonus, limitMoney} = bonusRule;
         // 计算使用积分前的价格
@@ -557,7 +563,6 @@
           return `订单需满${orderLimitPrice}元`;
         }
         // 已有积分不能小于积分最小抵扣单位
-        const {bonus} = member;
         if (bonus < costBonusUnit) {
           this.bonusPicker = null;
           this.clearSelectedBonus();

@@ -1,8 +1,8 @@
 <template>
-  <view wx:if="{{init}}">
-    <view class="column information-box">
+  <view wx:if="{{init}}" @tap="tips">
+    <view class="column information-box" >
       <view class="row top-box">
-        <image class="mr20" src="{{shop.avatar}}" style="width: 60px;height:60px;"/>
+        <image class="mr20" src="{{user.avatarUrl}}" style="width: 60px;height:60px;"/>
         <text class="lg">推荐人：{{reference}}</text>
       </view>
       <view class="column money-box">
@@ -32,8 +32,6 @@
     </view>
   </view>
 
-  <Notice @close.user="close" wx:if="{{check}}" />
-
   <Copyright buttom="true" />
 </template>
 
@@ -42,16 +40,16 @@
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import base from '../../mixins/base';
+  import tips from '../../utils/Tips';
   import Copyright from '../../components/common/copyright';
-  import Notice from '../../components/shop/notice';
-
   @connect({
+    user: store.get('user'),
     shop: store.get('shop')
   })
   export default class Distribution extends wepy.page {
     data = {
       init: false,
-      reference: '黄伟明',
+      reference: '分销员1',
       list: [
         [
           {
@@ -100,13 +98,15 @@
       this.loaded();
     };
     methods = {
+      tips() {
+        tips.success('敬请期待');
+      },
       close() {
         this.check = false;
       }
     };
     components = {
-      Copyright: Copyright,
-      Notice: Notice
+      Copyright: Copyright
     };
     mixins = [base];
     config = {

@@ -6,7 +6,7 @@
     <view class="comment-box">
       <view class="row-between comment-header">
         <view class="star-box row-between">
-          <text class="lg">{{comment.goods_name}}</text>
+          <text class="goods-name inline">{{comment.goods_name}}</text>
           <view class="row">
             <view wx:for="{{comment.starArr}}" wx:for-item="item" wx:key="key">
               <icon wx:if="{{item > 0}}" class="star-fill xsmall" color="major"/>
@@ -15,7 +15,7 @@
           </view>
         </view>
       </view>
-      <view class="comment">评论：{{comment.comment}}</view>
+      <view class="comment mt5">{{comment.comment ? comment.comment  : '好评！'}}</view>
       <text class="muted xs comment-create-time">{{comment.createTime}}</text>
     </view>
   </view>
@@ -53,6 +53,11 @@
         height: 130rpx;
       }
     }
+    .goods-name{
+      color: $color-muted;
+      font-size: $text-sm;
+      max-width: 180px;
+    }
     .comment-box {
       flex: 1;
       height: 100%;
@@ -61,6 +66,7 @@
       .comment-header {
         width: 100%;
         position: relative;
+        align-items: center;
         .avatar-image {
           width: 50rpx;
           height: 50rpx;

@@ -72,7 +72,7 @@ export default class config extends base {
    * 处理页面的配置参数
    */
   static processPageParam(data) {
-    if (data == null) {
+    if (data == null || data == '') {
       return {};
     } else {
       return JSON.parse(data);

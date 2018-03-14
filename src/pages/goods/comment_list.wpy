@@ -13,7 +13,7 @@
   </view>
 
   <!--占位符-->
-  <Placeholder :show.sync="isPageEmpty" message="该商品没有相关评价"/>
+  <Placeholder :show.sync="isPageEmpty" message="您还没有商品评价"/>
 </template>
 
 <script>

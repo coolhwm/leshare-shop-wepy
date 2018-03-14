@@ -64,6 +64,7 @@
       const source = this.$root.$wxpage.route;
       const mode = this.getMode(goods);
       const action = 'cart';
+      console.info(`[router] goodId=${goods.id},source=${source}, action=${action}`);
       switch (mode) {
         case 'SLIDER':
           Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
@@ -78,6 +79,7 @@
     }
     minusCart(goodsId, goodsSku = '') {
       const source = this.$root.$wxpage.route;
+      console.info(`[router] goodId=${goodsId},source=${source}`);
       Event.emit(Event.GOODS_PANEL_MINUS, {goodsId, goodsSku, source});
     }
     getMode(goods) {
@@ -273,6 +275,10 @@
           case 'ADDRESS':
             // 我的地址
             this.$root.$navigate('/pages/customer/address_list');
+            break;
+          case 'COMMENT_LIST':
+            // 我的评论
+            this.$root.$navigate('/pages/customer/comment_list');
             break;
           case 'MEMBER_DETAIL':
             // 会员详情

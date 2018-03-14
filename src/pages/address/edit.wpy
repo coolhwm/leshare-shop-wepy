@@ -50,7 +50,7 @@
         <!--送餐地址-->
         <view class="weui-cell weui-cells_after-title" @tap="location">
           <view class="weui-cell__hd">
-            <view class="weui-label">送餐地址</view>
+            <view class="weui-label">收货地址</view>
           </view>
           <view class="weui-cell__bd">
             <text class="muted" wx:if="{{!location}}">小区/写字楼/学校等（请选择）</text>

@@ -62,9 +62,9 @@ if (prod) {
           quality: 80
         }
       }
+    },
+    filemin: {
+      filter: /\.(wxml)$/
     }
-    // filemin: {
-    //   filter: /\.(wxml)$/
-    // }
   }
 }

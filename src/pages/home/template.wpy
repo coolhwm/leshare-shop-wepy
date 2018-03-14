@@ -53,6 +53,11 @@
         <GroupBox :param.sync="item" />
       </block>
 
+      <!--分隔符-->
+      <block wx:if="{{item.type == 'SEPARATOR'}}">
+        <Separator :param.sync="item" />
+      </block>
+
       <!--间隔-->
       <view class="h-gap" wx:if="{{item.border !== 'none'}}"></view>
     </repeat>
@@ -109,6 +114,7 @@
   import Copyright from '../../components/common/copyright';
   import ButtonWidget from '../../components/template/button_widget';
   import GroupBox from '../../components/template/group_box';
+  import Separator from '../../components/template/separator';
 
   @connect({
     homePageId: store.get('homePageId'),
@@ -163,13 +169,17 @@
         return;
       }
       const {titleText, backgroundColor, textStyle} = this.param.navigation;
-      wepy.setNavigationBarTitle({
-        title: titleText
-      });
-      wepy.setNavigationBarColor({
-        backgroundColor: backgroundColor,
-        frontColor: textStyle
-      });
+      if (titleText) {
+        wepy.setNavigationBarTitle({
+          title: titleText
+        });
+      }
+      if (backgroundColor && textStyle) {
+        wepy.setNavigationBarColor({
+          backgroundColor: backgroundColor,
+          frontColor: textStyle
+        });
+      }
     }
     /**
      * 运行触发器
@@ -234,7 +244,8 @@
       HotAreaBox: HotAreaBox,
       Copyright: Copyright,
       ButtonWidget: ButtonWidget,
-      GroupBox: GroupBox
+      GroupBox: GroupBox,
+      Separator: Separator
     };
     computed = {
     };

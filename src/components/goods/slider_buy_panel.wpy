@@ -95,6 +95,7 @@
       Event.listen(Event.GOODS_PANEL_OPEN, this.open.bind(this), this);
     }
     open({goods, source, action}) {
+      console.info(`[slider] open goodId=${goods.id}, listen_source=${this.source} source=${source}, action=${action}`);
       if (source != this.source) {
         return;
       }
@@ -151,10 +152,10 @@
           if (type === 'join' || type === 'group') {
             const {groupId, ruleId} = this.goods;
             Object.assign(trade, {ruleId, groupId});
-            this.$root.$preload('trade', {trade, type});
+            this.$root.$preload('params', {trade, type});
           } else {
             // 直接购买
-            this.$root.$preload('trade', {trade, type});
+            this.$root.$preload('params', {trade, type});
           }
           this.$root.$navigate(`../order/trade`);
         }
@@ -355,7 +356,7 @@
 
   /*购买栏底部*/
   .buy-panel-next{
-    background-color: #1296db;
+    background-color: $color-primary;
     height: 100rpx;
     width: 100%;
     display: flex;

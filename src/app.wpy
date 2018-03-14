@@ -18,7 +18,7 @@
       pageParams: null,
       componentsParams: null,
       baseUrl: null,
-      version: 'v3.0.7'
+      version: 'v3.1.0'
     };
     constructor () {
       super();
@@ -87,12 +87,13 @@
     }
     config = {
       pages: [
-        'pages/home/home',
         'pages/home/template',
+        'pages/home/home',
         'pages/home/login',
         'pages/shop/index',
         'pages/goods/cart',
         'pages/goods/favorite',
+        'pages/goods/history',
         'pages/goods/detail',
         'pages/goods/comment_list',
         'pages/goods/search',
@@ -130,14 +131,14 @@
         'pages/group/group_detail',
         'pages/group/group_info_list',
         'pages/customer/balance',
-        'pages/shop/distribution',
+        'pages/distribution/index',
         'pages/bargain/goods_detail',
         'pages/bargain/bargain_detail'
       ],
       window: {
         backgroundTextStyle: 'dark',
         backgroundColor: '#F5F5F5',
-        navigationBarBackgroundColor: '#1296db'
+        navigationBarBackgroundColor: '#EE0000'
       }
     };
   }
