@@ -67,6 +67,7 @@
 <script>
   import wepy from 'wepy';
   import order from '../../api/order';
+  import bargain from '../../api/bargain'
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import ZanQuantity from '../../components/zanui/quantity';
@@ -141,6 +142,8 @@
           this.$apply();
           this.cartManager.plus(this.goods, skuText, num);
         } else if (type === 'begin' || type === 'help') {
+          const result = await bargain.GoodsBargain(this.goods.ruleId, this.goods.id);
+          this.$root.$preload('bargain', result);
           this.$root.$navigate(`../bargain/bargain_detail`);
         } else {
           const cart = this.cartManager.createCart(this.goods, skuText, num);

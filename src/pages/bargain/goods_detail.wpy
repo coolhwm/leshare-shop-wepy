@@ -11,14 +11,14 @@
       </block>
     </swiper>
 
-    <!--拼团倒计时栏-->
+    <!--砍价倒计时栏-->
     <TimeOutBar :endTime.sync="endTime" :callback="callback" describe="邀请好友帮砍 低价购" title="砍价" />
 
     <!--商品基本信息展示及服务信息-->
     <GoodsMsgBar :rule.sync="rule"/>
 
-    <!--拼团栏-->
-    <BargainInfoBar :processing.sync="processing" :info.sync="info"/>
+    <!--砍价玩法栏-->
+    <BargainRuleBar/>
 
     <!--评论预览-->
     <CommentPreview :goodsId.sync="goodsId"/>
@@ -44,7 +44,7 @@
   import BargainBar from '../../components/bargain/bottom_bargain_bar';
   import TimeOutBar from '../../components/group/timeout_bar';
   import CommentPreview from '../../components/goods/comment_preview';
-  import BargainInfoBar from '../../components/bargain/bargain_info_bar';
+  import BargainRuleBar from '../../components/bargain/bargain_rule_bar';
   import SilderPanel from '../../components/goods/slider_buy_panel';
   import bargain from '../../api/bargain';
   import DetailList from '../../components/goods/detail_list';
@@ -58,7 +58,8 @@
       goodsId: '',
       groupTime: '',
       ruleId: 33,
-      rule: {}
+      rule: {},
+      detail: {}
     };
     async onLoad () {
       await auth.login();
@@ -74,8 +75,9 @@
     }
     async update () {
       this.rule = await bargain.rule(this.ruleId);
+      this.detail = this.rule.goods;
       this.endTime = this.rule.endTime;
-      this.goodsId = this.rule.goodsId;
+      this.goodsId = this.rule.goods.id;
       this.loaded();
     }
     /**
@@ -112,7 +114,7 @@
       BargainBar: BargainBar,
       TimeOutBar: TimeOutBar,
       CommentPreview: CommentPreview,
-      BargainInfoBar: BargainInfoBar,
+      BargainRuleBar: BargainRuleBar,
       SilderPanel: SilderPanel,
       Loading: Loading,
       DetailList: DetailList,

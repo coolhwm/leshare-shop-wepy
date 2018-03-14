@@ -22,7 +22,6 @@
 
 <script>
   import wepy from 'wepy';
-  import router from '../../mixins/router';
   import countdown from '../../mixins/countdown';
 
   export default class TimeOutBar extends wepy.component {
@@ -48,7 +47,7 @@
         this.countdowm(endTime.replace(/-/g, '/'), 'endTime');
       }
     };
-    mixins = [router, countdown];
+    mixins = [countdown];
   }
 </script>
 

@@ -7,13 +7,11 @@
       <text class="group-goods-name lg ml10">{{rule.goods.name}}</text>
       <view>
         <view class="mb20 ml10">
-          <text class="weak xs mr10">{{rule.limitCustomer}}人拼团</text>
-          <text class="weak">·</text>
-          <text class="weak xs ml10">拼团立省{{rule.goods.maxPrice * 1 - rule.price * 1}}</text>
+          <text class="weak xs">砍价立省{{rule.goodsPrice * 1 - rule.floorPrice * 1}}</text>
         </view>
-        <view>
-          <text class="group-price-box">￥{{rule.price}}</text>
-          <text class="muted sellPrice-box">￥{{rule.goods.maxPrice}}</text>
+        <view class="row-between">
+          <text class="muted sellPrice-box">￥{{rule.goodsPrice}}</text>
+          <text class="group-price-box">[砍完价￥{{rule.floorPrice}}]</text>
         </view>
       </view>
     </view>
@@ -61,8 +59,6 @@
     flex: 1;
     height: $img-height;
     .group-price-box{
-      font-size: 46rpx;
-      line-height: 46rpx;
       color: #e64340;
     }
     .sellPrice-box{

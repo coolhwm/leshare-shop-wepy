@@ -2,21 +2,11 @@
   <view class="buy-bar-placeholder">
   </view>
   <view class="row group-bar-box">
-    <view class="column-center btn-home">
-      <icon class="home normal" color="gray"/>
-      <text class="xs">首页</text>
-    </view>
-    <view class="column-center btn-fav" @tap="fav">
-      <icon class="like{{!isFav ? '' : '-fill'}} normal" style="color: {{!isFav ? 'gray' : 'red'}}" />
-      <text class="xs">收藏</text>
-    </view>
-    <view class="column-center btn-buy" @tap="handleBuy({{rule.goods}})">
-      <text class="xxl money-box">￥{{rule.goods.sellPrice}}</text>
-      <text>单独购买</text>
-    </view>
-    <view class="column-center btn-group" @tap="handleBargain({{rule.goods}}, {{rule.id}}, {{state}}, {{id}})">
-      <text class="xxl money-box">￥{{rule.floorPrice}}</text>
-      <text>发起砍价</text>
+    <button class="column-center btn-buy" plain open-type="share">
+      <text>找人帮砍</text>
+    </button>
+    <view class="column-center btn-group" @tap="handleBuy({{rule.goods}})">
+      <text>立即购买</text>
     </view>
   </view>
 </template>
@@ -27,7 +17,7 @@
   import wepy from 'wepy';
   import Tips from '../../utils/Tips';
 
-  export default class BargainBar extends wepy.component {
+  export default class DetailBottom extends wepy.component {
     props = {
       rule: {},
       detail: {}
@@ -67,8 +57,6 @@
 <style lang="scss">
   @import "../../styles/variable";
 
-  $btn-width: 260rpx;
-  $btn-sm-width: (750rpx - $btn-width * 2) / 2;
   .group-bar-box{
     position: fixed;
     bottom: 0;
@@ -76,16 +64,9 @@
     width: 100%;
     border-top: $border;
     background-color: white;
-    .btn-fav{
-      border-left: $border;
-    }
-    .btn-fav, .btn-home{
-      width: $btn-sm-width;
-      height: inherit;
-    }
     .btn-buy, .btn-group{
       height: 100%;
-      width: $btn-width;
+      width: 50%;
       background-color: white;
       border-left: $border;
       text{

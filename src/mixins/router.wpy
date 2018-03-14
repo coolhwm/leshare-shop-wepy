@@ -48,11 +48,11 @@
     /**
      * 砍价
      */
-    bargain(goods, details, id, state, groupId) {
+    bargain(goods, ruleId, state, id) {
       // 只能在SLIDER模式下触发，否则会降级为购物车购买
       // 处理规格替换拼团价格
-      goods.ruleId = id;
-      goods.groupId = groupId;
+      goods.ruleId = ruleId;
+      goods.id = id;
       const source = this.$root.$wxpage.route;
       const action = state;
       Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
@@ -173,8 +173,8 @@
       /**
        * 处理砍价事件
        */
-      handleBargain(goods, detail, id, state, groupId) {
-        this.bargain(goods, detail, id, state, groupId);
+      handleBargain(goods, ruleId, state, id) {
+        this.bargain(goods, ruleId, state, id);
       },
       /**
        * 处理跳转到购物车页面

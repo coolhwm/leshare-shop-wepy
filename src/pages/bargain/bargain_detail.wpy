@@ -1,17 +1,48 @@
 <template>
+  <Loading :init.sync="init"/>
 
-  <view>
-    bargain_detail
+  <view class="container column" wx:if="{{init}}">
+    <!--商品详情栏-->
+    <GoodsDetail :rule.sync="rule"/>
+
+    <BargainInfoBar/>
+
+    <!--砍价玩法栏-->
+    <BargainRuleBar/>
+
+    <!--底栏-->
+    <DetailBottom/>
+
+    <!--滑出购物面板-->
+    <block>
+      <SilderPanel />
+    </block>
+
   </view>
 </template>
 <script>
   import wepy from 'wepy';
+  import base from '../../mixins/base'
+  import bargain from '../../api/bargain'
+  import BargainGoodsDetail from '../../components/bargain/bargain_goods_detail';
+  import Loading from '../../components/common/loading';
+  import BargainInfoBar from '../../components/bargain/bargain_info_bar';
+  import BargainRuleBar from '../../components/bargain/bargain_rule_bar';
+  import DetailBottom from '../../components/bargain/bottom_bargain_detail'
 
-  export default class BargainGoodsDetail extends wepy.page {
+  export default class BargainDetail extends wepy.page {
     data = {
-      init: false
+      init: false,
+      bargainList: {},
+      bargainId: 50,
+      rule: {}
     };
-    async onLoad () {};
+    async onLoad (params, {preload}) {
+      // this.bargainId = preload.bargain.id
+      this.bargainList = await bargain.bargain(this.bargainId);
+      this.rule = this.bargainList.rule;
+      this.loaded();
+    };
     onUnload() {
       this.$invoke('TimeOutBar', 'clear');
     };
@@ -23,19 +54,25 @@
      * 页面分享
      */
     onShareAppMessage () {
-      const {name, imageUrl} = this.rules.goods;
-      const shareName = `${name}，仅需${this.rules.limitCustomer}人即可成团，快来一起开团吧！`;
+      const {name, imageUrl} = this.rule.goods;
+      const shareName = `${name}，快帮您的好友砍一刀吧！`;
       // 【拼团】商品名称 还剩X人成团，快来一起参团
       return {
         title: shareName,
         imageUrl: imageUrl,
-        path: `/pages/group/goods_detail?groupId=${this.ruleId}`
+        path: `/pages/group/goods_detail?groupId=${this.bargainId}`
       };
     }
     methods = {};
     computed = {};
-    components = {};
-    mixins = [];
+    components = {
+      GoodsDetail: BargainGoodsDetail,
+      Loading: Loading,
+      BargainInfoBar: BargainInfoBar,
+      BargainRuleBar: BargainRuleBar,
+      DetailBottom: DetailBottom
+    };
+    mixins = [base];
     config = {
       enablePullDownRefresh: true,
       navigationBarTitleText: '砍价详情'
