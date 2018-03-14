@@ -304,7 +304,7 @@
           return;
         }
         // 检查是否为离线订单
-        if (trade.paymentType === PAYMENT.OFFLINE) {
+        if (trade.paymentType == PAYMENT.OFFLINE) {
           Tips.success('下单成功');
         } else {
         // 发起支付

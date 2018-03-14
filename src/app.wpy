@@ -87,8 +87,8 @@
     }
     config = {
       pages: [
-        'pages/home/home',
         'pages/home/template',
+        'pages/home/home',
         'pages/home/login',
         'pages/shop/index',
         'pages/goods/cart',
@@ -135,7 +135,7 @@
       window: {
         backgroundTextStyle: 'dark',
         backgroundColor: '#F5F5F5',
-        navigationBarBackgroundColor: '#1296db'
+        navigationBarBackgroundColor: '#EE0000'
       }
     };
   }
