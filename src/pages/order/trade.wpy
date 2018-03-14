@@ -178,8 +178,8 @@
       const result = await auth.user({block: true, redirect: true});
       if (!result || !isOpen) { return; }
       // 订单数据
-      this.trade = preload.trade;
-      this.type = preload.trade.type;
+      this.trade = preload.params.trade;
+      this.type = preload.params.type;
       this.goodsList = this.trade.orderGoodsInfos;
       if (orderUtils.isDeliveryOrder(this.trade.orderType)) {
         // 默认地址

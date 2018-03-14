@@ -44,7 +44,6 @@
   import base from '../../mixins/base';
   import Copyright from '../../components/common/copyright';
   import Notice from '../../components/shop/notice';
-
   @connect({
     shop: store.get('shop')
   })

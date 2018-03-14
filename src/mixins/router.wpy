@@ -258,6 +258,10 @@
             // 我的地址
             this.$root.$navigate('/pages/customer/address_list');
             break;
+          case 'COMMENT_LIST':
+            // 我的评论
+            this.$root.$navigate('/pages/customer/comment_list');
+            break;
           case 'MEMBER_DETAIL':
             // 会员详情
             this.$root.$navigate('/pages/customer/vip_detail');

@@ -147,10 +147,10 @@
           if (type === 'join' || type === 'group') {
             const {groupId, ruleId} = this.goods;
             Object.assign(trade, {ruleId, groupId});
-            this.$root.$preload('trade', {trade, type});
+            this.$root.$preload('params', {trade, type});
           } else {
             // 直接购买
-            this.$root.$preload('trade', {trade, type});
+            this.$root.$preload('params', {trade, type});
           }
           this.$root.$navigate(`../order/trade`);
         }

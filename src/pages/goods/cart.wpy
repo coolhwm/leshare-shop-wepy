@@ -135,7 +135,7 @@
         // 订单类型 TODO 订单类型
         param.orderType = 10;
         const trade = order.createCartTrade(this.cartManager.getCheckedCarts(), param);
-        this.$preload('trade', trade);
+        this.$preload('params', {trade});
         this.$navigate(`../order/trade`);
       },
       /**
