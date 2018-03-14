@@ -5,13 +5,14 @@
     <!--商品详情栏-->
     <GoodsDetail :rule.sync="rule"/>
 
-    <BargainInfoBar/>
+    <!--砍价信息-->
+    <BargainInfoBar :createTime.sync="createTime" :bargain.sync="bargainList"/>
 
     <!--砍价玩法栏-->
     <BargainRuleBar/>
 
     <!--底栏-->
-    <DetailBottom/>
+    <DetailBottom wx:if="{{bargainList.isHead}}"/>
 
     <!--滑出购物面板-->
     <block>
@@ -34,13 +35,15 @@
     data = {
       init: false,
       bargainList: {},
-      bargainId: 50,
-      rule: {}
+      bargainId: 57,
+      rule: {},
+      createTime: {}
     };
     async onLoad (params, {preload}) {
       // this.bargainId = preload.bargain.id
       this.bargainList = await bargain.bargain(this.bargainId);
       this.rule = this.bargainList.rule;
+      this.createTime = this.bargainList.createTime;
       this.loaded();
     };
     onUnload() {
@@ -60,7 +63,7 @@
       return {
         title: shareName,
         imageUrl: imageUrl,
-        path: `/pages/group/goods_detail?groupId=${this.bargainId}`
+        path: `/pages/bargain/bargain_detail?groupId=${this.bargainId}`
       };
     }
     methods = {};

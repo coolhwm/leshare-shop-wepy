@@ -7,10 +7,10 @@
       <text class="group-goods-name lg ml10">{{rule.goods.name}}</text>
       <view>
         <view class="mb20 ml10">
-          <text class="weak xs">砍价立省{{rule.goodsPrice * 1 - rule.floorPrice * 1}}</text>
+          <text class="weak xs">砍价立省{{rule.skuDetail.price * 1 - rule.floorPrice * 1}}</text>
         </view>
         <view class="row-between">
-          <text class="muted sellPrice-box">￥{{rule.goodsPrice}}</text>
+          <text class="muted sellPrice-box">￥{{rule.skuDetail.price}}</text>
           <text class="group-price-box">[砍完价￥{{rule.floorPrice}}]</text>
         </view>
       </view>
