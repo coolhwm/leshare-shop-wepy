@@ -3,9 +3,10 @@
     <icon class="notice xsmall"/>
     <swiper class="notice-bar-swiper" vertical autoplay circular interval="3000">
       <swiper-item wx:for="{{notices}}" wx:key="index">
-        <text class="notice-content inline">{{item.content}}</text>
+        <text class="notice-content inline" @tap="open({{item}})">{{item.content}}</text>
       </swiper-item>
     </swiper>
+    <NoticeDialog />
   </view>
 </template>
 
@@ -13,6 +14,8 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
+  import NoticeDialog from '../../components/shop/notice';
+
   @connect({
     notices: store.get('notices')
   })
@@ -20,7 +23,14 @@
     props = {
     };
     data = {};
-    methods = {};
+    methods = {
+      open(item) {
+        this.$invoke('NoticeDialog', 'open', item.content);
+      }
+    };
+    components = {
+      NoticeDialog: NoticeDialog
+    };
     events = {};
     onLoad() {
     }
