@@ -13,7 +13,7 @@
 
     <!--底栏-->
     <block wx:if="{{bargainList.isHead}}">
-      <DetailBottom  />
+      <DetailBottom :detail.sync="bargainList"/>
     </block>
 
 
@@ -21,6 +21,9 @@
     <block>
       <SilderPanel />
     </block>
+
+    <!--提示框-->
+    <Notice/>
 
   </view>
 </template>
@@ -32,22 +35,35 @@
   import Loading from '../../components/common/loading';
   import BargainInfoBar from '../../components/bargain/bargain_info_bar';
   import BargainRuleBar from '../../components/bargain/bargain_rule_bar';
-  import DetailBottom from '../../components/bargain/bottom_bargain_detail'
+  import DetailBottom from '../../components/bargain/bottom_bargain_detail';
+  import auth from '../../api/auth';
+  import Notice from '../../components/shop/notice';
+  import SilderPanel from '../../components/goods/slider_buy_panel';
 
   export default class BargainDetail extends wepy.page {
     data = {
       init: false,
       bargainList: {},
-      // bargainId: 60,
-      bargainId: '',
       rule: {},
-      createTime: {}
+      createTime: {},
+      isBegin: false
     };
-    async onLoad (params, {preload}) {
-      this.bargainId = preload.bargain.id;
-      this.bargainList = await bargain.bargain(this.bargainId);
+    async onLoad ({bargainId, isBegin}) {
+      // 用户信息
+      await auth.user();
+      this.isBegin = isBegin;
+      this.bargainList = await bargain.bargain(bargainId);
+      this.bargainList.bargainRate = (this.bargainList.balance / this.bargainList.rule.skuDetail.price) * 100;
       this.rule = this.bargainList.rule;
       this.createTime = this.bargainList.createTime;
+      if (this.isBegin) {
+        const notice = {
+          title: '太棒了',
+          btnText: '确定',
+          content: `您一出手就帮自己砍掉了${this.bargainList.details[0].reducePrice}`
+        };
+        this.$invoke('Notice', 'open', notice);
+      }
       this.loaded();
     };
     onUnload() {
@@ -67,7 +83,7 @@
       return {
         title: shareName,
         imageUrl: imageUrl,
-        path: `/pages/bargain/bargain_detail?groupId=${this.bargainId}`
+        path: `/pages/bargain/bargain_detail?bargainId=${this.bargainList.id}`
       };
     }
     methods = {};
@@ -77,7 +93,9 @@
       Loading: Loading,
       BargainInfoBar: BargainInfoBar,
       BargainRuleBar: BargainRuleBar,
-      DetailBottom: DetailBottom
+      DetailBottom: DetailBottom,
+      Notice: Notice,
+      SilderPanel: SilderPanel
     };
     mixins = [base];
     config = {

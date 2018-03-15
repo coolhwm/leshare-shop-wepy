@@ -21,7 +21,7 @@
     </view>
     <view wx:if="{{bargain.isHead}}">
       <view class="back-box">
-        <view class="process-box">
+        <view class="process-box" style="width: {{bargain.bargainRate}}%;">
           <view>
             <view class="msg-box">
               <icon class="msg-bar xxlarge" color="primary"></icon>
@@ -38,7 +38,8 @@
       </view>
     </view>
     <view wx:else class="row-center info-btn-box">
-      <view class="btn-box" @tap="help({{bargain.rule.id}}, {{bargain.id}})">帮TA砍一刀</view>
+      <view wx:if="{{isHelp}}" class="btn-box" @tap="help({{bargain.rule.id}}, {{bargain.id}})">帮TA砍一刀</view>
+      <view wx:else class="btn-box" @tap="want({{bargain.rule.id}})">我也要</view>
     </view>
     <view class="row-between mt20">
       <view class="row">
@@ -52,12 +53,15 @@
       </view>
     </view>
   </view>
+
+  <Notice />
 </template>
 
 <script>
   import wepy from 'wepy';
   import countdown from '../../mixins/countdown';
-  import bargain from '../../api/bargain'
+  import bargain from '../../api/bargain';
+  import Notice from '../shop/notice';
 
   export default class BargainInfoBar extends wepy.component {
     props = {
@@ -67,16 +71,30 @@
       bargain: {}
     };
     data = {
-      name: '小红'
+      name: '小红',
+      isHelp: true
     };
     methods = {
       async help (ruleId, bargainId) {
-        await bargain.GoodsBargain(ruleId, bargainId);
-        // TODO 弹出弹窗 弹窗按钮为确认
-        // 帮砍一刀的按钮变为我也要
+        const user = wepy.getStorageSync('user');
+        const result = await bargain.GoodsBargain(ruleId, bargainId);
+        const price = result.details.find(item => item.customer.id === user.id).reducePrice;
+        console.info(price, user.id);
+        const notice = {
+          title: '太棒了',
+          btnText: '确定',
+          content: `您一出手就帮好友砍掉了${price}`
+        };
+        this.$invoke('Notice', 'open', {notice});
+        this.isHelp = false;
+      },
+      async want (ruleId) {
+        this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${ruleId}`)
       }
     };
-    components = {};
+    components = {
+      Notice: Notice
+    };
     watch = {
       createTime (createTime) {
         this.countdowm(createTime.replace(/-/g, '/'), 'groupTime');
@@ -125,7 +143,6 @@
 
   .process-box {
     position: absolute;
-    width: 80%;
     right:0;
     bottom:0;
   }

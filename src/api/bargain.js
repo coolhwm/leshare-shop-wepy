@@ -59,13 +59,13 @@ export default class group extends base {
 
   // 筛选开砍者
   static _processBargainHeader (data) {
-    // const user = wepy.getStorageSync('user');
+    const user = wepy.getStorageSync('user');
     data.header = data.details[0];
-    // data.isHead = user.id === data.header.customer.id;
-    data.isHead = false;
+    data.isHead = user.id === data.header.customer.id;
+    // data.isHead = false;
   }
 
-  // 求一共砍了多少钱
+  // 求一共砍了多少钱，与已砍价比
   static _processAllBargainPrice (data) {
     const prices = data.details.map(item => item.reducePrice);
     data.allPrice = 0;

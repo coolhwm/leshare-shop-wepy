@@ -3,11 +3,11 @@
     <view class="bg-box"></view>
     <view class="column notice-content">
       <view class="notice-top-box">
-        <text class="xxl white">公告</text>
+        <text class="xxl white">{{title}}</text>
       </view>
       <view class="column notice-content-box">
         <text class="lg">{{content}}</text>
-        <button @tap="close">我知道了</button>
+        <button @tap="close">{{btnText}}</button>
       </view>
     </view>
   </view>
@@ -23,12 +23,16 @@
   export default class Notice extends wepy.component {
     data = {
       content: '',
-      display: false
+      display: false,
+      title: '公告',
+      btnText: '我知道了'
     };
     methods = {
-      open(content) {
+      open({title, btnText, content}) {
         this.display = true;
-        this.content = content;
+        this.title = title;
+        this.btnText = btnText;
+        this.content = content
       },
       close() {
         this.display = false;
