@@ -1,30 +1,42 @@
 <template>
-  <view class="notice-box">
+  <view class="notice-box" wx:if="{{display}}">
     <view class="bg-box"></view>
     <view class="column notice-content">
       <view class="notice-top-box">
         <text class="xxl white">公告</text>
-        <image src="../../images/icons/134.png"/>
       </view>
       <view class="column notice-content-box">
-        <text class="lg">迎新特大喜讯迎新特大喜讯迎新特大喜讯迎新特大喜讯迎新特大喜讯迎新特大喜讯迎新特大喜讯迎新特大喜讯迎新特大喜讯</text>
+        <text class="lg">{{content}}</text>
         <button @tap="close">我知道了</button>
       </view>
     </view>
   </view>
 
+  <CoverPanel :display.sync="display"/>
+
 </template>
 
 <script>
   import wepy from 'wepy';
+  import CoverPanel from '../common/cover_panel';
 
   export default class Notice extends wepy.component {
-    props = {};
+    data = {
+      content: '',
+      display: false
+    };
     methods = {
+      open(content) {
+        this.display = true;
+        this.content = content;
+      },
       close() {
-        this.$emit('close')
+        this.display = false;
       }
-    }
+    };
+    components = {
+      CoverPanel: CoverPanel
+    };
   }
 </script>
 
@@ -32,37 +44,27 @@
   @import "../../styles/variable";
   .notice-box{
     position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     top:0;
     height: 100%;
     width: 750rpx;
+    z-index: 10001;
 
-    .bg-box{
-      background-color: gray;
-      opacity: .5;
-      height: 100%;
-      width: 750rpx;
-    }
     .notice-content{
       position: absolute;
-      top:0;
+      width: 600rpx;
       background-color: white;
-      margin: 200rpx 40rpx;
       border-radius: 10rpx;
     }
     .notice-top-box{
-      background-color: #FF4544;
+      background-color: $color-primary;
       text-align: center;
       border-top-left-radius: 10rpx;
       border-top-right-radius: 10rpx;
       padding: 20rpx 0;
       position: relative;
-      image{
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 320rpx;
-        height: 240rpx;
-      }
     }
     .notice-content-box{
       padding: 40rpx;
@@ -70,7 +72,7 @@
         margin-bottom: 40rpx;
       }
       button{
-        background-color: #FF4544;
+        background-color: $color-primary;
         color: white;
       }
     }
