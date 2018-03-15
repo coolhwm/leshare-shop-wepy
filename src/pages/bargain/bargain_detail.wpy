@@ -12,7 +12,10 @@
     <BargainRuleBar/>
 
     <!--底栏-->
-    <DetailBottom wx:if="{{bargainList.isHead}}"/>
+    <block wx:if="{{bargainList.isHead}}">
+      <DetailBottom  />
+    </block>
+
 
     <!--滑出购物面板-->
     <block>
@@ -35,19 +38,20 @@
     data = {
       init: false,
       bargainList: {},
-      bargainId: 57,
+      // bargainId: 60,
+      bargainId: '',
       rule: {},
       createTime: {}
     };
     async onLoad (params, {preload}) {
-      // this.bargainId = preload.bargain.id
+      this.bargainId = preload.bargain.id;
       this.bargainList = await bargain.bargain(this.bargainId);
       this.rule = this.bargainList.rule;
       this.createTime = this.bargainList.createTime;
       this.loaded();
     };
     onUnload() {
-      this.$invoke('TimeOutBar', 'clear');
+      this.$invoke('BargainInfoBar', 'clear');
     };
     async onPullDownRefresh () {
       await this.update();

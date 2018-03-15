@@ -71,7 +71,9 @@
     };
     methods = {
       async help (ruleId, bargainId) {
-        await bargain.GoodsBargain(ruleId, bargainId)
+        await bargain.GoodsBargain(ruleId, bargainId);
+        // TODO 弹出弹窗 弹窗按钮为确认
+        // 帮砍一刀的按钮变为我也要
       }
     };
     components = {};
@@ -165,6 +167,7 @@
     width: 60rpx;
     height: 60rpx;
     border-radius: 30rpx;
+    border: $border;
   }
 
 </style>

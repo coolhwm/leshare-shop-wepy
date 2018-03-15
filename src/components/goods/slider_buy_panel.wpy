@@ -144,8 +144,10 @@
           this.cartManager.plus(this.goods, skuText, num);
         } else if (type === 'begin' || type === 'help') {
           const result = await bargain.GoodsBargain(this.goods.ruleId, this.goods.id, this.sku.skuText);
+          Tips.success('砍价成功');
           this.$root.$preload('bargain', result);
           this.$root.$navigate(`../bargain/bargain_detail`);
+          // TODO 弹出弹窗，提示自己砍了多少钱
         } else {
           const cart = this.cartManager.createCart(this.goods, skuText, num);
           const trade = order.createCartTrade([cart], {orderType: 10});
