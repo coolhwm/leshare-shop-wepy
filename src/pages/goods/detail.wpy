@@ -205,7 +205,8 @@
       canvasHidden: false,
       canvasHeight: null,
       canvasWidth: null,
-      code: ''
+      code: '',
+      user: {}
     };
     async onLoad ({goodsId}) {
       await store.init();
@@ -217,8 +218,8 @@
       const system = JSON.stringify(wepy.getSystemInfoSync());
       this.canvasWidth = JSON.parse(system).windowWidth * 0.8;
       this.canvasHeight = JSON.parse(system).windowHeight * 0.75;
-      this.user = wepy.getStorageSync('user');
-      this.code = await code.getCode(this.user.openId, `pages/goods/detail`);
+      // this.user = wepy.getStorageSync('user');
+      this.code = await code.getCode(this.goodsId, `pages/goods/detail`);
       this.loaded();
     };
     createTab() {
