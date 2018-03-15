@@ -143,7 +143,7 @@
           this.$apply();
           this.cartManager.plus(this.goods, skuText, num);
         } else if (type === 'begin' || type === 'help') {
-          const result = await bargain.GoodsBargain(this.goods.ruleId, this.goods.id);
+          const result = await bargain.GoodsBargain(this.goods.ruleId, this.goods.id, this.sku.skuText);
           this.$root.$preload('bargain', result);
           this.$root.$navigate(`../bargain/bargain_detail`);
         } else {

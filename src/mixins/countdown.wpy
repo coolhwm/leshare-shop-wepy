@@ -50,6 +50,7 @@
         this.timer = null;
       }
       this.content = {
+        day: '00',
         hour: '00',
         min: '00',
         sec: '00'
