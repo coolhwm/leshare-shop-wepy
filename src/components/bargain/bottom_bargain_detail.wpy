@@ -5,17 +5,18 @@
     <button class="column-center btn-buy" plain open-type="share">
       <text>找人帮砍</text>
     </button>
-    <view class="column-center btn-group" @tap="handleBargain({{detail.rule.goods}}, {{detail.ruleId}}, {{detail.id}})">
+    <view class="column-center btn-group" @tap="buy({{detail.rule.goods}}, {{detail.ruleId}}, {{detail.id}})">
       <text>立即购买</text>
     </view>
   </view>
 </template>
 
 <script>
-  import favorite from '../../api/favorite';
   import router from '../../mixins/router';
   import wepy from 'wepy';
-  import Tips from '../../utils/Tips';
+  import order from '../../api/order';
+  import Sku from '../../utils/Sku';
+  import Cart from '../../utils/Cart';
 
   export default class DetailBottom extends wepy.component {
     props = {
@@ -23,29 +24,49 @@
     };
     data = {
       isFav: false,
-      state: 'begin',
+      state: 'bargain',
       id: ''
     };
+    skuManager = null;
+    cartManager = Cart.create();
+    clear () {
+      console.info('[SilderPanel] clear');
+      this.goods = null;
+      this.action = 'cart';
+      this.display = false;
+    }
     methods = {
-      async fav() {
-        if (this.isFav) {
-          await Tips.confirm('确认取消收藏?');
-          await favorite.remove(this.detail.rule.goods.id);
-        } else {
-          await favorite.add(this.detail.rule.goods.id);
-          await Tips.success('收藏成功');
+      async buy () {
+        // TODO 搬自slider
+        if (!this.sku.next) {
+          return;
         }
-        this.isFav = !this.isFav;
-        this.$apply();
+        const {num} = this.sku;
+        const goods = this.detail.rule.goods;
+        goods.originalPrice = this.detail.rule.skuDetail.price;
+        goods.sellPrice = this.detail.balance;
+        const skuText = null;
+        const cart = this.cartManager.createCart(goods, skuText, num);
+        const trade = order.createCartTrade([cart], {orderType: 10});
+        const {id, ruleId} = this.detail;
+        Object.assign(trade, {ruleId, id});
+        this.$root.$preload('params', {trade, type: this.state});
+        this.$root.$navigate(`../order/trade`);
+        this.clear();
       }
     };
     computed = {
+      sku() {
+        if (this.skuManager == null) return;
+        return this.skuManager.export();
+      }
     };
     watch = {
       async detail(current, origin) {
         if (origin != null && origin.id != null) return;
-        const result = await favorite.is(current.goods.id);
-        this.isFav = result.isFavorite === 1;
+        // 构造SKU对象
+        this.skuManager = new Sku(current.rule.goods);
+        this.skuManager.action = this.state;
         this.$apply();
       }
     };

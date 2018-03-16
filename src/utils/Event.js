@@ -1,6 +1,8 @@
 const WxNotificationCenter = require('./WxNotificationCenter.js');
 
 export default class Event {
+  // 砍价详情帮砍更新事件
+  static BARGAIN_DETAIL_UPDATE = 'BARGAIN_DETAIL_UPDATE';
   // 拼团列表更新事件
   static GROUP_LIST_UPDATE = 'GROUP_LIST_UPDATE';
   // 订单列表更新事件

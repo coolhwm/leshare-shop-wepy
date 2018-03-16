@@ -133,7 +133,8 @@
         'pages/customer/balance',
         'pages/distribution/index',
         'pages/bargain/goods_detail',
-        'pages/bargain/bargain_detail'
+        'pages/bargain/bargain_detail',
+        'pages/bargain/list'
       ],
       window: {
         backgroundTextStyle: 'dark',

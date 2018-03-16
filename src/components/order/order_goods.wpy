@@ -1,12 +1,31 @@
 <template>
   <view class="order-goods-container row-between">
+    <!--&lt;!&ndash;商品图片&ndash;&gt;-->
+    <!--<image class="order-goods-image" mode="aspectFill" src="{{goods.imageUrl}}"/>-->
+
+    <!--&lt;!&ndash;商品说明&ndash;&gt;-->
+    <!--<view class="order-goods-title-container column">-->
+      <!--<text>{{goods.goodsName}}</text>-->
+      <!--<text class="muted" wx:if="{{goods.goodsSku}}">{{goods.goodsSku}}</text>-->
+      <!--&lt;!&ndash;折扣信息&ndash;&gt;-->
+      <!--<view class="discount-box row" wx:if="{{goods.discount}}">-->
+        <!--<view class="discount-rate"><text>{{goods.discountRate}}</text></view>-->
+        <!--<view class="discount-text"><text>{{goods.discountText}}</text></view>-->
+      <!--</view>-->
+    <!--</view>-->
+
+    <!--&lt;!&ndash;商品购买信息&ndash;&gt;-->
+    <!--<view class="order-goods-buy-container column">-->
+      <!--<text>￥{{goods.goodsSellPrice}}</text>-->
+      <!--<text class="muted">x{{goods.count}}</text>-->
+    <!--</view>-->
     <!--商品图片-->
-    <image class="order-goods-image" mode="aspectFill" src="{{goods.imageUrl}}"/>
+    <image class="order-goods-image" mode="aspectFill" src="../../images/icons/test.jpeg"/>
 
     <!--商品说明-->
     <view class="order-goods-title-container column">
-      <text>{{goods.goodsName}}</text>
-      <text class="muted" wx:if="{{goods.goodsSku}}">{{goods.goodsSku}}</text>
+      <text>溜溜溜滑板鞋</text>
+      <text class="muted">大红色</text>
       <!--折扣信息-->
       <view class="discount-box row" wx:if="{{goods.discount}}">
         <view class="discount-rate"><text>{{goods.discountRate}}</text></view>
@@ -16,8 +35,8 @@
 
     <!--商品购买信息-->
     <view class="order-goods-buy-container column">
-      <text>￥{{goods.goodsSellPrice}}</text>
-      <text class="muted">x{{goods.count}}</text>
+      <text>底价：0.01</text>
+      <text class="muted">x1</text>
     </view>
   </view>
 </template>

@@ -21,14 +21,15 @@
     </view>
     <view wx:if="{{bargain.isHead}}">
       <view class="back-box">
-        <view class="process-box" style="width: {{bargain.bargainRate}}%;">
-          <view>
-            <view class="msg-box">
-              <icon class="msg-bar xxlarge" color="primary"></icon>
-              <text class="price-box xxs primary">{{bargain.balance}}</text>
-            </view>
-            <view class="process"></view>
-          </view>
+        <view class="msg-box" style="width: {{bargain.bargainRate}}%;">
+          <icon class="msg-bar xxlarge" color="primary"></icon>
+          <text class="price-box xxs primary">{{bargain.balance}}</text>
+        </view>
+        <view class="back-msg-box"></view>
+      </view>
+      <view class="back-box">
+        <view class="process-box" style="width: {{bargain.bargainRate}}%;min-width: 5%;">
+          <view class="process"></view>
         </view>
         <view class="back"></view>
       </view>
@@ -37,8 +38,11 @@
         <text class="primary">底价：￥{{bargain.rule.floorPrice}}</text>
       </view>
     </view>
-    <view wx:else class="row-center info-btn-box">
-      <view wx:if="{{isHelp}}" class="btn-box" @tap="help({{bargain.rule.id}}, {{bargain.id}})">帮TA砍一刀</view>
+    <view wx:else class="column-center info-btn-box">
+      <view class="help-text">
+        <text wx:if="{{bargain.isHelp}}" class="primary">您一出手就帮好友砍掉了{{bargain.reducePrice}}元，功力了得啊~</text>
+      </view>
+      <view wx:if="{{!bargain.isHelp}}" class="btn-box" @tap="help({{bargain.rule.id}}, {{bargain.id}})">帮TA砍一刀</view>
       <view wx:else class="btn-box" @tap="want({{bargain.rule.id}})">我也要</view>
     </view>
     <view class="row-between mt20">
@@ -54,7 +58,8 @@
     </view>
   </view>
 
-  <Notice />
+  <!--提示框-->
+  <Notice/>
 </template>
 
 <script>
@@ -62,31 +67,26 @@
   import countdown from '../../mixins/countdown';
   import bargain from '../../api/bargain';
   import Notice from '../shop/notice';
+  import Event from '../../utils/Event';
 
   export default class BargainInfoBar extends wepy.component {
     props = {
-      createTime: {
-        default: ''
-      },
       bargain: {}
     };
     data = {
-      name: '小红',
-      isHelp: true
     };
     methods = {
       async help (ruleId, bargainId) {
-        const user = wepy.getStorageSync('user');
         const result = await bargain.GoodsBargain(ruleId, bargainId);
-        const price = result.details.find(item => item.customer.id === user.id).reducePrice;
-        console.info(price, user.id);
+        const {id: userId} = wepy.getStorageSync('user');
+        const price = result.details.find(item => item.customer.id === userId).reducePrice;
         const notice = {
           title: '太棒了',
           btnText: '确定',
-          content: `您一出手就帮好友砍掉了${price}`
+          content: `您一出手就帮好友砍掉了${price}元`
         };
-        this.$invoke('Notice', 'open', {notice});
-        this.isHelp = false;
+        this.$invoke('Notice', 'open', notice);
+        Event.emit(Event.BARGAIN_DETAIL_UPDATE, bargainId);
       },
       async want (ruleId) {
         this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${ruleId}`)
@@ -96,8 +96,10 @@
       Notice: Notice
     };
     watch = {
-      createTime (createTime) {
-        this.countdowm(createTime.replace(/-/g, '/'), 'groupTime');
+      bargain (bargain) {
+        if (bargain != null) {
+          this.countdowm(bargain.createTime, 'groupTime');
+        }
       }
     };
     mixins = [countdown];
@@ -138,7 +140,6 @@
     height: 30rpx;
     background-color: #e6e6e6;
     border-radius: 15rpx;
-    margin-top: 44px;
   }
 
   .process-box {
@@ -156,6 +157,7 @@
 
   .msg-box {
     position: relative;
+    min-width: 44px;
   }
 
   .price-box {
@@ -170,10 +172,17 @@
     .btn-box{
       background-color: $color-primary;
       color:white;
-      padding: 10rpx 60rpx;
+      padding: 10rpx 0;
+      width: 500rpx;
       border-radius: 5rpx;
       margin: 20rpx 0;
+      text-align: center;
+      font-size: 34rpx;
     }
+  }
+
+  .help-text{
+    height: 40rpx;
   }
 
   /*底部样式*/

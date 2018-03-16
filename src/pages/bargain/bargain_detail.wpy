@@ -6,7 +6,7 @@
     <GoodsDetail :rule.sync="rule"/>
 
     <!--砍价信息-->
-    <BargainInfoBar :createTime.sync="createTime" :bargain.sync="bargainList"/>
+    <BargainInfoBar :bargain.sync="bargainList" />
 
     <!--砍价玩法栏-->
     <BargainRuleBar/>
@@ -14,12 +14,6 @@
     <!--底栏-->
     <block wx:if="{{bargainList.isHead}}">
       <DetailBottom :detail.sync="bargainList"/>
-    </block>
-
-
-    <!--滑出购物面板-->
-    <block>
-      <SilderPanel />
     </block>
 
     <!--提示框-->
@@ -38,34 +32,36 @@
   import DetailBottom from '../../components/bargain/bottom_bargain_detail';
   import auth from '../../api/auth';
   import Notice from '../../components/shop/notice';
-  import SilderPanel from '../../components/goods/slider_buy_panel';
+  import Event from '../../utils/Event';
 
   export default class BargainDetail extends wepy.page {
     data = {
+      bargainId: null,
       init: false,
-      bargainList: {},
-      rule: {},
-      createTime: {},
-      isBegin: false
+      bargainList: null,
+      rule: null,
+      createTime: null
     };
     async onLoad ({bargainId, isBegin}) {
+      this.bargainId = bargainId;
       // 用户信息
       await auth.user();
-      this.isBegin = isBegin;
-      this.bargainList = await bargain.bargain(bargainId);
-      this.bargainList.bargainRate = (this.bargainList.balance / this.bargainList.rule.skuDetail.price) * 100;
-      this.rule = this.bargainList.rule;
-      this.createTime = this.bargainList.createTime;
-      if (this.isBegin) {
+      await this.update(bargainId);
+      if (isBegin) {
         const notice = {
           title: '太棒了',
           btnText: '确定',
-          content: `您一出手就帮自己砍掉了${this.bargainList.details[0].reducePrice}`
+          content: `您一出手就帮自己砍掉了${this.bargainList.reducePrice}`
         };
         this.$invoke('Notice', 'open', notice);
       }
-      this.loaded();
+      Event.listen(Event.BARGAIN_DETAIL_UPDATE, this.update.bind(this), this);
     };
+    async update () {
+      this.bargainList = await bargain.bargain(this.bargainId);
+      this.rule = this.bargainList.rule;
+      this.loaded();
+    }
     onUnload() {
       this.$invoke('BargainInfoBar', 'clear');
     };
@@ -94,8 +90,7 @@
       BargainInfoBar: BargainInfoBar,
       BargainRuleBar: BargainRuleBar,
       DetailBottom: DetailBottom,
-      Notice: Notice,
-      SilderPanel: SilderPanel
+      Notice: Notice
     };
     mixins = [base];
     config = {

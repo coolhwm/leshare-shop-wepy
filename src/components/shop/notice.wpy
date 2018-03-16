@@ -6,7 +6,7 @@
         <text class="xxl white">{{title}}</text>
       </view>
       <view class="column notice-content-box">
-        <text class="lg">{{content}}</text>
+        <text class="lg content-box">{{content}}</text>
         <button @tap="close">{{btnText}}</button>
       </view>
     </view>
@@ -48,16 +48,17 @@
   @import "../../styles/variable";
   .notice-box{
     position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     top:0;
+    right: 0;
     height: 100%;
     width: 750rpx;
     z-index: 10001;
 
     .notice-content{
-      position: absolute;
+      position: fixed;
+      left: 75rpx;
+      right: 75rpx;
+      top: 30%;
       width: 600rpx;
       background-color: white;
       border-radius: 10rpx;
@@ -78,6 +79,9 @@
       button{
         background-color: $color-primary;
         color: white;
+      }
+      .content-box{
+        text-align: center;
       }
     }
   }
