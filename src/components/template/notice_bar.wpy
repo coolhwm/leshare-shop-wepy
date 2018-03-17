@@ -25,7 +25,7 @@
     data = {};
     methods = {
       open(item) {
-        this.$invoke('NoticeDialog', 'open', item.content);
+        this.$invoke('NoticeDialog', 'open', {content: item.content});
       }
     };
     components = {

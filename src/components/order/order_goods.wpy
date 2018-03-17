@@ -16,7 +16,8 @@
 
     <!--商品购买信息-->
     <view class="order-goods-buy-container column">
-      <text>￥{{goods.goodsSellPrice}}</text>
+      <text>￥{{goods.goodsPrice}}</text>
+      <text class="cancel" wx:if="{{goods.goodsSellPrice}}">￥{{goods.goodsSellPrice}}</text>
       <text class="muted">x{{goods.count}}</text>
     </view>
   </view>

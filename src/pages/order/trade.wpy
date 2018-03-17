@@ -136,6 +136,7 @@
   import {PAYMENT, TYPE, orderUtils} from '../../api/order_const';
   import shop from '../../api/shop';
   import group from '../../api/group';
+  import bargain from '../../api/bargain'
   import FormTips from '../../components/weui/tips';
   import ActionBar from '../../components/common/action_bar';
   import AddressSelector from '../../components/address/select_item';
@@ -173,7 +174,6 @@
     };
     cartManager = Cart.create();
     async onLoad (params, {preload}) {
-      console.info(preload);
       const isOpen = await this.checkShopStatus();
       const result = await auth.user({block: true, redirect: true});
       if (!result || !isOpen) { return; }
@@ -341,6 +341,9 @@
           // 拼团订单
           const result = await group.goodsGroup(trade, address);
           return result.order;
+        } else if (this.type === 'bargain') {
+          console.info('bargain');
+          return await bargain.order(trade, address);
         } else {
           // 普通订单
           return await order.createOrder(trade, address);

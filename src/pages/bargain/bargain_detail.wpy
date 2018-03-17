@@ -6,18 +6,18 @@
     <GoodsDetail :rule.sync="rule"/>
 
     <!--砍价信息-->
-    <BargainInfoBar :createTime.sync="createTime" :bargain.sync="bargainList"/>
+    <BargainInfoBar :bargain.sync="bargainList" />
 
     <!--砍价玩法栏-->
     <BargainRuleBar/>
 
     <!--底栏-->
-    <DetailBottom wx:if="{{bargainList.isHead}}"/>
-
-    <!--滑出购物面板-->
-    <block>
-      <SilderPanel />
+    <block wx:if="{{bargainList.isHead}}">
+      <DetailBottom :detail.sync="bargainList"/>
     </block>
+
+    <!--提示框-->
+    <Notice/>
 
   </view>
 </template>
@@ -29,25 +29,41 @@
   import Loading from '../../components/common/loading';
   import BargainInfoBar from '../../components/bargain/bargain_info_bar';
   import BargainRuleBar from '../../components/bargain/bargain_rule_bar';
-  import DetailBottom from '../../components/bargain/bottom_bargain_detail'
+  import DetailBottom from '../../components/bargain/bottom_bargain_detail';
+  import auth from '../../api/auth';
+  import Notice from '../../components/shop/notice';
+  import Event from '../../utils/Event';
 
   export default class BargainDetail extends wepy.page {
     data = {
+      bargainId: null,
       init: false,
-      bargainList: {},
-      bargainId: 57,
-      rule: {},
-      createTime: {}
+      bargainList: null,
+      rule: null,
+      createTime: null
     };
-    async onLoad (params, {preload}) {
-      // this.bargainId = preload.bargain.id
+    async onLoad ({bargainId, isBegin}) {
+      this.bargainId = bargainId;
+      // 用户信息
+      await auth.user();
+      await this.update(bargainId);
+      if (isBegin) {
+        const notice = {
+          title: '太棒了',
+          btnText: '确定',
+          content: `您一出手就帮自己砍掉了${this.bargainList.reducePrice}`
+        };
+        this.$invoke('Notice', 'open', notice);
+      }
+      Event.listen(Event.BARGAIN_DETAIL_UPDATE, this.update.bind(this), this);
+    };
+    async update () {
       this.bargainList = await bargain.bargain(this.bargainId);
       this.rule = this.bargainList.rule;
-      this.createTime = this.bargainList.createTime;
       this.loaded();
-    };
+    }
     onUnload() {
-      this.$invoke('TimeOutBar', 'clear');
+      this.$invoke('BargainInfoBar', 'clear');
     };
     async onPullDownRefresh () {
       await this.update();
@@ -63,7 +79,7 @@
       return {
         title: shareName,
         imageUrl: imageUrl,
-        path: `/pages/bargain/bargain_detail?groupId=${this.bargainId}`
+        path: `/pages/bargain/bargain_detail?bargainId=${this.bargainList.id}`
       };
     }
     methods = {};
@@ -73,7 +89,8 @@
       Loading: Loading,
       BargainInfoBar: BargainInfoBar,
       BargainRuleBar: BargainRuleBar,
-      DetailBottom: DetailBottom
+      DetailBottom: DetailBottom,
+      Notice: Notice
     };
     mixins = [base];
     config = {
