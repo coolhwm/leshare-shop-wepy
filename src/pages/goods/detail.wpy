@@ -26,11 +26,9 @@
             <view class="small label primary" wx:if="{{detail.isRecommend == 1}}">推荐</view>
             <text class="name">{{detail.name}}</text>
           </view>
-          <view class="share-box">
-            <button open-type="share" plain class="column-center"  wx:if="{{isShare}}">
-              <icon class="share small" />
-              <text class="sm">分享</text>
-            </button>
+          <view class="column-center" @tap="shareGoods">
+            <icon class="share small" />
+            <text class="sm">分享</text>
           </view>
         </view>
 
@@ -124,6 +122,12 @@
     <block wx:if="{{isContact}}">
       <ContactWidget />
     </block>
+
+    <!--分享画布-->
+    <ShareCanvas/>
+
+    <!--分享方式-->
+    <ActionSheet @circle.user="circle"/>
   </view>
 
 </template>
@@ -151,7 +155,10 @@
   import BuyBar from '../../components/goods/bottom_buy_bar';
   import CouponPickPanel from '../../components/coupons/pick_panel';
   import CartWidget from '../../components/template/cart_widget';
+  import code from '../../api/code';
+  import ShareCanvas from '../../components/common/share_canvas';
   import DetailList from '../../components/goods/detail_list';
+  import ActionSheet from '../../components/common/action_sheet';
 
   @connect({
     pickCoupons: store.get('pickCoupons'),
@@ -176,7 +183,21 @@
       isComment: true,
       isSales: true,
       isContact: true,
-      isShare: true
+      isShare: true,
+      user: {},
+      canvasParams: {
+        canvasTemplateId: 0,
+        canvasName: 'goodsShare',
+        canvasHidden: false,
+        canvasHeight: null,
+        canvasPadding: null,
+        canvasWidth: null,
+        code: '',
+        detail: ''
+      },
+      sheetParams: {
+        sheetHidden: null
+      }
     };
     async onLoad ({goodsId}) {
       await auth.login();
@@ -186,6 +207,13 @@
       this.count = await comment.count(goodsId);
       this.page = comment.page();
       this.tab = this.createTab();
+      const system = JSON.stringify(wepy.getSystemInfoSync());
+      this.canvasParams.canvasWidth = JSON.parse(system).windowWidth * 0.8;
+      this.canvasParams.canvasHeight = JSON.parse(system).windowHeight * 0.75;
+      // this.user = wepy.getStorageSync('user');
+      this.canvasParams.code = await code.getCode(this.goodsId, `pages/goods/detail`);
+      this.canvasParams.detail = this.detail;
+      this.canvasParams.canvasPadding = (JSON.parse(system).windowWidth - this.canvasParams.canvasWidth) / 2;
       this.loaded();
     };
     onUnload() {
@@ -215,7 +243,8 @@
     /**
      * 页面分享
      */
-    onShareAppMessage () {
+    onShareAppMessage (res) {
+      console.log(res);
       const {id, name, imageUrl} = this.detail;
       return {
         title: name,
@@ -223,7 +252,23 @@
         path: `/pages/goods/detail?goodsId=${id}`
       };
     }
+
     methods = {
+      /**
+       * 分享到朋友圈
+       */
+      circle() {
+        this.canvasParams.canvasHidden = false;
+        this.$invoke('ShareCanvas', 'show', this.canvasParams);
+      },
+
+      /**
+       * 显示sheet
+       */
+      shareGoods () {
+        this.sheetParams.sheetHidden = true;
+        this.$invoke('ActionSheet', 'show', this.sheetParams);
+      },
       /**
        * 打开领取优惠券面板
        */
@@ -305,7 +350,9 @@
       BuyBar: BuyBar,
       CouponPickPanel: CouponPickPanel,
       CartWidget: CartWidget,
-      DetailList: DetailList
+      DetailList: DetailList,
+      ShareCanvas: ShareCanvas,
+      ActionSheet: ActionSheet
     };
     mixins = [base, pagination, router];
     config = {
@@ -388,4 +435,22 @@
     text-align: center;
   }
 
+  .detail-box{
+    margin-top: 20rpx;
+    background-color: #FFF;
+    border-top: $border;
+    .detail-title{
+      height: 90rpx;
+      border-bottom: $border;
+    }
+    .detail-list{
+      padding-bottom: 20rpx;
+      image{
+        width: 100%;
+      }
+      text{
+        padding: 20rpx;
+      }
+    }
+  }
 </style>

@@ -1,0 +1,94 @@
+<template>
+  <view class="sheet-box" wx:if="{{sheetHidden}}">
+    <view class="clear-area" @tap="hidden"/>
+    <view class="share-area">
+      <view class="column-center text-box" >
+        <text class="muted xs">分享</text>
+      </view>
+      <view class="btn-box row-around">
+        <button open-type="share" plain class="column-between" @tap="shareFriends">
+          <image class="icon-size" src="/images/icons/friends.png"/>
+          <text class="xs muted">微信</text>
+        </button>
+        <view class="column-between friends-btn" @tap="shareFriendsCircle">
+          <image class="icon-size" src="/images/icons/circle-friends.png"/>
+          <text class="xs muted mb10">朋友圈</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  export default class ActionSheet extends wepy.component {
+    data = {
+      sheetHidden: false
+    };
+    methods = {
+      /**
+       * 分享到微信朋友
+       * */
+      shareFriends() {
+        this.$emit('friends');
+        this.sheetHidden = false;
+      },
+      /**
+       * 分享到微信朋友圈
+       * */
+      shareFriendsCircle() {
+        this.$emit('circle');
+        this.sheetHidden = false;
+      },
+      /**
+       * 隐藏分享sheet
+       * */
+      hidden() {
+        this.sheetHidden = false;
+      },
+      /**
+       * 显示分享sheet
+       * */
+      show(params) {
+        this.sheetHidden = params.sheetHidden;
+      }
+    };
+  }
+</script>
+<style lang="scss">
+  @import "../../styles/variable";
+  .sheet-box {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0rpx;
+    background: rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    z-index: 1;
+    .clear-area{
+      width: 100%;
+      height: 68%;
+    }
+    .share-area{
+      padding: 10rpx;
+      height: 22%;
+      margin: 40rpx;
+      border-radius: 15rpx;
+      background-color: white;
+      .text-box{
+        margin: 15rpx;
+      }
+      .btn-box{
+        padding: 30rpx;
+        border-top: $border-line;
+        .friends-btn{
+          width: 176rpx;
+          height: 174rpx;
+        }
+        .icon-size{
+          width: 120rpx;
+          height: 120rpx;
+        }
+      }
+    }
+  }
+</style>

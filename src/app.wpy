@@ -115,6 +115,7 @@
         'pages/coupon/pick',
         'pages/customer/index_template',
         'pages/customer/index',
+        'pages/customer/index_basic',
         'pages/customer/registe_member',
         'pages/customer/vip_detail',
         'pages/customer/address_list',
@@ -122,7 +123,6 @@
         'pages/customer/vip_info',
         'pages/customer/sign_in',
         'pages/coupon/use',
-        'pages/shop/pay',
         'pages/shop/about_us',
         'pages/customer/comment_list',
         'pages/group/index',
@@ -131,7 +131,11 @@
         'pages/group/group_detail',
         'pages/group/group_info_list',
         'pages/customer/balance',
-        'pages/distribution/index'
+        'pages/distribution/index',
+        'pages/shop/contact',
+        'pages/shop/share',
+        'pages/shop/group_share',
+        'pages/shop/pay'
       ],
       window: {
         backgroundTextStyle: 'dark',
