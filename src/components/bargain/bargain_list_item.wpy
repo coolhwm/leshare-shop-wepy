@@ -143,6 +143,7 @@
 
   .bargain-goods-box{
     padding: 10rpx 20rpx;
+    background-color: $color-bg-item;
   }
 
   .group-bottom-box{

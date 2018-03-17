@@ -2,7 +2,7 @@
   <view class="buy-bar-placeholder">
   </view>
   <view class="row group-bar-box">
-    <view class="column-center btn-home">
+    <view class="column-center btn-home" @tap="home">
       <icon class="home normal" color="gray"/>
       <text class="xs">首页</text>
     </view>
@@ -50,6 +50,9 @@
         }
         this.isFav = !this.isFav;
         this.$apply();
+      },
+      home () {
+        this.$root.$switch(`/pages/home/template`)
       }
     };
     computed = {
