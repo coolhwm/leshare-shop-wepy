@@ -5,7 +5,7 @@
       <button class="btn" style="width: {{canvasWidth}}px;" @tap="savaCanvasAsImage">
         <text class="white">保存图片</text>
       </button>
-      <text class="mt20 xs white">点击按钮保存图片到相册</text>
+      <text class="mt20 xs white">长按图保存图片到相册</text>
     </view>
   </view>
   <view class="column-center" wx:if="{{canvasTemplateId == 1}}">
