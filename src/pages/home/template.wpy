@@ -53,6 +53,11 @@
         <GroupBox :param.sync="item" />
       </block>
 
+      <!--砍价橱窗-->
+      <block wx:if="{{item.type == 'BARGAIN_BOX'}}">
+        <BargainBox :param.sync="item" />
+      </block>
+
       <!--分隔符-->
       <block wx:if="{{item.type == 'SEPARATOR'}}">
         <Separator :param.sync="item" />
@@ -114,6 +119,7 @@
   import Copyright from '../../components/common/copyright';
   import ButtonWidget from '../../components/template/button_widget';
   import GroupBox from '../../components/template/group_box';
+  import BargainBox from '../../components/template/bargain_box';
   import Separator from '../../components/template/separator';
 
   @connect({
@@ -245,7 +251,8 @@
       Copyright: Copyright,
       ButtonWidget: ButtonWidget,
       GroupBox: GroupBox,
-      Separator: Separator
+      Separator: Separator,
+      BargainBox: BargainBox
     };
     computed = {
     };

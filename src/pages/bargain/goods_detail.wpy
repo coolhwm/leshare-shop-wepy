@@ -57,8 +57,7 @@
       endTime: '',
       goodsId: '',
       groupTime: '',
-      ruleId: 44,
-      // ruleId: 43,
+      ruleId: 43,
       rule: {},
       detail: {}
     };

@@ -52,7 +52,9 @@ export default class group extends base {
    */
   static list (status) {
     const url = `${this.baseUrl}/goods_bargain/rules?status=${status}`;
-    return new Page(url);
+    return new Page(url, item => {
+      this._processBargainListItem(item);
+    });
   }
   // 处理方法
 
@@ -68,9 +70,19 @@ export default class group extends base {
     return data;
   }
 
+  static _processBargainListItem (data) {
+    // 处理预览图
+    api._processGoodsPreview(data.rule);
+    // 筛选规格
+    data.rule.skuDetail = data.rule.skuDetails.find(item => item.sku === data.sku);
+    // 处理价格
+    this._processPrice(data);
+  }
+
   // 处理详情信息
   static _processDetail (data) {
-    data.rule.skuDetail = data.rule.skuDetails.find(item => item.sku === data.sku)
+    data.rule.skuDetail = data.rule.skuDetails.find(item => item.sku === data.sku);
+    if (data.createTime == null) return;
     data.createTime = data.createTime.replace(/-/g, '/');
   }
 
@@ -95,7 +107,7 @@ export default class group extends base {
   // 处理砍价价格
   static _processPrice (data) {
     // 一共砍了多少钱
-    data.allPrice = data.details.reduce((prev, current) => prev + current.reducePrice, 0);
+    data.allPrice = (data.details.reduce((prev, current) => prev + current.reducePrice, 0)).toFixed(2);
     const goodsPrice = data.rule.skuDetail.price;
     // 剩余多少钱
     data.balance = (goodsPrice * 1 - data.allPrice * 1).toFixed(2);

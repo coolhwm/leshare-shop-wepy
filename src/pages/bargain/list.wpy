@@ -5,9 +5,9 @@
     <ZanTab :tab.sync="tab" @change.user="switchTab" />
 
     <!--列表展现-->
-    <!--<repeat for="{{page.list}}" key="index" index="index" item="item">-->
-      <BargainItem/>
-    <!--</repeat>-->
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <BargainItem :detail.sync="item"/>
+    </repeat>
 
     <!-- 加载提示 -->
     <Loadmore :page.sync="page"/>
@@ -27,6 +27,7 @@
   import BargainItem from '../../components/bargain/bargain_list_item';
   import Loadmore from '../../components/weui/loadmore';
   import Loading from '../../components/common/loading';
+  import Event from '../../utils/Event';
 
   export default class OrderList extends wepy.page {
     def = {
@@ -41,7 +42,7 @@
           {id: '1', title: '进行中', status: 'PROCESSING'},
           {id: '2', title: '已至底', status: 'BARGAINED'},
           {id: '3', title: '已过期', status: 'TIMEOUT'},
-          {id: '4', title: '已购买', status: 'ORDERED'}
+          {id: '4', title: '已下单', status: 'ORDERED'}
         ],
         selectedId: '0'
       }
@@ -53,6 +54,7 @@
       }
       this.page = bargain.list();
       await this.next();
+      Event.listen(Event.BARGAIN_LIST_UPDATE, this.update.bind(this), this);
     };
     params() {
       const status = this.tab.list.find(item => item.id === this.tab.selectedId);
