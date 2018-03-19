@@ -3,17 +3,17 @@
 
   <view class="container column" wx:if="{{init}}">
     <!--商品详情栏-->
-    <GoodsDetail :rule.sync="rule"/>
+    <GoodsDetail :bargain.sync="detail"/>
 
     <!--砍价信息-->
-    <BargainInfoBar :bargain.sync="bargainList" />
+    <BargainInfoBar :bargain.sync="detail" @help.user="help"/>
 
     <!--砍价玩法栏-->
     <BargainRuleBar/>
 
     <!--底栏-->
-    <block wx:if="{{bargainList.isHead}}">
-      <DetailBottom :detail.sync="bargainList"/>
+    <block wx:if="{{detail.isHead}}">
+      <DetailBottom :detail.sync="detail"/>
     </block>
 
     <!--提示框-->
@@ -38,7 +38,7 @@
     data = {
       bargainId: null,
       init: false,
-      bargainList: null,
+      detail: null,
       rule: null,
       createTime: null
     };
@@ -51,15 +51,15 @@
         const notice = {
           title: '太棒了',
           btnText: '确定',
-          content: `您一出手就帮自己砍掉了${this.bargainList.reducePrice}`
+          content: `您一出手就帮自己砍掉了${this.detail.reducePrice}`
         };
         this.$invoke('Notice', 'open', notice);
       }
       Event.listen(Event.BARGAIN_DETAIL_UPDATE, this.update.bind(this), this);
     };
     async update () {
-      this.bargainList = await bargain.bargain(this.bargainId);
-      this.rule = this.bargainList.rule;
+      this.detail = await bargain.bargain(this.bargainId);
+      this.rule = this.detail.rule;
       this.loaded();
     }
     onUnload() {
@@ -75,14 +75,23 @@
     onShareAppMessage () {
       const {name, imageUrl} = this.rule.goods;
       const shareName = `${name}，快帮您的好友砍一刀吧！`;
-      // 【拼团】商品名称 还剩X人成团，快来一起参团
       return {
         title: shareName,
         imageUrl: imageUrl,
-        path: `/pages/bargain/bargain_detail?bargainId=${this.bargainList.id}`
+        path: `/pages/bargain/bargain_detail?bargainId=${this.detail.id}`
       };
     }
-    methods = {};
+    methods = {
+      help (price, bargainId) {
+        const notice = {
+          title: '太棒了',
+          btnText: '确定',
+          content: `您一出手就帮好友砍掉了${price}元`
+        };
+        this.$invoke('Notice', 'open', notice);
+        Event.emit(Event.BARGAIN_DETAIL_UPDATE, bargainId);
+      }
+    };
     computed = {};
     components = {
       GoodsDetail: BargainGoodsDetail,

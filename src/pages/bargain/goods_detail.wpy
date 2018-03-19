@@ -4,9 +4,9 @@
   <!--轮播展示图-->
   <view class="container column" wx:if="{{init}}">
     <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" @tap="previewDetailSwiper">
-      <block wx:for="{{rule.goods.images}}" wx:key="id">
+      <block wx:for="{{rule.goods.images}}" wx:key="index">
         <swiper-item>
-          <image src="{{item.url}}/preview" mode="aspectFill" style="width: 100%"></image>
+          <image src="{{item.url}}/preview" mode="aspectFill" style="width: 750rpx; height:480rpx;"></image>
         </swiper-item>
       </block>
     </swiper>
@@ -84,9 +84,8 @@
      * 页面分享
      */
     onShareAppMessage () {
-      const {name, imageUrl} = this.rules.goods;
-      const shareName = `${name}，仅需${this.rules.limitCustomer}人即可成团，快来一起开团吧！`;
-      // 【拼团】商品名称 还剩X人成团，快来一起参团
+      const {name, imageUrl} = this.rule.goods;
+      const shareName = `${name} 底价低至${this.rule.floorPrice}元，快邀请好友帮你砍一刀吧~`;
       return {
         title: shareName,
         imageUrl: imageUrl,
@@ -98,7 +97,7 @@
        * 预览轮播图
        */
       previewDetailSwiper() {
-        const urls = this.rules.goods.images.map(value => value.url);
+        const urls = this.rule.goods.images.map(value => value.url);
         wepy.previewImage({
           urls: urls
         });

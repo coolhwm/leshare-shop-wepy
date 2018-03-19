@@ -113,5 +113,7 @@ export default class group extends base {
     data.balance = (goodsPrice * 1 - data.allPrice * 1).toFixed(2);
     // 砍价的百分比
     data.bargainRate = (data.balance / goodsPrice) * 100;
+    // 是否已至底价
+    data.isFloor = data.balance == data.rule.floorPrice;
   }
 }

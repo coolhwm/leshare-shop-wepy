@@ -1,17 +1,18 @@
 <template>
-  <view class="row group-detail-box" @tap="detail({{rule.id}})">
-    <view class="group-goods-image">
-      <image src="{{rule.goods.imageUrl}}" mode="aspectFill"/>
+  <view class="row bargain-detail-box" @tap="detail({{bargain.rule.id}})">
+    <view class="bargain-goods-image">
+      <image src="{{bargain.rule.goods.imageUrl}}" mode="aspectFill"/>
     </view>
-    <view class="column ml20 group-goods-msg-box">
-      <text class="group-goods-name lg ml10">{{rule.goods.name}}</text>
+    <view class="column ml20 bargain-goods-msg-box">
+      <text class="bargain-goods-name lg ml10">{{bargain.rule.goods.name}}</text>
       <view>
         <view class="mb20 ml10">
-          <text class="weak xs">砍价立省{{rule.skuDetail.price * 1 - rule.floorPrice * 1}}</text>
+          <text class="weak xs">砍价立省{{bargain.rule.skuDetail.price * 1 - bargain.rule.floorPrice * 1}}</text>
         </view>
-        <view class="row-between">
-          <text class="muted sellPrice-box">￥{{rule.skuDetail.price}}</text>
-          <text class="group-price-box">[砍完价￥{{rule.floorPrice}}]</text>
+        <text class="primary ml10">现价：￥{{bargain.balance}}</text>
+        <view class="row-between ml10">
+          <text class="muted sellPrice-box">￥{{bargain.rule.skuDetail.price}}</text>
+          <text class="bargain-price-box">[砍完价￥{{bargain.rule.floorPrice}}]</text>
         </view>
       </view>
     </view>
@@ -21,9 +22,9 @@
 <script>
   import wepy from 'wepy';
 
-  export default class GroupGoodsDetail extends wepy.component {
+  export default class BargainGoodsDetail extends wepy.component {
     props = {
-      rule: {}
+      bargain: {}
     };
     data = {
     };
@@ -41,13 +42,13 @@
 <style lang="scss">
   @import "../../styles/variable";
   $img-height: 220rpx;
-  .group-detail-box{
+  .bargain-detail-box{
     margin-bottom: 10rpx;
     background: white;
     padding: 10rpx 20rpx;
     align-items: flex-start;
   }
-  .group-goods-image{
+  .bargain-goods-image{
     width: $img-height;
     height: $img-height;
     image{
@@ -55,10 +56,10 @@
       height: 100%;
     }
   }
-  .group-goods-msg-box{
+  .bargain-goods-msg-box{
     flex: 1;
     height: $img-height;
-    .group-price-box{
+    .bargain-price-box{
       color: #e64340;
     }
     .sellPrice-box{

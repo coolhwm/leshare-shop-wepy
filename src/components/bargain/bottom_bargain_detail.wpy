@@ -2,8 +2,11 @@
   <view class="buy-bar-placeholder">
   </view>
   <view class="row group-bar-box">
-    <button class="column-center btn-buy" plain open-type="share">
-      <text>找人帮砍</text>
+    <button wx:if="{{detail.isFloor}}" class="column-center btn-buy" plain open-type="share" disabled>
+      <text class="muted">找人帮砍</text>
+    </button>
+    <button wx:else class="column-center btn-buy" plain open-type="share">
+      <text class="primary">找人帮砍</text>
     </button>
     <view class="column-center btn-group" @tap="buy({{detail.rule.goods}}, {{detail.ruleId}}, {{detail.id}})">
       <text>立即购买</text>
@@ -89,12 +92,13 @@
       width: 50%;
       background-color: white;
       border-left: $border;
-      text{
-        color: $color-primary;
-      }
       .money-box{
         font-weight: bold;
       }
+    }
+    .btn-buy{
+      border:none;
+      border-radius: 0rpx;
     }
     .btn-group{
       background-color:$color-primary;
