@@ -51,7 +51,7 @@
         const notice = {
           title: '太棒了',
           btnText: '确定',
-          content: `您一出手就帮自己砍掉了${this.detail.reducePrice}`
+          content: `您一出手就帮自己砍掉了${this.detail.reducePrice}元`
         };
         this.$invoke('Notice', 'open', notice);
       }
