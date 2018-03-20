@@ -139,7 +139,7 @@
       window: {
         backgroundTextStyle: 'dark',
         backgroundColor: '#F5F5F5',
-        navigationBarBackgroundColor: '#EE0000'
+        navigationBarBackgroundColor: '#F3514F'
       }
     };
   }
