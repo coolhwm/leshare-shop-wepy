@@ -133,8 +133,6 @@
         'pages/customer/balance',
         'pages/distribution/index',
         'pages/shop/contact',
-        'pages/shop/share',
-        'pages/shop/group_share',
         'pages/shop/pay'
       ],
       window: {
