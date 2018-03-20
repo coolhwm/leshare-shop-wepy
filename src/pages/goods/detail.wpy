@@ -178,11 +178,12 @@
       isContact: true,
       isShare: true
     };
-    async onLoad ({goodsId}) {
+    async onLoad ({goodsId, type}) {
       await auth.login();
       await store.init();
       this.goodsId = goodsId;
       this.detail = await goods.getInfo(goodsId, this.discount);
+      if (type != null) this.detail.type = type;
       this.count = await comment.count(goodsId);
       this.page = comment.page();
       this.tab = this.createTab();

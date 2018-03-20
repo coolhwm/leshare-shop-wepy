@@ -1,0 +1,140 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view class="container column">
+
+    <view class="row booking-goods-box">
+      <image class="goods-img" src="{{goods.imageUrl}}"/>
+      <view class="column goods-box ml20">
+        <text class="xl">{{goods.name}}</text>
+        <view class="row goods-price-box">
+          <text class="xl danger ml20">￥1.00</text>
+          <text class="muted original-price">￥168.00</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="column booking-box">
+      <view class="row-center top-box">
+        <icon class="booking" color="white"/>
+        <text class="white xxl ml10">预约表</text>
+      </view>
+      <view class="content-box">
+        <view class="row row-box">
+          <text class="mr20 xl">姓名:</text>
+          <input type="text" placeholder="请输入您的姓名"/>
+        </view>
+        <view class="row row-box">
+          <text class="mr20 xl">手机:</text>
+          <input maxlength="11" type="number" placeholder="请输入您的手机号"/>
+        </view>
+        <view class="row-between row-box">
+          <text class="mr20 xl">日期:</text>
+          <picker mode="date" value="{{date}}" bindchange="bindDateChange">
+            <text class="weui-input">{{date}}</text>
+            <icon class="more" color="gray"/>
+          </picker>
+        </view>
+        <view class="row-between row-box">
+          <text class="mr20 xl">时间:</text>
+          <picker mode="time" value="{{time}}" bindchange="bindTimeChange">
+            <text class="weui-input">{{time}}</text>
+            <icon class="more" color="gray"/>
+          </picker>
+        </view>
+        <view class="row row-box">
+          <text class="mr20 xl">备注:</text>
+          <input type="text" placeholder="请输入您的想对我们说的"/>
+        </view>
+      </view>
+    </view>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import Loading from '../../components/common/loading';
+
+  export default class BookingOrder extends wepy.page {
+    data = {
+      init: false,
+      date: '',
+      time: '',
+      goods: {}
+    };
+    async onLoad (options, {preload}) {
+      this.goods = preload.data;
+      let date = new Date();
+      let mon = date.getMonth() + 1;
+      let day = date.getDate();
+      let hour = date.getHours();
+      let min = date.getMinutes();
+      this.date = `${date.getFullYear()}-${mon < 10 ? '0' + mon : mon}-${day < 10 ? '0' + day : day}`;
+      this.time = `${hour < 10 ? '0' + hour : hour}:${min < 10 ? '0' + min : min}`;
+      this.loaded();
+    };
+    methods = {
+      bindDateChange (e) {
+        this.date = e.detail.value
+      },
+      bindTimeChange  (e) {
+        this.time = e.detail.value
+      }
+    };
+    computed = {
+    };
+    components = {
+      Loading: Loading
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '预约下单'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  $img-width: 200rpx;
+  .booking-goods-box{
+    background-color: white;
+    margin: 20rpx;
+    padding: 30rpx;
+    border-radius: 20rpx;
+    .goods-img{
+      width: $img-width;
+      height: $img-width;
+    }
+    .goods-box{
+      height: $img-width;
+      justify-content: space-between;
+    }
+    .goods-price-box{
+      flex-direction: row-reverse;
+    }
+    .original-price{
+      text-decoration: line-through;
+    }
+  }
+  .booking-box{
+    background-color: white;
+    margin: 20rpx;
+    border-radius: 20rpx;
+    .top-box{
+      background-color: $color-primary;
+      flex: 1;
+      border-top-left-radius: 20rpx;
+      border-top-right-radius: 20rpx;
+      padding: 30rpx;
+    }
+    .content-box{
+      padding: 30rpx;
+    }
+    .row-box{
+      border-bottom: $border;
+      padding: 10rpx 0;
+    }
+  }
+</style>

@@ -1,9 +1,22 @@
 <template>
   <view class="buy-bar-placeholder">
   </view>
-  <view class="row buy-bar-box">
+  <view class="row buy-bar-box" wx:if="{{goods.type === 'service'}}">
+    <view class="column-center  btn-fav">
+      <icon class="service" color="gray"/>
+      <text>客服</text>
+    </view>
+    <view class="column-center btn-goto-cart" @tap="cart">
+      <icon class="home" color="gray"/>
+      <text>首页</text>
+    </view>
+    <view class="column-center btn-service" @tap="service({{goods}})">
+      <text class="white">立即预约</text>
+    </view>
+  </view>
+  <view class="row buy-bar-box" wx:else>
     <view class="column-center  btn-fav" @tap="fav">
-      <icon class="like{{!isFav ? '' : '-fill'}}" style="color: {{!isFav ? 'gray' : 'red'}}" />
+      <icon class="like{{!isFav ? '' : '-fill'}}" style="color: {{!isFav ? 'gray' : 'red'}}"/>
       <text>收藏</text>
     </view>
     <view class="column-center btn-goto-cart" @tap="cart">
@@ -54,6 +67,11 @@
       },
       cart() {
         this.$parent.$switch('/pages/goods/cart');
+      },
+      service (goods) {
+        console.info(goods);
+        this.$root.$preload('data', goods);
+        this.$root.$navigate(`/pages/booking/order`);
       }
     };
     watch = {
@@ -99,6 +117,11 @@
     }
     .btn-buy{
       background-color: darken($color-primary, 3%);
+    }
+    .btn-service{
+      background-color: darken($color-primary, 3%);
+      width: 750rpx - $btn-sm-width * 2;
+      height: 100%;
     }
   }
   .buy-bar-placeholder{
