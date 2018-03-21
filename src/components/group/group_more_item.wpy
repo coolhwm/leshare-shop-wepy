@@ -9,7 +9,7 @@
       </view>
       <view class="row-between">
         <text class="muted sm">{{item.limitCustomer}}人团/已成团{{item.successCount}}件</text>
-        <view class="btn-box">去拼团<icon class="more ml10 xsmall" color="white"/></view>
+        <view class="btn-box" @tap="group({{item.ruleId}})">去拼团<icon class="more ml10 xsmall" color="white"/></view>
       </view>
     </view>
   </view>
@@ -28,6 +28,9 @@
     async onLoad () {
     };
     methods = {
+      group (id) {
+        this.$root.$navigate(`/pages/group/goods_detail?ruleId${id}`)
+      }
     };
     computed = {
     };

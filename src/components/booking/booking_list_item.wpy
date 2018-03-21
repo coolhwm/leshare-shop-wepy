@@ -1,0 +1,147 @@
+<template>
+  <view class="order-item-container column">
+    <!--顶栏/基本信息-->
+    <view class="order-header-container colunm">
+      <view class="row-between">
+        <view class="user-info-container">
+          <text class="sm ml10">{{detail.createTime}}</text>
+        </view>
+        <text wx:if="{{detail.status === 'PROCESS'}}" class="sm primary">预约中</text>
+        <text wx:elif="{{detail.status === 'TIMEOUT'}}" class="sm primary">已过期</text>
+        <text wx:elif="{{detail.status === 'CANCEL'}}" class="sm primary">已取消</text>
+        <text wx:elif="{{detail.status === 'FINISH'}}" class="sm primary">已结束</text>
+      </view>
+    </view>
+
+    <!--商品区域-->
+    <view class="row-between bargain-goods-box">
+      <image src="{{detail.goods.imageUrl}}" style="width: 150rpx;height: 150rpx;"/>
+      <view class="column">
+        <text>{{detail.goods.name}}</text>
+        <text class="muted mt20">￥{{detail.goods.sellPrice}}</text>
+      </view>
+    </view>
+
+    <!--操作栏-->
+    <view class="group-bottom-box row">
+      <view wx:if="{{detail.status === 'PROCESS' && detail.order.status == 2}}" class="group-btn-box" @tap="cancel({{detail.id}})">取消预约</view>
+      <view class="row" wx:elif="{{detail.status === 'PROCESS' && detail.order.status == 1}}">
+        <view class="group-btn-box" @tap="pay({{detail.order.orderId}})">立即支付</view>
+        <view class="ml20 group-btn-box" @tap="cancel({{detail.id}})">取消预约</view>
+      </view>
+      <view wx:if="{{detail.status === 'CANCEL'}}" class="group-btn-box" @tap="booking({{detail.goodsId}})">重新预约</view>
+
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import booking from '../../api/booking';
+  import Tips from '../../utils/Tips';
+  import Event from '../../utils/Event';
+  import order from '../../api/order'
+
+  export default class BookingnItem extends wepy.component {
+    props = {
+      detail: {}
+    };
+    data = {
+    };
+    methods = {
+      async cancel (id) {
+        await booking.cancel(id);
+        await Tips.success('取消成功');
+        Event.emit(Event.BOOKING_LIST_UPDATE);
+      },
+      /**
+       * 订单支付
+       */
+      async pay(orderId) {
+        try {
+          Tips.loading();
+          const payment = await order.prepayOrder(orderId);
+          Tips.loaded();
+          await order.wxpayOrder(payment);
+          await Tips.success('支付成功');
+        } catch (e) {
+          console.warn(e);
+          await Tips.success('支付取消');
+        }
+        Event.emit(Event.BARGAIN_LIST_UPDATE);
+      },
+      booking (id) {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${id}`)
+      }
+    };
+    components = {
+    };
+    watch = {
+    };
+    mixins = [];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .order-item-container {
+    border-top: $border;
+    border-bottom: $border;
+    background-color: #FFF;
+    margin-bottom: 10rpx;
+  }
+
+  /*顶栏*/
+  .order-header-container {
+    padding: 10rpx 25rpx 10rpx 20rpx;
+  }
+
+  /*底栏*/
+  .order-footer-container {
+    padding-left: 25rpx;
+    padding-right: 20rpx;
+    height: 70rpx;
+  }
+
+  /*顶栏订单信息*/
+  .order-info-container{
+    text{
+      font-size: $text-xs;
+      color:$color-muted;
+    }
+  }
+
+  /* 操作栏 */
+  .order-action-bar {
+    border-top: $border;
+    height: 90rpx;
+    padding-right: 10rpx;
+  }
+
+  .order-goods-fold{
+    display: none;
+  }
+
+  .goods-fold-btn{
+    background-color: $color-bg-item;
+    padding-top: 5rpx;
+    padding-bottom: 5rpx;
+  }
+
+  .bargain-goods-box{
+    padding: 10rpx 20rpx;
+    background-color: $color-bg-item;
+  }
+
+  .group-bottom-box{
+    flex-direction: row-reverse;
+    border-top: 1px solid #FAFAFA;
+    .group-btn-box{
+      color: white;
+      background-color: $color-primary;
+      padding: 6rpx 20rpx;
+      margin: 14rpx;
+      border-radius: 5rpx;
+    }
+  }
+</style>
