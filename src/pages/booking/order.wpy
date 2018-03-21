@@ -1,7 +1,7 @@
 <template>
   <Loading :init.sync="init"/>
 
-  <view class="container column">
+  <view class="container column" wx:if="{{init}}">
 
     <view class="row booking-goods-box">
       <image class="goods-img" src="{{goods.imageUrl}}"/>
@@ -13,42 +13,76 @@
         </view>
       </view>
     </view>
+    <form @submit="submit">
+      <view class="booking-box">
+        <view class="row-center top-box">
+          <icon class="booking"/>
+          <text class="primary xxl ml10">预约表</text>
+        </view>
+        <view class="content-box">
+          <view class="weui-cells weui-cells-form">
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">姓名</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="name" placeholder="请输入您的姓名"/>
+              </view>
+            </view>
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">手机</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="phone" placeholder="请输入您的手机号" type="number"
+                       maxlength="11"/>
+              </view>
+            </view>
 
-    <view class="column booking-box">
-      <view class="row-center top-box">
-        <icon class="booking" color="white"/>
-        <text class="white xxl ml10">预约表</text>
-      </view>
-      <view class="content-box">
-        <view class="row row-box">
-          <text class="mr20 xl">姓名:</text>
-          <input type="text" placeholder="请输入您的姓名"/>
-        </view>
-        <view class="row row-box">
-          <text class="mr20 xl">手机:</text>
-          <input maxlength="11" type="number" placeholder="请输入您的手机号"/>
-        </view>
-        <view class="row-between row-box">
-          <text class="mr20 xl">日期:</text>
-          <picker mode="date" value="{{date}}" bindchange="bindDateChange">
-            <text class="weui-input">{{date}}</text>
-            <icon class="more" color="gray"/>
-          </picker>
-        </view>
-        <view class="row-between row-box">
-          <text class="mr20 xl">时间:</text>
-          <picker mode="time" value="{{time}}" bindchange="bindTimeChange">
-            <text class="weui-input">{{time}}</text>
-            <icon class="more" color="gray"/>
-          </picker>
-        </view>
-        <view class="row row-box">
-          <text class="mr20 xl">备注:</text>
-          <input type="text" placeholder="请输入您的想对我们说的"/>
-        </view>
-      </view>
-    </view>
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">日期</view>
+              </view>
+              <view class="weui-cell__bd">
+                <picker mode="date" id="dueTime" @change="bindDateChange" value="{{order.date}}"
+                        start="{{order.date}}">
+                  <view class="weui-input">
+                    {{order.date}}
+                  </view>
+                </picker>
+              </view>
+            </view>
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">时间</view>
+              </view>
+              <view class="weui-cell__bd">
+                <picker mode="date" id="dueTime" @change="bindTimeChange" value="{{order.time}}"
+                        start="{{order.time}}">
+                  <view class="weui-input">
+                    {{order.time}}
+                  </view>
+                </picker>
+              </view>
+            </view>
 
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">备注</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="remark" placeholder="您想嘱咐点啥吗？"/>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="booking-btn-box row-center">
+        <button style="color: white;" form-type="submit" plain>
+          提交预约
+        </button>
+      </view>
+    </form>
   </view>
 </template>
 
@@ -56,31 +90,42 @@
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import Loading from '../../components/common/loading';
+  import booking from '../../api/booking';
 
   export default class BookingOrder extends wepy.page {
     data = {
       init: false,
-      date: '',
-      time: '',
+      order: {},
       goods: {}
     };
     async onLoad (options, {preload}) {
       this.goods = preload.data;
+      this.order.goodsId = this.goods.id;
       let date = new Date();
       let mon = date.getMonth() + 1;
       let day = date.getDate();
       let hour = date.getHours();
       let min = date.getMinutes();
-      this.date = `${date.getFullYear()}-${mon < 10 ? '0' + mon : mon}-${day < 10 ? '0' + day : day}`;
-      this.time = `${hour < 10 ? '0' + hour : hour}:${min < 10 ? '0' + min : min}`;
+      this.order.date = `${date.getFullYear()}-${mon < 10 ? '0' + mon : mon}-${day < 10 ? '0' + day : day}`;
+      this.order.time = `${hour < 10 ? '0' + hour : hour}:${min < 10 ? '0' + min : min}`;
       this.loaded();
     };
     methods = {
       bindDateChange (e) {
-        this.date = e.detail.value
+        this.order.date = e.detail.value
       },
       bindTimeChange  (e) {
-        this.time = e.detail.value
+        this.order.time = e.detail.value
+      },
+      async submit ({detail}) {
+        const param = {
+          name: detail.value.name,
+          phone: detail.value.phone,
+          date: this.order.date + ' ' + this.order.time,
+          remark: detail.value.remark,
+          goodsId: this.goods.id
+        };
+        await booking.booking(param);
       }
     };
     computed = {
@@ -90,7 +135,7 @@
     };
     mixins = [base];
     config = {
-      navigationBarTitleText: '预约下单'
+      navigationBarTitleText: '提交预约'
     };
   }
 </script>
@@ -123,18 +168,22 @@
     margin: 20rpx;
     border-radius: 20rpx;
     .top-box{
-      background-color: $color-primary;
       flex: 1;
       border-top-left-radius: 20rpx;
       border-top-right-radius: 20rpx;
-      padding: 30rpx;
+      padding: 20rpx;
     }
     .content-box{
-      padding: 30rpx;
+      padding: 0 20rpx;
     }
-    .row-box{
-      border-bottom: $border;
-      padding: 10rpx 0;
-    }
+  }
+  .booking-btn-box{
+    background-color: $color-primary;
+    color:white;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 100rpx;
+    width: 750rpx;
   }
 </style>

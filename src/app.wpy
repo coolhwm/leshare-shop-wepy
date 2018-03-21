@@ -135,7 +135,8 @@
         'pages/bargain/goods_detail',
         'pages/bargain/bargain_detail',
         'pages/bargain/list',
-        'pages/booking/order'
+        'pages/booking/order',
+        'pages/group/group_more'
       ],
       window: {
         backgroundTextStyle: 'dark',

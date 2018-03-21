@@ -69,7 +69,6 @@
         this.$parent.$switch('/pages/goods/cart');
       },
       service (goods) {
-        console.info(goods);
         this.$root.$preload('data', goods);
         this.$root.$navigate(`/pages/booking/order`);
       }

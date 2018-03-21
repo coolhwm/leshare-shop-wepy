@@ -5,7 +5,7 @@
         <text class="title-box">拼团</text>
         <text class="muted ml20 xs">限量拼团，每日必逛</text>
       </view>
-      <view>
+      <view @tap="more({{param.data}})">
         <text class="sm muted">更多</text>
         <icon class="more" color="gray"/>
       </view>
@@ -38,6 +38,10 @@
     methods = {
       detail (ruleId) {
         this.$root.$navigate(`/pages/group/goods_detail?ruleId=${ruleId}`)
+      },
+      more (data) {
+        this.$root.$preload('data', data);
+        this.$root.$navigate(`/pages/group/group_more`)
       }
     };
   }
