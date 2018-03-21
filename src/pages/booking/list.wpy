@@ -71,7 +71,7 @@
     };
     mixins = [base, pagination];
     config = {
-      navigationBarTitleText: '预约订单',
+      navigationBarTitleText: '我的预约',
       enablePullDownRefresh: true
     };
   }
