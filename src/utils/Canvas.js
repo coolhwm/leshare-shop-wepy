@@ -88,7 +88,7 @@ export default class Canvas {
   /**
    * 选择模板
    * */
-  static chooseShareTemplate(params) {
+  static async chooseShareTemplate(params) {
     if (params.canvasName == 'goodsShare') {
       this.goodsShareTemplete(params);
     }
@@ -211,6 +211,7 @@ export default class Canvas {
    * 邀请卡分享的画布模板
    * */
   static async inviteShareTemplete(params) {
+    console.log(params);
     // 图片
     const shareBg = {};
     shareBg.tempFilePath = '/images/icons/share-bg.jpg';

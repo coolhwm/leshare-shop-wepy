@@ -115,7 +115,6 @@
         'pages/coupon/pick',
         'pages/customer/index_template',
         'pages/customer/index',
-        'pages/customer/index_basic',
         'pages/customer/registe_member',
         'pages/customer/vip_detail',
         'pages/customer/address_list',
@@ -132,7 +131,6 @@
         'pages/group/group_info_list',
         'pages/customer/balance',
         'pages/distribution/index',
-        'pages/shop/contact',
         'pages/shop/pay'
       ],
       window: {

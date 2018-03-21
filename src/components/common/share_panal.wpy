@@ -1,0 +1,196 @@
+<template>
+  <view class="sheet-box" wx:if="{{sheetParams.sheetHidden}}">
+    <view class="clear-area" @tap="hidden"/>
+    <view class="share-area">
+      <view class="column-center text-box" >
+        <text class="muted xs">分享</text>
+      </view>
+      <view class="btn-box row-around">
+        <button open-type="share" plain class="column-between">
+          <image class="icon-size" src="/images/icons/friends.png"/>
+          <text class="xs muted">微信</text>
+        </button>
+        <view class="column-between friends-btn" @tap="shareFriendsCircle">
+          <image class="icon-size" src="/images/icons/circle-friends.png"/>
+          <text class="xs muted mb10">朋友圈</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="canvas-box" @tap="grayArea" wx:if="{{canvasParams.canvasHidden && canvasParams.canvasTemplateId == 0}}">
+    <view class="column-center">
+      <canvas disable-scroll="true" @touchmove="contentArea" style="width: 100%; height: {{canvasParams.canvasHeight + 40}}px;" canvas-id="{{canvasParams.canvasName}}"/>
+      <button class="btn" style="width: {{canvasParams.canvasWidth}}px;" @tap="savaCanvasAsImage">
+        <text class="white">保存图片</text>
+      </button>
+      <text class="mt20 xs white">长按图保存图片到相册</text>
+    </view>
+  </view>
+  <view class="column-center" wx:if="{{canvasParams.canvasHidden && canvasParams.canvasTemplateId == 1}}">
+    <canvas  class="canvas-group-box" style="width: {{canvasParams.canvasWidth}}px; height: {{canvasParams.canvasHeight}}px;" canvas-id="{{canvasParams.canvasName}}" @longtap="saveCanvas"/>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import canvas from '../../utils/Canvas';
+  import code from '../../api/code';
+
+  export default class SharePanal extends wepy.component {
+    data = {
+      sheetParams: {
+        sheetHidden: false
+      },
+      canvasParams: {
+        canvasTemplateId: '',
+        canvasName: '',
+        canvasHidden: false,
+        canvasHeight: null,
+        canvasWidth: null,
+        code: {},
+        canvasPadding: null
+      }
+    };
+
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {id, name, imageUrl} = this.canvasParams.detail;
+      return {
+        title: name,
+        imageUrl: imageUrl,
+        path: `/pages/goods/detail?goodsId=${id}`
+      };
+    }
+    methods = {
+      contentArea(res) {},
+      /**
+       * 点击灰色区域隐藏
+       * */
+      grayArea() {
+        this.canvasParams.canvasHidden = false;
+      },
+      /**
+       * 长按保存图片
+       * */
+      saveCanvas() {
+        canvas.saveImage(this.canvasParams.canvasName);
+      },
+      /**
+       * 保存图片到相册
+       * */
+      savaCanvasAsImage() {
+        canvas.saveImage(this.canvasParams.canvasName);
+        this.canvasHidden = false;
+      },
+      /**
+       * 分享到微信朋友圈
+       * */
+      async shareFriendsCircle() {
+        this.sheetParams.sheetHidden = false;
+        this.canvasParams.canvasHidden = true;
+        await this.configCanvas(this.canvasParams);
+        this.$apply();
+        canvas.chooseShareTemplate(this.canvasParams);
+      },
+      /**
+       * 隐藏分享sheet
+       * */
+      hidden() {
+        this.sheetParams.sheetHidden = false;
+      },
+      /**
+       * 显示分享sheet
+       * */
+      async show(params) {
+        this.sheetParams = params.sheetParams;
+        this.canvasParams = params.canvasParams;
+      }
+    };
+
+    /**
+     * 配置分享画布数据
+     * */
+    async configCanvas(params) {
+      const systemStringify = JSON.stringify(wepy.getSystemInfoSync());
+      const system = JSON.parse(systemStringify);
+      if (params.canvasName == 'goodsShare') {
+        this.canvasParams.canvasWidth = system.windowWidth * 0.8;
+        this.canvasParams.canvasHeight = system.windowHeight * 0.75;
+        this.canvasParams.code = await code.getCode(params.detail.id, `pages/goods/detail`);
+        this.canvasParams.canvasPadding = (system.windowWidth - this.canvasParams.canvasWidth) / 2;
+      }
+      if (params.canvasName == 'shopCanvas') {
+        this.canvasParams.canvasWidth = system.windowWidth * 0.9;
+        this.canvasParams.canvasHeight = system.windowHeight * 0.7;
+        this.shop.images[0] = 'http://pic2.ooopic.com/12/58/16/15bOOOPICae.jpg';
+        this.user = wepy.getStorageSync('user');
+        this.canvasParams.code = await code.getCode(this.user.openId, 'pages/home/home');
+        this.canvasParams.shop = this.shop;
+        this.canvasParams.canvasPadding = (system.windowWidth - this.canvasParams.canvasWidth) / 2;
+      }
+      if (params.canvasName == 'groupShare') {
+        this.canvasParams.canvasWidth = system.windowWidth * 0.9;
+        this.canvasParams.canvasHeight = system.windowHeight * 0.8;
+        this.user = wepy.getStorageSync('user');
+        this.canvasParams.code = await code.getCode(this.user.openId, 'pages/home/home');
+      }
+    }
+  }
+</script>
+<style lang="scss">
+  @import "../../styles/variable";
+  .sheet-box {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0rpx;
+    background: rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    z-index: 1;
+    .clear-area{
+      width: 100%;
+      height: 68%;
+    }
+    .share-area{
+      padding: 10rpx;
+      height: 22%;
+      margin: 40rpx;
+      border-radius: 15rpx;
+      background-color: white;
+      .text-box{
+        margin: 15rpx;
+      }
+      .btn-box{
+        padding: 30rpx;
+        border-top: $border-line;
+        .friends-btn{
+          width: 176rpx;
+          height: 174rpx;
+        }
+        .icon-size{
+          width: 120rpx;
+          height: 120rpx;
+        }
+      }
+    }
+  }
+  .canvas-box {
+       position: fixed;
+       width: 100%;
+       height: 100%;
+       top: 0rpx;
+       background: rgba(0, 0, 0, 0.6);
+       overflow: hidden;
+       z-index: 1000;
+     }
+
+  .btn{
+    margin-top: 10rpx;
+    background-color: $color-warn;
+  }
+  .canvas-group-box{
+    margin-top: 40rpx;
+  }
+</style>
