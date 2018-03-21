@@ -1,10 +1,10 @@
 <template>
   <Loading :init.sync="init"/>
 
-  <view class="container column" wx:if="{{init}}">
-    <repeat for="{{data}}" key="index" index="index" item="item">
+  <view class="column" wx:if="{{init}}">
+    <repeat for="{{param}}" key="index" index="index" item="item">
       <block>
-        <GroupItem :param.sync="item"/>
+        <GroupItem :item.sync="item"/>
       </block>
     </repeat>
   </view>
@@ -19,18 +19,12 @@
   export default class ShopIndex extends wepy.page {
     data = {
       init: false,
-      data: {}
+      param: {}
     };
     async onLoad (options, {preload}) {
-      this.data = preload.data;
+      this.param = preload.param;
       this.loaded();
     };
-    /**
-     * 页面分享
-     */
-    onShareAppMessage () {
-      return {};
-    }
     methods = {
     };
     computed = {
@@ -41,6 +35,7 @@
     };
     mixins = [base];
     config = {
+      navigationBarTitleText: '拼团商品'
     };
   }
 </script>

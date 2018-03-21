@@ -40,7 +40,7 @@
         this.$root.$navigate(`/pages/group/goods_detail?ruleId=${ruleId}`)
       },
       more (data) {
-        this.$root.$preload('data', data);
+        this.$root.$preload('param', data);
         this.$root.$navigate(`/pages/group/group_more`)
       }
     };
