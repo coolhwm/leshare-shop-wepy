@@ -1,14 +1,5 @@
 <template>
   <view class="address-box">
-    <!--店铺图片轮播-->
-    <swiper class="shop-swiper" indicator-dots autoplay interval="3000" circular>
-      <block wx:for="{{shop.images}}" wx:key="key">
-        <swiper-item>
-          <image src="{{item.url}}" mode="aspectFill" class="shop-image" @tap="image({{item.url}})"/>
-        </swiper-item>
-      </block>
-    </swiper>
-
     <!--店铺信息-->
     <view class="info-box">
       <view class="info-item column">
@@ -90,10 +81,6 @@
   @import "../../styles/variable";
   .address-box{
     background-color: white;
-    .shop-swiper, .shop-image{
-      width: 750rpx;
-      height: 480rpx;
-    }
     .info-box{
       padding: 0 30rpx;
     }

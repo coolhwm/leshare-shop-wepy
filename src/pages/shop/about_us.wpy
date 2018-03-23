@@ -2,6 +2,15 @@
   <Loading :init.sync="init" />
 
   <view wx:if="{{init}}">
+    <!--店铺图片轮播-->
+    <swiper class="shop-swiper" indicator-dots autoplay interval="3000" circular>
+      <block wx:for="{{shop.images}}" wx:key="key">
+        <swiper-item>
+          <image src="{{item.url}}" mode="aspectFill" class="shop-image" @tap="image({{item.url}})"/>
+        </swiper-item>
+      </block>
+    </swiper>
+
     <AddressBox/>
     <Copyright buttom="true"/>
   </view>
@@ -47,5 +56,8 @@
   page{
     background-color: white;
   }
-
+  .shop-swiper, .shop-image{
+    width: 750rpx;
+    height: 480rpx;
+  }
 </style>

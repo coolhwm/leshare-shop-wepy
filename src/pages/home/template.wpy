@@ -63,6 +63,10 @@
         <Separator :param.sync="item" />
       </block>
 
+      <block wx:if="{{item.type == 'ADDRESS_BOX'}}">
+        <AddressBox :param.sync="item" />
+      </block>
+
       <!--间隔-->
       <view class="h-gap" wx:if="{{item.border !== 'none'}}"></view>
     </repeat>
@@ -121,6 +125,7 @@
   import GroupBox from '../../components/template/group_box';
   import BargainBox from '../../components/template/bargain_box';
   import Separator from '../../components/template/separator';
+  import AddressBox from '../../components/template/address_box';
 
   @connect({
     homePageId: store.get('homePageId'),
@@ -252,7 +257,8 @@
       ButtonWidget: ButtonWidget,
       GroupBox: GroupBox,
       Separator: Separator,
-      BargainBox: BargainBox
+      BargainBox: BargainBox,
+      AddressBox: AddressBox
     };
     computed = {
     };
