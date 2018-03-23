@@ -170,7 +170,6 @@ const STATUS_ACTIONS = {
   '33-1-4': [ACTION.COMMENT],
   '33-1-5': [ACTION.UNREFUND],
   // 商城（线下）
-  '10-0-2': [ACTION.CLOSE],
   '10-0-3': [ACTION.RECEIVE],
   '10-0-4': [ACTION.COMMENT],
   // 商城（线上）

@@ -37,6 +37,10 @@
   .nav-grid-box{
     .grid-box + .grid-box{
       border-top: $border;
+      button{
+        padding: 0;
+        line-height: 1.2em;
+      }
     }
     .row-box{
       align-items: center;
@@ -45,10 +49,5 @@
     .cell-box{
       width: 150rpx;
     }
-    button{
-      padding: 0;
-      line-height: 1.2em;
-    }
   }
-
 </style>
