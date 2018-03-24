@@ -137,7 +137,10 @@
         'pages/bargain/list',
         'pages/booking/order',
         'pages/group/group_more',
-        'pages/booking/list'
+        'pages/bargain/bargain_more',
+        'pages/booking/list',
+        'pages/booking/booking_detail',
+        'pages/shop/top_up'
       ],
       window: {
         backgroundTextStyle: 'dark',

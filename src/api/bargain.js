@@ -48,7 +48,7 @@ export default class group extends base {
   }
 
   /**
-   * 返回看家；
+   * 返回砍价列表
    */
   static list (status) {
     const url = `${this.baseUrl}/goods_bargain/rules?status=${status}`;
@@ -77,6 +77,7 @@ export default class group extends base {
     data.rule.skuDetail = data.rule.skuDetails.find(item => item.sku === data.sku);
     // 处理价格
     this._processPrice(data);
+    return data;
   }
 
   // 处理详情信息

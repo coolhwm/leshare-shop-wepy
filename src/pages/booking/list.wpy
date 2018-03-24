@@ -44,7 +44,7 @@
           {id: '3', title: '已取消', status: 'CANCEL'},
           {id: '4', title: '已结束', status: 'FINISH'}
         ],
-        selectedId: '1'
+        selectedId: '0'
       }
     };
     async onLoad () {

@@ -185,7 +185,15 @@ const STATUS_ACTIONS = {
   // 拼团
   '50-1-1': [ACTION.CLOSE, ACTION.PAY],
   '50-1-3': [ACTION.RECEIVE],
-  '50-1-4': [ACTION.COMMENT]
+  '50-1-4': [ACTION.COMMENT],
+  // 预约
+  '60-1-1': [ACTION.CLOSE, ACTION.PAY],
+  '60-1-3': [ACTION.RECEIVE],
+  '60-1-4': [ACTION.COMMENT],
+  // 砍价
+  '70-1-1': [ACTION.CLOSE, ACTION.PAY],
+  '70-1-3': [ACTION.RECEIVE],
+  '70-1-4': [ACTION.COMMENT]
 };
 
 /**  内部方法 **/

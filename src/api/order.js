@@ -159,6 +159,8 @@ export default class order extends base {
       postFee: (0).toFixed(2),
       paymentType: '1',
       paymentText: '在线支付',
+      onlinePayType: 'wxpay',
+      onlinePayText: '微信支付',
       orderGoodsInfos: orderGoodsInfos,
       shopName: this.shopName
     };

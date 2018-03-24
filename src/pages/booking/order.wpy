@@ -1,13 +1,16 @@
 <template>
   <Loading :init.sync="init"/>
 
+  <Tips/>
+  <view class="mt20"></view>
+
   <view class="container column" wx:if="{{init}}">
 
     <view class="row booking-goods-box">
       <image class="goods-img" src="{{goods.imageUrl}}"/>
       <view class="column goods-box ml20">
         <text class="xl">{{goods.name}}</text>
-        <view class="row goods-price-box">
+        <view class="row goods-price-box" wx:if="{{goods.sellPrice != 0}}">
           <text class="xl danger ml20">￥{{goods.sellPrice}}</text>
           <text class="muted original-price">￥{{goods.originalPrice}}</text>
         </view>
@@ -44,11 +47,8 @@
                 <view class="weui-label">日期</view>
               </view>
               <view class="weui-cell__bd">
-                <picker mode="date" id="dueTime" @change="bindDateChange" value="{{order.date}}"
-                        start="{{order.date}}">
-                  <view class="weui-input">
-                    {{order.date}}
-                  </view>
+                <picker mode="date" value="{{order.date}}" bindchange="bindDateChange">
+                  <view class="weui-input">{{order.date}}</view>
                 </picker>
               </view>
             </view>
@@ -57,11 +57,8 @@
                 <view class="weui-label">时间</view>
               </view>
               <view class="weui-cell__bd">
-                <picker mode="date" id="dueTime" @change="bindTimeChange" value="{{order.time}}"
-                        start="{{order.time}}">
-                  <view class="weui-input">
-                    {{order.time}}
-                  </view>
+                <picker mode="time" value="{{order.time}}" bindchange="bindTimeChange">
+                  <view class="weui-input">{{order.time}}</view>
                 </picker>
               </view>
             </view>
@@ -93,6 +90,9 @@
   import booking from '../../api/booking';
   import order from '../../api/order';
   import Tips from '../../utils/Tips';
+  import FormTips from '../../components/weui/tips';
+  import input from '../../mixins/input';
+  import goods from '../../api/goods'
 
   export default class BookingOrder extends wepy.page {
     data = {
@@ -100,9 +100,8 @@
       order: {},
       goods: {}
     };
-    async onLoad (options, {preload}) {
-      this.goods = preload.data;
-      this.order.goodsId = this.goods.id;
+    async onLoad ({goodsId}) {
+      this.goods = await goods.getInfo(goodsId);
       let date = new Date();
       let mon = date.getMonth() + 1;
       let day = date.getDate();
@@ -120,6 +119,11 @@
         this.order.time = e.detail.value
       },
       async submit ({detail}) {
+        this.order.name = detail.value.name;
+        this.order.phone = detail.value.phone.replace(/\s/g, '');
+        if (!this.validate()) {
+          return;
+        }
         const goods = {
           goodsId: this.goods.id,
           goodsName: this.goods.name,
@@ -189,12 +193,39 @@
     computed = {
     };
     components = {
-      Loading: Loading
+      Loading: Loading,
+      Tips: FormTips
     };
-    mixins = [base];
+    mixins = [base, input];
     config = {
       navigationBarTitleText: '提交预约'
     };
+    validate () {
+      const rules = [
+        {
+          value: this.order.name,
+          method: 'required',
+          message: '姓名不能为空'
+        }, {
+          value: this.order.phone,
+          method: 'required',
+          message: '联系电话不能为空'
+        }, {
+          value: this.order.phone,
+          method: 'maxlength',
+          param: 11
+        }, {
+          value: this.order.phone,
+          method: 'number',
+          message: '联系电话只能为数字'
+        }, {
+          value: this.order.phone,
+          method: 'tel',
+          message: '请输入正确的手机格式'
+        }
+      ];
+      return this.check(rules);
+    }
   }
 </script>
 

@@ -1,0 +1,145 @@
+<template>
+  <view wx:if="{{init}}">
+    <image src="http://img.leshare.shop/shop/other/top_up.jpg" mode="aspectFill" style="width: 750rpx; height:340rpx;"/>
+
+    <view class="top-up-box row-center">
+      <view class="row" style="flex: 1;flex-wrap: wrap;">
+        <block wx:for="{{rules}}" wx:key="index" wx:index="index" wx:for-item="item">
+          <view wx:if="{{item.isSelected}}" class="sel-item-box column-center" @tap="selected({{index}})">
+            <text>{{item.baseFee}}元</text>
+            <text class="muted xs">送{{item.giftFee}}元</text>
+            <icon class="top-up-selected icon-box"/>
+          </view>
+          <view class="column-center item-box" wx:else @tap="selected({{index}})">
+            <text>{{item.baseFee}}元</text>
+            <text class="muted xs">送{{item.giftFee}}元</text>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <button class="btn-box" @tap="topUp">立即充值</button>
+
+    <view class="rule-box column">
+      <text class="muted sm">1、会员可对账户进行充值</text>
+      <text class="muted sm">2、充值{{ruleText}}</text>
+      <text class="muted sm">3、实际支付的充值本金会构成您的账户余额，充值本金不可提现、转移、转增、充值余额无有效期</text>
+      <text class="muted sm">4、根据全国税务局规定，预定充值业务只能在充值时开具增值税普通发票，开票内容为预付卡销售和充值，不能开具增值税专用发票，且用储值消费时不再另外开具发票</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import topUp from '../../api/top_up';
+  import Tips from '../../utils/Tips';
+  import order from '../../api/order';
+
+  export default class TopUp extends wepy.page {
+    data = {
+      init: false,
+      rules: null,
+      rule: null
+    };
+    async onLoad () {
+      this.rules = await topUp.getTopUp();
+      this.loaded();
+    };
+    methods = {
+      selected (idx) {
+        this.rules.forEach((item, index) => {
+          item.isSelected = index === idx
+        });
+        this.rule = this.rules[idx]
+      },
+      async topUp () {
+        if (this.rule == null) {
+          await Tips.alert('请选择金额')
+        }
+        const param = {
+          finalPrice: this.rule.baseFee,
+          dealPrice: this.rule.baseFee * 1 + this.rule.giftFee * 1,
+          paymentType: 1
+        };
+        const trade = await topUp.topUp(param);
+        if (trade == null) {
+          Tips.alert('下单失败');
+          return;
+        }
+        // 发起支付
+        const isPay = await this.requestWxPayment(trade);
+        if (isPay) {
+          Tips.success('支付成功');
+        } else {
+          Tips.alert('支付取消');
+        }
+      }
+    };
+    /**
+     * 请求发起支付
+     */
+    async requestWxPayment(trade) {
+      // 微信支付
+      try {
+        const payment = await order.prepayOrder(trade.orderId);
+        await order.wxpayOrder(payment);
+        return true;
+      } catch (e) {
+        console.error(e);
+        return false;
+      }
+    }
+    computed = {
+      ruleText () {
+        if (this.rules == null) return;
+        const textArr = this.rules.map(item => {
+          return `满${item.baseFee}元赠送${item.giftFee}元`
+        });
+        return textArr.toString();
+      }
+    };
+    components = {
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '会员账户充值'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .top-up-box{
+    background-color: white;
+    padding: 20rpx;
+    margin-top: -13rpx;
+    .item-box, .sel-item-box{
+      margin: 20rpx;
+      padding: 20rpx;
+      width: 21%;
+      border: $border;
+      border-radius: 10rpx;
+      overflow: hidden;
+    }
+    .sel-item-box{
+      position: relative;
+      border: 1px solid $color-primary;
+    }
+    .icon-box{
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      padding: 0;
+    }
+  }
+  .btn-box{
+    background-color: $color-primary;
+    margin: 35rpx 30rpx;
+    color: white;
+  }
+  .rule-box{
+    background-color: white;
+    padding: 30rpx;
+  }
+</style>
