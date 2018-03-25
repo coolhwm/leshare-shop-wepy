@@ -13,12 +13,40 @@
     globalData = {
       auth: {},
       scene: null,
-      appCode: null,
-      shopType: null,
-      pageParams: null,
-      componentsParams: null,
-      baseUrl: null,
-      version: 'v3.2.3'
+      'shopType': '1',
+      'shopName': '连江日用品专营店',
+      'appCode': 'owVHb1gHrvktni80kjMlFMzSDJDWY0xR',
+      'baseUrl': 'https://www.easy-mock.com/mock/5ab7c9627a7afd3099d16b4c/customer',
+      version: 'v3.2.3',
+      'componentsParams': {},
+      'pageParams': {
+        'pages/goods/category': {
+          'buyPanelType': 'POPUP',
+          'isCoupon': false
+        },
+        'pages/goods/detail': {
+          'buyPanelType': 'SLIDER',
+          'cartType': 'BAR',
+          'isCoupon': true,
+          'isComment': true,
+          'isContact': true,
+          'isShare': true,
+          'isSales': true
+        },
+        'pages/goods/search': {
+          'hotKeywords': [
+            '抽纸',
+            '卷纸',
+            '面巾纸',
+            '卫生巾',
+            '湿纸巾',
+            '维达',
+            '维达',
+            '波斯猫',
+            '妙洁'
+          ]
+        }
+      }
     };
     constructor () {
       super();
@@ -136,10 +164,42 @@
         'pages/bargain/bargain_detail',
         'pages/bargain/list'
       ],
-      window: {
-        backgroundTextStyle: 'dark',
-        backgroundColor: '#F5F5F5',
-        navigationBarBackgroundColor: '#1296db'
+      'window': {
+        'backgroundTextStyle': 'dark',
+        'backgroundColor': '#F5F5F5',
+        'navigationBarBackgroundColor': '#F3514F'
+      },
+      'tabBar': {
+        'color': '#666666',
+        'selectedColor': '#F3514F',
+        'borderStyle': 'white',
+        'backgroundColor': '#FAFAFA',
+        'list': [
+          {
+            'iconPath': 'images/tab/home.png',
+            'selectedIconPath': 'images/tab/red/home-active.png',
+            'pagePath': 'pages/home/template',
+            'text': '首页'
+          },
+          {
+            'iconPath': 'images/tab/order.png',
+            'selectedIconPath': 'images/tab/red/order-active.png',
+            'pagePath': 'pages/goods/category',
+            'text': '分类'
+          },
+          {
+            'iconPath': 'images/tab/cart.png',
+            'selectedIconPath': 'images/tab/red/cart-active.png',
+            'pagePath': 'pages/goods/cart',
+            'text': '购物车'
+          },
+          {
+            'iconPath': 'images/tab/user.png',
+            'selectedIconPath': 'images/tab/red/user-active.png',
+            'pagePath': 'pages/customer/index_template',
+            'text': '我的'
+          }
+        ]
       }
     };
   }
