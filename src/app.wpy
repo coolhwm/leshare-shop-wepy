@@ -18,7 +18,7 @@
       pageParams: null,
       componentsParams: null,
       baseUrl: null,
-      version: 'v3.1.0'
+      version: 'v3.2.3'
     };
     constructor () {
       super();

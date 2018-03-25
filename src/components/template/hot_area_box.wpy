@@ -4,7 +4,7 @@
       <image class="image" style="width:{{image.width}};height:{{image.height}} " mode="aspectFill" src="{{image.url}}" @tap="routeByAction({{image}})"></image>
     </block>
     <block wx:for="{{param.data.hotAreas}}" wx:for-item="area" wx:key="seq">
-      <view class="area" style="width:{{area.width}};height:{{area.height}};top:{{area.yPos}};left:{{area.xPos}}" @tap="routeByAction({{area}})"></view>
+      <button plain class="area" style="width:{{area.width}};height:{{area.height}};top:{{area.yPos}};left:{{area.xPos}}" @tap="routeByAction({{area}})" open-type="{{area.openType}}"></button>
     </block>
   </view>
 
@@ -26,9 +26,12 @@
   .hot-area-box{
     position: relative;
     .image {
-      position: absolute;
+      position: relative;
     }
-    .area{
+    button.area{
+      border: none;
+      border-color: transparent;
+      background-color: transparent;
       position: absolute;
     }
   }

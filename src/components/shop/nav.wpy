@@ -29,7 +29,7 @@
     };
     methods = {
       goto() {
-        WxUtils.backOrNavigate('/pages/customer/index');
+        this.$root.$switch('/pages/customer/index_template');
       }
     };
     computed = {
