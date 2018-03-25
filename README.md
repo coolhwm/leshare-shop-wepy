@@ -10,8 +10,9 @@
 > 小程序商家管理端：https://github.com/coolhwm/leshare-seller-wepy
 
 ## 部分截图
-![预览1](http://img.leshare.shop/github/customer/preview-1.jpg)
-![预览2](http://img.leshare.shop/github/customer/preview-2.jpg)
+![预览1](http://img.leshare.shop/github/customer/preview-01.jpg)
+![预览2](http://img.leshare.shop/github/customer/preview-02.jpg)
+![预览2](http://img.leshare.shop/github/customer/preview-03.jpg)
 
 ## 部署说明
 
