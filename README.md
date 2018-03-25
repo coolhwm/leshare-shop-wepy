@@ -11,8 +11,8 @@
 
 ## 部分截图
 ![预览1](http://img.leshare.shop/github/customer/preview-01.jpg)
-![预览2](http://img.leshare.shop/github/customer/preview-02.jpg)
-![预览2](http://img.leshare.shop/github/customer/preview-03.jpg)
+![预览2](http://img.leshare.shop/github/customer/preivew-02.jpg)
+![预览2](http://img.leshare.shop/github/customer/preivew-03.jpg)
 
 ## 部署说明
 
