@@ -180,4 +180,4 @@ const exists = key => {
   return interval < CACHE_TIMEOUT;
 };
 
-export default {get, save, use, reflesh, init}
+export default {get, save, use, refresh: reflesh, init}

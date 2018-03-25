@@ -1,0 +1,88 @@
+<template>
+  <view class="notice-box" wx:if="{{display}}">
+    <view class="bg-box"></view>
+    <view class="column notice-content">
+      <view class="notice-top-box">
+        <text class="xxl white">{{title}}</text>
+      </view>
+      <view class="column notice-content-box">
+        <text class="lg content-box">{{content}}</text>
+        <button @tap="close">{{btnText}}</button>
+      </view>
+    </view>
+  </view>
+
+  <CoverPanel :display.sync="display"/>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import CoverPanel from '../common/cover_panel';
+
+  export default class Notice extends wepy.component {
+    data = {
+      content: '',
+      display: false,
+      title: '公告',
+      btnText: '我知道了'
+    };
+    methods = {
+      open({title, btnText, content}) {
+        this.display = true;
+        this.title = title;
+        this.btnText = btnText;
+        this.content = content
+      },
+      close() {
+        this.display = false;
+      }
+    };
+    components = {
+      CoverPanel: CoverPanel
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .notice-box{
+    position: absolute;
+    top:0;
+    right: 0;
+    height: 100%;
+    width: 750rpx;
+    z-index: 10001;
+
+    .notice-content{
+      position: fixed;
+      left: 75rpx;
+      right: 75rpx;
+      top: 30%;
+      width: 600rpx;
+      background-color: white;
+      border-radius: 10rpx;
+    }
+    .notice-top-box{
+      background-color: $color-primary;
+      text-align: center;
+      border-top-left-radius: 10rpx;
+      border-top-right-radius: 10rpx;
+      padding: 20rpx 0;
+      position: relative;
+    }
+    .notice-content-box{
+      padding: 40rpx;
+      text{
+        margin-bottom: 40rpx;
+      }
+      button{
+        background-color: $color-primary;
+        color: white;
+      }
+      .content-box{
+        text-align: center;
+      }
+    }
+  }
+</style>

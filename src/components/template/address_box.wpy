@@ -1,0 +1,98 @@
+<template>
+  <view class="address-box">
+    <!--店铺信息-->
+    <view class="info-box">
+      <view class="info-item column">
+        <text class="muted">店铺名称 | Name</text>
+        <view class="row-between">
+          <text class="mt10 xxl">{{shop.name}}</text>
+          <button plain class="icon-box" open-type="share" >
+            <icon class="share"></icon>
+          </button>
+        </view>
+      </view>
+
+      <view class="info-item column">
+        <text class="muted">联系地址 | Address</text>
+        <view class="row-between">
+          <text class="mt10 xxl">{{shop.address}}</text>
+          <view class="icon-box" @tap="location">
+            <icon class="address"></icon>
+          </view>
+        </view>
+      </view>
+
+      <view class="info-item column">
+        <text class="muted">联系电话 | Telephone</text>
+        <view class="row-between">
+          <text class="mt10 xxl">{{shop.phone}}</text>
+          <view class="icon-box" @tap="phone">
+            <icon class="phone"></icon>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+
+  @connect({
+    shop: store.get('shop')
+  })
+  export default class AddressBox extends wepy.component {
+    data = {
+      init: false
+    };
+    async onLoad () {
+    };
+    methods = {
+      image (src) {
+        wepy.previewImage({
+          current: src,
+          urls: this.shop.images.map(item => item.url)
+        });
+      },
+      phone() {
+        wepy.makePhoneCall({phoneNumber: this.shop.phone});
+      },
+      location () {
+        const longitude = this.shop.longitude;
+        const latitude = this.shop.latitude;
+        wepy.openLocation({
+          latitude: Number(latitude),
+          longitude: Number(longitude),
+          name: this.shop.name,
+          address: this.shop.describe
+        });
+      }
+    };
+    components = {
+    };
+    mixins = [base]
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .address-box{
+    background-color: white;
+    .info-box{
+      padding: 0 30rpx;
+    }
+    .info-item{
+      padding: 20rpx 0;
+      border-bottom: $border;
+    }
+    .icon-box{
+      padding: 0;
+      line-height: 1.5;
+      padding-left: 20rpx;
+      border-left: $border;
+    }
+  }
+</style>

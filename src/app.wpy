@@ -18,7 +18,7 @@
       pageParams: null,
       componentsParams: null,
       baseUrl: null,
-      version: 'v3.0.2'
+      version: 'v3.2.3'
     };
     constructor () {
       super();
@@ -87,11 +87,13 @@
     }
     config = {
       pages: [
-        'pages/home/home',
         'pages/home/template',
+        'pages/home/home',
         'pages/home/login',
         'pages/shop/index',
         'pages/goods/cart',
+        'pages/goods/favorite',
+        'pages/goods/history',
         'pages/goods/detail',
         'pages/goods/comment_list',
         'pages/goods/search',
@@ -102,6 +104,7 @@
         'pages/address/select',
         'pages/address/list',
         'pages/address/search',
+        'pages/order/list',
         'pages/order/trade',
         'pages/order/detail',
         'pages/order/refund_edit',
@@ -110,8 +113,8 @@
         'pages/coupon/list',
         'pages/coupon/detail',
         'pages/coupon/pick',
+        'pages/customer/index_template',
         'pages/customer/index',
-        'pages/customer/index_basic',
         'pages/customer/registe_member',
         'pages/customer/vip_detail',
         'pages/customer/address_list',
@@ -119,8 +122,19 @@
         'pages/customer/vip_info',
         'pages/customer/sign_in',
         'pages/coupon/use',
-        'pages/shop/contact',
-        'pages/shop/pay'
+        'pages/shop/pay',
+        'pages/shop/about_us',
+        'pages/customer/comment_list',
+        'pages/group/index',
+        'pages/group/goods_detail',
+        'pages/group/list',
+        'pages/group/group_detail',
+        'pages/group/group_info_list',
+        'pages/customer/balance',
+        'pages/distribution/index',
+        'pages/bargain/goods_detail',
+        'pages/bargain/bargain_detail',
+        'pages/bargain/list'
       ],
       window: {
         backgroundTextStyle: 'dark',

@@ -16,6 +16,20 @@ export default class order extends base {
   }
 
   /**
+   * 获取订单统计信息
+   */
+  static count () {
+    const url = `${this.baseUrl}/orders/count`;
+    return this.get(url).then(data => {
+      const result = {};
+      data.forEach(({status, total}) => {
+        result[status] = total;
+      });
+      return result;
+    });
+  }
+
+  /**
    * 获取订单详情
    */
   static getInfo (orderId) {

@@ -1,0 +1,92 @@
+<template>
+  <!--订单信息-->
+  <view class="column order-box">
+    <view>
+      <view class="weui-cells weui-cells-show">
+        <view url="" class="weui-cell weui-cell_access" @tap="list(0)">
+          <view class="weui-cell__bd">我的订单</view>
+          <view class="weui-cell__ft weui-cell__ft_in-access">查看全部订单</view>
+        </view>
+      </view>
+    </view>
+    <view class="row-around state-box">
+      <view class="column-center" @tap="list(1)">
+        <icon class="payment large" color="gray"/>
+        <text>待付款</text>
+        <view class="weui-badge" wx:if="{{count[1] > 0}}">{{count[1]}}</view>
+      </view>
+      <view class="column-center" @tap="list(2)">
+        <icon class="delivery large" color="gray"/>
+        <text>待发货</text>
+        <view class="weui-badge" wx:if="{{count[2] > 0}}" >{{count[2]}}</view>
+      </view>
+      <view class="column-center" @tap="list(3)">
+        <icon class="received large" color="gray"/>
+        <text>待收货</text>
+        <view class="weui-badge" wx:if="{{count[3] > 0}}">{{count[3]}}</view>
+      </view>
+      <view class="column-center" @tap="list(4)">
+        <icon class="evaluated large" color="gray"/>
+        <text>待评论</text>
+        <view class="weui-badge" wx:if="{{count[4] > 0}}">{{count[4]}}</view>
+      </view>
+      <view class="column-center" @tap="list(5)">
+        <icon class="refund large" color="gray"/>
+        <text>退货/退款</text>
+        <view class="weui-badge" wx:if="{{count[5] > 0}}">{{count[5]}}</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import order from '../../api/order';
+  import Event from '../../utils/Event';
+
+  export default class OrderBar extends wepy.component {
+    props = {
+    };
+    data = {
+      count: null
+    };
+    async onLoad() {
+      Event.listen(Event.ORDER_LIST_UPDATE, this.load.bind(this), this);
+      await this.load();
+    }
+    async load() {
+      this.count = await order.count();
+      this.$apply();
+    }
+    methods = {
+      list(status) {
+        this.$root.$navigate(`/pages/order/list?status=${status}`);
+      }
+    };
+    events = {
+      async refresh() {
+        await this.load();
+      }
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .order-box{
+    background-color: #FFFFFF;
+    border-bottom: $border;
+    .state-box{
+      position: relative;
+      padding: 10rpx 0;
+      .column-center{
+        position: relative;
+      }
+      .weui-badge{
+        position: absolute;
+        top: 0;
+        right: -5px;
+      }
+    }
+  }
+</style>

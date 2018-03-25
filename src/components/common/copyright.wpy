@@ -1,9 +1,9 @@
 <template>
-  <view class="weui-footer {{buttom == 'true' ? 'weui-footer_fixed-bottom' : 'mt20'}} ">
+  <view class="weui-footer {{buttom == 'true' ? 'weui-footer_fixed-bottom' : ''}} " @tap="tap">
     <view class="weui-footer__links">
-      <navigator url="/pages/shop/contact" class="weui-footer__link">乐享启创提供技术支持</navigator>
+      <view class="weui-footer__link">乐享启创提供技术支持</view>
     </view>
-    <view class="weui-footer__text">Copyright © 2017 leshare.shop {{version}}</view>
+    <view class="weui-footer__text">Copyright © 2018 leshare.shop {{version}}</view>
   </view>
 </template>
 
@@ -16,6 +16,8 @@
     onLoad () {
       this.version = wepy.$instance.globalData.version;
     }
+    methods = {
+    };
     props ={
       buttom: {
         default: 'false'
@@ -26,4 +28,8 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .weui-footer{
+    padding: 15rpx 0;
+    background-color: $color-bg-body;
+  }
 </style>

@@ -1,6 +1,7 @@
 const prod = process.env.NODE_ENV === 'production';
 module.exports = {
   wpyExt: '.wpy',
+  cliLogs: true,
   build: {
     web: {
     }
@@ -51,9 +52,6 @@ if (prod) {
       config: {
       }
     },
-    filemin: {
-      filter: /\.(wxml)$/
-    },
     imagemin: {
       filter: /\.(jpg|png|jpeg)$/,
       config: {
@@ -64,6 +62,9 @@ if (prod) {
           quality: 80
         }
       }
+    },
+    filemin: {
+      filter: /\.(wxml)$/
     }
   }
 }

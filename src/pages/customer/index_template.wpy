@@ -1,0 +1,143 @@
+<template>
+  <Loading :init.sync="init"/>
+  <view class="template-box column" wx:if="{{init}}">
+
+    <!--组件-->
+    <repeat for="{{components}}" key="index" index="index" item="item">
+
+      <!--简单头像-->
+      <block wx:if="{{item.type == 'CUSTOMER_AVATAR'}}">
+        <CustomerAvatar />
+      </block>
+
+      <!--会员卡-->
+      <block wx:if="{{item.type == 'VIP_CARD'}}">
+        <VipCard />
+      </block>
+
+      <!--余额充值-->
+      <block wx:if="{{item.type == 'BALANCE_BAR'}}">
+        <BalanceBar />
+      </block>
+
+      <!--导航栏-->
+      <block wx:if="{{item.type == 'NAV_LIST'}}">
+        <NavList :param.sync="item" />
+      </block>
+
+      <!--导航网格-->
+      <block wx:if="{{item.type == 'NAV_GRID'}}">
+        <NavGrid :param.sync="item" />
+      </block>
+
+      <!--订单栏-->
+      <block wx:if="{{item.type == 'ORDER_BAR'}}">
+        <OrderBar :param.sync="item" />
+      </block>
+
+      <!--版权栏-->
+      <block wx:if="{{item.type == 'COPYRIGHT'}}">
+        <Copyright :param.sync="item" />
+      </block>
+
+      <!--分隔符-->
+      <block wx:if="{{item.type == 'SEPARATOR'}}">
+        <Separator :param.sync="item" />
+      </block>
+
+    </repeat>
+
+    <!--插件-->
+    <repeat for="{{plugins}}" key="index" index="index" item="item">
+    </repeat>
+  </view>
+</template>
+
+<script>
+  import auth from '../../api/auth';
+  import store from '../../store/utils';
+  import { connect } from 'wepy-redux';
+  import config from '../../api/config';
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import Loading from '../../components/common/loading';
+  import CustomerAvatar from '../../components/customer/avatar';
+  import NavList from '../../components/customer/nav_list';
+  import NavGrid from '../../components/customer/nav_grid';
+  import OrderBar from '../../components/customer/order_bar';
+  import Separator from '../../components/template/separator';
+  import VipCard from '../../components/customer/vip_card';
+  import BalanceBar from '../../components/customer/balance_bar';
+  import Copyright from '../../components/common/copyright';
+
+  @connect({
+    shop: store.get('shop'),
+    customPageId: store.get('customPageId')
+  })
+  export default class IndexTemplate extends wepy.page {
+    data = {
+      init: false,
+      components: null,
+      plugins: null,
+      triggers: []
+    };
+    async onLoad () {
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
+      await store.init();
+      const page = await config.layout(this.customPageId);
+      if (page) {
+        this.components = page.components;
+        this.plugins = page.plugins;
+        this.triggers = page.triggers;
+      }
+      this.loaded();
+    };
+    /**
+     * 下拉刷新
+     */
+    async onPullDownRefresh() {
+      await store.refresh('member');
+      this.$broadcast('refresh');
+      this.loaded();
+      wepy.stopPullDownRefresh();
+    }
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {name, avatar} = this.shop;
+      return {
+        title: `${name} 欢迎光临`,
+        imageUrl: `${avatar}/5x4`
+      };
+    }
+    methods = {
+    };
+    components = {
+      Loading: Loading,
+      CustomerAvatar: CustomerAvatar,
+      NavList: NavList,
+      OrderBar: OrderBar,
+      Separator: Separator,
+      VipCard: VipCard,
+      NavGrid: NavGrid,
+      BalanceBar: BalanceBar,
+      Copyright: Copyright
+    };
+    computed = {
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '个人中心',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .template-box{
+    background-color: white;
+  }
+</style>

@@ -1,0 +1,86 @@
+<template>
+  <Loading :init.sync="init"/>
+  <view class="container" wx:if="{{init}}">
+    <!--TAB 页-->
+    <ZanTab :tab.sync="tab" @change.user="switchTab" />
+
+    <!--列表展现-->
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <OrderItem :order.sync="item" @tap.user="detail"/>
+    </repeat>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+  </view>
+
+  <!--占位符-->
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关订单"/>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import order from '../../api/order';
+  import pagination from '../../mixins/pagination.wpy';
+  import Placeholder from '../../components/common/placeholder';
+  import ZanTab from '../../components/zanui/tab';
+  import OrderItem from '../../components/order/order_item';
+  import Loadmore from '../../components/weui/loadmore';
+  import Loading from '../../components/common/loading';
+  import Event from '../../utils/Event';
+
+  export default class OrderList extends wepy.page {
+    def = {
+      init: true,
+      page: {
+        list: [
+        ]
+      },
+      tab: {
+        list: [
+          {id: '0', title: '全部'},
+          {id: '1', title: '待付款'},
+          {id: '2', title: '待发货'},
+          {id: '3', title: '待收货'},
+          {id: '4', title: '待评论'},
+          {id: '5', title: '退款中'}
+        ],
+        selectedId: '0'
+      }
+    };
+    data = {...this.def};
+    async onLoad ({status}) {
+      if (status != null && status != '' && status != 'null') {
+        this.tab.selectedId = status;
+      }
+      this.page = order.page();
+      await this.next();
+      Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
+    };
+    params() {
+      return {status: this.tab.selectedId};
+    }
+    methods = {
+      switchTab() {
+        this.reload();
+      }
+    };
+    events = {};
+    components = {
+      Placeholder: Placeholder,
+      ZanTab: ZanTab,
+      Loadmore: Loadmore,
+      Loading: Loading,
+      OrderItem: OrderItem
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '我的订单',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

@@ -1,0 +1,86 @@
+<template>
+  <Loading :init.sync="init"/>
+  <view class="container" wx:if="{{init}}">
+    <!--TAB 页-->
+    <ZanTab :tab.sync="tab" @change.user="switchTab" />
+
+    <!--列表展现-->
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <BargainItem :detail.sync="item"/>
+    </repeat>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+  </view>
+
+  <!--占位符-->
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关拼团信息"/>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import bargain from '../../api/bargain';
+  import pagination from '../../mixins/pagination.wpy';
+  import Placeholder from '../../components/common/placeholder';
+  import ZanTab from '../../components/zanui/tab';
+  import BargainItem from '../../components/bargain/bargain_list_item';
+  import Loadmore from '../../components/weui/loadmore';
+  import Loading from '../../components/common/loading';
+  import Event from '../../utils/Event';
+
+  export default class OrderList extends wepy.page {
+    def = {
+      init: true,
+      page: {
+        list: [
+        ]
+      },
+      tab: {
+        list: [
+          {id: '0', title: '全部', status: ''},
+          {id: '1', title: '进行中', status: 'PROCESSING'},
+          {id: '2', title: '已至底', status: 'BARGAINED'},
+          {id: '3', title: '已过期', status: 'TIMEOUT'},
+          {id: '4', title: '已下单', status: 'ORDERED'}
+        ],
+        selectedId: '0'
+      }
+    };
+    data = {...this.def};
+    async onLoad ({status}) {
+      if (status != null && status !== '' && status !== 'null') {
+        this.tab.selectedId = status;
+      }
+      this.page = bargain.list();
+      await this.next();
+      Event.listen(Event.BARGAIN_LIST_UPDATE, this.update.bind(this), this);
+    };
+    params() {
+      const status = this.tab.list.find(item => item.id === this.tab.selectedId);
+      return {status: status.status};
+    }
+    methods = {
+      switchTab() {
+        this.reload();
+      }
+    };
+    events = {};
+    components = {
+      BargainItem: BargainItem,
+      Placeholder: Placeholder,
+      ZanTab: ZanTab,
+      Loadmore: Loadmore,
+      Loading: Loading
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '我的砍价',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

@@ -1,0 +1,97 @@
+<template>
+  <view class="group-box">
+    <view class="row-between mb20">
+      <view class="row group-title-box">
+        <text class="title-box">拼团</text>
+        <text class="muted ml20 xs">限量拼团，每日必逛</text>
+      </view>
+      <view>
+        <text class="sm muted">更多</text>
+        <icon class="more" color="gray"/>
+      </view>
+    </view>
+    <view>
+      <scroll-view scroll-x class="tight-box" wx:if="{{param.layout == 'TIGHT'}}">
+        <repeat for="{{param.data}}" key="index" index="index" item="item">
+          <view class="column group-tight-box" @tap="detail({{item.ruleId}})">
+            <view class="content-top-box">
+              <image class="group-image" lazy-load src="{{item.goodsImage}}"></image>
+              <text class="group-goods-name mb10 xs">{{item.goodsName}}</text>
+              <view class="group-goods-price">￥{{item.goodsPrice}}</view>
+            </view>
+            <text class="xs muted content-bottom-box">已拼{{item.successCount}}件</text>
+            </view>
+        </repeat>
+      </scroll-view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+
+  export default class GroupBox extends wepy.component {
+    props = {
+      param: {}
+    };
+    async onLoad () {
+    }
+    methods = {
+      detail (ruleId) {
+        this.$root.$navigate(`/pages/group/goods_detail?ruleId=${ruleId}`)
+      }
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .group-box{
+    background-color: #FEF6F4;
+    padding: 20rpx;
+  }
+  .group-title-box{
+    align-items: flex-end;
+  }
+  .title-box{
+    color:#e64340;
+    font-weight: bold;
+    font-style: oblique;
+    font-size:40rpx;
+    line-height: 50rpx;
+  }
+  .tight-box{
+    width: 750rpx;
+    white-space: nowrap;
+  }
+  .group-tight-box{
+    position: relative;
+    $padding-size: 20rpx;
+    $size: 220rpx;
+    display: inline-flex;
+    background-color: white;
+    width: $size + $padding-size * 2;
+
+    .group-image{
+      width: $size;
+      height: $size;
+    }
+
+    .content-top-box{
+      padding: 20rpx 20rpx 10rpx;
+      border-bottom: $border;
+    }
+    .group-goods-name{
+      white-space:pre-wrap;
+      width:$size;
+    }
+    .group-goods-price{
+      color:#e64340;
+    }
+    .content-bottom-box{
+      padding: 10rpx 20rpx;
+    }
+  }
+  .group-tight-box + .group-tight-box{
+    margin-left: 10rpx;
+  }
+</style>

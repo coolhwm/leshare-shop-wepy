@@ -1,9 +1,9 @@
 <template>
   <!--TODO 滑出面板可以重构-->
-  <view class="goods-buy-panel-cover" @tap="close" wx:if="{{sku.display}}"></view>
+  <view class="goods-buy-panel-cover" @tap="close" wx:if="{{display}}"></view>
 
   <!--购买面板-->
-  <view class="goods-buy-panel-container {{ sku.display ? 'goods-buy-panel-show' : '' }}" >
+  <view class="goods-buy-panel-container {{ display ? 'goods-buy-panel-show' : '' }}" >
     <!--信息面板-->
     <view class="buy-panel-info-container">
       <!--商品图-->
@@ -12,7 +12,7 @@
       <view class="buy-panel-title-price">
         <text class="buy-panel-title">{{goods.name}}</text>
         <view class="panel-price-box row">
-          <text class="buy-panel-price">￥{{sku.isReady ? sku.detail.price: goods.priceLable}}</text>
+          <text class="buy-panel-price">￥{{sku.isReady ? sku.detail.price : goods.priceLable}}</text>
           <text class="cancel ml10" wx:if="{{goods.discount}}">￥{{goods.originalPrice}}</text>
           <DiscountBadge :goods.sync="goods" />
         </view>
@@ -21,7 +21,6 @@
       <view class="buy-panel-close-container">
         <icon class="close" color="gray" @tap="close"/>
       </view>
-
     </view>
 
     <!--SKU展示 -->
@@ -52,11 +51,8 @@
     </view>
 
     <block wx:if="{{status.open}}">
-      <view class="buy-panel-next {{sku.next ? '' : 'buy-panel-empty'}}" @tab="confirm('buy')" wx:if="{{sku.action =='buy'}}">
-        <text>下一步</text>
-      </view>
-      <view class="buy-panel-next {{sku.next ? '' : 'buy-panel-empty'}}" @tap="confirm('cart')" wx:if="{{sku.action =='cart'}}">
-        <text>确定</text>
+      <view class="buy-panel-next {{sku.next ? '' : 'buy-panel-empty'}}" @tap="confirm({{action}})">
+        <text>{{buttonText}}</text>
       </view>
     </block>
     <block wx:else>
@@ -66,10 +62,13 @@
     </block>
 
   </view>
+
 </template>
 
 <script>
   import wepy from 'wepy';
+  import order from '../../api/order';
+  import bargain from '../../api/bargain'
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import ZanQuantity from '../../components/zanui/quantity';
@@ -83,11 +82,11 @@
     status: store.get('status')
   })
   export default class GoodsPanel extends wepy.component {
-    props = {
-    };
     data = {
       goods: {},
-      source: null
+      source: null,
+      action: 'cart',
+      display: false
     };
     skuManager = null;
     cartManager = Cart.create();
@@ -96,15 +95,24 @@
       // 监听购物面板打开的事件
       Event.listen(Event.GOODS_PANEL_OPEN, this.open.bind(this), this);
     }
-    open({goods, source}) {
+    open({goods, source, action}) {
+      console.info(`[slider] open goodId=${goods.id}, listen_source=${this.source} source=${source}, action=${action}`);
       if (source != this.source) {
         return;
       }
       this.goods = goods;
+      this.action = action;
+      // 构造SKU对象
       this.skuManager = new Sku(goods);
-      this.skuManager.action = 'cart';
-      this.skuManager.display = true;
+      this.skuManager.action = action;
+      this.display = true;
       this.$apply();
+    }
+    clear () {
+      console.info('[SilderPanel] clear');
+      this.goods = null;
+      this.action = 'cart';
+      this.display = false;
     }
     methods = {
       // 选择SKU
@@ -116,33 +124,66 @@
       },
       // 关闭SKU
       close() {
-        this.goods = null;
-        this.skuManager.display = false;
+        this.clear();
       },
       // 改变SKU数量
       num({quantity}) {
         this.skuManager.setNum(quantity);
       },
       // 确认选择
-      confirm(type) {
+      async confirm(type) {
         if (!this.sku.next) {
           return;
         }
         // 增加到购物车
         const {skuText, num} = this.sku;
-        if (this.goods.isTips) {
+        if (type === 'cart') {
           Tips.success('已加入购物车');
+          // 关闭面板
+          this.display = false;
+          this.$apply();
+          this.cartManager.plus(this.goods, skuText, num);
+        } else if (type === 'begin' || type === 'help') {
+          const result = await bargain.GoodsBargain(this.goods.ruleId, this.goods.id, this.sku.skuText);
+          await Tips.success('砍价成功');
+          const isBegin = true;
+          this.$root.$navigate(`../bargain/bargain_detail?bargainId=${result.id}&&isBegin=${isBegin}`);
+        } else {
+          const cart = this.cartManager.createCart(this.goods, skuText, num);
+          const trade = order.createCartTrade([cart], {orderType: 10});
+          if (type === 'join' || type === 'group') {
+            const {groupId, ruleId} = this.goods;
+            Object.assign(trade, {ruleId, groupId});
+            this.$root.$preload('params', {trade, type});
+          } else {
+            // 直接购买
+            this.$root.$preload('params', {trade, type});
+          }
+          this.$root.$navigate(`../order/trade`);
         }
-        // 关闭面板
-        this.skuManager.display = false;
-        this.$root.$apply();
-        this.cartManager.plus(this.goods, skuText, num);
+        this.clear();
       }
     };
     computed = {
       sku() {
         if (this.skuManager == null) return;
         return this.skuManager.export();
+      },
+      buttonText() {
+        if (this.goods == null || this.sku == null) return;
+        if (this.goods.totalStock < 1) {
+          return '已售罄';
+        } else if (this.action === 'cart') {
+          return '加入购物车'
+        } else if (this.action === 'buy' || this.action === 'bargain') {
+          return '立即购买';
+        } else if (this.action === 'group') {
+          return '一键开团';
+        } else if (this.action === 'join') {
+          return '一键参团';
+        } else if (this.action === 'begin') {
+          return '发起砍价';
+        }
       },
       quantity() {
         if (this.sku == null) {
@@ -160,7 +201,12 @@
       ZanQuantity: ZanQuantity,
       DiscountBadge: DiscountBadge
     };
-    events = {};
+    events = {
+      clear() {
+        console.info('[SilderPanel] clear');
+        this.clear();
+      }
+    };
   }
 </script>
 
@@ -312,7 +358,7 @@
 
   /*购买栏底部*/
   .buy-panel-next{
-    background-color: #1296db;
+    background-color: $color-primary;
     height: 100rpx;
     width: 100%;
     display: flex;

@@ -80,23 +80,9 @@
       </view>
 
       <!--详情区域-->
-      <view class="detail-box" >
-        <!--详情标题-->
-        <view class="detail-title row-center">
-          <text class="primary lg">── 商品详情 ──</text>
-        </view>
-        <!--详情类列表区域/遍历详情-->
-        <view class="detail-list column">
-          <block wx:for="{{detail.goodsDetails}}" wx:key="id">
-            <!--文本-->
-            <text class="mb20 lg" wx:if="{{item.type == 1}}">{{item.content}}</text>
-            <!--图片-->
-            <image src="{{item.content}}" lazy-load mode="widthFix" wx:if="{{item.type == 2}}" @tap="previewDetailImages({{item.content}})"/>
-          </block>
-        </view>
-      </view>
-    </view>
+      <DetailList :detail.sync="detail" />
 
+    </view>
 
 
     <!--评价区域-->
@@ -144,6 +130,7 @@
 
 <script>
   import wepy from 'wepy';
+  import auth from '../../api/auth';
   import goods from '../../api/goods';
   import comment from '../../api/comment';
   import base from '../../mixins/base';
@@ -164,6 +151,7 @@
   import BuyBar from '../../components/goods/bottom_buy_bar';
   import CouponPickPanel from '../../components/coupons/pick_panel';
   import CartWidget from '../../components/template/cart_widget';
+  import DetailList from '../../components/goods/detail_list';
 
   @connect({
     pickCoupons: store.get('pickCoupons'),
@@ -191,6 +179,7 @@
       isShare: true
     };
     async onLoad ({goodsId}) {
+      await auth.login();
       await store.init();
       this.goodsId = goodsId;
       this.detail = await goods.getInfo(goodsId, this.discount);
@@ -199,6 +188,9 @@
       this.tab = this.createTab();
       this.loaded();
     };
+    onUnload() {
+      this.$invoke('SilderPanel', 'clear');
+    }
     createTab() {
       const tab = {
         list: [
@@ -259,16 +251,6 @@
         }
       },
       /**
-       * 预览详情页面
-       */
-      previewDetailImages(current) {
-        const urls = this.detail.goodsDetails.filter(v => v.type == 2).map(v => v.content);
-        wepy.previewImage({
-          urls: urls,
-          current: current
-        });
-      },
-      /**
        * 预览轮播图
        */
       previewDetailSwiper() {
@@ -322,7 +304,8 @@
       ContactWidget: ContactWidget,
       BuyBar: BuyBar,
       CouponPickPanel: CouponPickPanel,
-      CartWidget: CartWidget
+      CartWidget: CartWidget,
+      DetailList: DetailList
     };
     mixins = [base, pagination, router];
     config = {
@@ -404,22 +387,5 @@
     height: 50px;
     text-align: center;
   }
-  .detail-box{
-    margin-top: 20rpx;
-    background-color: #FFF;
-    border-top: $border;
-    .detail-title{
-      height: 90rpx;
-      border-bottom: $border;
-    }
-    .detail-list{
-      padding-bottom: 20rpx;
-      image{
-        width: 100%;
-      }
-      text{
-        padding: 20rpx;
-      }
-    }
-  }
+
 </style>

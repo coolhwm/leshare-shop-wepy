@@ -73,7 +73,7 @@
           <text class="weak">我的优惠券</text>
         </button>
 
-        <button class="shop-btn" plain @tap="goto" data-url="{{version.isMember ? '/pages/customer/index' : '/pages/customer/index_basic'}}" >
+        <button class="shop-btn" plain @tap="goto" data-url="{{'/pages/customer/index'}}" >
           <image class="icon-xl" src="http://img.leshare.shop/shop/home/my.png"></image>
           <text class="weak">个人中心</text>
         </button>
@@ -203,7 +203,7 @@
      * 下拉刷新
      */
     async onPullDownRefresh() {
-      await store.reflesh('shop', 'notices', 'reduce', 'coupon', 'status');
+      await store.refresh('shop', 'notices', 'reduce', 'coupon', 'status');
       this.loaded();
       wepy.stopPullDownRefresh();
     }

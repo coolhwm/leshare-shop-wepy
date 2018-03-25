@@ -1,7 +1,7 @@
 <template>
-  <view class="coupon-item-container" data-coupon-id="{{coupon.id}}">
+  <view class="coupon-item-container row" data-coupon-id="{{coupon.id}}">
     <!--左侧区域-->
-    <view class="coupon-main-container">
+    <view class="coupon-main-container column-center">
       <view class="coupon-value-container">
         <text class="coupon-value-unit">￥</text>
         <text class="coupon-value-text">{{coupon.price}}</text>
@@ -44,7 +44,7 @@
           Tips.loading();
           await coupon.pick(item.id);
           await Tips.success('领取成功');
-          await store.reflesh('coupon');
+          await store.refresh('coupon');
           this.$root.$apply();
         } catch (e) {
           await Tips.alert('已达领取上限');
@@ -63,22 +63,15 @@
   /*父容器*/
   .coupon-item-container{
     position: relative;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
     margin:20rpx 20rpx 0 20rpx;
     background-color: #FFF;
     height: 200rpx;
-    border: 1px solid #E7E7E7;
+    border: $border;
     border-radius: 5px;
     overflow: hidden;
   }
   /*左侧容器*/
   .coupon-main-container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     width: 255rpx;
     height: 100%;
     background: linear-gradient(to right, #2F80ED, #1296db);
@@ -159,9 +152,9 @@
 
   /*领取*/
   .coupon-item-pick{
-    border: 1px solid #1296db;
+    border: 1px solid $color-primary;
     border-radius: 10px;
-    color: #1296db;
+    color: $color-primary;
     font-size: 26rpx;
     display: inline-block;
     padding: 10rpx;

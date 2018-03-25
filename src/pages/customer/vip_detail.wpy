@@ -4,7 +4,7 @@
 
     <view class="list-panel">
 
-      <VipCard/>
+      <VipCard isDetail="false"/>
       <text class="titel-box">会员特权</text>
 
       <view class="mt20"></view>
@@ -93,7 +93,7 @@
       this.loaded();
     }
     async onPullDownRefresh() {
-      await store.reflesh('member');
+      await store.refresh('member');
       this.loaded();
       wepy.stopPullDownRefresh();
     }

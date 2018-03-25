@@ -1,0 +1,85 @@
+<template>
+  <Loading :init.sync="init"/>
+  <view class="container" wx:if="{{init}}">
+    <!--TAB 页-->
+    <ZanTab :tab.sync="tab" @change.user="switchTab" />
+
+    <!--列表展现-->
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+       <GroupItem :group.sync="item" @tap.user="detail"/>
+    </repeat>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+  </view>
+
+  <!--占位符-->
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关拼团信息"/>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import group from '../../api/group';
+  import pagination from '../../mixins/pagination.wpy';
+  import Placeholder from '../../components/common/placeholder';
+  import ZanTab from '../../components/zanui/tab';
+  import GroupItem from '../../components/group/group_list_item';
+  import Loadmore from '../../components/weui/loadmore';
+  import Loading from '../../components/common/loading';
+  import Event from '../../utils/Event';
+
+  export default class OrderList extends wepy.page {
+    def = {
+      init: true,
+      page: {
+        list: [
+        ]
+      },
+      tab: {
+        list: [
+          {id: '0', title: '全部', status: ''},
+          {id: '1', title: '正在拼团', status: 'PROCESSING'},
+          {id: '2', title: '拼团成功', status: 'SUCCESS'},
+          {id: '3', title: '拼团失败', status: 'FAILURE'}
+        ],
+        selectedId: '0'
+      }
+    };
+    data = {...this.def};
+    async onLoad ({status}) {
+      if (status != null && status !== '' && status !== 'null') {
+        this.tab.selectedId = status;
+      }
+      this.page = group.list();
+      await this.next();
+      Event.listen(Event.GROUP_LIST_UPDATE, this.update.bind(this), this);
+    };
+    params() {
+      const status = this.tab.list.find(item => item.id === this.tab.selectedId);
+      return {status: status.status};
+    }
+    methods = {
+      switchTab() {
+        this.reload();
+      }
+    };
+    events = {};
+    components = {
+      GroupItem: GroupItem,
+      Placeholder: Placeholder,
+      ZanTab: ZanTab,
+      Loadmore: Loadmore,
+      Loading: Loading
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '我的拼团',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

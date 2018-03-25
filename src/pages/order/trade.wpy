@@ -95,7 +95,7 @@
     </view>
 
     <!--备注信息-->
-    <view class="remark-box weui-cells weui-cells_after-title weui-cells-merge-top">
+    <view class="remark-box weui-cells weui-cells-show">
       <view class="weui-cell weui-cell_input">
         <view class="weui-cell__hd" >
           <view class="weui-label">订单备注</view>
@@ -135,6 +135,8 @@
   import order from '../../api/order';
   import {PAYMENT, TYPE, orderUtils} from '../../api/order_const';
   import shop from '../../api/shop';
+  import group from '../../api/group';
+  import bargain from '../../api/bargain'
   import FormTips from '../../components/weui/tips';
   import ActionBar from '../../components/common/action_bar';
   import AddressSelector from '../../components/address/select_item';
@@ -164,10 +166,11 @@
       coupons: [],
       selectedCoupon: null,
       confirmStatus: false,
-      confirmText: '立即下单',
+      confirmText: '',
       goodsList: null,
       bonusPicker: null,
-      selectedBonus: null
+      selectedBonus: null,
+      type: '' // buy/group/join
     };
     cartManager = Cart.create();
     async onLoad (params, {preload}) {
@@ -175,7 +178,8 @@
       const result = await auth.user({block: true, redirect: true});
       if (!result || !isOpen) { return; }
       // 订单数据
-      this.trade = preload.trade;
+      this.trade = preload.params.trade;
+      this.type = preload.params.type;
       this.goodsList = this.trade.orderGoodsInfos;
       if (orderUtils.isDeliveryOrder(this.trade.orderType)) {
         // 默认地址
@@ -213,6 +217,8 @@
         const {index} = await Tips.action(...actions);
         this.selectedDelivery = this.delilveries[index];
         this.selectedBonus = null;
+        this.trade.deliveryType = this.selectedDelivery.type;
+        this.trade.postFee = Number(this.selectedDelivery.fee).toFixed(2);
         this.updateTradePrice();
         this.$apply();
       },
@@ -257,7 +263,7 @@
        * 选择付款方式
        */
       async paymentType () {
-        if (this.shop.offPay == 0 || this.isForhearOrPack) {
+        if (this.shop.offPay === 0 || this.isForhearOrPack) {
           return;
         }
         const trade = this.trade;
@@ -287,7 +293,7 @@
           return;
         }
         // 数据准备
-        if (this.trade.orderType == TYPE.TAKEAWAY) {
+        if (this.trade.orderType === TYPE.TAKEAWAY) {
           this.trade.deliveryType = 'CITY';
         }
         // 表单ID
@@ -299,12 +305,13 @@
           Tips.alert('下单失败');
           return;
         }
+        let isPay = false;
         // 检查是否为离线订单
         if (trade.paymentType == PAYMENT.OFFLINE) {
           Tips.success('下单成功');
         } else {
-          // 发起支付
-          const isPay = await this.requestWxPayment(trade);
+        // 发起支付
+          isPay = await this.requestWxPayment(trade);
           if (isPay) {
             Tips.success('支付成功');
           } else {
@@ -315,12 +322,15 @@
         this.cartManager.clear();
         // 卡券领取更新
         if (trade.couponUsedId) {
-          await store.reflesh('coupon', 'member');
+          await store.refresh('coupon', 'member');
         }
         // 刷新列表
         Event.emit(Event.ORDER_LIST_UPDATE);
-        // TODO 这个可能在TAB里
-        WxUtils.backOrRedirect('/pages/customer/index');
+        if (isPay && (this.type === 'join' || this.type === 'group')) {
+          WxUtils.backOrRedirect('/pages/group/list');
+        } else {
+          WxUtils.backOrRedirect('/pages/customer/index_template');
+        }
       }
     };
     /**
@@ -329,7 +339,17 @@
     async requestCreateOrder(trade, address) {
       try {
         // 创建订单
-        return await order.createOrder(trade, address);
+        if (this.type === 'join' || this.type === 'group') {
+          // 拼团订单
+          const result = await group.goodsGroup(trade, address);
+          return result.order;
+        } else if (this.type === 'bargain') {
+          console.info('bargain');
+          return await bargain.order(trade, address);
+        } else {
+          // 普通订单
+          return await order.createOrder(trade, address);
+        }
       } catch (e) {
         console.error(e);
         return null;
@@ -380,6 +400,7 @@
       } else {
         this.selectedDelivery = null;
       }
+      this.updateTradePrice();
     }
     /**
      * 检查店铺状态
@@ -478,7 +499,13 @@
             const fee = this.selectedDelivery.fee > 0 ? `￥${this.selectedDelivery.fee}` : '免配送费';
             deliveryText = `${this.selectedDelivery.name} ${fee}`;
             confirmStatus = true;
-            confirmText = '立即下单';
+            if (this.type === 'group') {
+              confirmText = '一键开团';
+            } else if (this.type === 'join') {
+              confirmText = '立即参团';
+            } else {
+              confirmText = '立即下单';
+            }
           }
         }
         // 刷新视图
@@ -507,7 +534,7 @@
           return false;
         } else {
           const {supplyBonus, bonusRule} = this.card;
-          return supplyBonus == 1 && bonusRule.isCost == 1 && this.member;
+          return supplyBonus === 1 && bonusRule.isCost === 1 && this.member;
         }
       },
       // 积分使用文字
@@ -525,6 +552,10 @@
           this.clearSelectedBonus();
           return false;
         }
+        const {bonus} = member;
+        if (bonus == 0) {
+          return `暂无积分`;
+        }
         // 每使用costBonusUnit积分，抵扣reduceMoney元，最多使用maxReduceBonus积分，订单需满limitMoney元
         const {costBonusUnit, reduceMoney, maxReduceBonus, limitMoney} = bonusRule;
         // 计算使用积分前的价格
@@ -538,7 +569,6 @@
           return `订单需满${orderLimitPrice}元`;
         }
         // 已有积分不能小于积分最小抵扣单位
-        const {bonus} = member;
         if (bonus < costBonusUnit) {
           this.bonusPicker = null;
           this.clearSelectedBonus();
@@ -601,7 +631,6 @@
   @import "../../styles/variable";
 
   .remark-box{
-    border-top: $border;
     margin-bottom: 10rpx;
   }
 

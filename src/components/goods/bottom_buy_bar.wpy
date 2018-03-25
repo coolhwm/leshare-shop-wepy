@@ -14,6 +14,9 @@
     <view class="column-center btn-cart" @tap="handlePlusCart({{goods}})">
       <text>加入购物车</text>
     </view>
+    <view class="column-center btn-buy" @tap="handleBuy({{goods}})">
+      <text>立即购买</text>
+    </view>
   </view>
 </template>
 
@@ -68,8 +71,8 @@
 <style lang="scss">
   @import "../../styles/variable";
 
-  $btn-width: 430rpx;
-  $btn-sm-width: (750rpx - $btn-width) / 2;
+  $btn-width: 250rpx;
+  $btn-sm-width: (750rpx - $btn-width * 2) / 2;
   .buy-bar-box{
     position: fixed;
     bottom: 0;
@@ -85,14 +88,17 @@
       width: $btn-sm-width;
       text{font-size: $text-xs}
     }
-    .btn-cart{
+    .btn-cart, .btn-buy{
       height: 100%;
       width: $btn-width;
-      background-color: $color-primary;
+      background-color: lighten($color-primary, 3%);
       text{
         color: white;
         font-size: $text-xl;
       }
+    }
+    .btn-buy{
+      background-color: darken($color-primary, 3%);
     }
   }
   .buy-bar-placeholder{

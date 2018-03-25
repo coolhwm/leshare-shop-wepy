@@ -1,0 +1,100 @@
+<template>
+  <view class="bargain-box">
+    <view class="row-between mb20">
+      <view class="row bargain-title-box">
+        <text class="title-box">砍价</text>
+        <text class="muted ml20 xs">疯狂砍价，等你来砍</text>
+      </view>
+      <view>
+        <text class="sm muted">更多</text>
+        <icon class="more" color="gray"/>
+      </view>
+    </view>
+    <view>
+      <scroll-view scroll-x class="tight-box" wx:if="{{param.layout == 'TIGHT'}}">
+        <repeat for="{{param.data}}" key="index" index="index" item="item">
+          <view class="column bargain-tight-box" @tap="detail({{item.ruleId}})">
+            <view class="content-top-box">
+              <image class="bargain-image" lazy-load src="{{item.goodsImage}}"></image>
+              <text class="bargain-goods-name mb10 xs">{{item.goodsName}}</text>
+              <view class="row">
+                <text class="muted xxs">最低</text>
+                <view class="bargain-goods-price">￥{{item.goodsPrice}}</view>
+              </view>
+            </view>
+            <text class="xs muted content-bottom-box">已砍{{item.successCount}}件</text>
+          </view>
+        </repeat>
+      </scroll-view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+
+  export default class bargainBox extends wepy.component {
+    props = {
+      param: {}
+    };
+    async onLoad () {
+    }
+    methods = {
+      detail (ruleId) {
+        this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${ruleId}`)
+      }
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .bargain-box{
+    background-color: #FEF6F4;
+    padding: 20rpx;
+  }
+  .bargain-title-box{
+    align-items: flex-end;
+  }
+  .title-box{
+    color:#e64340;
+    font-weight: bold;
+    font-style: oblique;
+    font-size:40rpx;
+    line-height: 50rpx;
+  }
+  .tight-box{
+    width: 750rpx;
+    white-space: nowrap;
+  }
+  .bargain-tight-box{
+    position: relative;
+    $padding-size: 20rpx;
+    $size: 220rpx;
+    display: inline-flex;
+    background-color: white;
+    width: $size + $padding-size * 2;
+
+    .bargain-image{
+      width: $size;
+      height: $size;
+    }
+
+    .content-top-box{
+      padding: 20rpx 20rpx 10rpx;
+      border-bottom: $border;
+    }
+    .bargain-goods-name{
+      white-space:pre-wrap;
+      width:$size;
+    }
+    .bargain-goods-price{
+      color:#e64340;
+    }
+    .content-bottom-box{
+      padding: 10rpx 20rpx;
+    }
+  }
+  .bargain-tight-box + .bargain-tight-box{
+    margin-left: 10rpx;
+  }
+</style>

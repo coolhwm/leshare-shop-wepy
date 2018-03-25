@@ -29,22 +29,6 @@
     components = {
       placeholder: Placeholder
     };
-    events = {
-      // 'index-broadcast': (...args) => {
-      //   let $event = args[args.length - 1]
-      //   console.log(`${this.$name} receive ${$event.name} from ${$event.source.name}`)
-      // }
-    };
-
-    methods = {};
-
-    onLoad () {
-      // if (this.list.length == 0) {
-      //   this.is_empty = true;
-      //   this.$apply();
-
-      // }
-    }
   }
 
 </script>

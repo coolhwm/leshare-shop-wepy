@@ -1,0 +1,63 @@
+<template>
+  <Loading :init.sync="init" />
+
+  <view wx:if="{{init}}">
+    <!--店铺图片轮播-->
+    <swiper class="shop-swiper" indicator-dots autoplay interval="3000" circular>
+      <block wx:for="{{shop.images}}" wx:key="key">
+        <swiper-item>
+          <image src="{{item.url}}" mode="aspectFill" class="shop-image" @tap="image({{item.url}})"/>
+        </swiper-item>
+      </block>
+    </swiper>
+
+    <AddressBox/>
+    <Copyright buttom="true"/>
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import Copyright from '../../components/common/copyright';
+  import AddressBox from '../../components/template/address_box'
+  import Loading from '../../components/common/loading';
+
+  @connect({
+    shop: store.get('shop')
+  })
+  export default class AboutUs extends wepy.page {
+    data = {
+      init: false
+    };
+    async onLoad () {
+      await store.init();
+      this.loaded();
+    };
+    methods = {
+    };
+    components = {
+      AddressBox: AddressBox,
+      Copyright: Copyright,
+      Loading: Loading
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '联系我们'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  page{
+    background-color: white;
+  }
+  .shop-swiper, .shop-image{
+    width: 750rpx;
+    height: 480rpx;
+  }
+</style>

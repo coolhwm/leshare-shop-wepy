@@ -1,0 +1,173 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <!--轮播展示图-->
+  <view class="container column" wx:if="{{init}}">
+    <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" @tap="previewDetailSwiper">
+      <block wx:for="{{rules.goods.images}}" wx:key="index">
+        <swiper-item>
+          <image src="{{item.url}}/preview" mode="aspectFill" style="width: 100%"></image>
+        </swiper-item>
+      </block>
+    </swiper>
+
+    <!--拼团倒计时栏-->
+    <TimeOutBar :endTime.sync="endTime" :callback="callback" />
+
+    <!--商品基本信息展示及服务信息-->
+    <GoodsMsgBar :rule.sync="rules"/>
+
+    <!--拼团栏-->
+    <GroupInfoBar :processing.sync="processing" :info.sync="info"/>
+
+    <!--评论预览-->
+    <CommentPreview :goodsId.sync="goodsId"/>
+
+    <!--商品详情-->
+    <DetailList :detail.sync="detail" />
+
+    <!--滑出购物面板-->
+    <block >
+      <SilderPanel />
+    </block>
+
+    <!--底栏-->
+    <GroupBar :rule.sync="rules" />
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import auth from '../../api/auth';
+  import store from '../../store/utils';
+  import base from '../../mixins/base';
+  import Loading from '../../components/common/loading';
+  import GroupBar from '../../components/group/bottom_group_bar';
+  import TimeOutBar from '../../components/group/timeout_bar';
+  import CommentPreview from '../../components/goods/comment_preview';
+  import GroupInfoBar from '../../components/group/group_info_bar';
+  import SilderPanel from '../../components/goods/slider_buy_panel';
+  import group from '../../api/group';
+  import DetailList from '../../components/goods/detail_list';
+  import GoodsMsgBar from '../../components/group/goods_msg_bar'
+
+  export default class GroupGoodsDetail extends wepy.page {
+    data = {
+      init: false,
+      buyPanelType: 'POPUP',
+      endTime: '',
+      goodsId: '',
+      groupTime: '',
+      ruleId: 25,
+      rules: {},
+      processing: {}
+    };
+    async onLoad () {
+      await auth.login();
+      await store.init();
+      await this.update();
+    };
+    onUnload() {
+      this.$invoke('TimeOutBar', 'clear');
+    };
+    async onPullDownRefresh () {
+      await this.update();
+      wepy.stopPullDownRefresh();
+    }
+    async update () {
+      this.rules = await group.rules(this.ruleId);
+      this.processing = await group.processing(this.ruleId);
+      this.endTime = this.rules.endTime;
+      this.goodsId = this.rules.goodsId;
+      this.groupTime = this.processing.map(item => {
+        return item.groupTime
+      });
+      this.loaded();
+    }
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {name, imageUrl} = this.rules.goods;
+      const shareName = `${name}，仅需${this.rules.limitCustomer}人即可成团，快来一起开团吧！`;
+      // 【拼团】商品名称 还剩X人成团，快来一起参团
+      return {
+        title: shareName,
+        imageUrl: imageUrl,
+        path: `/pages/group/goods_detail?groupId=${this.ruleId}`
+      };
+    }
+    methods = {
+      /**
+       * 预览轮播图
+       */
+      previewDetailSwiper() {
+        const urls = this.rules.goods.images.map(value => value.url);
+        wepy.previewImage({
+          urls: urls
+        });
+      }
+    };
+    computed = {
+      detail() {
+        if (this.rules == null) return;
+        return this.rules.goods;
+      }
+    };
+    components = {
+      GroupBar: GroupBar,
+      TimeOutBar: TimeOutBar,
+      CommentPreview: CommentPreview,
+      GroupInfoBar: GroupInfoBar,
+      SilderPanel: SilderPanel,
+      Loading: Loading,
+      DetailList: DetailList,
+      GoodsMsgBar: GoodsMsgBar
+    };
+    mixins = [base];
+    config = {
+      enablePullDownRefresh: true,
+      navigationBarTitleText: '商品详情'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .goods-swiper{
+    width: 750rpx;
+    height:480rpx;
+  }
+
+  .goods-msg-box{
+    background: white;
+    padding: 20rpx;
+    .price-box{
+      font-size: 80rpx;
+      line-height: 80rpx;
+    }
+    .sellPrice-box{
+      text-decoration: line-through;
+      line-height: $text-sm;
+    }
+    .price-rule-box{
+      text{
+        background: #FEE7EF;
+        color: #FB4578;
+        padding: 0 4rpx;
+      }
+    }
+    .goods-name-box{
+      font-size: 30rpx;
+      line-height: 30rpx;
+    }
+  }
+  .goods-des-box{
+    background: white;
+    padding: 20rpx;
+    border-top:$border;
+    margin-bottom: 10rpx;
+    .row icon{
+      color: $color-primary;
+    }
+  }
+</style>

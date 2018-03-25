@@ -1,0 +1,164 @@
+<template>
+  <view wx:if="{{init}}" @tap="tips">
+    <view class="column information-box" >
+      <view class="row top-box">
+        <image class="mr20" src="{{user.avatarUrl}}" style="width: 60px;height:60px;"/>
+        <text class="lg">推荐人：{{reference}}</text>
+      </view>
+      <view class="column money-box">
+        <view class="row-between">
+          <view class="column">
+            <text class="lg">可提现佣金</text>
+            <text class="mt20 lg">0.00元</text>
+          </view>
+          <button>提现</button>
+        </view>
+        <view class="column">
+          <text class="mt20 lg">成功提现佣金</text>
+          <text class="mt20 lg">0.00元</text>
+        </view>
+      </view>
+    </view>
+    <view class="column content-box">
+      <view class="row-between row-box" wx:for="{{list}}" wx:for-index="columnIndex" wx:for-item="column" wx:key="columnIndex">
+        <view class="column-center column-box" wx:for="{{column}}" wx:for-index="rowIndex" wx:for-item="row" wx:key="rowIndex">
+          <icon class="{{row.icon}}" style="color: {{row.color}};font-size: 25px;line-height: 25px;" />
+          <text class="lg mb10">{{row.title}}</text>
+          <view class="row number-box">
+            <text class="lg" style="color: #FF4544">{{row.num}}</text><text class="lg">{{row.unit}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <Copyright buttom="true" />
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import base from '../../mixins/base';
+  import tips from '../../utils/Tips';
+  import Copyright from '../../components/common/copyright';
+  @connect({
+    user: store.get('user'),
+    shop: store.get('shop')
+  })
+  export default class Distribution extends wepy.page {
+    data = {
+      init: false,
+      reference: '分销员1',
+      list: [
+        [
+          {
+            icon: 'recharge',
+            title: '分销佣金',
+            color: '#DABC69',
+            num: 0,
+            unit: '元'
+          },
+          {
+            icon: 'order',
+            title: '分销订单',
+            color: '#37B1D7',
+            num: 0,
+            unit: '元'
+          },
+          {
+            icon: 'balance',
+            title: '提现明细',
+            color: '#FF4544',
+            num: 0,
+            unit: '元'
+          }
+        ],
+        [
+          {
+            icon: 'groups',
+            title: '我的团队',
+            color: '#F59150',
+            num: 0,
+            unit: '个'
+          },
+          {
+            icon: 'qrcode',
+            title: '推广二维码',
+            color: '#8DD38A',
+            num: ''
+          },
+          {}
+        ]
+      ],
+      check: true
+    };
+    async onLoad () {
+      await store.init();
+      this.loaded();
+    };
+    methods = {
+      tips() {
+        tips.success('敬请期待');
+      },
+      close() {
+        this.check = false;
+      }
+    };
+    components = {
+      Copyright: Copyright
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '分销中心',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTextStyle: 'black'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .information-box{
+    background-color: #FF4544;
+    padding: 30rpx;
+    text{
+      color: #EDEDED;
+    }
+    .top-box{
+      border-bottom: $border;
+      padding-bottom: 30rpx;
+      image{
+        width: 100rpx;
+        height: 100rpx;
+        border-radius: 50%;
+      }
+    }
+    .money-box{
+      padding-top: 20rpx;
+      button{
+        font-size: 14px;
+        padding: 0 20rpx;
+        background-color: #FF4544;
+        color: #EDEDED;
+        border: $border;
+      }
+    }
+  }
+  .content-box{
+    background-color: #fff;
+    .row-box + .row-box{
+      border-top: $border;
+    }
+    .column-box{
+      width: 33.3%;
+      height: 220rpx;
+    }
+    .column-box + .column-box{
+      border-left: $border;
+    }
+    .number-box{
+      height: 20px;
+    }
+  }
+</style>

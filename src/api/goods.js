@@ -27,16 +27,6 @@ export default class goods extends base {
   }
 
   /**
-   * 新的分页方法
-   */
-  static list () {
-    let url = `${this.baseUrl}/goods/list`;
-    return new Page(url, item => {
-      this._processGoodsData(item);
-    });
-  }
-
-  /**
    * 获取商品库存
    */
   static stock (goodsId, sku = '') {
@@ -75,9 +65,10 @@ export default class goods extends base {
         };
       }));
     }
+    const selectedId = list.length > 0 ? list[0].id : null;
     return {
-      list: list,
-      selectedId: list[0].id,
+      list,
+      selectedId,
       scroll: false
     };
   }
@@ -182,7 +173,7 @@ export default class goods extends base {
       // priceLable = `${detail.minPrice}~${detail.maxPrice}`;
       priceLable = detail.minPrice;
     }
-    detail.priceLable = isNaN(detail.priceLable) ? priceLable : priceLable.toFixed.toFixed(2);
+    detail.priceLable = isNaN(detail.priceLable) ? priceLable : priceLable.toFixed(2);
   }
 
   /**

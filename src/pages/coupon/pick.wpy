@@ -1,4 +1,3 @@
-<!--废弃页面-->
 <template>
   <view class="container" wx:if="{{init}}">
     <!--列表展现-->
@@ -40,7 +39,7 @@
       this.loaded();
     };
     async onPullDownRefresh () {
-      await store.reflesh('coupon');
+      await store.refresh('coupon');
       wepy.stopPullDownRefresh();
     }
     methods = {
@@ -48,7 +47,7 @@
         try {
           Tips.loading();
           await coupon.pick(couponId);
-          await store.reflesh('coupon');
+          await store.refresh('coupon');
           await Tips.success('领取成功');
         } catch (e) {
           if (e.serverCode == '50001') {

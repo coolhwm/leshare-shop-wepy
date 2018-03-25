@@ -1,0 +1,70 @@
+<template>
+    <view class="row-between bar-box">
+      <view class="column">
+        <view class="name-box">
+          {{shop.name}}
+        </view>
+        <view @tap.stop="chooseLocation">
+          <icon class="address" color="gray"/><text class="muted sm">{{shop.address}}</text>
+        </view>
+      </view>
+      <icon class="call call-box" color="gray" @tap.stop="phone"/>
+    </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import Tips from '../../utils/Tips';
+
+  @connect({
+    shop: store.get('shop')
+  })
+  export default class AddressBar extends wepy.component {
+    data = {
+    };
+    async onLoad () {
+      await store.init();
+      this.loaded();
+    };
+    methods = {
+      phone () {
+        if (this.shop) {
+          wepy.makePhoneCall({phoneNumber: this.shop.phone});
+        } else {
+          Tips.alert('该店铺没有电话');
+        }
+      },
+      chooseLocation () {
+        wepy.chooseLocation({
+          type: 'wgs84'
+        }).then(res => {
+          this.shop.latitude = res.latitude;
+          this.shop.longitude = res.longitude;
+          let location = res.location;
+          if (location == '' || location == undefined) {
+            location = '请选择店铺地址';
+          }
+          this.shop.location = location;
+          this.$apply();
+        });
+      }
+    };
+    mixins = [base]
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .bar-box{
+    .name-box{
+      font-weight: bold;
+    }
+    .call-box{
+      padding: 0 20rpx;
+      border-left: 1px solid #A3A3A3;
+    }
+  }
+</style>

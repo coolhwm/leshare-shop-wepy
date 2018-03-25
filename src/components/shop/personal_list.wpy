@@ -1,0 +1,36 @@
+<template>
+  <view class="grid-box" wx:for="{{grid.data}}" wx:key="cellIndex" wx:for-item="cell" wx:for-index="cellIndex">
+    <view class="column cell-box weui-cells weui-cells_after-title">
+      <navigator class="row weui-cell weui-cell_access" hover-class="weui-cell_active" wx:for="{{cell}}" wx:key="itemIndex" wx:for-index="itemIndex" wx:for-item="item">
+            <view class="weui-cell__bd">
+              <icon class="{{item.iconClass}} mr20" style="color: {{item.iconColor}}; font-size: {{item.iconSize}}; line-height: {{item.iconSize}};" />
+              <text>{{item.title}}</text>
+            </view>
+            <view class="weui-cell__ft weui-cell__ft_in-access">{{item.explain}}</view>
+          </navigator>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from '../../mixins/base';
+
+  export default class PersonalList extends wepy.component {
+    props = {
+      grid: {}
+    };
+    onLoad () {}
+    mixins = [base]
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .grid-box + .grid-box{
+    margin-top: 10rpx;
+  }
+  .cell-box{
+  }
+</style>

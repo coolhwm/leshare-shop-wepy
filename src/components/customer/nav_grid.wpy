@@ -1,0 +1,53 @@
+<template>
+  <view class="nav-grid-box column">
+    <view class="weui-cells weui-cells-show" wx:if="{{param.title}}">
+      <view class="weui-cell weui-cell_access">
+        <view class="weui-cell__bd">{{param.title}}</view>
+      </view>
+    </view>
+    <view class="grid-box" wx:for="{{param.data}}" wx:key="rowIndex" wx:for-item="row" wx:for-index="rowIndex">
+      <view class="row-around row-box">
+        <block wx:for="{{row}}" wx:key="cellIndex" wx:for-index="cellIndex" wx:for-item="cell">
+          <button plain class="column-center cell-box"  @tap="routeByAction({{cell}})" open-type="{{cell.openType}}">
+            <icon class="{{cell.iconClass}}" style="color: {{cell.iconColor}}; font-size: {{cell.iconSize}}; line-height: {{cell.iconSize}};" />
+            <text>{{cell.title}}</text>
+          </button>
+        </block>
+      </view>
+    </view>
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import router from '../../mixins/router';
+
+  export default class NavGrid extends wepy.component {
+    props = {
+      param: {}
+    };
+    mixins = [router];
+    onLoad () {}
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .nav-grid-box{
+    .grid-box + .grid-box{
+      border-top: $border;
+      button{
+        padding: 0;
+        line-height: 1.2em;
+      }
+    }
+    .row-box{
+      align-items: center;
+      padding: 20rpx 0;
+    }
+    .cell-box{
+      width: 150rpx;
+    }
+  }
+</style>

@@ -43,6 +43,30 @@
         <NoticeBar :param.sync="item" />
       </block>
 
+      <!--版权栏-->
+      <block wx:if="{{item.type == 'COPYRIGHT'}}">
+        <Copyright :param.sync="item" />
+      </block>
+
+      <!--拼团橱窗-->
+      <block wx:if="{{item.type == 'GROUP_BOX'}}">
+        <GroupBox :param.sync="item" />
+      </block>
+
+      <!--砍价橱窗-->
+      <block wx:if="{{item.type == 'BARGAIN_BOX'}}">
+        <BargainBox :param.sync="item" />
+      </block>
+
+      <!--分隔符-->
+      <block wx:if="{{item.type == 'SEPARATOR'}}">
+        <Separator :param.sync="item" />
+      </block>
+
+      <block wx:if="{{item.type == 'ADDRESS_BOX'}}">
+        <AddressBox :param.sync="item" />
+      </block>
+
       <!--间隔-->
       <view class="h-gap" wx:if="{{item.border !== 'none'}}"></view>
     </repeat>
@@ -68,6 +92,10 @@
       <block wx:if="{{item.type == 'STATUS_WIDGET'}}" >
         <StatusWidget />
       </block>
+
+      <block wx:if="{{item.type == 'BUTTON_WIDGET'}}" >
+        <ButtonWidget :param="item" />
+      </block>
     </repeat>
   </view>
 </template>
@@ -76,6 +104,8 @@
   import store from '../../store/utils';
   import { connect } from 'wepy-redux';
   import auth from '../../api/auth';
+  import shop from '../../api/shop';
+  import config from '../../api/config';
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import Loading from '../../components/common/loading';
@@ -90,34 +120,78 @@
   import CartWidget from '../../components/template/cart_widget';
   import NoticeBar from '../../components/template/notice_bar';
   import HotAreaBox from '../../components/template/hot_area_box';
+  import Copyright from '../../components/common/copyright';
+  import ButtonWidget from '../../components/template/button_widget';
+  import GroupBox from '../../components/template/group_box';
+  import BargainBox from '../../components/template/bargain_box';
+  import Separator from '../../components/template/separator';
+  import AddressBox from '../../components/template/address_box';
 
   @connect({
-    page: store.get('page'),
+    homePageId: store.get('homePageId'),
     shop: store.get('shop'),
     campaign: store.get('campaign')
   })
   export default class IndexTemplate extends wepy.page {
     data = {
+      pageId: null,
       init: false,
       components: null,
       plugins: null,
-      triggers: []
+      triggers: [],
+      param: null,
+      sence: null
     };
-    async onLoad () {
+    async onLoad ({pageId, sence}) {
       // 登录检查
       await auth.login();
       await store.init();
-      if (this.page) {
-        this.components = this.page.components;
-        this.plugins = this.page.plugins;
-        this.triggers = this.page.triggers;
+      this.sence = sence;
+      if (pageId) {
+        console.info(`[template] load template page id=${pageId}`);
+        this.pageId = pageId;
+      } else if (this.homePageId) {
+        console.info(`[template] load home page`);
+        this.pageId = this.homePageId;
       }
-      wepy.setNavigationBarTitle({
-        title: this.shop.name
-      });
+      const page = await await config.layout(this.pageId);
+      this.renderTemplatePage(page);
+      console.info(`[template] render template page success`);
       this.loaded();
+      // 渲染导航栏
+      this.renderNavigationBar();
+      // 执行触发器
       this.runTriggers();
     };
+    /**
+     * 渲染页面
+     */
+    renderTemplatePage(page) {
+      this.components = page.components;
+      this.plugins = page.plugins;
+      this.triggers = page.triggers;
+      this.param = page.param;
+    }
+    /**
+     * 渲染标题栏
+     */
+    renderNavigationBar() {
+      if (this.param.navigation == null) {
+        return;
+      }
+      const {titleText, backgroundColor, textStyle} = this.param.navigation;
+      if (titleText) {
+        wepy.setNavigationBarTitle({
+          title: titleText
+        });
+      }
+      if (backgroundColor && textStyle) {
+        wepy.setNavigationBarColor({
+          backgroundColor: backgroundColor,
+          frontColor: textStyle
+        });
+      }
+    }
     /**
      * 运行触发器
      */
@@ -135,21 +209,34 @@
      * 活动优惠券触发器
      */
     triggerCampaign() {
+      console.info(`[trigger] check campaign coupon`);
       if (this.campaign) {
         this.$preload('coupon', this.campaign);
         this.$navigate('/pages/coupon/active');
       }
     }
     /**
+     * 活动优惠券触发器
+     */
+    triggerVisitLog() {
+      const wxSence = wepy.$instance.globalData.scene;
+      console.info(`[trigger] visit log, custom_sence=${this.sence}, wx_sence=${wxSence}`);
+      shop.visit(this.sence, wxSence);
+      wepy.$instance.globalData.scene = '';
+    }
+    /**
      * 页面分享
      */
     onShareAppMessage () {
-      const {name, avatar} = this.shop;
-      console.info(`${avatar}/5x4`);
-      return {
-        title: `${name} 欢迎光临`,
-        imageUrl: `${avatar}/5x4`
-      };
+      if (this.param.share == null) {
+        const {name, avatar} = this.shop;
+        return {
+          title: `${name} 欢迎光临`,
+          imageUrl: `${avatar}/5x4`
+        };
+      } else {
+        return this.param.share;
+      }
     }
     methods = {
     };
@@ -165,7 +252,13 @@
       PopupPanel: SkuSelector,
       CartWidget: CartWidget,
       NoticeBar: NoticeBar,
-      HotAreaBox: HotAreaBox
+      HotAreaBox: HotAreaBox,
+      Copyright: Copyright,
+      ButtonWidget: ButtonWidget,
+      GroupBox: GroupBox,
+      Separator: Separator,
+      BargainBox: BargainBox,
+      AddressBox: AddressBox
     };
     computed = {
     };

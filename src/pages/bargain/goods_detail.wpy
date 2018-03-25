@@ -1,0 +1,136 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <!--轮播展示图-->
+  <view class="container column" wx:if="{{init}}">
+    <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" @tap="previewDetailSwiper">
+      <block wx:for="{{rule.goods.images}}" wx:key="index">
+        <swiper-item>
+          <image src="{{item.url}}/preview" mode="aspectFill" style="width: 750rpx; height:480rpx;"></image>
+        </swiper-item>
+      </block>
+    </swiper>
+
+    <!--砍价倒计时栏-->
+    <TimeOutBar :endTime.sync="endTime" :callback="callback" describe="邀请好友帮砍 低价购" title="砍价" />
+
+    <!--商品基本信息展示及服务信息-->
+    <GoodsMsgBar :rule.sync="rule"/>
+
+    <!--砍价玩法栏-->
+    <BargainRuleBar/>
+
+    <!--评论预览-->
+    <CommentPreview :goodsId.sync="goodsId"/>
+
+    <!--商品详情-->
+    <DetailList :detail.sync="detail" />
+
+    <!--滑出购物面板-->
+    <block >
+      <SilderPanel />
+    </block>
+
+    <!--底栏-->
+    <BargainBar :rule.sync="rule" />
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import auth from '../../api/auth';
+  import store from '../../store/utils';
+  import base from '../../mixins/base';
+  import Loading from '../../components/common/loading';
+  import BargainBar from '../../components/bargain/bottom_bargain_bar';
+  import TimeOutBar from '../../components/group/timeout_bar';
+  import CommentPreview from '../../components/goods/comment_preview';
+  import BargainRuleBar from '../../components/bargain/bargain_rule_bar';
+  import SilderPanel from '../../components/goods/slider_buy_panel';
+  import bargain from '../../api/bargain';
+  import DetailList from '../../components/goods/detail_list';
+  import GoodsMsgBar from '../../components/bargain/goods_msg_bar'
+
+  export default class BargainGoodsDetail extends wepy.page {
+    data = {
+      init: false,
+      buyPanelType: 'POPUP',
+      endTime: '',
+      goodsId: '',
+      groupTime: '',
+      ruleId: 43,
+      rule: {},
+      detail: {}
+    };
+    async onLoad () {
+      await auth.login();
+      await store.init();
+      await this.update();
+    };
+    onUnload() {
+      this.$invoke('TimeOutBar', 'clear');
+    };
+    async onPullDownRefresh () {
+      await this.update();
+      wepy.stopPullDownRefresh();
+    }
+    async update () {
+      this.rule = await bargain.rule(this.ruleId);
+      this.detail = this.rule.goods;
+      this.endTime = this.rule.endTime;
+      this.goodsId = this.rule.goods.id;
+      this.loaded();
+    }
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {name, imageUrl} = this.rule.goods;
+      const shareName = `${name} 底价低至${this.rule.floorPrice}元，快邀请好友帮你砍一刀吧~`;
+      return {
+        title: shareName,
+        imageUrl: imageUrl,
+        path: `/pages/group/goods_detail?groupId=${this.ruleId}`
+      };
+    }
+    methods = {
+      /**
+       * 预览轮播图
+       */
+      previewDetailSwiper() {
+        const urls = this.rule.goods.images.map(value => value.url);
+        wepy.previewImage({
+          urls: urls
+        });
+      }
+    };
+    computed = {
+      detail() {
+        if (this.rules == null) return;
+        return this.rule.goods;
+      }
+    };
+    components = {
+      BargainBar: BargainBar,
+      TimeOutBar: TimeOutBar,
+      CommentPreview: CommentPreview,
+      BargainRuleBar: BargainRuleBar,
+      SilderPanel: SilderPanel,
+      Loading: Loading,
+      DetailList: DetailList,
+      GoodsMsgBar: GoodsMsgBar
+    };
+    mixins = [base];
+    config = {
+      enablePullDownRefresh: true,
+      navigationBarTitleText: '商品详情'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .goods-swiper{
+    width: 750rpx;
+    height:480rpx;
+  }
+</style>

@@ -1,0 +1,53 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view class="column group-info-box">
+    <repeat for="{{page.list}}" index="index" item="item" key="index">
+      <ProcessItem :item.sync="item"/>
+    </repeat>
+  </view>
+
+  <!--滑出购物面板-->
+  <block>
+    <SilderPanel />
+  </block>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import pagination from '../../mixins/pagination.wpy';
+  import Loading from '../../components/common/loading';
+  import SilderPanel from '../../components/goods/slider_buy_panel';
+  import group from '../../api/group';
+  import router from '../../mixins/router';
+  import ProcessItem from '../../components/group/gourp_process_item';
+
+  export default class GroupInfoList extends wepy.page {
+    data = {
+      init: false,
+      page: {}
+    };
+    async onLoad({ruleId}) {
+      this.page = await group.processingList(ruleId);
+      await this.next();
+    };
+    computed = {};
+    components = {
+      SilderPanel: SilderPanel,
+      Loading: Loading,
+      ProcessItem: ProcessItem
+    };
+    mixins = [base, pagination, router];
+    config = {
+      navigationBarTitleText: '正在开团'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .info-item-box{
+    padding: 20rpx;
+  }
+</style>

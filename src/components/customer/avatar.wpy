@@ -1,0 +1,49 @@
+<template>
+  <!-- 头图区域 -->
+  <view class="user-info-box column-center">
+    <image class="user-avatar" src="{{user.avatarUrl}}" />
+    <text class="user-nickname">{{user.nickName}}</text>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import store from '../../store/utils';
+  import { connect } from 'wepy-redux';
+
+  @connect({
+    user: store.get('user')
+  })
+  export default class CustomerAvatar extends wepy.component {
+    props = {
+      order: {}
+    };
+    data = {};
+    methods = {};
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  /*用户信息*/
+  .user-info-box{
+    height: 300rpx;
+    background-color: $color-primary;
+
+    .user-avatar{
+      height:160rpx;
+      width: 160rpx;
+      border-radius: 50%;
+    }
+
+    .user-nickname{
+      font-size: $text-xl;
+      margin-top: 10rpx;
+      color: white;
+    }
+  }
+</style>

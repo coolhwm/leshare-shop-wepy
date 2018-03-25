@@ -29,7 +29,10 @@
 
         <!--加入购物车按钮-->
         <view>
-          <icon class="plus normal" wx:if="{{goods.isCart || goods.isCart == null}}" @tap.stop="handlePlusCart({{goods}})" />
+          <block wx:if="{{goods.isCart || goods.isCart == null}}">
+            <icon class="plus normal" wx:if="{{goods.totalStock > 0}}" @tap.stop="handlePlusCart({{goods}})" />
+            <text class="sm muted" wx:else>已售罄</text>
+          </block>
         </view>
       </view>
     </view>

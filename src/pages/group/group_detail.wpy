@@ -1,0 +1,112 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view class="container column" wx:if="{{init}}">
+    <!--商品详情栏-->
+    <GoodsDetail :rule.sync="rule"/>
+
+    <!--拼团状态-->
+    <StatusBar :detail.sync="detail" />
+
+    <!--订单信息栏-->
+    <view class="row-between group-order-box" wx:if="{{isJoined}}">
+      <text>订单信息</text>
+      <view @tap="order">
+        <text class="muted sm">· 收件人</text>
+        <text class="muted sm ml10">· 收货地址 </text>
+        <text class="muted sm ml10">· 成团时间</text>
+        <icon class="more ml10" color="gray"/>
+      </view>
+    </view>
+
+    <!--拼团栏-->
+    <GroupInfoBar />
+
+    <!--滑出购物面板-->
+    <block>
+      <SilderPanel />
+    </block>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import store from '../../store/utils';
+  import auth from '../../api/auth';
+  import GroupGoodsDetail from '../../components/group/group_goods_detail'
+  import GroupInfoBar from '../../components/group/group_info_bar';
+  import StatusBar from '../../components/group/status_bar';
+  import base from '../../mixins/base';
+  import group from '../../api/group'
+  import Loading from '../../components/common/loading';
+  import SilderPanel from '../../components/goods/slider_buy_panel';
+
+  export default class GroupDetail extends wepy.page {
+    data = {
+      init: false,
+      detail: {},
+      rule: {},
+      isJoined: false,
+      userGroup: null
+    };
+    async onLoad ({groupId}) {
+      await auth.login();
+      await store.init();
+      this.detail = await group.groupDetail(groupId);
+      this.rule = this.detail.rule;
+      this.isJoined = this.isUserJoined();
+      this.detail.isJoined = this.isJoined;
+      this.loaded();
+    };
+    onUnload() {
+      this.$invoke('StatusBar', 'clear');
+    }
+    isUserJoined() {
+      const user = wepy.getStorageSync('user');
+      if (user == null || user.id == null) return false;
+      if (this.detail == null || this.detail.list == null) return false;
+      this.userGroup = this.detail.list.find(item => item.customerId === user.id);
+      return this.userGroup != null;
+    }
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {name, imageUrl} = this.detail.rule.goods;
+      const shareName = `${name}，还剩${this.rule.spareCustomer}人成团，快来一起参团吧！`;
+      // 【拼团】商品名称 还剩X人成团，快来一起参团
+      return {
+        title: shareName,
+        imageUrl: imageUrl,
+        path: `/pages/group/group_detail?groupId=${this.detail.id}`
+      };
+    }
+    methods = {
+      order() {
+        this.$navigate(`/pages/order/detail?orderId=${this.userGroup.orderId}`);
+      }
+    };
+    watch = {};
+    components = {
+      GoodsDetail: GroupGoodsDetail,
+      GroupInfoBar: GroupInfoBar,
+      StatusBar: StatusBar,
+      SilderPanel: SilderPanel,
+      Loading: Loading
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '拼团详情'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .group-order-box{
+    background-color: white;
+    margin-bottom: 10rpx;
+    padding: 20rpx;
+  }
+</style>

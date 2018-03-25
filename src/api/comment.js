@@ -19,6 +19,14 @@ export default class comment extends base {
   }
 
   /**
+   * 买家自己商品评论列表
+   */
+  static list () {
+    const url = `${this.baseUrl}/comments/list`;
+    return new Page(url, this._processGoodsComment.bind(this));
+  }
+
+  /**
    * 评价统计
    */
   static count (goodsId) {
@@ -46,6 +54,10 @@ export default class comment extends base {
     }
 
     comment.comment = data.comment;
+    if (data.goods !== null) {
+      comment.goods_image = data.goods.images[0].url;
+      comment.goods_name = data.goods.name;
+    }
     return comment;
   }
 }

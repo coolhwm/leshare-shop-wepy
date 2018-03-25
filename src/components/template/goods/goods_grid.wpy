@@ -20,8 +20,10 @@
         </view>
       </view>
       <!--加入购物车按钮-->
-      <icon class="plus normal" wx:if="{{goods.isCart}}" @tap="handlePlusCart({{goods}})" />
-
+      <block wx:if="{{goods.isCart}}">
+        <icon class="plus normal" wx:if="{{goods.totalStock > 0}}"  @tap="handlePlusCart({{goods}})" />
+        <text class="sm muted" wx:else>已售罄</text>
+      </block>
     </view>
   </view>
 </template>

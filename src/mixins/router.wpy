@@ -1,19 +1,73 @@
 <script>
   import wepy from 'wepy';
   import Event from '../utils/Event';
-
+  import Tips from '../utils/Tips';
+  import api from '../api/goods';
   /**
    * 分页通用方法
    */
   export default class router extends wepy.mixin {
     config = {};
     components = {};
+    /**
+     * 直接购买商品
+     */
+    buy(goods) {
+      // 只能在SLIDER模式下触发，否则会降级为购物车购买
+      const source = this.$root.$wxpage.route;
+      const action = 'buy';
+      Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
+    }
+    /**
+     * 拼团
+     */
+    group(goods, details, id, state, groupId) {
+      // 只能在SLIDER模式下触发，否则会降级为购物车购买
+      // 处理规格替换拼团价格
+      goods.ruleId = id;
+      goods.groupId = groupId;
+      if (goods.goodsSkuInfo && details) {
+        const originDetails = goods.goodsSkuInfo.goodsSkuDetails;
+        originDetails.forEach(detail => {
+          const {sku, goodsSkuDetailBase: base} = detail;
+          const groupDetail = details.find(item => item.sku === sku);
+          if (groupDetail) {
+            base.price = groupDetail.price
+          } else {
+            console.warn(`[group] can not find group price, sku=${sku}`)
+          }
+          // 重新计算标签
+          api._processGoodsPriceRange(goods);
+          api._processGoodsPriceLabel(goods);
+        })
+      }
+      const source = this.$root.$wxpage.route;
+      const action = state;
+      Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
+    }
+    /**
+     * 砍价
+     */
+    bargain(goods, ruleId, state, id) {
+      // 只能在SLIDER模式下触发，否则会降级为购物车购买
+      // 处理规格替换拼团价格
+      goods.ruleId = ruleId;
+      goods.id = id;
+      const source = this.$root.$wxpage.route;
+      const action = state;
+      Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
+    }
+    /**
+     * 加入购物车
+     */
     plusCart(goods, goodsSku = '') {
       const source = this.$root.$wxpage.route;
       const mode = this.getMode(goods);
+      const action = 'cart';
+      console.info(`[router] goodId=${goods.id},source=${source}, action=${action}`);
       switch (mode) {
         case 'SLIDER':
-          Event.emit(Event.GOODS_PANEL_OPEN, {goods, source});
+          Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
           break;
         case 'POPUP':
           Event.emit(Event.GOODS_PANEL_PLUS, {goods, goodsSku, source});
@@ -25,6 +79,7 @@
     }
     minusCart(goodsId, goodsSku = '') {
       const source = this.$root.$wxpage.route;
+      console.info(`[router] goodId=${goodsId},source=${source}`);
       Event.emit(Event.GOODS_PANEL_MINUS, {goodsId, goodsSku, source});
     }
     getMode(goods) {
@@ -106,6 +161,24 @@
         this.plusCart(goods);
       },
       /**
+       * 处理加入购物车事件
+       */
+      handleBuy(goods) {
+        this.buy(goods);
+      },
+      /**
+       * 处理拼团事件
+       */
+      handleGroup(goods, detail, id, state, groupId) {
+        this.group(goods, detail, id, state, groupId);
+      },
+      /**
+       * 处理砍价事件
+       */
+      handleBargain(goods, ruleId, state, id) {
+        this.bargain(goods, ruleId, state, id);
+      },
+      /**
        * 处理跳转到购物车页面
        */
       routeToGoods(goodsId) {
@@ -116,11 +189,34 @@
        */
       routeByAction(event) {
         const {action, targetId} = event;
+        console.info(`[router] handle action=${action}, targetId=${targetId}`);
         // 根据动作进行路由
         switch (action) {
+          case 'NONE':
+            // 无动作
+            break;
+          case 'NO_OPEN':
+            Tips.success(targetId != null ? targetId : '敬请期待');
+            break;
           case 'DEBUG':
-            // 某个商品
-            console.info(event);
+            // 调试
+            console.info('[router] debug action', event);
+            break;
+          case 'PAGE_NAVIGATE':
+            // 跳转指定页面
+            this.$root.$navigate(targetId);
+            break;
+          case 'PAGE_REDIRECT':
+            // 跳转指定页面
+            this.$root.$redirect(targetId);
+            break;
+          case 'PAGE_SWITCH':
+            // 跳转指定页面
+            this.$root.$switch(targetId);
+            break;
+          case 'PAGE_BACK':
+            // 跳转指定页面
+            wepy.navigateBack();
             break;
           case 'GOODS':
             // 某个商品
@@ -130,9 +226,13 @@
             // 某个分类
             this.$root.$navigate(`/pages/goods/search_list?categoryId=${targetId}`);
             break;
+          case 'HOME':
+            // 首页
+            this.routeToHome();
+            break;
           case 'USER':
             // 用户首页
-            this.routeToCustomer();
+            this.$root.$switch('/pages/customer/index_template');
             break;
           case 'GOODS_ALL':
             // 商品首页
@@ -164,9 +264,41 @@
             // 我的优惠券
             this.$root.$navigate('/pages/coupon/list');
             break;
+          case 'COUPON_PICK':
+            // 领取优惠券
+            this.$root.$navigate('/pages/coupon/pick');
+            break;
+          case 'FAVORITE':
+            // 我的收藏
+            this.$root.$navigate('/pages/goods/favorite');
+            break;
+          case 'ADDRESS':
+            // 我的地址
+            this.$root.$navigate('/pages/customer/address_list');
+            break;
+          case 'COMMENT_LIST':
+            // 我的评论
+            this.$root.$navigate('/pages/customer/comment_list');
+            break;
           case 'MEMBER_DETAIL':
             // 会员详情
             this.$root.$navigate('/pages/customer/vip_detail');
+            break;
+          case 'MEMBER_CODE':
+            // 会员码
+            this.$root.$navigate('/pages/customer/vip_info');
+            break;
+          case 'MEMBER_BONUS':
+            // 会员积分
+            this.$root.$navigate('/pages/customer/bonus_list');
+            break;
+          case 'TOP_UP':
+            // 会员充值
+            this.$root.$navigate('/pages/customer/balance');
+            break;
+          case 'ORDER_LIST':
+            // 会员充值
+            this.$root.$navigate('/pages/order/list');
             break;
           case 'PHONE':
             // 拨打电话
@@ -186,6 +318,16 @@
             // 离线支付
             this.$root.$navigate('/pages/shop/pay');
             break;
+          case 'TEMPLATE':
+            // 模板页面
+            this.$root.$navigate(`/pages/home/template?pageId=${targetId}`);
+            break;
+          case 'SHOP_INFO':
+            // 店铺信息
+            this.$root.$navigate(`/pages/shop/about_us`);
+            break;
+          default:
+            console.info(`[router] unsupport action=${action}, targetId=${targetId}`)
         }
       }
     };

@@ -113,8 +113,8 @@
           Tips.loading();
           await member.regist(this.registeInfo, detail.value.code);
           await Tips.success('注册成功');
-          await store.reflesh('member');
-          WxUtils.backOrRedirect('/pages/customer/index');
+          await store.refresh('member');
+          WxUtils.backOrRedirect('/pages/customer/index_template');
         } catch (error) {
           this.tips(error.message);
           Tips.loaded();
@@ -132,8 +132,14 @@
           if (rule.initIncreaseBonus > 0) {
             describes.push(`注册绑定手机开卡即送 ${rule.initIncreaseBonus} 积分`);
           }
-          describes.push(`每消费 ${rule.costMoneyUnit} 元可获得 ${rule.increaseBonus} 积分`);
-          describes.push(`每使用 ${rule.costBonusUnit} 积分，抵扣 ${rule.reduceMoney} 元现金，每笔订单最多使用 ${rule.maxReduceBonus} 积分，订单需满 ${rule.limitMoney} 元`);
+          // 获取积分
+          if (rule.costMoneyUnit > 0) {
+            describes.push(`每消费 ${rule.costMoneyUnit} 元可获得 ${rule.increaseBonus} 积分`);
+          }
+          // 抵扣金额
+          if (rule.reduceMoney > 0) {
+            describes.push(`每使用 ${rule.costBonusUnit} 积分，抵扣 ${rule.reduceMoney} 元现金，每笔订单最多使用 ${rule.maxReduceBonus} 积分，订单需满 ${rule.limitMoney} 元`);
+          }
         }
         return describes;
       },

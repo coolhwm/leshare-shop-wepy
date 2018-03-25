@@ -1,0 +1,86 @@
+<template>
+  <view class="row item-box">
+    <view class="goods-box mr20">
+      <image class="goods-image" src="{{comment.goods_image}}" />
+    </view>
+    <view class="comment-box">
+      <view class="row-between comment-header">
+        <view class="star-box row-between">
+          <text class="goods-name inline">{{comment.goods_name}}</text>
+          <view class="row">
+            <view wx:for="{{comment.starArr}}" wx:for-item="item" wx:key="key">
+              <icon wx:if="{{item > 0}}" class="star-fill xsmall" color="major"/>
+              <icon wx:else class="star xsmall" color="gray"/>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="comment mt5">{{comment.comment ? comment.comment  : '好评！'}}</view>
+      <text class="muted xs comment-create-time">{{comment.createTime}}</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class Comment extends wepy.component {
+    props = {
+      comment: {}
+    };
+    data = {};
+    methods = {};
+    events = {};
+
+    onLoad () {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .item-box{
+    background-color: white;
+    padding: 20rpx;
+    flex: 1;
+    height: 150rpx;
+    margin: 5rpx 0;
+    .goods-box {
+
+      .goods-image {
+        width: 130rpx;
+        height: 130rpx;
+      }
+    }
+    .goods-name{
+      color: $color-muted;
+      font-size: $text-sm;
+      max-width: 180px;
+    }
+    .comment-box {
+      flex: 1;
+      height: 100%;
+      position: relative;
+
+      .comment-header {
+        width: 100%;
+        position: relative;
+        align-items: center;
+        .avatar-image {
+          width: 50rpx;
+          height: 50rpx;
+          border-radius: 50%;
+        }
+      }
+      .comment-create-time {
+        position: absolute;
+        bottom: 0rpx;
+        right: 0;
+      }
+      .star-box{
+        flex: 1;
+      }
+    }
+  }
+</style>

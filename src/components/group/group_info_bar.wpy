@@ -1,0 +1,78 @@
+<template>
+  <view class="column group-info-box" wx:if="{{!processing || processing.length < 1}}">
+    <text class="top-box">拼团玩法</text>
+    <view class="row-around content-box">
+      <view class="column-center info-rule-box">
+        <icon class="payment large" color="gray"/>
+        <text class="xs muted">支付开团或者参团</text>
+      </view>
+      <view class="column-center info-rule-box">
+        <icon class="groups large" color="gray"/>
+        <text class="xs muted">邀请好友参团</text>
+      </view>
+      <view class="column-center info-rule-box">
+        <icon class="car large" color="gray"/>
+        <text class="xs muted">人数达到分别发货</text>
+      </view>
+      <view class="column-center info-rule-box">
+        <icon class="refund large" color="gray"/>
+        <text class="xs muted">人数不够自动退款</text>
+      </view>
+    </view>
+  </view>
+  <view class="column group-info-box" wx:else>
+    <view class="row-between top-box" @tap="moreGroup({{processing.length > 0 ? processing[0].rule.id : ''}})">
+      <text>以下小伙伴已发起拼团，您可以直接参加</text>
+      <icon class="more xsmall" color="gray"/>
+    </view>
+    <view class="column">
+      <repeat for="{{processing}}" index="index" item="item" key="index">
+        <ProcessItem :item.sync="item"/>
+      </repeat>
+    </view>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import ProcessItem from '../../components/group/gourp_process_item';
+
+  export default class GroupInfoBar extends wepy.component {
+    props = {
+      processing: {}
+    };
+    methods = {
+      moreGroup (ruleId) {
+        if (ruleId === null) return;
+        this.$root.$navigate(`/pages/group/group_info_list?ruleId=${ruleId}`)
+      }
+    };
+    components = {
+      ProcessItem: ProcessItem
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .group-info-box{
+    background-color: white;
+    padding: 0 20rpx;
+    margin-bottom: 10rpx;
+    .top-box{
+      border-bottom: $border;
+      padding: 20rpx 0;
+    }
+    .content-box{
+      text{
+        text-align: center;
+        height: 76rpx;
+      }
+    }
+    .info-rule-box{
+      width: 25%;
+      padding: 20rpx 10rpx;
+    }
+  }
+</style>

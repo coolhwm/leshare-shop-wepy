@@ -5,9 +5,7 @@
 
       <block wx:if="{{supportMember}}">
         <!-- 会员卡 -->
-        <view class="box-bg">
-          <VipCard @detail.user="gotoDetail"/>
-        </view>
+        <VipCard @detail.user="gotoDetail"/>
 
         <!--功能区域-->
         <view class="function-box row-between">
@@ -121,18 +119,14 @@
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;
       await store.init();
-      if (!this.version.isMember) {
-        this.$redirect('index_basic');
-      } else {
-        this.page = order.page();
-        // 分页加载
-        await this.next();
-        // 监听更新事件
-        Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
-      }
+      this.page = order.page();
+      // 分页加载
+      await this.next();
+      // 监听更新事件
+      Event.listen(Event.ORDER_LIST_UPDATE, this.update.bind(this), this);
     };
     async onPullDownRefresh() {
-      await store.reflesh('member');
+      await store.refresh('member');
       this.loaded();
       wepy.stopPullDownRefresh();
     }

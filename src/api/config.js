@@ -11,6 +11,15 @@ export default class config extends base {
   };
 
   static discount = null;
+
+  /**
+   * 获取布局视图
+   */
+  static layout(pageId) {
+    const url = `${this.baseUrl}/layout/pages/${pageId}`;
+    return this.get(url).then(data => this._processPage(data.message));
+  }
+
   /**
    * 获取店铺完整配置信息
    */
@@ -18,6 +27,8 @@ export default class config extends base {
     const url = `${this.baseUrl}/shops/full`;
     return this.get(url).then(data => {
       return {
+        homePageId: data.homePageId,
+        customPageId: data.customPageId,
         page: data.homePageConfig,
         card: data.memberCard,
         member: data.member,
@@ -51,8 +62,20 @@ export default class config extends base {
     const config = JSON.parse(data);
     const components = this.processComponents(config.components);
     const {plugins, triggers} = this.processPlugins(config.plugins);
+    const param = this.processPageParam(config.param);
     return {
-      components, plugins, triggers
+      components, plugins, triggers, param
+    }
+  }
+
+  /**
+   * 处理页面的配置参数
+   */
+  static processPageParam(data) {
+    if (data == null || data == '') {
+      return {};
+    } else {
+      return JSON.parse(data);
     }
   }
 
@@ -99,6 +122,12 @@ export default class config extends base {
             goods._processGoodsDiscount(item, this.discount);
             goods._processGoodsData(item);
           });
+        }
+        // 特殊处理图片窗格
+        if (component.type == 'IMAGE_BOX') {
+          if (component.padding == null) {
+            component.padding = '10rpx;';
+          }
         }
         return this.copyParamToData(component);
       });

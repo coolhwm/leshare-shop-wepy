@@ -29,7 +29,7 @@
     };
     methods = {
       goto() {
-        WxUtils.backOrNavigate(this.version.isMember ? '/pages/customer/index' : '/pages/customer/index_basic');
+        this.$root.$switch('/pages/customer/index_template');
       }
     };
     computed = {

@@ -1,0 +1,114 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view class="container column" wx:if="{{init}}">
+    <!--商品详情栏-->
+    <GoodsDetail :bargain.sync="detail"/>
+
+    <!--砍价信息-->
+    <BargainInfoBar :bargain.sync="detail" @help.user="help"/>
+
+    <!--砍价玩法栏-->
+    <BargainRuleBar/>
+
+    <!--底栏-->
+    <block wx:if="{{detail.isHead}}">
+      <DetailBottom :detail.sync="detail"/>
+    </block>
+
+    <!--提示框-->
+    <Notice/>
+
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base'
+  import bargain from '../../api/bargain'
+  import BargainGoodsDetail from '../../components/bargain/bargain_goods_detail';
+  import Loading from '../../components/common/loading';
+  import BargainInfoBar from '../../components/bargain/bargain_info_bar';
+  import BargainRuleBar from '../../components/bargain/bargain_rule_bar';
+  import DetailBottom from '../../components/bargain/bottom_bargain_detail';
+  import auth from '../../api/auth';
+  import Notice from '../../components/shop/notice';
+  import Event from '../../utils/Event';
+
+  export default class BargainDetail extends wepy.page {
+    data = {
+      bargainId: null,
+      init: false,
+      detail: null,
+      rule: null,
+      createTime: null
+    };
+    async onLoad ({bargainId, isBegin}) {
+      this.bargainId = bargainId;
+      // 用户信息
+      await auth.user();
+      await this.update(bargainId);
+      if (isBegin) {
+        const notice = {
+          title: '太棒了',
+          btnText: '确定',
+          content: `您一出手就帮自己砍掉了${this.detail.reducePrice}元`
+        };
+        this.$invoke('Notice', 'open', notice);
+      }
+      Event.listen(Event.BARGAIN_DETAIL_UPDATE, this.update.bind(this), this);
+    };
+    async update () {
+      this.detail = await bargain.bargain(this.bargainId);
+      this.rule = this.detail.rule;
+      this.loaded();
+    }
+    onUnload() {
+      this.$invoke('BargainInfoBar', 'clear');
+    };
+    async onPullDownRefresh () {
+      await this.update();
+      wepy.stopPullDownRefresh();
+    }
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {name, imageUrl} = this.rule.goods;
+      const shareName = `${name}，快帮您的好友砍一刀吧！`;
+      return {
+        title: shareName,
+        imageUrl: imageUrl,
+        path: `/pages/bargain/bargain_detail?bargainId=${this.detail.id}`
+      };
+    }
+    methods = {
+      help (price, bargainId) {
+        const notice = {
+          title: '太棒了',
+          btnText: '确定',
+          content: `您一出手就帮好友砍掉了${price}元`
+        };
+        this.$invoke('Notice', 'open', notice);
+        Event.emit(Event.BARGAIN_DETAIL_UPDATE, bargainId);
+      }
+    };
+    computed = {};
+    components = {
+      GoodsDetail: BargainGoodsDetail,
+      Loading: Loading,
+      BargainInfoBar: BargainInfoBar,
+      BargainRuleBar: BargainRuleBar,
+      DetailBottom: DetailBottom,
+      Notice: Notice
+    };
+    mixins = [base];
+    config = {
+      enablePullDownRefresh: true,
+      navigationBarTitleText: '砍价详情'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

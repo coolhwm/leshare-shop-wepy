@@ -1,0 +1,95 @@
+<template>
+  <view class="timeout-box row-between" >
+    <view class="title-box row">
+      <view class="title mr20 ">{{title}}</view>
+      <view class="describe-box">{{describe}}</view>
+    </view>
+    <view class="column-center time-box" wx:if="{{content.day}}">
+      <text class="danger xxs">距结束仅剩</text>
+      <view class="row">
+        <view class="time-num-box">{{content.day}}</view>
+        <text class="xxs">天</text>
+        <view class="time-num-box">{{content.hour}}</view>
+        <text class="xxs">时</text>
+        <view class="time-num-box">{{content.min}}</view>
+        <text class="xxs">分</text>
+        <view class="time-num-box">{{content.sec}}</view>
+        <text class="xxs">秒</text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import countdown from '../../mixins/countdown';
+
+  export default class TimeOutBar extends wepy.component {
+    props = {
+      endTime: {
+        default: ''
+      },
+      endText: {
+        default: '已结束'
+      },
+      describe: {
+        default: '限时火拼·超值底价'
+      },
+      title: {
+        default: '拼团'
+      }
+    };
+    data = {};
+    methods = {
+    };
+    watch = {
+      endTime(endTime) {
+        this.countdowm(endTime.replace(/-/g, '/'), 'endTime');
+      }
+    };
+    mixins = [countdown];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .timeout-box{
+    background:-webkit-gradient(linear, 0% 0%, 100% 0%,from($color-primary), to(#FFCC59));
+    padding: 6rpx 0;
+    .title-box{
+      padding: 10rpx 0 10rpx 20rpx;
+      text{
+        color: white;
+      }
+    }
+    .title{
+      $title-size: 48rpx;
+      font-size: $title-size;
+      line-height: $title-size;
+      font-weight: bold;
+      color: white;
+      margin-top: 10rpx;
+    }
+    .describe-box{
+      margin-top: 36rpx;
+      color: white;
+      font-size: $text-xs;
+      line-height: $text-xs;
+    }
+    .time-box{
+      padding: 10rpx 20rpx;
+      .time-num-box{
+        padding: 4rpx 8rpx;
+        margin: 0 8rpx;
+        background-color: #000;
+        color: #fff;
+        font-size: $text-xxs;
+        line-height: $text-xxs;
+      }
+    }
+    .end-box{
+      font-size: 40rpx;
+      margin-top: 10rpx;
+    }
+  }
+</style>
