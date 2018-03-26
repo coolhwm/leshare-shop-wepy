@@ -49,7 +49,7 @@
     };
     methods = {
       async cancel (id) {
-        await Tips.modal('确定取消？');
+        await Tips.confirm('确定取消？');
         await booking.cancel(id);
         await Tips.success('取消成功');
         Event.emit(Event.BOOKING_LIST_UPDATE);

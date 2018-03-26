@@ -22,6 +22,16 @@
           <view wx:if="{{coupons.length > 0}}" class="weui-cell__ft {{coupons.length > 0 ? 'weui-cell__ft_in-access' : ''}}"  @tap="coupon">{{couponText}}</view>
           <view wx:else class="weui-cell__ft" >{{couponText}}</view>
         </view>
+        <!--支付方式-->
+        <!--TODO 0为店铺不支持余额支付-->
+        <view class="coupon-box row" wx:if="{{card.supplyBalance == 0}}">
+          <view class="weui-cell__bd">支付方式</view>
+          <view class="weui-cell__ft">{{payType.onlinePayText}}</view>
+        </view>
+        <view wx:else class="coupon-box row" @tap="onlinePayType">
+          <view class="weui-cell__bd">支付方式</view>
+          <view class="weui-cell__ft {{member ? 'weui-cell__ft_in-access' : ''}}">{{payType.onlinePayText}}</view>
+        </view>
         <view class="button-box">
           <button class="weui-btn" type="primary" @tap="offline">立即付款</button>
         </view>
@@ -58,7 +68,9 @@
 
   @connect({
     shop: store.get('shop'),
-    ownCoupons: store.get('ownCoupons')
+    ownCoupons: store.get('ownCoupons'),
+    member: store.get('member'),
+    card: store.get('card')
   })
   export default class ShopIndex extends wepy.page {
     data = {
@@ -67,7 +79,11 @@
       couponText: '无可用',
       selectedCoupon: null,
       mode: 'pay',
-      result: null
+      result: null,
+      payType: {
+        onlinePayType: 'wxpay',
+        onlinePayText: '微信支付'
+      }
     };
     async onLoad () {
       // 登录检查
@@ -76,6 +92,10 @@
       await store.init();
       this.loaded();
       Event.listen(Event.TRADE_COUPON_UPDATE, this.updateCoupon.bind(this), this);
+    };
+    async upDate () {
+      await store.refresh('member');
+      this.loaded();
     };
     methods = {
       dealPriceInput (e) {
@@ -88,7 +108,8 @@
           orderType: 40,
           paymentType: 1,
           dealPrice: this.dealPrice,
-          finalPrice: this.dealPrice
+          finalPrice: this.dealPrice,
+          onlinePayType: this.payType.onlinePayType
         };
         if (this.selectedCoupon) {
           param.couponPrice = this.selectedCoupon.price;
@@ -99,12 +120,18 @@
           // 创建订单
           const trade = await order.offline(param);
           this.result = trade;
-          // 调用后台支付接口
-          const payment = await order.prepayOrder(trade.orderId);
-          // 拉起支付页面
-          await order.wxpayOrder(payment);
-          await Tips.success('支付成功');
-          this.mode = 'success';
+          if (this.payType.onlinePayType == 'balance') {
+            await Tips.success('支付成功');
+            this.mode = 'success';
+            this.upDate();
+          } else {
+            // 调用后台支付接口
+            const payment = await order.prepayOrder(trade.orderId);
+            // 拉起微信支付页面
+            await order.wxpayOrder(payment);
+            await Tips.success('支付成功');
+            this.mode = 'success';
+          }
         } catch (error) {
           if (error.errMsg == 'requestPayment:fail cancel') {
             await Tips.error('支付取消');
@@ -129,6 +156,26 @@
       },
       finish () {
         this.$switch('../home/template');
+      },
+      /**
+       * 选择付款方式
+       */
+      async onlinePayType () {
+        if (this.shop.offPay === 0 || this.isForhearOrPack) {
+          return;
+        }
+        const payType = this.payType;
+        Tips.actionWithFunc(['微信支付', '余额支付'],
+          () => {
+            payType.onlinePayText = '微信支付';
+            payType.onlinePayType = 'wxpay';
+            this.$apply();
+          },
+          () => {
+            payType.onlinePayText = '余额支付';
+            payType.onlinePayType = 'balance';
+            this.$apply();
+          });
       }
     };
     /**
@@ -191,7 +238,7 @@
     };
     mixins = [base, input];
     config = {
-      navigationBarTitleText: '微信支付'
+      navigationBarTitleText: '支付'
     };
   }
 </script>

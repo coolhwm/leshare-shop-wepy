@@ -35,6 +35,8 @@
   import topUp from '../../api/top_up';
   import Tips from '../../utils/Tips';
   import order from '../../api/order';
+  import Event from '../../utils/Event';
+  import store from '../../store/utils';
 
   export default class TopUp extends wepy.page {
     data = {
@@ -46,6 +48,10 @@
       this.rules = await topUp.getTopUp();
       this.loaded();
     };
+    async upDate () {
+      await store.refresh('member');
+      this.loaded();
+    }
     methods = {
       selected (idx) {
         this.rules.forEach((item, index) => {
@@ -74,6 +80,8 @@
         } else {
           Tips.alert('支付取消');
         }
+        this.upDate();
+        this.$switch('../customer/index_template');
       }
     };
     /**

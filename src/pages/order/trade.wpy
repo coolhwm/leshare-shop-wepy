@@ -34,8 +34,8 @@
       </view>
 
       <!--支付方式-->
-      <!--TODO 判断值需要改为1-->
-      <view class="weui-cell weui-cell_access" wx:if="{{card.supplyBalance == 1}}">
+      <!--TODO 0为店铺不支持余额支付-->
+      <view class="weui-cell weui-cell_access" wx:if="{{card.supplyBalance == 0}}">
         <view class="weui-cell__bd">支付方式</view>
         <view class="weui-cell__ft">微信支付</view>
       </view>
@@ -200,6 +200,7 @@
       }
       // 刷新价格
       this.updateTradePrice();
+      // 可用余额支付
       if (this.member != null) {
         this.trade.isTopUp = this.trade.finalPrice <= this.member.balance;
       }
