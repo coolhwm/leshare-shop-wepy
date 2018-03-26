@@ -44,6 +44,7 @@
         <view class="small label primary ml20" wx:if="{{order.orderType == 30}}">堂食</view>
         <view class="small label primary ml20" wx:if="{{order.orderType == 33}}">打包</view>
         <view class="small label primary ml20" wx:if="{{order.orderType == 50}}">拼团</view>
+        <view class="small label primary ml20" wx:if="{{order.orderType == 60}}">预约</view>
         <view class="small label primary ml20" wx:if="{{order.orderType == 70}}">砍价</view>
       </view>
       <view class="row">

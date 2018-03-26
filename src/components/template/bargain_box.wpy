@@ -5,7 +5,7 @@
         <text class="title-box">砍价</text>
         <text class="muted ml20 xs">疯狂砍价，等你来砍</text>
       </view>
-      <view>
+      <view @tap="more({{param.data}})">
         <text class="sm muted">更多</text>
         <icon class="more" color="gray"/>
       </view>
@@ -41,6 +41,10 @@
     methods = {
       detail (ruleId) {
         this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${ruleId}`)
+      },
+      more (data) {
+        this.$root.$preload('param', data);
+        this.$root.$navigate(`/pages/bargain/bargain_more`)
       }
     };
   }

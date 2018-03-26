@@ -1,0 +1,151 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view class="container column" wx:if="{{init}}">
+
+    <view class="row booking-goods-box">
+      <image class="goods-img" src="{{detail.goods.imageUrl}}"/>
+      <view class="column goods-box ml20">
+        <text class="xl">{{detail.goods.name}}</text>
+        <view class="row goods-price-box">
+          <text class="xl danger ml20">￥{{detail.goods.sellPrice}}</text>
+          <text class="muted original-price">￥{{detail.goods.originalPrice}}</text>
+        </view>
+      </view>
+    </view>
+    <form>
+      <view class="booking-box">
+        <view class="row-center top-box">
+          <icon class="booking"/>
+          <text class="primary xxl ml10">预约表</text>
+        </view>
+        <view class="content-box">
+          <view class="weui-cells weui-cells-form">
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">姓名</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="name" value="{{detail.name}}" disabled/>
+              </view>
+            </view>
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">手机</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="phone" value="{{detail.phone}}" disabled/>
+              </view>
+            </view>
+
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">日期</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="phone"
+                       value="{{detail.date}}" disabled/>
+              </view>
+            </view>
+
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">时间</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="phone"
+                       value="{{detail.time}}" disabled/>
+              </view>
+            </view>
+
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">备注</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="remark" value="{{detail.remark}}" disabled/>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </form>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import Loading from '../../components/common/loading';
+  import booking from '../../api/booking';
+
+  export default class BookingDetail extends wepy.page {
+    data = {
+      init: false,
+      detail: {}
+    };
+    async onLoad ({bookingId}) {
+      this.detail = await booking.bookingDetail(bookingId);
+      this.loaded();
+    };
+    methods = {
+    };
+    computed = {
+    };
+    components = {
+      Loading: Loading
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '预约详情'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  $img-width: 200rpx;
+  .booking-goods-box{
+    background-color: white;
+    margin: 20rpx;
+    padding: 30rpx;
+    border-radius: 20rpx;
+    .goods-img{
+      width: $img-width;
+      height: $img-width;
+    }
+    .goods-box{
+      height: $img-width;
+      justify-content: space-between;
+    }
+    .goods-price-box{
+      flex-direction: row-reverse;
+    }
+    .original-price{
+      text-decoration: line-through;
+    }
+  }
+  .booking-box{
+    background-color: white;
+    margin: 20rpx;
+    border-radius: 20rpx;
+    .top-box{
+      flex: 1;
+      border-top-left-radius: 20rpx;
+      border-top-right-radius: 20rpx;
+      padding: 20rpx;
+    }
+    .content-box{
+      padding: 0 20rpx;
+    }
+  }
+  .booking-btn-box{
+    background-color: $color-primary;
+    color:white;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 100rpx;
+    width: 750rpx;
+  }
+</style>

@@ -326,6 +326,10 @@
             // 店铺信息
             this.$root.$navigate(`/pages/shop/about_us`);
             break;
+          case 'BOOKING':
+            // 店铺信息
+            this.$root.$navigate(`/pages/booking/order?goodsId=${targetId}`);
+            break;
           default:
             console.info(`[router] unsupport action=${action}, targetId=${targetId}`)
         }

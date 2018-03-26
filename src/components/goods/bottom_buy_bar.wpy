@@ -10,7 +10,7 @@
       <icon class="home" color="gray"/>
       <text>首页</text>
     </view>
-    <view class="column-center btn-service" @tap="service({{goods}})">
+    <view class="column-center btn-service" @tap="service({{goods.id}})">
       <text class="white">立即预约</text>
     </view>
   </view>
@@ -68,9 +68,8 @@
       cart() {
         this.$parent.$switch('/pages/goods/cart');
       },
-      service (goods) {
-        this.$root.$preload('data', goods);
-        this.$root.$navigate(`/pages/booking/order`);
+      service (id) {
+        this.$root.$navigate(`/pages/booking/order?goodsId=${id}`);
       }
     };
     watch = {

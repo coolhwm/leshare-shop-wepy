@@ -29,6 +29,14 @@ export default class booking extends base {
     return this.post(url, {id: id});
   }
 
+  /***
+   * 根据预约 ID查找预约详情
+   */
+  static bookingDetail (id) {
+    const url = `${this.baseUrl}/booking/${id}`;
+    return this.get(url).then(data => this._processBookingDetail(data));
+  }
+
   // 处理数据
 
   // 预定列表
@@ -38,5 +46,21 @@ export default class booking extends base {
       api._processGoodsPreview(data);
     }
     return data;
+  }
+  // 预定列表
+  static _processBookingDetail (data) {
+    // 处理预览图
+    if (data.goods) {
+      api._processGoodsPreview(data);
+    }
+    // 处理预约时间
+    this._processServiceTime(data);
+    return data;
+  }
+  // 处理预约时间
+  static _processServiceTime (data) {
+    console.info(data.serviceTime);
+    data.date = data.serviceTime.slice(0, 10);
+    data.time = data.serviceTime.slice(11, 20);
   }
 }

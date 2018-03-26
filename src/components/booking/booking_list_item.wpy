@@ -4,7 +4,7 @@
     <view class="order-header-container colunm">
       <view class="row-between">
         <view class="user-info-container">
-          <text class="sm ml10">{{detail.createTime}}</text>
+          <text class="sm ml10">预约时间：{{detail.serviceTime}}</text>
         </view>
         <text wx:if="{{detail.status === 'PROCESS'}}" class="sm primary">预约中</text>
         <text wx:elif="{{detail.status === 'TIMEOUT'}}" class="sm primary">已过期</text>
@@ -14,8 +14,8 @@
     </view>
 
     <!--商品区域-->
-    <view class="row-between bargain-goods-box">
-      <image src="{{detail.goods.imageUrl}}" style="width: 150rpx;height: 150rpx;"/>
+    <view class="row bargain-goods-box" @tap="detail({{detail.id}})">
+      <image class="mr20" src="{{detail.goods.imageUrl}}" style="width: 150rpx;height: 150rpx;"/>
       <view class="column">
         <text>{{detail.goods.name}}</text>
         <text class="muted mt20">￥{{detail.goods.sellPrice}}</text>
@@ -23,13 +23,13 @@
     </view>
 
     <!--操作栏-->
-    <view class="group-bottom-box row">
-      <view wx:if="{{detail.status === 'PROCESS' && detail.order.status == 2}}" class="group-btn-box" @tap="cancel({{detail.id}})">取消预约</view>
+    <view class="booking-bottom-box row mb10 mt10">
+      <button class="eui-btn mini-btn mr10" size="mini" wx:if="{{detail.status === 'PROCESS' && detail.order.status == 2}}" @tap="cancel({{detail.id}})">取消预约</button>
       <view class="row" wx:elif="{{detail.status === 'PROCESS' && detail.order.status == 1}}">
-        <view class="group-btn-box" @tap="pay({{detail.order.orderId}})">立即支付</view>
-        <view class="ml20 group-btn-box" @tap="cancel({{detail.id}})">取消预约</view>
+        <button class="eui-btn mini-btn mr10" size="mini" @tap="cancel({{detail.id}})">取消预约</button>
+        <button class="weui-btn mini-btn mr10" size="mini" type="primary" @tap="pay({{detail.order.orderId}})">立即支付</button>
       </view>
-      <view wx:if="{{detail.status === 'CANCEL'}}" class="group-btn-box" @tap="booking({{detail.goodsId}})">重新预约</view>
+      <button wx:if="{{detail.status === 'CANCEL'}}" size="mini" class="weui-btn mini-btn mr10" @tap="booking({{detail.goodsId}})">重新预约</button>
 
     </view>
   </view>
@@ -41,7 +41,7 @@
   import Event from '../../utils/Event';
   import order from '../../api/order'
 
-  export default class BookingnItem extends wepy.component {
+  export default class BookingItem extends wepy.component {
     props = {
       detail: {}
     };
@@ -49,6 +49,7 @@
     };
     methods = {
       async cancel (id) {
+        await Tips.confirm('确定取消？');
         await booking.cancel(id);
         await Tips.success('取消成功');
         Event.emit(Event.BOOKING_LIST_UPDATE);
@@ -71,6 +72,9 @@
       },
       booking (id) {
         this.$root.$navigate(`/pages/goods/detail?goodsId=${id}`)
+      },
+      detail (id) {
+        this.$root.$navigate(`/pages/booking/booking_detail?bookingId=${id}`)
       }
     };
     components = {
@@ -133,10 +137,10 @@
     background-color: $color-bg-item;
   }
 
-  .group-bottom-box{
+  .booking-bottom-box{
     flex-direction: row-reverse;
     border-top: 1px solid #FAFAFA;
-    .group-btn-box{
+    .booking-btn-box{
       color: white;
       background-color: $color-primary;
       padding: 6rpx 20rpx;

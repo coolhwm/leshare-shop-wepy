@@ -27,10 +27,21 @@
         <text class="weui-cell__ft weui-cell__ft_in-access">{{trade.arriveTime}} </text>
       </view>
 
-      <!--支付方式-->
+      <!--支付类型-->
       <view class="weui-cell weui-cell_access" @tap="paymentType">
-        <view class="weui-cell__bd">支付方式</view>
+        <view class="weui-cell__bd">支付类型</view>
         <view class="weui-cell__ft {{shop.offPay == 1 ? 'weui-cell__ft_in-access' : ''}}">{{trade.paymentText}}</view>
+      </view>
+
+      <!--支付方式-->
+      <!--TODO 0为店铺不支持余额支付-->
+      <view class="weui-cell weui-cell_access" wx:if="{{card.supplyBalance == 0}}">
+        <view class="weui-cell__bd">支付方式</view>
+        <view class="weui-cell__ft">微信支付</view>
+      </view>
+      <view wx:else class="weui-cell weui-cell_access" @tap="onlinePayType">
+        <view class="weui-cell__bd">支付方式</view>
+        <view class="weui-cell__ft {{member && trade.isTopUp ? 'weui-cell__ft_in-access' : ''}}">{{trade.onlinePayText}}</view>
       </view>
 
       <!--需要配送的订单, 需要选择配送方式-->
@@ -187,6 +198,12 @@
         // 处理配送方式
         await this.updateDelivery();
       }
+      // 刷新价格
+      this.updateTradePrice();
+      // 可用余额支付
+      if (this.member != null) {
+        this.trade.isTopUp = this.trade.finalPrice <= this.member.balance;
+      }
       // 可用卡券
       this.coupons = await coupon.available(this.trade.orderGoodsInfos);
       // 自动选择优惠券
@@ -280,6 +297,26 @@
           });
       },
       /**
+       * 选择付款方式
+       */
+      async onlinePayType () {
+        if (this.shop.offPay === 0 || this.isForhearOrPack) {
+          return;
+        }
+        const trade = this.trade;
+        Tips.actionWithFunc(['微信支付', '余额支付'],
+          () => {
+            trade.onlinePayText = '微信支付';
+            trade.onlinePayType = 'wxpay';
+            this.$apply();
+          },
+          () => {
+            trade.onlinePayText = '余额支付';
+            trade.onlinePayType = 'balance';
+            this.$apply();
+          });
+      },
+      /**
        * 确定下单
        */
       async confirm({detail}) {
@@ -306,16 +343,21 @@
           return;
         }
         let isPay = false;
-        // 检查是否为离线订单
-        if (trade.paymentType == PAYMENT.OFFLINE) {
-          Tips.success('下单成功');
+        if (trade.onlinePayType === 'balance') {
+          Tips.success('支付成功');
+          isPay = true;
         } else {
-        // 发起支付
-          isPay = await this.requestWxPayment(trade);
-          if (isPay) {
-            Tips.success('支付成功');
+          // 检查是否为离线订单
+          if (trade.paymentType == PAYMENT.OFFLINE) {
+            Tips.success('下单成功');
           } else {
-            Tips.alert('支付取消');
+            // 发起支付
+            isPay = await this.requestWxPayment(trade);
+            if (isPay) {
+              Tips.success('支付成功');
+            } else {
+              Tips.alert('支付取消');
+            }
           }
         }
         // 清空购物车
