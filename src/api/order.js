@@ -338,22 +338,20 @@ export default class order extends base {
 
   static _processOfflinePayment(order) {
     const orderType = order.orderType;
-    if (orderType != TYPE.OFFLINE) return;
-    if (order.onlinePayType == 'balance') {
-      order.orderGoodsInfos = [{
-        imageUrl: 'http://img.leshare.shop/shop/other/wechat_pay.png',
-        goodsName: `余额支付 ${order.finalPrice}元`,
-        goodsPrice: order.finalPrice,
-        count: 1
-      }];
+    if (order.orderGoodsInfos && order.orderGoodsInfos.length > 0) return;
+    const goods = {
+      imageUrl: 'http://img.leshare.shop/shop/other/wechat_pay.png',
+      goodsPrice: order.finalPrice,
+      count: 1
+    };
+    if (orderType == TYPE.BALANCE) {
+      goods.goodsName = `余额充值 ${order.finalPrice}元`;
+    } else if (orderType == TYPE.OFFLINE && order.onlinePayType == 'balance') {
+      goods.goodsName = `余额支付 ${order.finalPrice}元`;
     } else {
-      order.orderGoodsInfos = [{
-        imageUrl: 'http://img.leshare.shop/shop/other/wechat_pay.png',
-        goodsName: `微信支付 ${order.finalPrice}元`,
-        goodsPrice: order.finalPrice,
-        count: 1
-      }];
+      goods.goodsName = `微信支付 ${order.finalPrice}元`;
     }
+    order.orderGoodsInfos = [goods];
     return order;
   }
 

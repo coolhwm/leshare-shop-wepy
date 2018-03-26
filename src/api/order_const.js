@@ -7,7 +7,11 @@ const TYPE = {
   TAKEAWAY: 20,
   FORHERE: 30,
   PACK: 33,
-  OFFLINE: 40
+  OFFLINE: 40,
+  GROUP: 50,
+  BOOKING: 60,
+  BARGAIN: 70,
+  BALANCE: 80
 };
 /**
  * 支付方式
@@ -192,7 +196,9 @@ const STATUS_ACTIONS = {
   // 砍价
   '70-1-1': [ACTION.CLOSE, ACTION.PAY],
   '70-1-3': [ACTION.RECEIVE],
-  '70-1-4': [ACTION.COMMENT]
+  '70-1-4': [ACTION.COMMENT],
+  // 充值
+  '80-1-1': [ACTION.CLOSE, ACTION.PAY]
 };
 
 /**  内部方法 **/

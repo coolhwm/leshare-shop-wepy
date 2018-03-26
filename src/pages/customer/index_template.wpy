@@ -69,7 +69,6 @@
   import VipCard from '../../components/customer/vip_card';
   import BalanceBar from '../../components/customer/balance_bar';
   import Copyright from '../../components/common/copyright';
-  import Event from '../../utils/Event';
 
   @connect({
     shop: store.get('shop'),
