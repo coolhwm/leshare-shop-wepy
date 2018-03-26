@@ -1,11 +1,11 @@
 @import "variable";
 @font-face {
   font-family: 'iconfont';  /* project id 553949 */
-  src: url('//at.alicdn.com/t/font_553949_ker7rmb5ie3lerk9.eot');
-  src: url('//at.alicdn.com/t/font_553949_ker7rmb5ie3lerk9.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_553949_ker7rmb5ie3lerk9.woff') format('woff'),
-  url('//at.alicdn.com/t/font_553949_ker7rmb5ie3lerk9.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_553949_ker7rmb5ie3lerk9.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_553949_a0iyeu85akprpb9.eot');
+  src: url('//at.alicdn.com/t/font_553949_a0iyeu85akprpb9.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_553949_a0iyeu85akprpb9.woff') format('woff'),
+  url('//at.alicdn.com/t/font_553949_a0iyeu85akprpb9.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_553949_a0iyeu85akprpb9.svg#iconfont') format('svg');
 }
 @mixin icon-size($size){
   line-height: $size;
@@ -132,4 +132,5 @@ icon.question:before { content: "\e638"; }
 icon.coin:before { content: "\e645"; }
 icon.selected:before { content: "\e608"; }
 icon.msg-bar:before { content: "\e623"; }
+icon.booking:before { content: "\e624"; }
 

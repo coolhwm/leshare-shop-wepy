@@ -48,7 +48,7 @@ export default class group extends base {
   }
 
   /**
-   * 返回参团列表
+   * 返回看家；
    */
   static list (status) {
     const url = `${this.baseUrl}/goods_bargain/rules?status=${status}`;

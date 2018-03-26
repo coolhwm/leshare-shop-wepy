@@ -1,0 +1,46 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view class="column" wx:if="{{init}}">
+    <repeat for="{{param}}" key="index" index="index" item="item">
+      <block>
+        <GroupItem :item.sync="item"/>
+      </block>
+    </repeat>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import Loading from '../../components/common/loading';
+  import GroupItem from '../../components/group/group_more_item'
+
+  export default class ShopIndex extends wepy.page {
+    data = {
+      init: false,
+      param: {}
+    };
+    async onLoad (options, {preload}) {
+      this.param = preload.param;
+      this.loaded();
+    };
+    methods = {
+    };
+    computed = {
+    };
+    components = {
+      Loading: Loading,
+      GroupItem: GroupItem
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '拼团商品'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+</style>

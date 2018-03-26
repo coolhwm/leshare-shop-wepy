@@ -1,0 +1,247 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view class="container column" wx:if="{{init}}">
+
+    <view class="row booking-goods-box">
+      <image class="goods-img" src="{{goods.imageUrl}}"/>
+      <view class="column goods-box ml20">
+        <text class="xl">{{goods.name}}</text>
+        <view class="row goods-price-box">
+          <text class="xl danger ml20">￥{{goods.sellPrice}}</text>
+          <text class="muted original-price">￥{{goods.originalPrice}}</text>
+        </view>
+      </view>
+    </view>
+    <form @submit="submit">
+      <view class="booking-box">
+        <view class="row-center top-box">
+          <icon class="booking"/>
+          <text class="primary xxl ml10">预约表</text>
+        </view>
+        <view class="content-box">
+          <view class="weui-cells weui-cells-form">
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">姓名</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="name" placeholder="请输入您的姓名"/>
+              </view>
+            </view>
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">手机</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="phone" placeholder="请输入您的手机号" type="number"
+                       maxlength="11"/>
+              </view>
+            </view>
+
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">日期</view>
+              </view>
+              <view class="weui-cell__bd">
+                <picker mode="date" id="dueTime" @change="bindDateChange" value="{{order.date}}"
+                        start="{{order.date}}">
+                  <view class="weui-input">
+                    {{order.date}}
+                  </view>
+                </picker>
+              </view>
+            </view>
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">时间</view>
+              </view>
+              <view class="weui-cell__bd">
+                <picker mode="date" id="dueTime" @change="bindTimeChange" value="{{order.time}}"
+                        start="{{order.time}}">
+                  <view class="weui-input">
+                    {{order.time}}
+                  </view>
+                </picker>
+              </view>
+            </view>
+
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">备注</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="remark" placeholder="您想嘱咐点啥吗？"/>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="booking-btn-box row-center">
+        <button style="color: white;" form-type="submit" plain>
+          提交预约
+        </button>
+      </view>
+    </form>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import Loading from '../../components/common/loading';
+  import booking from '../../api/booking';
+  import order from '../../api/order';
+  import Tips from '../../utils/Tips';
+
+  export default class BookingOrder extends wepy.page {
+    data = {
+      init: false,
+      order: {},
+      goods: {}
+    };
+    async onLoad (options, {preload}) {
+      this.goods = preload.data;
+      this.order.goodsId = this.goods.id;
+      let date = new Date();
+      let mon = date.getMonth() + 1;
+      let day = date.getDate();
+      let hour = date.getHours();
+      let min = date.getMinutes();
+      this.order.date = `${date.getFullYear()}-${mon < 10 ? '0' + mon : mon}-${day < 10 ? '0' + day : day}`;
+      this.order.time = `${hour < 10 ? '0' + hour : hour}:${min < 10 ? '0' + min : min}`;
+      this.loaded();
+    };
+    methods = {
+      bindDateChange (e) {
+        this.order.date = e.detail.value
+      },
+      bindTimeChange  (e) {
+        this.order.time = e.detail.value
+      },
+      async submit ({detail}) {
+        const goods = {
+          goodsId: this.goods.id,
+          goodsName: this.goods.name,
+          goodsImage: this.goods.imageUrl,
+          goodsPrice: this.goods.sellPrice,
+          innerCid: this.goods.innerCid,
+          originalPrice: this.goods.originalPrice,
+          goodsNum: 1
+        };
+        const trade = order.createCartTrade([goods], {orderType: 10});
+        const param = {
+          name: detail.value.name,
+          phone: detail.value.phone,
+          serviceTime: this.order.date + ' ' + this.order.time,
+          remark: detail.value.remark,
+          goodsId: this.goods.id,
+          order: trade
+        };
+
+        // 创建订单
+        const result = await this.requestCreateOrder(param);
+        // 检查是否下单成功
+        if (result == null) {
+          Tips.alert('下单失败');
+          return;
+        }
+        if (this.goods.booking.payment) {
+          // 发起支付
+          const isPay = await this.requestWxPayment(result);
+          if (isPay) {
+            Tips.success('支付成功');
+          } else {
+            Tips.alert('支付取消');
+          }
+        }
+        this.$navigate(`/pages/booking/list`);
+      }
+    };
+    /**
+     * 请求创建订单
+     */
+    async requestCreateOrder(param) {
+      try {
+        // 创建订单
+        const result = await booking.booking(param);
+        await Tips.success('预约成功');
+        return result.order;
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+    }
+    /**
+     * 请求发起支付
+     */
+    async requestWxPayment(trade) {
+      // 微信支付
+      try {
+        const payment = await order.prepayOrder(trade.orderId);
+        await order.wxpayOrder(payment);
+        return true;
+      } catch (e) {
+        console.error(e);
+        return false;
+      }
+    }
+    computed = {
+    };
+    components = {
+      Loading: Loading
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '提交预约'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  $img-width: 200rpx;
+  .booking-goods-box{
+    background-color: white;
+    margin: 20rpx;
+    padding: 30rpx;
+    border-radius: 20rpx;
+    .goods-img{
+      width: $img-width;
+      height: $img-width;
+    }
+    .goods-box{
+      height: $img-width;
+      justify-content: space-between;
+    }
+    .goods-price-box{
+      flex-direction: row-reverse;
+    }
+    .original-price{
+      text-decoration: line-through;
+    }
+  }
+  .booking-box{
+    background-color: white;
+    margin: 20rpx;
+    border-radius: 20rpx;
+    .top-box{
+      flex: 1;
+      border-top-left-radius: 20rpx;
+      border-top-right-radius: 20rpx;
+      padding: 20rpx;
+    }
+    .content-box{
+      padding: 0 20rpx;
+    }
+  }
+  .booking-btn-box{
+    background-color: $color-primary;
+    color:white;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 100rpx;
+    width: 750rpx;
+  }
+</style>

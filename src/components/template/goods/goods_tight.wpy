@@ -1,4 +1,4 @@
-<template>
+<template xmlns:wx="http://java.sun.com/JSP/Page">
   <view class="column goods-tight-box">
     <view class="tight-discount-box row" wx:if="{{goods.discount}}">
       <icon class="vip xsmall" color="white" />
@@ -20,8 +20,13 @@
         </view>
         <!--加入购物车按钮-->
         <block wx:if="{{goods.isCart || goods.isCart == null}}">
-          <icon class="plus"  @tap="handlePlusCart({{goods}})" wx:if="{{goods.totalStock > 0}}"/>
-          <text class="xxs muted" wx:else>已售罄</text>
+          <view wx:if="{{goods.type === 'goods'}}">
+            <icon class="plus"  @tap="handlePlusCart({{goods}})" wx:if="{{goods.totalStock > 0}}"/>
+            <text class="xxs muted" wx:else>已售罄</text>
+          </view>
+          <view wx:elif="{{goods.type === 'service'}}">
+            <text class="service-btn-box" @tap="service({{goods.id}}, {{goods.type}})">预约</text>
+          </view>
         </block>
 
       </view>
@@ -38,6 +43,9 @@
       goods: {}
     };
     methods = {
+      service (id, type) {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${id}&type=${type}`)
+      }
     };
     mixins = [router]
   }
@@ -77,6 +85,12 @@
 
     .content-box{
       padding: 5rpx;
+    }
+    .service-btn-box{
+      padding: 0 10rpx;
+      border-radius: 10rpx;
+      background-color: $color-primary;
+      color: white;
     }
   }
 </style>
