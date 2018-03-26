@@ -39,9 +39,14 @@
         <view class="weui-cell__bd">支付方式</view>
         <view class="weui-cell__ft">微信支付</view>
       </view>
-      <view wx:else class="weui-cell weui-cell_access" @tap="onlinePayType">
+      <view class="weui-cell weui-cell_access" wx:elif="{{member && trade.isTopUp}}"  @tap="onlinePayType">
         <view class="weui-cell__bd">支付方式</view>
-        <view class="weui-cell__ft {{member && trade.isTopUp ? 'weui-cell__ft_in-access' : ''}}">{{trade.onlinePayText}}</view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">{{trade.onlinePayText}}</view>
+
+      </view>
+      <view wx:else class="weui-cell weui-cell_access">
+        <view class="weui-cell__bd">支付方式</view>
+        <view class="weui-cell__ft">微信支付</view>
       </view>
 
       <!--需要配送的订单, 需要选择配送方式-->
@@ -213,6 +218,10 @@
       Event.listen(Event.TRADE_ADDRESS_UPDATE, this.updateAddress.bind(this), this);
       Event.listen(Event.TRADE_COUPON_UPDATE, this.updateCoupon.bind(this), this);
     };
+    async upDate () {
+      await store.refresh('member');
+      this.loaded();
+    };
     methods = {
       input({detail}) {
         this.trade.message = detail.value;
@@ -335,6 +344,9 @@
         }
         // 表单ID
         this.trade.formId = detail.formId;
+        if (this.trade.onlinePayType === 'balance') {
+          await Tips.confirm('是否确认使用余额支付下单？');
+        }
         // 创建订单
         const trade = await this.requestCreateOrder(this.trade, this.selectedAddress);
         // 检查是否下单成功
@@ -344,8 +356,9 @@
         }
         let isPay = false;
         if (trade.onlinePayType === 'balance') {
-          Tips.success('支付成功');
+          await Tips.success('支付成功');
           isPay = true;
+          this.upDate()
         } else {
           // 检查是否为离线订单
           if (trade.paymentType == PAYMENT.OFFLINE) {
