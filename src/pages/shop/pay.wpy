@@ -98,7 +98,7 @@
       this.loaded();
       Event.listen(Event.TRADE_COUPON_UPDATE, this.updateCoupon.bind(this), this);
     };
-    async upDate () {
+    async upDateMember () {
       await store.refresh('member');
       this.loaded();
     };
@@ -127,12 +127,15 @@
             await Tips.alert('余额不足');
             return;
           }
+          if (this.payType.onlinePayType == 'balance') {
+            await Tips.confirm('确认使用余额付款？');
+          }
           const trade = await order.offline(param);
           this.result = trade;
           if (this.payType.onlinePayType == 'balance') {
             await Tips.success('支付成功');
             this.mode = 'success';
-            this.upDate();
+            this.upDateMember();
           } else {
             // 调用后台支付接口
             const payment = await order.prepayOrder(trade.orderId);
@@ -145,7 +148,11 @@
           if (error.errMsg == 'requestPayment:fail cancel') {
             await Tips.error('支付取消');
           } else {
-            await Tips.error('支付失败');
+            if (this.payType.onlinePayType == 'balance') {
+              await Tips.alert('余额不足')
+            } else {
+              await Tips.error('支付失败');
+            }
             console.error('支付失败：', error);
           }
         }

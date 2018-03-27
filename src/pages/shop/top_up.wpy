@@ -19,7 +19,7 @@
         </view>
       </view>
       <view class="input-box">
-        <input class="weui-input" name="money" placeholder="请输入您要充值的金额" type="number" bindinput="bindMoney" value="{{money}}"/>
+        <input class="weui-input" name="money" placeholder="请输入您要充值的金额" type="digit" bindinput="bindMoney" value="{{money}}"/>
       </view>
     </view>
 
@@ -52,7 +52,7 @@
       this.rules = await topUp.getTopUp();
       this.loaded();
     };
-    async upDate () {
+    async upDateMember () {
       await store.refresh('member');
       this.loaded();
     }
@@ -93,7 +93,7 @@
         } else {
           await Tips.alert('支付取消');
         }
-        this.upDate();
+        this.upDateMember();
         this.$switch('../customer/index_template');
       }
     };

@@ -218,7 +218,7 @@
       Event.listen(Event.TRADE_ADDRESS_UPDATE, this.updateAddress.bind(this), this);
       Event.listen(Event.TRADE_COUPON_UPDATE, this.updateCoupon.bind(this), this);
     };
-    async upDate () {
+    async upDateMember () {
       await store.refresh('member');
       this.loaded();
     };
@@ -353,14 +353,18 @@
         const trade = await this.requestCreateOrder(this.trade, this.selectedAddress);
         // 检查是否下单成功
         if (trade == null) {
-          Tips.alert('下单失败');
+          if (this.trade.onlinePayType === 'balance') {
+            await Tips.alert('余额不足')
+          } else {
+            await Tips.alert('下单失败');
+          }
           return;
         }
         let isPay = false;
         if (trade.onlinePayType === 'balance') {
           await Tips.success('支付成功');
           isPay = true;
-          this.upDate()
+          this.upDateMember()
         } else {
           // 检查是否为离线订单
           if (trade.paymentType == PAYMENT.OFFLINE) {
