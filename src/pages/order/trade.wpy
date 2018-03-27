@@ -35,7 +35,7 @@
 
       <!--支付方式-->
       <!--TODO 0为店铺不支持余额支付-->
-      <view class="weui-cell weui-cell_access" wx:if="{{card.supplyBalance == 0}}">
+      <view class="weui-cell weui-cell_access" wx:if="{{card.supplyBalance == 1}}">
         <view class="weui-cell__bd">支付方式</view>
         <view class="weui-cell__ft">微信支付</view>
       </view>
@@ -44,9 +44,9 @@
         <view class="weui-cell__ft weui-cell__ft_in-access">{{trade.onlinePayText}}</view>
       </view>
       <!--显示余额-->
-      <view class="weui-cell weui-cell_access" wx:if="{{card.supplyBalance == 1}}">
+      <view class="weui-cell weui-cell_access" wx:if="{{card.supplyBalance == 0}}">
         <view class="weui-cell__bd">剩余余额</view>
-        <view class="weui-cell__ft">{{member.balance}}</view>
+        <view class="weui-cell__ft">{{member == null ? '0' : member.balance}}元{{balanceText}}</view>
       </view>
 
       <!--需要配送的订单, 需要选择配送方式-->
@@ -186,6 +186,7 @@
       goodsList: null,
       bonusPicker: null,
       selectedBonus: null,
+      balanceText: '',
       type: '' // buy/group/join
     };
     cartManager = Cart.create();
@@ -208,6 +209,9 @@
       // 可用余额支付
       if (this.member != null) {
         this.trade.isTopUp = this.trade.finalPrice <= this.member.balance;
+        this.trade.onlinePayText = this.trade.isTopUp ? '余额支付' : '微信支付';
+        this.trade.onlinePayType = this.trade.isTopUp ? 'balance' : 'wxpay';
+        this.balanceText = this.trade.isTopUp ? '' : '（余额不足）';
       }
       // 可用卡券
       this.coupons = await coupon.available(this.trade.orderGoodsInfos);

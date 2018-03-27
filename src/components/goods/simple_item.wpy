@@ -5,11 +5,17 @@
       <!-- 主体区域-->
       <view @tap="routeToGoods({{goods.id}})">
         <view class="goods-name row-between">
-          <text>{{goods.name}}</text>
+          <text class="inline">{{goods.name}}</text>
         </view>
         <view class="row">
-          <view>
-            <text class="xs muted">已售{{goods.salesVolume}}件</text>
+          <view class="column">
+            <text class="xxs muted inline" wx:if="{{goods.subhead != null}}">{{goods.subhead}}</text>
+            <text class="xxs muted">已售{{goods.salesVolume}}件</text>
+            <view class="row">
+              <block wx:for="{{goods.tags}}" wx:key="index" wx:index="index" wx:for-item="item">
+                <text wx:if="{{item.show}}" class="xxs primary tag-box">{{item.tag}}</text>
+              </block>
+            </view>
           </view>
           <!--折扣信息-->
           <view class="discount-box row" wx:if="{{goods.discount}}">
@@ -98,6 +104,12 @@
         padding: 2px 5px;
         font-size: $text-xxs;
         width: 72rpx;
+      }
+      .tag-box{
+        border:1px solid $color-primary;
+        border-radius: 4rpx;
+        padding: 5rpx;
+        line-height: $text-xxs;
       }
     }
 
