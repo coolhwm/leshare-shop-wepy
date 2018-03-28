@@ -26,7 +26,7 @@
 
       <!--多属性区域-->
       <block wx:if="{{goods.skuProperties.length > 0}}">
-        <block wx:for="{{properties}}" wx:for-item="property" wx:key="index" wx:index="index">
+        <block wx:for="{{properties}}" wx:for-item="property" wx:key="index" wx:index="propertyIndex">
           <view class="sku-list-box column">
             <view class="row">
               <text class="weak sm mr10">{{property.propertyKey}}：</text>
@@ -34,7 +34,7 @@
             </view>
             <view class="sku-item-box row">
               <block  wx:for-item="propertyValue"  wx:for="{{property.property}}" wx:key="index">
-                <view class="sku-item label {{proSelected == propertyValue ? 'primary' : ''}}" @tap="selectPro({{propertyValue}}, {{property.propertyKey}})">
+                <view class="sku-item label {{proSelected == propertyValue ? 'primary' : ''}}" @tap="selectPro({{propertyValue}}, {{index}})">
                   {{propertyValue}}
                 </view>
               </block>
@@ -159,9 +159,9 @@
         this.originalPrice = skuData.detail.originalPrice;
         this.$apply();
       },
-      selectPro (pro, key) {
+      selectPro (pro, index) {
         this.proSelected = pro;
-        this.proKey = key;
+        console.info(pro, index)
       },
       async confirm() {
         if (this.goods.goodsSkuInfo != null) {

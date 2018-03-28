@@ -24,7 +24,7 @@
         </view>
         <!--支付方式-->
         <!--TODO 0为店铺不支持余额支付-->
-        <view class="coupon-box row" wx:if="{{card.supplyBalance == 1}}">
+        <view class="coupon-box row" wx:if="{{card.supplyBalance == 0}}">
           <view class="weui-cell__bd">支付方式</view>
           <view class="weui-cell__ft">{{payType.onlinePayText}}</view>
         </view>
@@ -33,10 +33,12 @@
           <view class="weui-cell__ft weui-cell__ft_in-access">{{payType.onlinePayText}}</view>
         </view>
         <!--显示余额-->
-        <view class="coupon-box row" wx:if="{{card.supplyBalance == 0}}">
-          <view class="weui-cell__bd">余额</view>
-          <view class="weui-cell__ft">{{balanceText}}</view>
-        </view>
+        <block wx:if="{{payType.onlinePayType == 'balance'}}">
+          <view class="coupon-box row" wx:if="{{card.supplyBalance == 1}}">
+            <view class="weui-cell__bd">余额</view>
+            <view class="weui-cell__ft">{{balanceText}}</view>
+          </view>
+        </block>
         <view class="button-box">
           <button class="weui-btn" type="primary" @tap="offline">立即付款</button>
         </view>
@@ -96,7 +98,7 @@
       await auth.login();
       // 用户信息
       await store.init();
-      if (this.card.supplyBalance == 0) {
+      if (this.card.supplyBalance == 1) {
         this.payType.onlinePayType = 'balance';
         this.payType.onlinePayText = '余额支付';
       }
@@ -231,7 +233,7 @@
         return this.ownCoupons
           .filter(item => item.supportType != 1)  // 并不能使仅线上使用
           .filter(item => item.type == 'CASH')    // 必须是现金券
-          .filter(item => item.limitPrice < this.dealPrice); // 金额满足要求
+          .filter(item => item.limitPrice <= this.dealPrice); // 金额满足要求
       },
       couponLabel () {
         if (!this.coupons || !this.dealPrice) return;
@@ -239,7 +241,8 @@
       },
       balanceText () {
         if (this.member == null) return '0元';
-        if (this.dealPrice <= this.member.balance) {
+        const price = this.selectedCoupon ? this.dealPrice * 1 - this.selectedCoupon.price * 1 <= this.member.balance : this.dealPrice;
+        if (price <= this.member.balance) {
           return this.member.balance;
         } else {
           this.payType.onlinePayType = 'wxpay';

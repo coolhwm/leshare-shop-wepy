@@ -40,6 +40,7 @@
   import Tips from '../../utils/Tips';
   import order from '../../api/order';
   import store from '../../store/utils';
+  import WxUtils from '../../utils/WxUtils';
 
   export default class TopUp extends wepy.page {
     data = {
@@ -94,7 +95,7 @@
           await Tips.alert('支付取消');
         }
         this.upDateMember();
-        this.$switch('../customer/index_template');
+        WxUtils.backOrRedirect('/pages/customer/index_template');
       }
     };
     /**
