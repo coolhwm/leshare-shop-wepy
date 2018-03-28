@@ -126,6 +126,7 @@
   import BargainBox from '../../components/template/bargain_box';
   import Separator from '../../components/template/separator';
   import AddressBox from '../../components/template/address_box';
+  import _ from 'underscore';
 
   @connect({
     homePageId: store.get('homePageId'),
@@ -176,7 +177,7 @@
      * 渲染标题栏
      */
     renderNavigationBar() {
-      if (this.param.navigation == null) {
+      if (_.isEmpty(this.param.navigation)) {
         return;
       }
       const {titleText, backgroundColor, textStyle} = this.param.navigation;
