@@ -623,8 +623,10 @@
         const card = this.card;
         const member = this.member;
         const {supplyBonus, bonusRule} = card;
+        // 每使用costBonusUnit积分，抵扣reduceMoney元，最多使用maxReduceBonus积分，订单需满limitMoney元
+        const {costBonusUnit, reduceMoney, maxReduceBonus, limitMoney} = bonusRule;
         // 没有开启积分功能
-        if (supplyBonus != 1 || bonusRule == null) {
+        if (supplyBonus != 1 || bonusRule == null || costBonusUnit == 0 || reduceMoney == 0) {
           this.bonusPicker = null;
           this.clearSelectedBonus();
           return false;
@@ -633,8 +635,6 @@
         if (bonus == 0) {
           return `暂无积分`;
         }
-        // 每使用costBonusUnit积分，抵扣reduceMoney元，最多使用maxReduceBonus积分，订单需满limitMoney元
-        const {costBonusUnit, reduceMoney, maxReduceBonus, limitMoney} = bonusRule;
         // 计算使用积分前的价格
         const {finalPrice, bonusPrice} = this.trade;
         const orderPrice = parseFloat(finalPrice) + (bonusPrice ? parseFloat(bonusPrice) : 0);
