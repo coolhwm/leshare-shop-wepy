@@ -80,10 +80,10 @@
         this.display = true;
       } else {
         // 没有SKU，直接加入购物车
+        this.cartManager.plus(goods, goodsSku);
         if (goods.isTips || goods.isTips == null) {
           Tips.success('已加入购物车');
         }
-        this.cartManager.plus(goods, goodsSku);
         this.clear();
       }
       this.$apply();
@@ -139,13 +139,13 @@
           Tips.alert('请选择');
           return;
         }
+        this.cartManager.plus(this.goods, this.selected);
         if (this.goods.isTips || this.goods.isTips == null) {
           Tips.success('已加入购物车');
         }
-        this.$root.$apply();
-        this.cartManager.plus(this.goods, this.selected);
         // 清理残留数据
         this.clear();
+        this.$root.$apply();
       }
     };
     computed = {

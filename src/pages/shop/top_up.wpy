@@ -2,19 +2,24 @@
   <view wx:if="{{init}}">
     <image src="http://img.leshare.shop/shop/other/top_up.jpg" mode="aspectFill" style="width: 750rpx; height:340rpx;"/>
 
-    <view class="top-up-box row-center">
-      <view class="row" style="flex: 1;flex-wrap: wrap;">
-        <block wx:for="{{rules}}" wx:key="index" wx:index="index" wx:for-item="item">
-          <view wx:if="{{item.isSelected}}" class="sel-item-box column-center" @tap="selected({{index}})">
-            <text>{{item.baseFee}}元</text>
-            <text class="muted xs">送{{item.giftFee}}元</text>
-            <icon class="top-up-selected icon-box"/>
-          </view>
-          <view class="column-center item-box" wx:else @tap="selected({{index}})">
-            <text>{{item.baseFee}}元</text>
-            <text class="muted xs" wx:if="{{item.giftFee > 0}}">送{{item.giftFee}}元</text>
-          </view>
-        </block>
+    <view class="top-up-box column">
+      <view class="row-center">
+        <view class="row" style="flex: 1;flex-wrap: wrap;">
+          <block wx:for="{{rules}}" wx:key="index" wx:index="index" wx:for-item="item">
+            <view wx:if="{{item.isSelected}}" class="sel-item-box column-center" @tap="selected({{index}})">
+              <text>{{item.baseFee}}元</text>
+              <text class="muted xs">送{{item.giftFee}}元</text>
+              <icon class="top-up-selected icon-box"/>
+            </view>
+            <view class="column-center item-box" wx:else @tap="selected({{index}})">
+              <text>{{item.baseFee}}元</text>
+              <text class="muted xs" wx:if="{{item.giftFee > 0}}">送{{item.giftFee}}元</text>
+            </view>
+          </block>
+        </view>
+      </view>
+      <view class="input-box">
+        <input class="weui-input" name="money" placeholder="请输入您要充值的金额" type="digit" bindinput="bindMoney" value="{{money}}"/>
       </view>
     </view>
 
@@ -35,18 +40,20 @@
   import Tips from '../../utils/Tips';
   import order from '../../api/order';
   import store from '../../store/utils';
+  import WxUtils from '../../utils/WxUtils';
 
   export default class TopUp extends wepy.page {
     data = {
       init: false,
       rules: null,
-      rule: null
+      rule: null,
+      money: null
     };
     async onLoad () {
       this.rules = await topUp.getTopUp();
       this.loaded();
     };
-    async upDate () {
+    async upDateMember () {
       await store.refresh('member');
       this.loaded();
     }
@@ -55,15 +62,24 @@
         this.rules.forEach((item, index) => {
           item.isSelected = index === idx
         });
-        this.rule = this.rules[idx]
+        this.rule = this.rules[idx];
+        this.money = null;
+      },
+      bindMoney (e) {
+        this.rules.forEach(item => {
+          item.isSelected = false;
+        });
+        this.rule = null;
+        this.money = e.detail.value;
       },
       async topUp () {
-        if (this.rule == null) {
-          await Tips.alert('请选择金额')
+        if (this.rule == null && this.money == null) {
+          await Tips.alert('请选择金额');
+          return;
         }
         const param = {
-          finalPrice: this.rule.baseFee,
-          dealPrice: this.rule.baseFee * 1 + this.rule.giftFee * 1,
+          finalPrice: this.rule == null ? this.money * 1 : this.rule.baseFee,
+          dealPrice: this.rule == null ? this.money * 1 : this.rule.baseFee * 1 + this.rule.giftFee * 1,
           paymentType: 1
         };
         const trade = await topUp.topUp(param);
@@ -78,8 +94,8 @@
         } else {
           await Tips.alert('支付取消');
         }
-        this.upDate();
-        this.$switch('../customer/index_template');
+        this.upDateMember();
+        WxUtils.backOrRedirect('/pages/customer/index_template');
       }
     };
     /**
@@ -140,5 +156,11 @@
   .rule-box{
     background-color: white;
     padding: 30rpx;
+  }
+  .input-box{
+    border:$border;
+    border-radius: 10rpx;
+    padding: 10rpx;
+    margin: 10rpx 20rpx;
   }
 </style>

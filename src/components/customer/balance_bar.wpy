@@ -2,7 +2,7 @@
   <!--余额、充值-->
   <view class="row blance-bar-box">
     <view class="column-center" @tap="record">
-      <text class="major xxl">￥{{member.balance}}</text>
+      <text class="major xxl">￥{{member == null ? '0' : member.balance}}</text>
       <text>我的余额</text>
     </view>
     <view class="column-center" @tap="pay">

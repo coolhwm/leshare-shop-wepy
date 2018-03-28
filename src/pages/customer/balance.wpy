@@ -11,7 +11,8 @@
       </view>
       <view class="column-center button-box">
         <button plain class="payment-box" @tap="pay">去支付</button>
-        <button plain class=" mt20" @tap="wait" wx:if="{{member == null}}">充值</button>
+        <button plain class=" mt20" @tap="wait" wx:if="{{member == null || card.supplyBalance == 0}}">充值</button>
+        <button plain class=" mt20" @tap="addVip" wx:elif="{{member == null && card.supplyBalance == 1}}">充值</button>
         <button plain class=" mt20" @tap="topUp" wx:else>充值</button>
         <text class="muted mt20" @tap="check">查看账单记录</text>
       </view>
@@ -27,7 +28,8 @@
   import Tips from '../../utils/Tips';
 
   @connect({
-    member: store.get('member')
+    member: store.get('member'),
+    card: store.get('card')
   })
 
   export default class Comment extends wepy.page {
@@ -53,6 +55,9 @@
       },
       wait() {
         Tips.success('敬请期待');
+      },
+      addVip () {
+        this.$navigate('/pages/customer/registe_member')
       }
     };
     mixins = [base];
