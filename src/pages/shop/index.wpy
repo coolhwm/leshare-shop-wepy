@@ -13,9 +13,9 @@
     <CategoryBox top="145px" bottom="55px"/>
 
     <!-- 购物车 -->
-    <!--<block wx:if="{{version.isOrder}}">-->
+    <block wx:if="{{version.isOrder}}">
       <SliderCart @buy.user="buy" :mode.sync="mode"/>
-    <!--</block>-->
+    </block>
 
     <!--SKU选择器-->
     <SkuSelector/>

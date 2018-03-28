@@ -10,38 +10,19 @@
       </view>
 
       <!--规格区域-->
-      <view class="sku-list-box column"  wx:if="{{goods.goodsSkuInfo != null}}">
+      <view class="sku-list-box column">
         <view class="row">
           <text class="weak sm mr10">规格:</text>
           <DisplayBadge :goods.sync="goods" />
         </view>
         <view class="sku-item-box row">
           <block  wx:for-item="skuValue"  wx:for="{{sku}}" wx:key="index">
-            <view class="sku-item label {{skuSelected == skuValue.sku ? 'primary' : ''}} {{skuValue.max ? 'disabled' : ''}}" @tap="selectSkU({{skuValue}})">
+            <view class="sku-item label {{selected == skuValue.sku ? 'primary' : ''}} {{skuValue.max ? 'disabled' : ''}}" @tap="select({{skuValue}})">
               {{skuValue.sku}}
             </view>
           </block>
         </view>
       </view>
-
-      <!--多属性区域-->
-      <block wx:if="{{goods.skuProperties.length > 0}}">
-        <block wx:for="{{properties}}" wx:for-item="property" wx:key="index" wx:index="propertyIndex">
-          <view class="sku-list-box column">
-            <view class="row">
-              <text class="weak sm mr10">{{property.propertyKey}}：</text>
-              <DisplayBadge :goods.sync="goods" />
-            </view>
-            <view class="sku-item-box row">
-              <block  wx:for-item="propertyValue"  wx:for="{{property.property}}" wx:key="index">
-                <view class="sku-item label {{proSelected == propertyValue ? 'primary' : ''}}" @tap="selectPro({{propertyValue}}, {{index}})">
-                  {{propertyValue}}
-                </view>
-              </block>
-            </view>
-          </view>
-        </block>
-      </block>
 
       <!--操作区域-->
       <view class="sku-btn-box row-between">
@@ -69,9 +50,7 @@
     };
     data = {
       goods: null,
-      skuSelected: null,
-      proSelected: null,
-      proKey: null,
+      selected: null,
       price: null,
       originalPrice: null,
       display: false,
@@ -96,19 +75,15 @@
       // 初始化商品对象
       this.goods = goods;
       const hasSku = goods.goodsSkuInfo && (goodsSku == null || goodsSku == '');
-      const hasProperty = goods.skuProperties.length > 0;
       if (hasSku) {
         // 有SKU，且没有选择SKU的情况，展现面板
         this.display = true;
-      } else if (hasProperty) {
-        this.display = true;
-        console.info('hasProperty')
       } else {
         // 没有SKU，直接加入购物车
+        this.cartManager.plus(goods, goodsSku);
         if (goods.isTips || goods.isTips == null) {
           Tips.success('已加入购物车');
         }
-        this.cartManager.plus(goods, goodsSku);
         this.clear();
       }
       this.$apply();
@@ -138,7 +113,7 @@
     }
     clear () {
       skuData = null;
-      this.skuSelected = null;
+      this.selected = null;
       this.originalPrice = null;
       this.price = null;
       this.goods = null;
@@ -148,42 +123,29 @@
       close() {
         this.clear();
       },
-      selectSkU(sku) {
+      select(sku) {
         const skuValue = sku.sku;
         if (sku.max) {
           return;
         }
         skuData.select('规格', skuValue);
-        this.skuSelected = skuValue;
+        this.selected = skuValue;
         this.price = skuData.detail.price;
         this.originalPrice = skuData.detail.originalPrice;
         this.$apply();
       },
-      selectPro (pro, index) {
-        this.proSelected = pro;
-        console.info(pro, index)
-      },
       async confirm() {
-        if (this.goods.goodsSkuInfo != null) {
-          if (this.skuSelected == null) {
-            Tips.alert('请选择');
-            return;
-          }
+        if (this.selected == null) {
+          Tips.alert('请选择');
+          return;
         }
-        if (this.goods.skuProperties.length > 0) {
-          if (this.proSelected == null) {
-            Tips.alert('请选择');
-            return;
-          }
-        }
+        this.cartManager.plus(this.goods, this.selected);
         if (this.goods.isTips || this.goods.isTips == null) {
           Tips.success('已加入购物车');
         }
-        this.$root.$apply();
-        this.cartManager.plus(this.goods, this.skuSelected);
-        console.info(this.goods, this.skuSelected);
         // 清理残留数据
         this.clear();
+        this.$root.$apply();
       }
     };
     computed = {
@@ -212,16 +174,6 @@
           }
         });
         return stocks;
-      },
-      properties () {
-        if (this.goods == null || this.carts == null) {
-          return;
-        }
-        if (this.goods.skuProperties.length <= 0) return;
-        this.goods.skuProperties.forEach(item => {
-          item.property = item.propertyValue.split('，');
-        });
-        return this.goods.skuProperties;
       }
     };
     components = {
