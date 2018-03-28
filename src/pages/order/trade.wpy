@@ -311,9 +311,6 @@
        * 选择付款方式
        */
       async onlinePayType () {
-        if (this.shop.offPay === 0 || this.isForhearOrPack) {
-          return;
-        }
         const trade = this.trade;
         Tips.actionWithFunc(['微信支付', '余额支付'],
           () => {
@@ -331,10 +328,6 @@
        * 确定下单
        */
       async confirm({detail}) {
-        Tips.loading('正在下单');
-        // 检查店铺状态
-        const isOpen = await this.checkShopStatus();
-        if (!isOpen) { return; }
         // 检查是否可以购买
         if (!this.confirmStatus) {
           Tips.alert(this.confirmText);
@@ -346,13 +339,20 @@
         }
         // 表单ID
         this.trade.formId = detail.formId;
-        if (!this.trade.isTopUp) {
-          await Tips.alert('余额不足！');
-          return;
-        }
+
+        // 处理余额支付校验
         if (this.trade.onlinePayType === 'balance') {
-          await Tips.confirm('是否确认使用余额支付下单？');
+          if (!this.trade.isTopUp) {
+            await Tips.alert('余额不足！');
+            return;
+          } else {
+            await Tips.confirm('是否确认使用余额支付下单？');
+          }
         }
+        Tips.loading('正在下单');
+        // 检查店铺状态
+        const isOpen = await this.checkShopStatus();
+        if (!isOpen) { return; }
         // 创建订单
         const trade = await this.requestCreateOrder(this.trade, this.selectedAddress);
         // 检查是否下单成功
@@ -366,9 +366,9 @@
         }
         let isPay = false;
         if (trade.onlinePayType === 'balance') {
+          await this.upDateMember();
           await Tips.success('支付成功');
           isPay = true;
-          this.upDateMember()
         } else {
           // 检查是否为离线订单
           if (trade.paymentType == PAYMENT.OFFLINE) {
@@ -570,6 +570,8 @@
           } else if (this.selectedDelivery.limitPrice > this.trade.dealPrice) {
             deliveryText = `${this.selectedDelivery.name} 起送价￥${this.selectedDelivery.limitPrice}`;
             confirmText = `起送价￥${this.selectedDelivery.limitPrice}`;
+          } else if (this.trade.onlinePayType === 'balance' && !this.trade.isTopUp) {
+            confirmText = `余额不足`;
           } else {
             const fee = this.selectedDelivery.fee > 0 ? `￥${this.selectedDelivery.fee}` : '免配送费';
             deliveryText = `${this.selectedDelivery.name} ${fee}`;

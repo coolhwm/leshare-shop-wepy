@@ -142,7 +142,6 @@
           if (this.payType.onlinePayType == 'balance') {
             await Tips.success('支付成功');
             this.mode = 'success';
-            this.upDateMember();
           } else {
             // 调用后台支付接口
             const payment = await order.prepayOrder(trade.orderId);
@@ -155,14 +154,11 @@
           if (error.errMsg == 'requestPayment:fail cancel') {
             await Tips.error('支付取消');
           } else {
-            if (this.payType.onlinePayType == 'balance') {
-              await Tips.alert('余额不足')
-            } else {
-              await Tips.error('支付失败');
-            }
+            await Tips.error('支付失败');
             console.error('支付失败：', error);
           }
         }
+        await this.upDateMember();
         this.$apply();
       },
       /**
@@ -184,9 +180,6 @@
        * 选择付款方式
        */
       async onlinePayType () {
-        if (this.shop.offPay === 0 || this.isForhearOrPack) {
-          return;
-        }
         const payType = this.payType;
         Tips.actionWithFunc(['微信支付', '余额支付'],
           () => {
