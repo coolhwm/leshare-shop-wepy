@@ -26,15 +26,15 @@
 
       <!--多属性区域-->
       <block wx:if="{{goods.skuProperties.length > 0}}">
-        <block wx:for="{{properties}}" wx:for-item="property" wx:key="index" wx:index="propertyIndex">
+        <block wx:for="{{properties}}" wx:for-item="property" wx:key="index" wx:for-index="index">
           <view class="sku-list-box column">
             <view class="row">
               <text class="weak sm mr10">{{property.propertyKey}}：</text>
               <DisplayBadge :goods.sync="goods" />
             </view>
             <view class="sku-item-box row">
-              <block  wx:for-item="propertyValue"  wx:for="{{property.property}}" wx:key="index">
-                <view class="sku-item label {{proSelected == propertyValue ? 'primary' : ''}}" @tap="selectPro({{propertyValue}}, {{index}})">
+              <block  wx:for-item="propertyValue"  wx:for="{{property.property}}" wx:key="proIndex" wx:for-index="proIndex">
+                <view class="sku-item label {{proSelected[index] == propertyValue ? 'primary' : ''}}" @tap="selectPro({{propertyValue}}, {{index}})">
                   {{propertyValue}}
                 </view>
               </block>
@@ -70,7 +70,7 @@
     data = {
       goods: null,
       skuSelected: null,
-      proSelected: null,
+      proSelected: [],
       proKey: null,
       price: null,
       originalPrice: null,
@@ -160,8 +160,7 @@
         this.$apply();
       },
       selectPro (pro, index) {
-        this.proSelected = pro;
-        console.info(pro, index)
+        this.proSelected[index] = pro;
       },
       async confirm() {
         if (this.goods.goodsSkuInfo != null) {
@@ -171,7 +170,7 @@
           }
         }
         if (this.goods.skuProperties.length > 0) {
-          if (this.proSelected == null) {
+          if (this.proSelected.length < this.goods.skuProperties.length) {
             Tips.alert('请选择');
             return;
           }
@@ -180,8 +179,11 @@
           Tips.success('已加入购物车');
         }
         this.$root.$apply();
+        // const selected = {
+        //   skuSelected: this.skuSelected,
+        //   proSelected: this.proSelected.toString()
+        // }
         this.cartManager.plus(this.goods, this.skuSelected);
-        console.info(this.goods, this.skuSelected);
         // 清理残留数据
         this.clear();
       }
