@@ -1,5 +1,5 @@
 <template>
-  <view class="row goods-row-box" @tap="routeToGoods({{goods.id}})">
+  <view class="row goods-row-box {{goods.goodsBorder == 'none'? '' : 'goods-row-border'}}" @tap="routeToGoods({{goods.id}})">
     <view>
       <image class="goods-image"  lazy-load src="{{goods.imageUrl}}" ></image>
     </view>
@@ -24,7 +24,7 @@
         <view class="price-box" wx:if="{{goods.isPrice || goods.isPrice == null}}">
           <view class="goods-unit">￥</view>
           <text class="goods-price">{{goods.priceLable}}</text>
-          <text class="original-price" wx:if="{{goods.discount}}">￥{{goods.originalPrice}}</text>
+          <text class="original-price" wx:if="{{goods.discount || goods.originalPrice != goods.sellPrice}}">￥{{goods.originalPrice}}</text>
         </view>
 
         <!--加入购物车按钮-->
@@ -58,9 +58,11 @@
 
 <style lang="scss">
   @import "../../../styles/variable";
+  .goods-row-border{
+    border-top: $border;
+  }
   .goods-row-box{
     background-color: white;
-    border-top: $border;
     align-items: center;
     padding: 10rpx;
     .goods-image {
@@ -85,7 +87,8 @@
       }
       .original-price{
         color: $color-muted;
-        font-size: $text-xs;
+        font-size: $text-sm;
+        margin-left: 10rpx;
         text-decoration: line-through;
       }
     }

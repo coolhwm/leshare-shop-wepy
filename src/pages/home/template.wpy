@@ -180,6 +180,7 @@
         return;
       }
       const {titleText, backgroundColor, textStyle} = this.param.navigation;
+      console.info(`[template] title=${titleText}, backgroundColor=${backgroundColor}, textStyle=${textStyle}`);
       if (titleText) {
         wepy.setNavigationBarTitle({
           title: titleText
@@ -264,7 +265,6 @@
     };
     mixins = [base];
     config = {
-      navigationBarTitleText: '首页'
     };
   }
 </script>

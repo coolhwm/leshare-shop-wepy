@@ -74,7 +74,7 @@
   .coupon-main-container{
     width: 255rpx;
     height: 100%;
-    background: linear-gradient(to right, #2F80ED, #1296db);
+    background: linear-gradient(to right,  $color-primary,  $color-primary-darken);
   }
 
   /*单位*/
