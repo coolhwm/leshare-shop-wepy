@@ -330,6 +330,10 @@
             // 预约
             this.$root.$navigate(`/pages/booking/order?goodsId=${targetId}`);
             break;
+          case 'USER_BOOKING':
+            // 预约
+            this.$root.$navigate(`/pages/booking/list`);
+            break;
           default:
             console.info(`[router] unsupport action=${action}, targetId=${targetId}`)
         }
