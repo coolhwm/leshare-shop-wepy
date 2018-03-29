@@ -5,7 +5,8 @@
       <view class="row mb20">
         <text class="xl">￥</text><text class="price-box">{{rule.price}}</text>
         <view class="column ml20">
-          <text class="muted sellPrice-box sm">￥{{rule.goods.maxPrice}}</text>
+          <text class="muted sellPrice-box sm" wx:if="{{rule.goods.maxPrice}}">￥{{rule.goods.maxPrice}}</text>
+          <text class="muted sellPrice-box sm" wx:else>￥{{rule.goods.sellPrice}}</text>
           <view class="price-rule-box">
             <text class="xxs">{{rule.limitCustomer}}人拼团</text>
             <text class="ml10 xxs">{{saveText}}{{saveNum}}</text>

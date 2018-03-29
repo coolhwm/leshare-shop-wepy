@@ -127,18 +127,21 @@
         Tips.alert('请在购物车操作');
         return;
       }
+
       // 处理多规格商品，但是购物车只有一个的情况
       const cartGoods = cartGoodsList[0];
-      if (goodsSku == null && cartGoods.goodsSku != null) {
-        goodsSku = cartGoods.goodsSku
-      }
+      const selText = {
+        skuSelected: cartGoods.goodsSku,
+        proSelected: cartGoods.skuProperty
+      };
       // 购物车对象
-      this.cartManager.minus(goodsId, goodsSku);
+      this.cartManager.minus(goodsId, selText);
       this.$apply();
     }
     clear () {
       skuData = null;
       this.skuSelected = null;
+      this.proSelected = [];
       this.originalPrice = null;
       this.price = null;
       this.goods = null;
@@ -148,6 +151,7 @@
       close() {
         this.clear();
       },
+      // 选择SKU
       selectSkU(sku) {
         const skuValue = sku.sku;
         if (sku.max) {
@@ -179,11 +183,12 @@
           Tips.success('已加入购物车');
         }
         this.$root.$apply();
-        // const selected = {
-        //   skuSelected: this.skuSelected,
-        //   proSelected: this.proSelected.toString()
-        // }
-        this.cartManager.plus(this.goods, this.skuSelected);
+        const selected = {
+          skuSelected: this.skuSelected,
+          proSelected: this.proSelected.length > 0 ? this.proSelected.toString() : null
+        };
+        console.info(selected);
+        this.cartManager.plus(this.goods, selected);
         // 清理残留数据
         this.clear();
       }

@@ -1,8 +1,12 @@
 <template>
   <!--余额、充值-->
   <view class="row blance-bar-box">
-    <view class="column-center" @tap="record">
-      <text class="major xxl">￥{{member == null ? '0' : member.balance}}</text>
+    <view class="column-center" @tap="wait" wx:if="{{member == null || card.supplyBalance == 0}}">
+      <text class="major xxl">￥0</text>
+      <text>我的余额</text>
+    </view>
+    <view class="column-center" @tap="record" wx:else>
+      <text class="major xxl">￥{{member.balance}}</text>
       <text>我的余额</text>
     </view>
     <view class="column-center" @tap="pay">
@@ -16,9 +20,11 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
+  import Tips from '../../utils/Tips';
 
   @connect({
-    member: store.get('member')
+    member: store.get('member'),
+    card: store.get('card')
   })
   export default class BalanceBar extends wepy.component {
     props = {
@@ -30,6 +36,9 @@
       },
       record () {
         this.$root.$navigate('/pages/shop/billing_record')
+      },
+      wait() {
+        Tips.success('敬请期待');
       }
     };
   }

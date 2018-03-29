@@ -23,6 +23,8 @@ export default class Sku {
     this.stock = 0;
     // SKU 的拼装文本
     this.skuText = '';
+    // Property 的拼装文本
+    this.proSelected = '';
     // 占位符
     this.skuKeys = '';
     // 处理后的已选择SKU值

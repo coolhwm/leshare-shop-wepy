@@ -184,7 +184,6 @@ export default class goods extends base {
     if (!skuInfo) {
       return;
     }
-
     const skuLabels = [];
     for (let i = 1; i <= 3; i++) {
       const skuKey = skuInfo[`prop${i}`];

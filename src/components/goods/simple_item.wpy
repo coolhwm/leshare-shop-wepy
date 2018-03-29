@@ -9,11 +9,11 @@
         </view>
         <view class="row">
           <view class="column">
-            <text class="xxs muted inline" wx:if="{{goods.subhead != null}}">{{goods.subhead}}</text>
-            <text class="xxs muted">已售{{goods.salesVolume}}件</text>
+            <text class="xxs muted inline"  wx:if="{{goods.subhead != null}}">{{goods.subhead}}</text>
             <view class="row">
+              <text class="xxs muted">已售{{goods.salesVolume}}件</text>
               <block wx:for="{{goods.tags}}" wx:key="index" wx:index="index" wx:for-item="item">
-                <text wx:if="{{item.show}}" class="xxs primary tag-box">{{item.tag}}</text>
+                <text wx:if="{{item.show}}" class="xxs primary tag-box ml10">{{item.tag}}</text>
               </block>
             </view>
           </view>

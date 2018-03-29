@@ -57,7 +57,7 @@
       endTime: '',
       goodsId: '',
       groupTime: '',
-      ruleId: 25,
+      ruleId: 2,
       rules: {},
       processing: {}
     };

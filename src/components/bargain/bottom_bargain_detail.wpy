@@ -46,10 +46,14 @@
         }
         const {num} = this.sku;
         const goods = this.detail.rule.goods;
-        goods.originalPrice = this.detail.rule.skuDetail.price;
-        goods.sellPrice = this.detail.balance;
-        const skuText = null;
-        const cart = this.cartManager.createCart(goods, skuText, num);
+        goods.originalPrice = this.detail.rule.skuDetail.price * 1;
+        goods.sellPrice = this.detail.balance * 1;
+        const selText = {
+          skuSelected: '',
+          proSelected: ''
+        };
+        const cart = this.cartManager.createCart(goods, selText, num);
+        cart.goodsSku = this.detail.sku;
         const trade = order.createCartTrade([cart], {orderType: 10});
         const {id, ruleId} = this.detail;
         Object.assign(trade, {ruleId, id});

@@ -36,7 +36,7 @@
       <block wx:if="{{trade.paymentType == 1}}">
         <!--支付方式-->
         <!--TODO 0为店铺不支持余额支付-->
-        <view class="weui-cell weui-cell_access" wx:if="{{card.supplyBalance == 0}}">
+        <view class="weui-cell weui-cell_access" wx:if="{{card.supplyBalance == 0 || member == null}}">
           <view class="weui-cell__bd">支付方式</view>
           <view class="weui-cell__ft">微信支付</view>
         </view>
@@ -309,9 +309,6 @@
        * 选择付款方式
        */
       async onlinePayType () {
-        if (this.shop.offPay === 0 || this.isForhearOrPack) {
-          return;
-        }
         const trade = this.trade;
         Tips.actionWithFunc(['微信支付', '余额支付'],
           () => {
@@ -355,11 +352,7 @@
         const trade = await this.requestCreateOrder(this.trade, this.selectedAddress);
         // 检查是否下单成功
         if (trade == null) {
-          if (this.trade.onlinePayType === 'balance') {
-            await Tips.alert('余额不足')
-          } else {
-            await Tips.alert('下单失败');
-          }
+          await Tips.alert('下单失败');
           return;
         }
         let isPay = false;
@@ -392,6 +385,7 @@
         if (isPay && (this.type === 'join' || this.type === 'group')) {
           WxUtils.backOrRedirect('/pages/group/list');
         } else if (isPay && (this.type === 'bargain')) {
+          Event.emit(Event.BARGAIN_LIST_UPDATE);
           WxUtils.backOrRedirect('/pages/bargain/list');
         } else {
           WxUtils.backOrRedirect('/pages/customer/index_template');

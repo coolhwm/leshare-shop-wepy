@@ -10,6 +10,9 @@
       </view>
     </block>
   </view>
+
+  <!--占位符-->
+  <Placeholder :show.sync="isPageEmpty" message="您还没有余额消费记录"/>
 </template>
 
 <script>
@@ -17,6 +20,7 @@
   import base from '../../mixins/base'
   import topUp from '../../api/top_up'
   import pagination from '../../mixins/pagination';
+  import Placeholder from '../../components/common/placeholder';
 
   export default class BillingRecord extends wepy.page {
     data = {
@@ -28,6 +32,7 @@
     }
     methods = {};
     components = {
+      Placeholder: Placeholder
     };
     mixins = [base, pagination];
     config = {

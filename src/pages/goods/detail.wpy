@@ -25,6 +25,9 @@
           <view>
             <view class="small label primary" wx:if="{{detail.isRecommend == 1}}">推荐</view>
             <text class="name">{{detail.name}}</text>
+            <view wx:if="{{detail.subhead != null}}">
+              <text class="xxs muted inline">{{detail.subhead}}</text>
+            </view>
           </view>
           <view class="share-box">
             <button open-type="share" plain class="column-center"  wx:if="{{isShare}}">
@@ -36,6 +39,9 @@
 
         <view class="row mt10">
           <text class="sm muted mr10" wx:if="{{isSales}}">已售{{detail.salesVolume}}件</text>
+          <block wx:for="{{detail.tags}}" wx:key="index" wx:index="index" wx:for-item="item">
+            <text wx:if="{{item.show}}" class="xxs primary tag-box ml10">{{item.tag}}</text>
+          </block>
           <DiscountBadge :goods.sync="detail"/>
         </view>
 
@@ -330,6 +336,12 @@
     .price{
       height: 32px;
       padding-bottom: 10rpx;
+    }
+    .tag-box{
+      border:1px solid $color-primary;
+      border-radius: 4rpx;
+      padding: 5rpx;
+      line-height: $text-xxs;
     }
   }
   .coupons-box{
