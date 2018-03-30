@@ -81,10 +81,10 @@ export default class shop extends base {
   /**
    * 查询版本及配额信息
    */
-  static chargeLimit () {
-    const url = `${this.baseUrl}/shop_charge_limit`;
-    return this.get(url).then(data => this._precoessVersion(data));
-  }
+  // static chargeLimit () {
+  //   const url = `${this.baseUrl}/shop_charge_limit`;
+  //   return this.get(url).then(data => this._precoessVersion(data));
+  // }
 
   /**
    * 上报FORM
@@ -155,20 +155,20 @@ export default class shop extends base {
   /**
    * 处理版本
    */
-  static _precoessVersion(data) {
-    if (data == null) {
-      // 没有初始化收费配置的情况下，开启所有权限
-      return {
-        isMember: true,
-        isOrder: true
-      }
-    } else {
-      const version = data.chargeVersion;
-      data.isMember = [2, 3, 6, 7].some(value => value == version);
-      data.isOrder = [4, 5, 6, 7].some(value => value == version);
-      return data;
-    }
-  }
+  // static _precoessVersion(data) {
+  //   if (data == null) {
+  //     // 没有初始化收费配置的情况下，开启所有权限
+  //     return {
+  //       isMember: true,
+  //       isOrder: true
+  //     }
+  //   } else {
+  //     const version = data.chargeVersion;
+  //     data.isMember = [2, 3, 6, 7].some(value => value == version);
+  //     data.isOrder = [4, 5, 6, 7].some(value => value == version);
+  //     return data;
+  //   }
+  // }
   /**
    * 处理满减
    */

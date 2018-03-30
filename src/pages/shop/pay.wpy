@@ -1,4 +1,5 @@
 <template>
+  <Loading :init.sync="init"/>
   <Tips/>
   <view class="container" wx:if="{{init}}">
 
@@ -71,6 +72,7 @@
   import store from '../../store/utils';
   import Event from '../../utils/Event';
   import Tips from '../../utils/Tips';
+  import Loading from '../../components/common/loading';
   import FormTips from '../../components/weui/tips';
 
   @connect({
@@ -261,6 +263,7 @@
       }
     };
     components = {
+      Loading: Loading,
       Tips: FormTips
     };
     mixins = [base, input];

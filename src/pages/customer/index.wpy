@@ -102,8 +102,7 @@
     shop: store.get('shop'),
     member: store.get('member'),
     card: store.get('card'),
-    user: store.get('user'),
-    version: store.get('version')
+    user: store.get('user')
   })
   export default class CustomerIndex extends wepy.page {
     data = {

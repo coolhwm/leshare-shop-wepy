@@ -19,8 +19,7 @@
 
   @connect({
     shop: store.get('shop'),
-    status: store.get('status'),
-    version: store.get('version')
+    status: store.get('status')
   })
   export default class ShopNav extends wepy.component {
     props = {
@@ -34,7 +33,7 @@
     computed = {
       // 需要进行优化
       title() {
-        if (this.shop == null || this.shop.type == null || this.version == null) return;
+        if (this.shop == null || this.shop.type == null) return;
         const type = this.shop.type;
         // 状态加载失败
         if (this.status == null) {
@@ -49,7 +48,7 @@
         }
         // 在线商城/在线点餐
         if (this.mode == '1') {
-          const name = this.version.isOrder ? type.name : type.basicName;
+          const name = type.name;
           wepy.setNavigationBarTitle({ title: name });
           return name;
         }
@@ -60,9 +59,9 @@
         }
       },
       badgeText() {
-        if (this.shop == null || this.shop.type == null || this.version == null) return;
+        if (this.shop == null || this.shop.type == null) return;
         const type = this.shop.type;
-        const text = this.version.isOrder ? type.badgeText : type.basicBadgeText;
+        const text = type.badgeText;
         return this.mode == 2 ? '堂食' : text;
       }
     }

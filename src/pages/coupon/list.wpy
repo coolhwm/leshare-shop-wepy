@@ -9,7 +9,7 @@
       <CouponItem :coupon.sync="item" @delete.user="delete" @select.user="detail"/>
     </repeat>
 
-    <form report-submit="true" @submit="use"  wx:if="{{!isPageEmpty && tab.selectedId == 'NEVER_USED' && version.isOrder}}">
+    <form report-submit="true" @submit="use"  wx:if="{{!isPageEmpty && tab.selectedId == 'NEVER_USED'}}">
       <view class="btn-panel">
         <button class="weui-btn" type="primary" form-type="submit">立即下单使用</button>
       </view>
@@ -37,12 +37,7 @@
   import Event from '../../utils/Event';
   import WxUtils from '../../utils/WxUtils';
   import Loading from '../../components/common/loading';
-  import { connect } from 'wepy-redux';
-  import store from '../../store/utils';
 
-  @connect({
-    version: store.get('version')
-  })
   export default class CouponList extends wepy.page {
     data = {
       init: false,

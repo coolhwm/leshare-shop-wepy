@@ -29,7 +29,7 @@
         </view>
 
         <!--数量选择器-->
-        <block wx:if="{{quantity}}">
+        <block>
           <view class="quantity row">
             <block wx:if="{{goods.num > 0}}">
               <icon class="minus" @tap.stop="handleMinusCart({{goods.id}})"/>
@@ -52,9 +52,6 @@
   export default class GoodsItem extends wepy.component {
     props = {
       goods: {
-      },
-      quantity: {
-        default: true
       }
     };
     components = {

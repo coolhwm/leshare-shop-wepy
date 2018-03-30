@@ -13,7 +13,7 @@
     <CategoryBox top="145px" bottom="55px"/>
 
     <!-- 购物车 -->
-    <block wx:if="{{version.isOrder}}">
+    <block>
       <SliderCart @buy.user="buy" :mode.sync="mode"/>
     </block>
 
@@ -40,8 +40,7 @@
 
   @connect({
     member: store.get('member'),
-    card: store.get('card'),
-    version: store.get('version')
+    card: store.get('card')
   })
   export default class ShopIndex extends wepy.page {
     data = {

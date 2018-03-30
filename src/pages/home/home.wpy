@@ -33,13 +33,12 @@
     <view class="nav-box column-cernter">
       <view class="row-between">
         <button class="shop-btn" plain form-type="submit" @tap="goto" data-url="/pages/shop/index?mode=1">
-          <image class="icon-xl" src="http://img.leshare.shop/shop/home/food.png" wx:if="{{version.isOrder}}"></image>
-          <image class="icon-xl" src="http://img.leshare.shop/shop/home/inshop.png" wx:else></image>
-          <text class="weak">{{version.isOrder ? shop.type.name : shop.type.basicName}}</text>
+          <image class="icon-xl" src="http://img.leshare.shop/shop/home/food.png"></image>
+          <text class="weak">{{shop.type.name}}</text>
         </button>
 
         <!--堂食模式-->
-        <button class="shop-btn" @tap="goto" data-url='/pages/shop/index?mode=2' plain form-type="submit" wx:if="{{shop.inShop == 1 && version.isOrder}}">
+        <button class="shop-btn" @tap="goto" data-url='/pages/shop/index?mode=2' plain form-type="submit" wx:if="{{shop.inShop == 1}}">
           <image class="icon-xl" src="http://img.leshare.shop/shop/home/inshop.png" ></image>
           <text class="weak">堂食/外带</text>
         </button>
@@ -128,7 +127,6 @@
     ownCoupons: store.get('ownCoupons'),
     reduce: store.get('reduce'),
     notices: store.get('notices'),
-    version: store.get('version'),
     member: store.get('member')
   })
   export default class ShopHome extends wepy.page {

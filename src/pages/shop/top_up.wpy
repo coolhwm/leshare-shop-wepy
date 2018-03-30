@@ -1,4 +1,5 @@
 <template>
+  <Loading :init.sync="init"/>
   <view wx:if="{{init}}">
     <image src="http://img.leshare.shop/shop/other/top_up.jpg" mode="aspectFill" style="width: 750rpx; height:340rpx;"/>
 
@@ -40,6 +41,7 @@
   import Tips from '../../utils/Tips';
   import order from '../../api/order';
   import store from '../../store/utils';
+  import Loading from '../../components/common/loading';
   import WxUtils from '../../utils/WxUtils';
 
   export default class TopUp extends wepy.page {
@@ -115,6 +117,7 @@
     computed = {
     };
     components = {
+      Loading: Loading
     };
     mixins = [base];
     config = {

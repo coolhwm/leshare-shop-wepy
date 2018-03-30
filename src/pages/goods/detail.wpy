@@ -48,7 +48,7 @@
 
           <!--数量选择器-->
           <view class="quantity row mr20">
-            <view class="quantity-cart-btn" @tap.stop="handlePlusCart({{detail}})" wx:if="{{version.isOrder && cartType=='BUTTON'}}">
+            <view class="quantity-cart-btn" @tap.stop="handlePlusCart({{detail}})" wx:if="{{cartType=='BUTTON'}}">
               加入购物车
             </view>
           </view>
@@ -155,7 +155,6 @@
 
   @connect({
     pickCoupons: store.get('pickCoupons'),
-    version: store.get('version'),
     discount: store.get('discount')
   })
   export default class GoodsDetail extends wepy.page {

@@ -37,7 +37,7 @@ export default class config extends base {
         notices: shop._processNotices(data.notices),
         reduce: shop._processReduce(data.reduceRules),
         shop: shop._processInfo(data.shop),
-        version: shop._precoessVersion(data.shopChargeLimit),
+        // version: shop._precoessVersion(data.shopChargeLimit),
         status: shop._processStatus(data.shopStatusInfo)
       };
     }).then(config => {

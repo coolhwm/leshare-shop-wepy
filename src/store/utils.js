@@ -143,8 +143,8 @@ const fetch = (field) => {
       return shop.reduces();
     case 'recommend' :
       return goods.recommend().next();
-    case 'version' :
-      return shop.chargeLimit();
+    // case 'version' :
+    //   return shop.chargeLimit();
   }
 };
 
