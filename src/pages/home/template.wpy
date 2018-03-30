@@ -156,8 +156,8 @@
         console.info(`[template] load home page`);
         this.pageId = this.homePageId;
       }
-      if (_.isEmpty(this.pageId)) {
-        console.warn('[template] page_id is null, render fail');
+      if (_.isNull(this.pageId)) {
+        console.warn(`[template] page_id is ${this.pageId}, render fail`);
         return;
       }
       const page = await await config.layout(this.pageId);
