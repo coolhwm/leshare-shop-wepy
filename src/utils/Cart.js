@@ -134,7 +134,7 @@ export default class Cart {
       discountText: goods.discountText
     };
   }
-  /**
+  /**git
    * 新增购物车数据
    */
   plus(goods, selText, num = 1) {

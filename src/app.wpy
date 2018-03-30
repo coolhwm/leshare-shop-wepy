@@ -18,7 +18,7 @@
       pageParams: null,
       componentsParams: null,
       baseUrl: null,
-      version: 'v3.1.0'
+      version: 'v3.2.3'
     };
     constructor () {
       super();
@@ -146,7 +146,7 @@
       window: {
         backgroundTextStyle: 'dark',
         backgroundColor: '#F5F5F5',
-        navigationBarBackgroundColor: '#EE0000'
+        navigationBarBackgroundColor: '#1296db'
       }
     };
   }

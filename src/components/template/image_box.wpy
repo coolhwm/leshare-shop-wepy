@@ -6,11 +6,11 @@
       <!--普通的图片-->
       <button plain class="column-around" wx:if="{{image.action == 'SHARE'}}" open-type="share">
         <image style="width:{{param.width}};height:{{param.height}} " mode="aspectFill" src="{{image.url}}" @tap="routeByAction({{image}})"></image>
-        <text wx:if="{{param.isShowTitle}}" class="image-title">{{image.title}}</text>
+        <text wx:if="{{param.isShowTitle}}" class="image-title" style="color: {{param.color}}">{{image.title}}</text>
       </button>
       <view class="column-around" wx:else >
         <image style="width:{{param.width}};height:{{param.height}} " mode="aspectFill" src="{{image.url}}" @tap="routeByAction({{image}})"></image>
-        <text wx:if="{{param.isShowTitle}}" class="image-title">{{image.title}}</text>
+        <text wx:if="{{param.isShowTitle}}" class="image-title" style="color: {{param.color}}">{{image.title}}</text>
       </view>
     </block>
   </view>

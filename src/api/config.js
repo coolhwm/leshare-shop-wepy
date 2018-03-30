@@ -7,7 +7,7 @@ export default class config extends base {
   static fieldsToCopy = {
     SWIPER: ['height'],
     IMAGE_BOX: ['heigth', 'width', 'isTitle'],
-    GOODS_BOX: ['isCart', 'isPrice', 'isGoodsName', 'isSales', 'skuMode', 'isTips']
+    GOODS_BOX: ['isCart', 'isPrice', 'isGoodsName', 'isSales', 'skuMode', 'isTips', 'goodsBorder']
   };
 
   static discount = null;

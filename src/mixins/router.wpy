@@ -235,7 +235,7 @@
             break;
           case 'USER':
             // 用户首页
-            this.routeToCustomer();
+            this.$root.$switch('/pages/customer/index_template');
             break;
           case 'GOODS_ALL':
             // 商品首页
@@ -295,6 +295,14 @@
             // 会员积分
             this.$root.$navigate('/pages/customer/bonus_list');
             break;
+          case 'TOP_UP':
+            // 会员充值
+            this.$root.$navigate('/pages/customer/balance');
+            break;
+          case 'ORDER_LIST':
+            // 会员充值
+            this.$root.$navigate('/pages/order/list');
+            break;
           case 'PHONE':
             // 拨打电话
             wepy.makePhoneCall({
@@ -322,8 +330,12 @@
             this.$root.$navigate(`/pages/shop/about_us`);
             break;
           case 'BOOKING':
-            // 店铺信息
+            // 预约
             this.$root.$navigate(`/pages/booking/order?goodsId=${targetId}`);
+            break;
+          case 'USER_BOOKING':
+            // 预约
+            this.$root.$navigate(`/pages/booking/list`);
             break;
           default:
             console.info(`[router] unsupport action=${action}, targetId=${targetId}`)
