@@ -19,7 +19,7 @@
       <image src="{{detail.rule.goods.imageUrl}}" style="width: 150rpx;height: 150rpx;"/>
       <view class="column">
         <text>{{detail.rule.goods.name}}</text>
-        <text class="muted mt20">原价:￥{{detail.rule.skuDetail.price}}</text>
+        <text class="muted mt20">原价:￥{{detail.rule.skuDetail.price ? detail.rule.skuDetail.price : detail.rule.goodsPrice}}</text>
       </view>
       <text class="primary xxl">现价:￥{{detail.balance}}</text>
     </view>

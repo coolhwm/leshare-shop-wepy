@@ -5,7 +5,7 @@
       <view class="row mb20">
         <text class="xl">￥</text><text class="price-box">{{rule.floorPrice}}</text>
         <view class="column ml20">
-          <text class="muted sellPrice-box sm">￥{{rule.goods.maxPrice}}</text>
+          <text class="muted sellPrice-box sm">￥{{rule.goods.maxPrice ? rule.goods.maxPrice : rule.goodsPrice}}</text>
           <view class="price-rule-box">
             <text class="xxs">{{saveText}}{{saveNum}}</text>
           </view>
