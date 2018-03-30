@@ -1,8 +1,8 @@
 <template>
   <view class="row group_more_item">
-    <image class="img-box" src="{{item.goodsImage}}"/>
+    <image class="img-box mr20" src="{{item.goodsImage}}"/>
     <view class="column content-box">
-      <text class="lg">{{item.goodsName}}</text>
+      <text class="lg inline">{{item.goodsName}}</text>
       <view class="row-between">
         <text class="primary xxl">￥{{item.goodsPrice}}</text>
         <text class="muted sm origin">￥{{item.originPrice	}}</text>
@@ -29,7 +29,7 @@
     };
     methods = {
       group (id) {
-        this.$root.$navigate(`/pages/group/goods_detail?ruleId${id}`)
+        this.$root.$navigate(`/pages/group/goods_detail?ruleId=${id}`)
       }
     };
     computed = {

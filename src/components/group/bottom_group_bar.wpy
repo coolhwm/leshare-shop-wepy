@@ -73,8 +73,8 @@
           this.state = 'join'
         }
         if (origin != null && origin.id != null) return;
-        if (current.goods.goodsSkuInfo == null) {
-          current.goods.rulePrice = current.price
+        if (current.goodsGroupSkuDetails.length <= 0) {
+          current.goods.rulePrice = current.price;
         }
         const result = await favorite.is(current.goods.id);
         this.isFav = result.isFavorite === 1;

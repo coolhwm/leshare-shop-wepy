@@ -9,7 +9,7 @@
       <view>
         <text class="xl">{{goods.name}}</text>
       </view>
-      <view  wx:if="{{goods.subhead != null}}">
+      <view class="goods-subhead" wx:if="{{goods.subhead != null}}">
         <text class="xxs muted inline">{{goods.subhead}}</text>
       </view>
       <!--销量展示-->
@@ -80,6 +80,9 @@
     .main-box{
       margin-left: 20rpx;
       flex: 1;
+      .goods-subhead{
+        max-width: 255px;
+      }
     }
     .tag-box{
       border:1px solid $color-primary;

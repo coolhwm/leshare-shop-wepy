@@ -22,11 +22,11 @@
 
         <!--基本信息-->
         <view class="row-between">
-          <view>
+          <view class="goods-content">
             <view class="small label primary" wx:if="{{detail.isRecommend == 1}}">推荐</view>
-            <text class="name">{{detail.name}}</text>
-            <view wx:if="{{detail.subhead != null}}">
-              <text class="xxs muted inline">{{detail.subhead}}</text>
+            <text class="name inline">{{detail.name}}</text>
+            <view class="goods-subhead" wx:if="{{detail.subhead != null}}">
+              <text class="xxs muted">{{detail.subhead}}</text>
             </view>
           </view>
           <view class="share-box">
@@ -329,6 +329,10 @@
     padding-bottom: 0rpx;
     border-bottom: $border;
     border-top: $border;
+    .goods-content,.goods-subhead{
+      max-width: 300px;
+      word-wrap:break-word;
+    }
     .name{
       font-size: $text-xxl;
       font-weight: bold;

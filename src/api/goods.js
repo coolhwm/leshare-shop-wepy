@@ -207,7 +207,7 @@ export default class goods extends base {
    */
   static _processGoodsData (item) {
     // 结构赋值
-    const {name, sellPrice, originalPrice} = item;
+    const {name, sellPrice, originalPrice, subhead} = item;
 
     // 长名字处理
     if (name.length > 12) {
@@ -221,6 +221,11 @@ export default class goods extends base {
     // 销售价处理
     if (originalPrice == null || originalPrice == 0) {
       item.originalPrice = sellPrice;
+    }
+
+    // 描述处理
+    if (subhead != null) {
+      item.subhead = subhead.replace(/\s/g, '');
     }
 
     // 处理图片

@@ -4,7 +4,7 @@
       <view class="title mr20 ">{{title}}</view>
       <view class="describe-box">{{describe}}</view>
     </view>
-    <view class="column-center time-box" wx:if="{{content.day}}">
+    <view class="column-center time-box" wx:if="{{content.sec}}">
       <text class="danger xxs">距结束仅剩</text>
       <view class="row">
         <view class="time-num-box">{{content.day}}</view>

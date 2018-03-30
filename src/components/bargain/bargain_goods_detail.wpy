@@ -7,11 +7,11 @@
       <text class="bargain-goods-name lg ml10">{{bargain.rule.goods.name}}</text>
       <view>
         <view class="mb20 ml10">
-          <text class="weak xs">砍价立省{{bargain.rule.skuDetail.price * 1 - bargain.rule.floorPrice * 1}}</text>
+          <text class="weak xs">砍价立省{{bargain.disparityPrice}}</text>
         </view>
         <text class="primary ml10">现价：￥{{bargain.balance}}</text>
         <view class="row-between ml10">
-          <text class="muted sellPrice-box">￥{{bargain.rule.skuDetail.price}}</text>
+          <text class="muted sellPrice-box">￥{{bargain.rule.skuDetail == null ? bargain.rule.goodsPrice : bargain.rule.skuDetail.price}}</text>
           <text class="bargain-price-box">[砍完价￥{{bargain.rule.floorPrice}}]</text>
         </view>
       </view>

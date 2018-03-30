@@ -57,14 +57,14 @@
       endTime: '',
       goodsId: '',
       groupTime: '',
-      ruleId: 2,
+      ruleId: '',
       rules: {},
       processing: {}
     };
-    async onLoad () {
+    async onLoad ({ruleId}) {
       await auth.login();
       await store.init();
-      await this.update();
+      await this.update(ruleId);
     };
     onUnload() {
       this.$invoke('TimeOutBar', 'clear');
@@ -73,9 +73,9 @@
       await this.update();
       wepy.stopPullDownRefresh();
     }
-    async update () {
-      this.rules = await group.rules(this.ruleId);
-      this.processing = await group.processing(this.ruleId);
+    async update (ruleId) {
+      this.rules = await group.rules(ruleId);
+      this.processing = await group.processing(ruleId);
       this.endTime = this.rules.endTime;
       this.goodsId = this.rules.goodsId;
       this.groupTime = this.processing.map(item => {

@@ -8,7 +8,7 @@
           <text class="inline">{{goods.name}}</text>
         </view>
         <view class="row">
-          <view class="column">
+          <view class="column goods-subhead">
             <text class="xxs muted inline"  wx:if="{{goods.subhead != null}}">{{goods.subhead}}</text>
             <view class="row">
               <text class="xxs muted">已售{{goods.salesVolume}}件</text>
@@ -94,7 +94,7 @@
       flex: 1;
       justify-content: flex-start;
       min-height: 70px;
-      .goods-name{
+      .goods-name,.goods-subhead{
         max-width: 380rpx;
       }
       .goods-sku-badge{

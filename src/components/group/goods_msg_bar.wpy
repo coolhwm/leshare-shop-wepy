@@ -62,6 +62,8 @@
       rule (rule) {
         if (rule.price && rule.goods.maxPrice) {
           this.saveNum = (rule.goods.maxPrice * 1 - rule.price * 1).toFixed(2);
+        } else {
+          this.saveNum = (rule.goods.sellPrice * 1 - rule.price * 1).toFixed(2);
         }
       }
     };

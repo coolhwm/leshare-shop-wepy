@@ -48,6 +48,15 @@
         this.$root.$navigate(`/pages/group/group_info_list?ruleId=${ruleId}`)
       }
     };
+    watch = {
+      processing (detail) {
+        detail.forEach(item => {
+          if (item.rule.goodsGroupSkuDetails.length <= 0) {
+            item.rule.goods.rulePrice = item.rule.price;
+          }
+        })
+      }
+    }
     components = {
       ProcessItem: ProcessItem
     };
