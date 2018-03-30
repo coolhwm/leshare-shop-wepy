@@ -7,7 +7,7 @@
     <!--信息面板-->
     <view class="buy-panel-info-container">
       <!--商品图-->
-      <image class="buy-panel-icon" src="{{sku.isReady ? sku.detail.imageUrl : goods.imageUrl}}" />
+      <image class="buy-panel-icon" src="{{sku.isReady && sku.detail.imageUrl ? sku.detail.imageUrl : goods.imageUrl}}" />
       <!--文字 -->
       <view class="buy-panel-title-price">
         <text class="buy-panel-title">{{goods.name}}</text>
@@ -226,7 +226,7 @@
         if (this.goods == null) return;
         if (this.goods.skuProperties.length <= 0) return;
         this.goods.skuProperties.forEach(item => {
-          item.property = item.propertyValue.split('，');
+          item.property = item.propertyValue.split(',');
         });
         return this.goods.skuProperties;
       }

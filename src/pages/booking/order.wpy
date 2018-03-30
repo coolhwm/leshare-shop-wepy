@@ -238,13 +238,14 @@
     padding: 30rpx;
     border-radius: 20rpx;
     .goods-img{
-      width: $img-width;
-      height: $img-width;
-    }
-    .goods-box{
-      height: $img-width;
-      justify-content: space-between;
-    }
+      min-width: $img-width;
+    width: $img-width;
+    height: $img-width;
+  }
+  .goods-box{
+    height: $img-width;
+    justify-content: space-between;
+  }
     .goods-price-box{
       flex-direction: row-reverse;
     }

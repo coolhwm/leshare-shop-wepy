@@ -226,7 +226,7 @@
         }
         if (this.goods.skuProperties.length <= 0) return;
         this.goods.skuProperties.forEach(item => {
-          item.property = item.propertyValue.split('，');
+          item.property = item.propertyValue.split(',');
         });
         return this.goods.skuProperties;
       }

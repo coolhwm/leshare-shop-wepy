@@ -49,7 +49,6 @@
 
     <!--插件-->
     <repeat for="{{plugins}}" key="index" index="index" item="item">
-
     </repeat>
   </view>
 </template>

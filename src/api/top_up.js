@@ -23,8 +23,13 @@ export default class booking extends base {
    */
   static checkRecord () {
     const url = `${this.baseUrl}/members/balance_detail?sort=desc`;
-    return new Page(url);
+    return new Page(url, this._processRecord.bind(this));
   }
 
   /** ********************* 数据处理方法 ***********************/
+  static _processRecord(data) {
+    if (data.costMoney) {
+      data.costMoney = data.costMoney.toFixed(2);
+    }
+  }
 }

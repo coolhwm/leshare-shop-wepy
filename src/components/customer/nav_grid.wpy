@@ -37,18 +37,19 @@
   .nav-grid-box{
     .grid-box + .grid-box{
       border-top: $border;
+      button{
+        padding: 0;
+        line-height: 1.2em;
+      }
     }
     .row-box{
       align-items: center;
       padding: 20rpx 0;
     }
     .cell-box{
-      width: 150rpx;
-    }
-    button{
       padding: 0;
-      line-height: 1.2em;
+      width: 150rpx;
+      text{ line-height: 21px;}
     }
   }
-
 </style>
