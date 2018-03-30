@@ -85,6 +85,10 @@
       const result = await auth.user({block: true, redirect: true});
       if (!result) return;
       await store.init();
+      if (this.customPageId == 0) {
+        console.warn('[customer] customer page_id=3, render fail');
+        return;
+      }
       const page = await config.layout(this.customPageId);
       if (page) {
         this.components = page.components;
