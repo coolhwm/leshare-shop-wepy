@@ -94,6 +94,10 @@
         <text>配送费</text>
         <text class="major">+￥{{trade.postFee}}</text>
       </view>
+      <view class="price-box row-between" >
+        <text>餐盒费</text>
+        <text class="major">+￥{{trade.foodBoxFee}}</text>
+      </view>
       <view class="price-box row-between" wx:if="{{trade.couponPrice > 0}}">
         <text>优惠券</text>
         <text class="major">-￥{{trade.couponPrice}}</text>
@@ -209,6 +213,10 @@
         // 处理配送方式
         await this.updateDelivery();
       }
+      this.goodsList.forEach(item => {
+        item.goodsFoodBoxFee = item.goodsFoodBoxFee * item.count
+      });
+      this.trade.foodBoxFee = this.goodsList.reduce((prev, current) => prev + current.goodsFoodBoxFee, 0);
       // 刷新价格
       this.updateTradePrice();
       // 可用卡券
@@ -525,6 +533,8 @@
       trade.finalPrice += trade.dealPrice ? parseFloat(trade.dealPrice) : 0;
       // 运费
       trade.finalPrice += trade.postFee ? parseFloat(trade.postFee) : 0;
+      // 餐盒费
+      trade.finalPrice += trade.foodBoxFee ? parseFloat(trade.foodBoxFee) : 0;
       // 优惠券
       trade.finalPrice -= trade.couponPrice ? parseFloat(trade.couponPrice) : 0;
       // 积分

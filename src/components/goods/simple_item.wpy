@@ -95,7 +95,7 @@
       justify-content: flex-start;
       min-height: 70px;
       .goods-name,.goods-subhead{
-        max-width: 380rpx;
+        max-width: 360rpx;
       }
       .goods-sku-badge{
         background-color: $color-primary;

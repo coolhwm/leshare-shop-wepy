@@ -9,8 +9,8 @@
         <icon class="close normal" color="gray" @tap="close" />
       </view>
       <!--内容区域-->
-      <view class="content-box">
-        <scroll-view class="scroll-box column" scroll-y>
+      <view class="content-box {{goods.goodsSkuInfo != null && goods.skuProperties.length > 0 || goods.skuProperties.length > 1 ? '' : 'sm-scroll-box'}}">
+        <scroll-view class="scroll-box column {{goods.goodsSkuInfo != null && goods.skuProperties.length > 0 || goods.skuProperties.length > 1 ? '' : 'sm-scroll-box'}}" scroll-y>
           <!--规格区域-->
           <view class="sku-list-box column"  wx:if="{{goods.goodsSkuInfo != null}}">
             <view class="row">
@@ -190,7 +190,6 @@
           skuSelected: this.skuSelected,
           proSelected: this.proSelected.length > 0 ? this.proSelected.toString() : null
         };
-        console.info(selected);
         this.cartManager.plus(this.goods, selected);
         // 清理残留数据
         this.clear();
@@ -254,11 +253,17 @@
       position: fixed;
       border-radius: 3px;
       width: 650rpx;
-      max-height: 300px;
+      max-height: 600rpx;
       top: 30%;
       left: 50rpx;
       background-color: #fFF;
       z-index: 1000002;
+    }
+    .scroll-box,.content-box{
+      height: 360rpx;
+    }
+    .sm-scroll-box{
+      height: 200rpx;
     }
   }
   .sku-title{
@@ -271,9 +276,6 @@
       top: 20rpx;
       right: 20rpx;
     }
-  }
-  .scroll-box,.content-box{
-    max-height: 200px;
   }
   .sku-list-box{
     padding-left: 30rpx;

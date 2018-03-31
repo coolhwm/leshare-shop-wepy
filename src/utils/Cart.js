@@ -123,6 +123,7 @@ export default class Cart {
       innerCid: goods.innerCid,
       goodsImage: goods.imageUrl,
       goodsPrice: goodsPrice,
+      goodsFoodBoxFee: goods.extraParam ? goods.extraParam.foodBoxFee : 0,
       goodsNum: num,
       totalPrice: goodsPrice,
       originalPrice: originalPrice,
@@ -134,7 +135,7 @@ export default class Cart {
       discountText: goods.discountText
     };
   }
-  /**git
+  /***git
    * 新增购物车数据
    */
   plus(goods, selText, num = 1) {
@@ -147,6 +148,7 @@ export default class Cart {
       cart.totalPrice = (cart.goodsNum * cart.goodsPrice).toFixed(2);
     } else {
       const cart = this.createCart(goods, selText, num);
+      console.info(cart);
       // 新增对象
       this.carts.push(cart);
     }
