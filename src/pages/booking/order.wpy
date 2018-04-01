@@ -16,6 +16,7 @@
         </view>
       </view>
     </view>
+
     <form @submit="submit">
       <view class="booking-box">
         <view class="row-center top-box">
@@ -44,7 +45,7 @@
 
             <view class="weui-cell weui-cell_input">
               <view class="weui-cell__hd">
-                <view class="weui-label">日期</view>
+                <view class="weui-label">预约日期</view>
               </view>
               <view class="weui-cell__bd">
                 <picker mode="date" value="{{order.date}}" bindchange="bindDateChange">
@@ -54,7 +55,7 @@
             </view>
             <view class="weui-cell weui-cell_input">
               <view class="weui-cell__hd">
-                <view class="weui-label">时间</view>
+                <view class="weui-label">预约时间</view>
               </view>
               <view class="weui-cell__bd">
                 <picker mode="time" value="{{order.time}}" bindchange="bindTimeChange">
@@ -62,7 +63,52 @@
                 </picker>
               </view>
             </view>
-
+            <block wx:for="{{extraParam}}" wx:for-item="item" wx:key="index">
+              <block wx:if="{{item.type == 'text'}}">
+                <view class="weui-cell weui-cell_input">
+                  <view class="weui-cell__hd">
+                    <view class="weui-label">{{item.label}}</view>
+                  </view>
+                  <view class="weui-cell__bd">
+                    <input class="weui-input" name="{{item.name}}"/>
+                  </view>
+                </view>
+              </block>
+              <block wx:if="{{item.type == 'number'}}">
+                <view class="weui-cell weui-cell_input">
+                  <view class="weui-cell__hd">
+                    <view class="weui-label">{{item.label}}</view>
+                  </view>
+                  <view class="weui-cell__bd">
+                    <input class="weui-input" type="number" maxlength="11" name="{{item.name}}"/>
+                  </view>
+                </view>
+              </block>
+              <block wx:if="{{item.type == 'picker'}}">
+                <view class="weui-cell weui-cell_input"
+                      wx:if="{{item.pickerType == 'date' ||item.pickerType == 'time'}}">
+                  <view class="weui-cell__hd">
+                    <view class="weui-label">{{item.label}}</view>
+                  </view>
+                  <view class="weui-cell__bd">
+                    <picker mode="{{item.pickerType == 'date' ? 'date' : 'time'}}" value="{{item.default}}"
+                            bindchange="{{item.pickerType == 'date' ? 'bindDateChange' : 'bindTimeChange'}}">
+                      <view class="weui-input">{{item.default}}</view>
+                    </picker>
+                  </view>
+                </view>
+                <view class="weui-cell weui-cell_input" wx:else>
+                  <view class="weui-cell__hd">
+                    <view class="weui-label">{{item.label}}</view>
+                  </view>
+                  <view class="weui-cell__bd">
+                    <picker bindchange="bindPickerChange" value="{{item.index}}" range="{{item.data}}">
+                      <view class="weui-input">{{item.data[item.index]}}</view>
+                    </picker>
+                  </view>
+                </view>
+              </block>
+            </block>
             <view class="weui-cell weui-cell_input">
               <view class="weui-cell__hd">
                 <view class="weui-label">备注</view>
@@ -74,6 +120,7 @@
           </view>
         </view>
       </view>
+      <view style="height: 110rpx;"></view>
       <view class="booking-btn-box row-center">
         <button style="color: white;" form-type="submit" plain>
           提交预约
@@ -98,7 +145,8 @@
     data = {
       init: false,
       order: {},
-      goods: {}
+      goods: null,
+      extraParam: null
     };
     async onLoad ({goodsId}) {
       this.goods = await goods.getInfo(goodsId);
@@ -109,18 +157,62 @@
       let min = date.getMinutes();
       this.order.date = `${date.getFullYear()}-${mon < 10 ? '0' + mon : mon}-${day < 10 ? '0' + day : day}`;
       this.order.time = `${hour < 10 ? '0' + hour : hour}:${min < 10 ? '0' + min : min}`;
+      if (this.goods.booking != null) {
+        if (this.goods.booking.extraParam) {
+          this.extraParam = JSON.parse(this.goods.booking.extraParam);
+          this.extraParam.forEach(item => {
+            if (item.type === 'picker') {
+              this.order[item.name] = item.pickerType === 'time' || item.pickerType === 'date' ? item.default : item.data[item.index];
+            }
+          });
+        }
+      }
       this.loaded();
     };
     methods = {
       bindDateChange (e) {
+        if (this.extraParam != null) {
+          this.extraParam.forEach(item => {
+            if (item.pickerType === 'date') {
+              item.default = e.detail.value;
+              this.order[item.name] = item.default
+            }
+          });
+        }
         this.order.date = e.detail.value
       },
       bindTimeChange  (e) {
+        if (this.extraParam != null) {
+          this.extraParam.forEach(item => {
+            if (item.pickerType === 'time') {
+              item.default = e.detail.value;
+              this.order[item.name] = item.default
+            }
+          });
+        }
         this.order.time = e.detail.value
+      },
+      bindPickerChange (e) {
+        if (this.extraParam != null) {
+          this.extraParam.forEach(item => {
+            if (item.pickerType === 'picker') {
+              item.index = e.detail.value;
+              this.order[item.name] = item.data[item.index]
+            }
+          });
+        }
       },
       async submit ({detail}) {
         this.order.name = detail.value.name;
         this.order.phone = detail.value.phone.replace(/\s/g, '');
+        let param = {};
+        if (this.extraParam != null) {
+          this.extraParam.forEach(item => {
+            if (item.type !== 'picker') {
+              this.order[item.name] = detail.value[item.name];
+            }
+          });
+        }
         if (!this.validate()) {
           return;
         }
@@ -134,14 +226,21 @@
           goodsNum: 1
         };
         const trade = order.createCartTrade([goods], {orderType: 10});
-        const param = {
-          name: detail.value.name,
-          phone: detail.value.phone,
-          serviceTime: this.order.date + ' ' + this.order.time,
-          remark: detail.value.remark,
+        param = {
+          order: trade,
           goodsId: this.goods.id,
-          order: trade
+          name: this.order.name,
+          phone: this.order.phone,
+          serviceTime: this.order.date + ' ' + this.order.time,
+          extraParam: this.extraParam != null ? {} : ''
         };
+        if (this.extraParam != null) {
+          this.extraParam.forEach(item => {
+            param.extraParam[item.name] = this.order[item.name];
+          });
+          param.extraParam = JSON.stringify(param.extraParam);
+        }
+        console.info(param);
 
         // 创建订单
         const result = await this.requestCreateOrder(param);
@@ -201,7 +300,8 @@
       navigationBarTitleText: '提交预约'
     };
     validate () {
-      const rules = [
+      let rules = [];
+      rules = [
         {
           value: this.order.name,
           method: 'required',
@@ -222,8 +322,28 @@
           value: this.order.phone,
           method: 'tel',
           message: '请输入正确的手机格式'
+        }, {
+          value: this.order.date,
+          method: 'required',
+          message: '预约日期不能为空'
+        }, {
+          value: this.order.time,
+          method: 'required',
+          message: '预约时间不能为空'
         }
       ];
+      if (this.booking != null) {
+        this.booking.filter(item => item.required)
+          .forEach(item => {
+            const rule = {
+              value: this.order[item.name],
+              method: 'required',
+              message: `${item.label}不能为空`
+            };
+            rules.push(rule);
+          });
+      }
+      console.info(rules);
       return this.check(rules);
     }
   }

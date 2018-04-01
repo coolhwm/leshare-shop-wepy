@@ -59,7 +59,6 @@ export default class booking extends base {
   }
   // 处理预约时间
   static _processServiceTime (data) {
-    console.info(data.serviceTime);
     data.date = data.serviceTime.slice(0, 10);
     data.time = data.serviceTime.slice(11, 20);
   }

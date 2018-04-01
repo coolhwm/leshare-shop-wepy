@@ -94,7 +94,7 @@
         <text>配送费</text>
         <text class="major">+￥{{trade.postFee}}</text>
       </view>
-      <view class="price-box row-between" >
+      <view class="price-box row-between" wx:if="{{shop.type.key == 1}}">
         <text>餐盒费</text>
         <text class="major">+￥{{trade.foodBoxFee}}</text>
       </view>

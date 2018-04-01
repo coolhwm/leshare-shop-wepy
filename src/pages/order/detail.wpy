@@ -62,6 +62,10 @@
         <text>运费</text>
         <text class="major">+￥{{order.postFee}}</text>
       </view>
+      <view class="price-box row-between" wx:if="{{shop.type.key == 1}}">
+        <text>餐盒费</text>
+        <text class="major">+￥{{order.foodBoxFee}}</text>
+      </view>
       <view class="price-box row-between" wx:if="{{order.couponPrice > 0}}">
         <text>优惠券</text>
         <text class="major">-￥{{order.couponPrice}}</text>
@@ -100,7 +104,9 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
   import base from '../../mixins/base';
   import auth from '../../api/auth';
   import order from '../../api/order';
@@ -111,6 +117,9 @@
   import OrderItem from '../../components/order/order_item';
   import InShopStatus from '../../components/order/inshop_status';
   import Loading from '../../components/common/loading';
+  @connect({
+    shop: store.get('shop')
+  })
   export default class OrderDetail extends wepy.page {
     data = {
       order: {

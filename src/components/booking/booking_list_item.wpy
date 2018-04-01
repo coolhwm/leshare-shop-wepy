@@ -6,7 +6,7 @@
         <view class="user-info-container">
           <text class="sm ml10">预约时间：{{detail.serviceTime}}</text>
         </view>
-        <text wx:if="{{detail.status === 'PROCESS'}}" class="sm primary">预约中</text>
+        <text wx:if="{{detail.status === 'WAITING_PROCCESS'}}" class="sm primary">处理中</text>
         <text wx:elif="{{detail.status === 'TIMEOUT'}}" class="sm primary">已过期</text>
         <text wx:elif="{{detail.status === 'CANCEL'}}" class="sm primary">已取消</text>
         <text wx:elif="{{detail.status === 'FINISH'}}" class="sm primary">已结束</text>
@@ -24,13 +24,12 @@
 
     <!--操作栏-->
     <view class="booking-bottom-box row mb10 mt10">
-      <button class="eui-btn mini-btn mr10" size="mini" wx:if="{{detail.status === 'PROCESS' && detail.order.status == 2}}" @tap="cancel({{detail.id}})">取消预约</button>
-      <view class="row" wx:elif="{{detail.status === 'PROCESS' && detail.order.status == 1}}">
+      <button class="eui-btn mini-btn mr10" size="mini" wx:if="{{detail.status === 'WAITING_PROCCESS' && detail.order.status == 2}}" @tap="cancel({{detail.id}})">取消预约</button>
+      <view class="row" wx:elif="{{detail.status === 'WAITING_PROCCESS' && detail.order.status == 1}}">
         <button class="eui-btn mini-btn mr10" size="mini" @tap="cancel({{detail.id}})">取消预约</button>
         <button class="weui-btn mini-btn mr10" size="mini" type="primary" @tap="pay({{detail.order.orderId}})">立即支付</button>
       </view>
       <button wx:if="{{detail.status === 'CANCEL'}}" size="mini" class="weui-btn mini-btn mr10" @tap="booking({{detail.goodsId}})">重新预约</button>
-
     </view>
   </view>
 </template>

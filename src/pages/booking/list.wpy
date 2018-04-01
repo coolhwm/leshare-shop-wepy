@@ -39,10 +39,10 @@
       tab: {
         list: [
           {id: '0', title: '全部', status: ''},
-          {id: '1', title: '预约中', status: 'PROCESS'},
-          {id: '2', title: '已过期', status: 'TIMEOUT'},
+          {id: '1', title: '处理中', status: 'WAITING_PROCCESS'},
+          {id: '2', title: '已超时', status: 'TIMEOUT'},
           {id: '3', title: '已取消', status: 'CANCEL'},
-          {id: '4', title: '已结束', status: 'FINISH'}
+          {id: '4', title: '已完成', status: 'FINISH'}
         ],
         selectedId: '0'
       }
