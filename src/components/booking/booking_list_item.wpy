@@ -24,7 +24,7 @@
 
     <!--操作栏-->
     <view class="booking-bottom-box row mb10 mt10">
-      <button class="eui-btn mini-btn mr10" size="mini" wx:if="{{detail.status === 'WAITING_PROCCESS' && detail.order.status == 2}}" @tap="cancel({{detail.id}})">取消预约</button>
+      <button class="eui-btn mini-btn mr10" size="mini" wx:if="{{detail.status === 'WAITING_PROCCESS' && (detail.order.status == 2 || detail.order == null)}}" @tap="cancel({{detail.id}})">取消预约</button>
       <view class="row" wx:elif="{{detail.status === 'WAITING_PROCCESS' && detail.order.status == 1}}">
         <button class="eui-btn mini-btn mr10" size="mini" @tap="cancel({{detail.id}})">取消预约</button>
         <button class="weui-btn mini-btn mr10" size="mini" type="primary" @tap="pay({{detail.order.orderId}})">立即支付</button>
@@ -138,7 +138,6 @@
 
   .booking-bottom-box{
     flex-direction: row-reverse;
-    border-top: 1px solid #FAFAFA;
     .booking-btn-box{
       color: white;
       background-color: $color-primary;
