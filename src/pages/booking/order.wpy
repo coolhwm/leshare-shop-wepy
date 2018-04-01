@@ -240,8 +240,6 @@
           });
           param.extraParam = JSON.stringify(param.extraParam);
         }
-        console.info(param);
-
         // 创建订单
         const result = await this.requestCreateOrder(param);
         // 检查是否下单成功
@@ -343,7 +341,6 @@
             rules.push(rule);
           });
       }
-      console.info(rules);
       return this.check(rules);
     }
   }

@@ -29,7 +29,7 @@
   import BookingItem from '../../components/booking/booking_list_item';
   import Event from '../../utils/Event';
 
-  export default class OrderList extends wepy.page {
+  export default class BookingList extends wepy.page {
     data = {
       init: true,
       page: {
