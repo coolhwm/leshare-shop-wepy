@@ -9,16 +9,26 @@
       <view>
         <text class="xl">{{goods.name}}</text>
       </view>
-      <!--销量展示-->
-      <view class="row" wx:if="{{goods.isSales || goods.isSales == null}}">
-        <text class="xs muted">已售{{goods.salesVolume}}件</text>
-        <!--折扣-->
-        <view wx:if="{{goods.discount && (goods.isPrice || goods.isPrice == null)}}">
-          <repeat for="{{[goods]}}" key="i" index="i" item="item">
-            <DiscountBadge :goods.sync="item"/>
-          </repeat>
-        </view>
+      <view class="goods-subhead" wx:if="{{goods.subhead != null}}">
+        <text class="xxs muted inline">{{goods.subhead}}</text>
       </view>
+      <!--销量展示-->
+      <view class="row">
+        <view class="row" wx:if="{{goods.isSales || goods.isSales == null}}">
+          <text class="xs muted">已售{{goods.salesVolume}}件</text>
+          <!--折扣-->
+          <view wx:if="{{goods.discount && (goods.isPrice || goods.isPrice == null)}}">
+            <repeat for="{{[goods]}}" key="i" index="i" item="item">
+              <DiscountBadge :goods.sync="item"/>
+            </repeat>
+          </view>
+        </view>
+        <!--标签-->
+        <block wx:for="{{goods.tags}}" wx:key="index" wx:for-item="tag">
+          <text wx:if="{{tag.isShow}}" class="xxs primary tag-box ml10">{{tag.tag}}</text>
+        </block>
+      </view>
+
       <!--价格-->
       <view class="row-between" wx:if="{{(goods.isPrice || goods.isPrice == null) || (goods.isCart || goods.isCart == null)}}">
         <view class="price-box" wx:if="{{goods.isPrice || goods.isPrice == null}}">
@@ -72,6 +82,15 @@
     .main-box{
       margin-left: 20rpx;
       flex: 1;
+      .goods-subhead{
+        max-width: 255px;
+      }
+    }
+    .tag-box{
+      border:1px solid $color-primary;
+      border-radius: 4rpx;
+      padding: 5rpx;
+      line-height: $text-xxs;
     }
     .price-box{
       display: flex;

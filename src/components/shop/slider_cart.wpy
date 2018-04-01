@@ -99,10 +99,18 @@
     methods = {
       plus(cart) {
         const goods = {id: cart.goodsId};
-        this.cartManager.plus(goods, cart.goodsSku);
+        const sel = {
+          skuSelected: cart.goodsSku,
+          proSelected: cart.skuProperty
+        };
+        this.cartManager.plus(goods, sel);
       },
       minus(cart) {
-        this.cartManager.minus(cart.goodsId, cart.goodsSku);
+        const sel = {
+          skuSelected: cart.goodsSku,
+          proSelected: cart.skuProperty
+        };
+        this.cartManager.minus(cart.goodsId, sel);
       },
       cart() {
         if (!this.status || !this.status.open) {

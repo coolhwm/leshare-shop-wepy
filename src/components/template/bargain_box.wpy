@@ -14,8 +14,8 @@
       <scroll-view scroll-x class="tight-box" wx:if="{{param.layout == 'TIGHT'}}">
         <repeat for="{{param.data}}" key="index" index="index" item="item">
           <view class="column bargain-tight-box" @tap="detail({{item.ruleId}})">
-            <view class="content-top-box">
-              <image class="bargain-image" lazy-load src="{{item.goodsImage}}"></image>
+            <view class="content-top-box column">
+              <image class="bargain-image" lazy-load src="{{item.goodsImage}}" mode="aspectFill"></image>
               <text class="bargain-goods-name mb10 xs">{{item.goodsName}}</text>
               <view class="row">
                 <text class="muted xxs">最低</text>
@@ -88,8 +88,10 @@
       border-bottom: $border;
     }
     .bargain-goods-name{
-      white-space:pre-wrap;
       width:$size;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap
     }
     .bargain-goods-price{
       color:#e64340;

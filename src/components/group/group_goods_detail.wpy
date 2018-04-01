@@ -9,11 +9,11 @@
         <view class="mb20 ml10">
           <text class="weak xs mr10">{{rule.limitCustomer}}人拼团</text>
           <text class="weak">·</text>
-          <text class="weak xs ml10">拼团立省{{rule.goods.maxPrice * 1 - rule.price * 1}}</text>
+          <text class="weak xs ml10">拼团立省{{disparityPrice}}</text>
         </view>
         <view>
           <text class="group-price-box">￥{{rule.price}}</text>
-          <text class="muted sellPrice-box">￥{{rule.goods.maxPrice}}</text>
+          <text class="muted sellPrice-box">￥{{rule.goods.maxPrice ? rule.goods.maxPrice : rule.goods.originalPrice}}</text>
         </view>
       </view>
     </view>
@@ -32,6 +32,16 @@
     methods = {
       detail (id) {
         this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${id}`)
+      }
+    };
+    computed = {
+      disparityPrice () {
+        if (this.rule.goods == null) return;
+        if (this.rule.goods.maxPrice) {
+          return (this.rule.goods.maxPrice * 1 - this.rule.price * 1).toFixed(2)
+        } else {
+          return (this.rule.goods.originalPrice * 1 - this.rule.price * 1).toFixed(2)
+        }
       }
     };
     watch = {

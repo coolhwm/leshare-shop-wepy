@@ -77,7 +77,10 @@
     watch = {
       detail (detail) {
         // 初始化定时器
-        if (detail !== null && this.init === false) {
+        if (detail != null && this.init === false) {
+          if (detail.rule.goodsGroupSkuDetails.length <= 0) {
+            detail.rule.goods.rulePrice = detail.rule.price;
+          }
           this.countdowm(detail.groupTime.replace(/-/g, '/'), 'groupTime');
           this.init = true;
         }

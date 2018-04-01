@@ -130,6 +130,7 @@ export default class order extends base {
         innerCid: goods.innerCid,
         skuText: goods.skuText,
         goodsSku: goods.goodsSku,
+        skuProperty: goods.skuProperty,
         goodsSellPrice: goods.originalPrice,
         discount: goods.discount,
         discountRate: goods.discountRate,

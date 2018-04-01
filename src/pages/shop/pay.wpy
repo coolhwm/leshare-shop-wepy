@@ -25,7 +25,7 @@
         </view>
         <!--支付方式-->
         <!--TODO 0为店铺不支持余额支付-->
-        <view class="coupon-box row" wx:if="{{card.supplyBalance == 0}}">
+        <view class="coupon-box row" wx:if="{{card.supplyBalance == 0 || member == null}}">
           <view class="weui-cell__bd">支付方式</view>
           <view class="weui-cell__ft">{{payType.onlinePayText}}</view>
         </view>
@@ -100,7 +100,7 @@
       await auth.login();
       // 用户信息
       await store.init();
-      if (this.card.supplyBalance == 1) {
+      if (this.card.supplyBalance == 1 && this.member != null) {
         this.payType.onlinePayType = 'balance';
         this.payType.onlinePayText = '余额支付';
       }

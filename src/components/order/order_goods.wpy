@@ -7,6 +7,7 @@
     <view class="order-goods-title-container column">
       <text>{{goods.goodsName}}</text>
       <text class="muted" wx:if="{{goods.goodsSku}}">{{goods.goodsSku}}</text>
+      <text class="muted" wx:if="{{goods.skuProperty}}">{{goods.skuProperty}}</text>
       <!--折扣信息-->
       <view class="discount-box row" wx:if="{{goods.discount}}">
         <view class="discount-rate"><text>{{goods.discountRate}}</text></view>

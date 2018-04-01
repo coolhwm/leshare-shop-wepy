@@ -7,7 +7,7 @@
     <!--信息面板-->
     <view class="buy-panel-info-container">
       <!--商品图-->
-      <image class="buy-panel-icon" src="{{sku.isReady ? sku.detail.imageUrl : goods.imageUrl}}" />
+      <image class="buy-panel-icon" src="{{sku.isReady && sku.detail.imageUrl ? sku.detail.imageUrl : goods.imageUrl}}" />
       <!--文字 -->
       <view class="buy-panel-title-price">
         <text class="buy-panel-title">{{goods.name}}</text>
@@ -24,7 +24,7 @@
     </view>
 
     <!--SKU展示 -->
-    <view class="buy-panel-sku-container" wx:if="{{sku.exists}}">
+    <view class="buy-panel-sku-container {{goods.skuProperties.length > 0 ? 'no-border-bottom' : ''}}" wx:if="{{goods.goodsSkuInfo != null}}">
       <view wx:for="{{sku.labels}}" wx:for-item="label" wx:key="key">
         <view class="buy-panel-sku-title">
           <text class="buy-panel-sku-title-text">{{label.key}}：</text>
@@ -32,7 +32,23 @@
         <view class="buy-panel-sku-list">
           <block wx:for-item="skuValue" wx:for="{{label.value}}" wx:key="*this" >
             <view class="label{{sku.disabledSkuValues[skuValue] ? 'disabled' : '' }} {{sku.selected[label.key] == skuValue ? 'primary' : ''}}"
-                  @tap="select({{label.key}}, {{skuValue}})">{{skuValue}}</view>
+                  @tap="selectSkU({{label.key}}, {{skuValue}})">{{skuValue}}</view>
+          </block>
+        </view>
+      </view>
+    </view>
+
+    <!-- PRO展示 -->
+    <view class="buy-panel-sku-container" wx:if="{{goods.skuProperties.length > 0}}">
+      <view wx:for="{{properties}}" wx:for-item="property" wx:key="index" wx:for-index="index">
+        <view class="buy-panel-sku-title">
+          <text class="weak sm mr10">{{property.propertyKey}}：</text>
+        </view>
+        <view class="buy-panel-sku-list">
+          <block  wx:for-item="propertyValue"  wx:for="{{property.property}}" wx:key="proIndex" wx:for-index="proIndex">
+            <view class="sku-item label {{proSelected[index] == propertyValue ? 'primary' : ''}}" @tap="selectPro({{propertyValue}}, {{index}})">
+              {{propertyValue}}
+            </view>
           </block>
         </view>
       </view>
@@ -51,7 +67,7 @@
     </view>
 
     <block wx:if="{{status.open}}">
-      <view class="buy-panel-next {{sku.next ? '' : 'buy-panel-empty'}}" @tap="confirm({{action}})">
+      <view class="buy-panel-next {{sku.next && goods.skuProperties.length == proSelected.length ? '' : 'buy-panel-empty'}}" @tap="confirm({{action}})">
         <text>{{buttonText}}</text>
       </view>
     </block>
@@ -83,10 +99,11 @@
   })
   export default class GoodsPanel extends wepy.component {
     data = {
-      goods: {},
+      goods: null,
       source: null,
       action: 'cart',
-      display: false
+      display: false,
+      proSelected: []
     };
     skuManager = null;
     cartManager = Cart.create();
@@ -113,14 +130,19 @@
       this.goods = null;
       this.action = 'cart';
       this.display = false;
+      this.proSelected = [];
     }
     methods = {
       // 选择SKU
-      select(key, value) {
+      selectSkU(key, value) {
         if (this.sku.disabledSkuValues[value]) {
           return;
         }
         this.skuManager.select(key, value);
+      },
+      // 选择PRO
+      selectPro (pro, index) {
+        this.proSelected[index] = pro;
       },
       // 关闭SKU
       close() {
@@ -137,19 +159,23 @@
         }
         // 增加到购物车
         const {skuText, num} = this.sku;
+        const selText = {
+          skuSelected: skuText,
+          proSelected: this.proSelected.length > 0 ? this.proSelected.toString() : null
+        };
         if (type === 'cart') {
           Tips.success('已加入购物车');
           // 关闭面板
           this.display = false;
           this.$apply();
-          this.cartManager.plus(this.goods, skuText, num);
+          this.cartManager.plus(this.goods, selText, num);
         } else if (type === 'begin' || type === 'help') {
           const result = await bargain.GoodsBargain(this.goods.ruleId, this.goods.id, this.sku.skuText);
           await Tips.success('砍价成功');
           const isBegin = true;
           this.$root.$navigate(`../bargain/bargain_detail?bargainId=${result.id}&&isBegin=${isBegin}`);
         } else {
-          const cart = this.cartManager.createCart(this.goods, skuText, num);
+          const cart = this.cartManager.createCart(this.goods, selText, num);
           const trade = order.createCartTrade([cart], {orderType: 10});
           if (type === 'join' || type === 'group') {
             const {groupId, ruleId} = this.goods;
@@ -195,6 +221,14 @@
             max: this.sku.stock
           }
         }
+      },
+      properties () {
+        if (this.goods == null) return;
+        if (this.goods.skuProperties.length <= 0) return;
+        this.goods.skuProperties.forEach(item => {
+          item.property = item.propertyValue.split(',');
+        });
+        return this.goods.skuProperties;
       }
     };
     components = {
@@ -302,6 +336,10 @@
     margin-left: 30rpx;
     padding-top: 25rpx;
     border-bottom: 1px solid #E2E2E2;
+  }
+
+  .no-border-bottom{
+    border-bottom: none;
   }
 
   /*SKU列表*/

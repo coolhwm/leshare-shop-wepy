@@ -109,7 +109,18 @@ export default class group extends base {
   static _processPrice (data) {
     // 一共砍了多少钱
     data.allPrice = (data.details.reduce((prev, current) => prev + current.reducePrice, 0)).toFixed(2);
-    const goodsPrice = data.rule.skuDetail.price;
+    let goodsPrice = '';
+    if (data.rule.skuDetail != null) {
+      goodsPrice = data.rule.skuDetail.price;
+    } else {
+      goodsPrice = data.rule.goodsPrice;
+    }
+    // 砍价省多少钱
+    if (data.rule.skuDetail != null) {
+      data.disparityPrice = (data.rule.skuDetail.price * 1 - data.rule.floorPrice * 1).toFixed(2)
+    } else {
+      data.disparityPrice = (data.rule.goodsPrice * 1 - data.rule.floorPrice * 1).toFixed(2)
+    }
     // 剩余多少钱
     data.balance = (goodsPrice * 1 - data.allPrice * 1).toFixed(2);
     // 砍价的百分比

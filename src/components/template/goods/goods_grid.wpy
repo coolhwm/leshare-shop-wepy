@@ -10,10 +10,16 @@
     <view class="goods-title" @tap="routeToGoods({{goods.id}})">
       <text wx:if="{{goods.isGoodsName}}">{{goods.name}}</text>
     </view>
-
+    <view>
+    </view>
     <view class="row-between" wx:if="{{goods.isSales || goods.isPrice || goods.isCart}}">
       <view class="content-box column" wx:if="{{goods.isSales || goods.isPrice}}">
-        <text class="xs muted" wx:if="{{goods.isSales}}">已售{{goods.salesVolume}}件</text>
+        <view class="row">
+          <text class="xs muted" wx:if="{{goods.isSales}}">已售{{goods.salesVolume}}件</text>
+          <block wx:for="{{goods.tags}}" wx:key="index" wx:index="index" wx:for-item="item">
+            <text wx:if="{{item.isShow}}" class="xxs primary tag-box ml10">{{item.tag}}</text>
+          </block>
+        </view>
         <view class="row" wx:if="{{goods.isPrice}}">
           <text class="major lg" >￥{{goods.priceLable}}</text>
           <text class="cancel ml10" wx:if="{{goods.discount}}">￥{{goods.originalPrice}}</text>
@@ -85,6 +91,12 @@
         -webkit-line-clamp: 2;
         overflow: hidden;
       }
+    }
+    .tag-box{
+      border:1px solid $color-primary;
+      border-radius: 4rpx;
+      padding: 5rpx;
+      line-height: $text-xxs;
     }
     .content-box{
       padding: 5rpx 10rpx;

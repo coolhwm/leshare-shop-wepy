@@ -40,6 +40,9 @@
           api._processGoodsPriceRange(goods);
           api._processGoodsPriceLabel(goods);
         })
+      } else {
+        goods.priceLable = goods.rulePrice;
+        goods.sellPrice = goods.rulePrice;
       }
       const source = this.$root.$wxpage.route;
       const action = state;
