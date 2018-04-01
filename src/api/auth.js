@@ -91,14 +91,29 @@ export default class auth extends base {
   }
 
   /**
+   * 服务端解密用户信息
+   */
+  static async decodePhone(rawUser) {
+    const url = `${this.baseUrl}/auth/decode_phone`;
+    const param = {
+      encryptedData: rawUser.encryptedData,
+      iv: rawUser.iv,
+      thirdSession: this.getConfig('third_session'),
+      app_code: this.getShopCode()
+    };
+    return await this.get(url, param);
+  }
+
+  /**
    * 执行登录操作
    */
   static async doLogin() {
     const {code} = await wepy.login();
-    const {third_session, login_code} = await this.session(code);
+    const {third_session: thirdSession, login_code} = await this.session(code);
     await this.setConfig('login_code', login_code);
-    await this.setConfig('third_session', third_session);
+    await this.setConfig('third_session', thirdSession);
     await this.login();
+    return thirdSession;
   }
 
   /**
