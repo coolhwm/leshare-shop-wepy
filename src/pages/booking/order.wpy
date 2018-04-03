@@ -6,19 +6,10 @@
 
   <view class="container column" wx:if="{{init}}">
 
-    <view class="row booking-goods-box">
-      <image class="goods-img" src="{{goods.imageUrl}}"/>
-      <view class="column goods-box ml20">
-        <view class="column">
-          <text class="xl">{{goods.name}}</text>
-          <text class="muted sm">{{goods.subhead}}</text>
-        </view>
-        <view class="row goods-price-box" wx:if="{{goods.sellPrice != 0}}">
-          <text class="xl danger ml20">￥{{goods.sellPrice}}</text>
-          <text class="muted original-price">￥{{goods.originalPrice}}</text>
-        </view>
-      </view>
-    </view>
+    <!--商品信息区域-->
+    <block>
+      <BookingGoodsInfoBar :goods.sync="goods"/>
+    </block>
 
     <form @submit="submit">
       <view class="booking-box">
@@ -147,7 +138,8 @@
   import Tips from '../../utils/Tips';
   import FormTips from '../../components/weui/tips';
   import input from '../../mixins/input';
-  import goods from '../../api/goods'
+  import goods from '../../api/goods';
+  import BookingGoodsInfoBar from '../../components/booking/booking_goods_info_bar'
 
   @connect({
     status: store.get('status')
@@ -289,7 +281,8 @@
     };
     components = {
       Loading: Loading,
-      Tips: FormTips
+      Tips: FormTips,
+      BookingGoodsInfoBar: BookingGoodsInfoBar
     };
     mixins = [base, input];
     config = {
@@ -347,31 +340,11 @@
 <style lang="scss">
   @import "../../styles/variable";
   $img-width: 200rpx;
-  .booking-goods-box{
-    background-color: white;
-    margin: 20rpx;
-    padding: 30rpx;
-    border-radius: 20rpx;
-    .goods-img{
-      min-width: $img-width;
-    width: $img-width;
-    height: $img-width;
-  }
-  .goods-box{
-    height: $img-width;
-    justify-content: space-between;
-  }
-    .goods-price-box{
-      flex-direction: row-reverse;
-    }
-    .original-price{
-      text-decoration: line-through;
-    }
-  }
   .booking-box{
     background-color: white;
     margin: 20rpx;
     border-radius: 20rpx;
+    padding-bottom: 20rpx;
     .top-box{
       flex: 1;
       border-top-left-radius: 20rpx;

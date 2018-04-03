@@ -3,16 +3,12 @@
 
   <view class="container column" wx:if="{{init}}">
 
-    <view class="row booking-goods-box">
-      <image class="goods-img" src="{{detail.goods.imageUrl}}"/>
-      <view class="column goods-box ml20">
-        <text class="xl">{{detail.goods.name}}</text>
-        <view class="row goods-price-box">
-          <text class="xl danger ml20">￥{{detail.goods.sellPrice}}</text>
-          <text class="muted original-price">￥{{detail.goods.originalPrice}}</text>
-        </view>
-      </view>
-    </view>
+    <!--商品信息区域-->
+    <block>
+      <BookingGoodsInfoBar :goods.sync="goods"/>
+    </block>
+
+    <!--预约信息区域-->
     <form>
       <view class="booking-box">
         <view class="row-center top-box">
@@ -78,6 +74,9 @@
           </view>
         </view>
       </view>
+      <view class="ml20" wx:if="{{detail.goods.booking != null && detail.goods.booking.tip != null}}">
+        <text class="muted">{{detail.goods.booking.tip}}</text>
+      </view>
     </form>
   </view>
 </template>
@@ -87,15 +86,18 @@
   import base from '../../mixins/base';
   import Loading from '../../components/common/loading';
   import booking from '../../api/booking';
+  import BookingGoodsInfoBar from '../../components/booking/booking_goods_info_bar'
 
   export default class BookingDetail extends wepy.page {
     data = {
       init: false,
       detail: {},
-      extraParam: null
+      extraParam: null,
+      goods: {}
     };
     async onLoad ({bookingId}) {
       this.detail = await booking.bookingDetail(bookingId);
+      this.goods = this.detail.goods;
       if (this.detail.extraParam != null) {
         const param = JSON.parse(this.detail.extraParam);
         this.extraParam = JSON.parse(this.detail.goods.booking.extraParam).map(item => {
@@ -114,7 +116,8 @@
     computed = {
     };
     components = {
-      Loading: Loading
+      Loading: Loading,
+      BookingGoodsInfoBar: BookingGoodsInfoBar
     };
     mixins = [base];
     config = {
@@ -125,32 +128,11 @@
 
 <style lang="scss">
   @import "../../styles/variable";
-  $img-width: 200rpx;
-  .booking-goods-box{
-    background-color: white;
-    margin: 20rpx;
-    padding: 30rpx;
-    border-radius: 20rpx;
-    .goods-img{
-      min-width: $img-width;
-      width: $img-width;
-      height: $img-width;
-    }
-    .goods-box{
-      height: $img-width;
-      justify-content: space-between;
-    }
-    .goods-price-box{
-      flex-direction: row-reverse;
-    }
-    .original-price{
-      text-decoration: line-through;
-    }
-  }
   .booking-box{
     background-color: white;
     margin: 20rpx;
     border-radius: 20rpx;
+    padding-bottom: 20rpx;
     .top-box{
       flex: 1;
       border-top-left-radius: 20rpx;
