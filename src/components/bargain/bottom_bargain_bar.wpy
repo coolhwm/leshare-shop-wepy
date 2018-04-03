@@ -11,7 +11,7 @@
       <text class="xs">收藏</text>
     </view>
     <view class="column-center btn-buy" @tap="handleBuy({{rule.goods}})">
-      <text class="xxl money-box">￥{{rule.goods.sellPrice}}</text>
+      <text class="xxl money-box">￥{{rule.goodsPrice}}</text>
       <text>单独购买</text>
     </view>
     <view class="column-center btn-group" @tap="handleBargain({{rule.goods}}, {{rule.id}}, {{state}}, {{id}})">

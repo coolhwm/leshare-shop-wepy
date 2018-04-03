@@ -85,6 +85,9 @@
         </view>
       </view>
 
+      <!--子商户区域-->
+      <ShopInfoBar />
+
       <!--详情区域-->
       <DetailList :detail.sync="detail" />
 
@@ -158,6 +161,7 @@
   import CouponPickPanel from '../../components/coupons/pick_panel';
   import CartWidget from '../../components/template/cart_widget';
   import DetailList from '../../components/goods/detail_list';
+  import ShopInfoBar from '../../components/goods/shop_info_bar';
 
   @connect({
     pickCoupons: store.get('pickCoupons'),
@@ -311,7 +315,8 @@
       BuyBar: BuyBar,
       CouponPickPanel: CouponPickPanel,
       CartWidget: CartWidget,
-      DetailList: DetailList
+      DetailList: DetailList,
+      ShopInfoBar: ShopInfoBar
     };
     mixins = [base, pagination, router];
     config = {

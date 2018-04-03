@@ -173,7 +173,7 @@
           const result = await bargain.GoodsBargain(this.goods.ruleId, this.goods.id, this.sku.skuText);
           await Tips.success('砍价成功');
           const isBegin = true;
-          this.$root.$navigate(`../bargain/bargain_detail?bargainId=${result.id}&&isBegin=${isBegin}`);
+          this.$root.$redirect(`../bargain/bargain_detail?bargainId=${result.id}&&isBegin=${isBegin}`);
         } else {
           const cart = this.cartManager.createCart(this.goods, selText, num);
           const trade = order.createCartTrade([cart], {orderType: 10});

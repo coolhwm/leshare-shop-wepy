@@ -80,25 +80,25 @@
 <style lang="scss">
   @import "../../styles/variable";
   .goods-item{
-    padding: 10px 15px 10px 0;
+    padding: 20rpx 20rpx 20rpx 0;
     border-bottom: $border;
     .goods-image{
-      width: 70px;
-      height: 70px;
+      width: 140rpx;
+      height: 140rpx;
     }
     .goods-main{
-      margin-left: 10px;
+      margin-left: 20rpx;
       flex: 1;
       justify-content: flex-start;
-      min-height: 70px;
+      min-height: 140rpx;
       .goods-name,.goods-subhead{
-        max-width: 380rpx;
+        max-width: 370rpx;
       }
       .goods-sku-badge{
         background-color: $color-primary;
         color: #FFF;
         border-radius: 5px;
-        padding: 2px 5px;
+        padding: 4rpx 10rpx;
         font-size: $text-xxs;
         width: 72rpx;
       }
@@ -131,15 +131,15 @@
 
     .discount-box{
       border: 1px solid $color-major;
-      height: 15px;
-      margin-left: 7px;
+      height: 30rpx;
+      margin-left: 14rpx;
       text {
         font-size: $text-xxs;
       }
       view{
         display: flex;
         align-items: center;
-        height: 15px;
+        height: 30rpx;
         padding: 0 3px;
       }
       .discount-rate{
@@ -159,7 +159,7 @@
   .quantity{
     .number{
       font-size: $text-sm;
-      min-width: 25px;
+      min-width: 50rpx;
       text-align: center;
     }
   }

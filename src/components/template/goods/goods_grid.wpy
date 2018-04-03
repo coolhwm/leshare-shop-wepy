@@ -14,7 +14,7 @@
     </view>
     <view class="row-between" wx:if="{{goods.isSales || goods.isPrice || goods.isCart}}">
       <view class="content-box column" wx:if="{{goods.isSales || goods.isPrice}}">
-        <view class="row">
+        <view class="row sale-tag-box">
           <text class="xs muted" wx:if="{{goods.isSales}}">已售{{goods.salesVolume}}件</text>
           <block wx:for="{{goods.tags}}" wx:key="index" wx:index="index" wx:for-item="item">
             <text wx:if="{{item.isShow}}" class="xxs primary tag-box ml10">{{item.tag}}</text>
@@ -100,6 +100,10 @@
     }
     .content-box{
       padding: 5rpx 10rpx;
+      overflow:hidden;
+      .sale-tag-box text{
+        white-space:nowrap;
+      }
     }
   }
 </style>

@@ -37,6 +37,20 @@ export default class booking extends base {
     return this.get(url).then(data => this._processBookingDetail(data));
   }
 
+  /**
+   * 获取订单统计信息
+   */
+  static count () {
+    const url = `${this.baseUrl}/booking/count`;
+    return this.get(url).then(data => {
+      const result = {};
+      data.forEach(({status, total}) => {
+        result[status] = total;
+      });
+      return result;
+    });
+  }
+
   // 处理数据
 
   // 预定列表
@@ -59,7 +73,6 @@ export default class booking extends base {
   }
   // 处理预约时间
   static _processServiceTime (data) {
-    console.info(data.serviceTime);
     data.date = data.serviceTime.slice(0, 10);
     data.time = data.serviceTime.slice(11, 20);
   }

@@ -43,8 +43,7 @@
                 <view class="weui-label">日期</view>
               </view>
               <view class="weui-cell__bd">
-                <input class="weui-input" name="phone"
-                       value="{{detail.date}}" disabled/>
+                <input class="weui-input" name="date" value="{{detail.date}}" disabled/>
               </view>
             </view>
 
@@ -53,10 +52,20 @@
                 <view class="weui-label">时间</view>
               </view>
               <view class="weui-cell__bd">
-                <input class="weui-input" name="phone"
-                       value="{{detail.time}}" disabled/>
+                <input class="weui-input" name="time" value="{{detail.time}}" disabled/>
               </view>
             </view>
+
+            <block wx:for="{{extraParam}}" wx:key="index" wx:for-item="item">
+              <view class="weui-cell weui-cell_input">
+                <view class="weui-cell__hd">
+                  <view class="weui-label">{{item.label}}</view>
+                </view>
+                <view class="weui-cell__bd">
+                  <input class="weui-input" name="{{item.name}}" value="{{item.value}}" disabled/>
+                </view>
+              </view>
+            </block>
 
             <view class="weui-cell weui-cell_input">
               <view class="weui-cell__hd">
@@ -82,10 +91,22 @@
   export default class BookingDetail extends wepy.page {
     data = {
       init: false,
-      detail: {}
+      detail: {},
+      extraParam: null
     };
     async onLoad ({bookingId}) {
       this.detail = await booking.bookingDetail(bookingId);
+      if (this.detail.extraParam != null) {
+        const param = JSON.parse(this.detail.extraParam);
+        this.extraParam = JSON.parse(this.detail.goods.booking.extraParam).map(item => {
+          for (let key in param) {
+            if (key === item.name) {
+              item.value = param[key];
+            }
+          }
+          return item;
+        });
+      }
       this.loaded();
     };
     methods = {

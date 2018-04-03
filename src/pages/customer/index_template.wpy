@@ -32,7 +32,7 @@
 
       <!--订单栏-->
       <block wx:if="{{item.type == 'ORDER_BAR'}}">
-        <OrderBar :param.sync="item" />
+        <BookingBar :param.sync="item" />
       </block>
 
       <!--版权栏-->
@@ -65,6 +65,7 @@
   import NavList from '../../components/customer/nav_list';
   import NavGrid from '../../components/customer/nav_grid';
   import OrderBar from '../../components/customer/order_bar';
+  import BookingBar from '../../components/customer/booking_bar';
   import Separator from '../../components/template/separator';
   import VipCard from '../../components/customer/vip_card';
   import BalanceBar from '../../components/customer/balance_bar';
@@ -127,7 +128,8 @@
       VipCard: VipCard,
       NavGrid: NavGrid,
       BalanceBar: BalanceBar,
-      Copyright: Copyright
+      Copyright: Copyright,
+      BookingBar: BookingBar
     };
     computed = {
     };
