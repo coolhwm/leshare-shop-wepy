@@ -114,7 +114,7 @@
           </view>
         </view>
       </view>
-      <view class="ml20" wx:if="{{goods.booking != null && goods.booking.tip != null}}">
+      <view class="ml20 tips-box" wx:if="{{goods.booking != null && goods.booking.tip != null}}">
         <text class="muted">{{goods.booking.tip}}</text>
       </view>
       <view style="height: 160rpx;"></view>
@@ -363,5 +363,8 @@
     left: 0;
     height: 100rpx;
     width: 750rpx;
+  }
+  .tips-box{
+    padding: 10rpx;
   }
 </style>
