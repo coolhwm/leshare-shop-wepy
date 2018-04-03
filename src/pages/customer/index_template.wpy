@@ -31,8 +31,13 @@
       </block>
 
       <!--订单栏-->
-      <block wx:if="{{item.type == 'ORDER_BAR'}}">
+      <block wx:if="{{item.type == 'BOOKING_BAR'}}">
         <BookingBar :param.sync="item" />
+      </block>
+
+      <!--订单栏-->
+      <block wx:if="{{item.type == 'ORDER_BAR'}}">
+        <OrderBar :param.sync="item" />
       </block>
 
       <!--版权栏-->
