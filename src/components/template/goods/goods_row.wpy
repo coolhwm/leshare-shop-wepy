@@ -35,13 +35,22 @@
           <text class="original-price" wx:if="{{goods.discount || goods.originalPrice != goods.sellPrice}}">￥{{goods.originalPrice}}</text>
         </view>
 
+        <!--预约按钮-->
+        <view wx:if="{{goods.type == 'service'}}">
+          <block>
+            <text class="service-box sm" wx:if="{{goods.totalStock > 0}}" @tap.stop="service({{goods.id}})">预约</text>
+            <text class="sm muted" wx:else>已售罄</text>
+          </block>
+        </view>
+
         <!--加入购物车按钮-->
-        <view>
+        <view wx:else>
           <block wx:if="{{goods.isCart || goods.isCart == null}}">
             <icon class="plus normal" wx:if="{{goods.totalStock > 0}}" @tap.stop="handlePlusCart({{goods}})" />
             <text class="sm muted" wx:else>已售罄</text>
           </block>
         </view>
+
       </view>
     </view>
   </view>
@@ -56,6 +65,9 @@
       goods: {}
     };
     methods = {
+      service (id) {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${id}`)
+      }
     };
     components = {
       DiscountBadge: DiscountBadge
@@ -108,6 +120,12 @@
         margin-left: 10rpx;
         text-decoration: line-through;
       }
+    }
+    .service-box{
+      background-color: $color-primary;
+      color: white;
+      padding: 5rpx 10rpx;
+      border-radius: 10rpx;
     }
   }
 </style>

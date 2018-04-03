@@ -9,7 +9,10 @@
     <view class="row booking-goods-box">
       <image class="goods-img" src="{{goods.imageUrl}}"/>
       <view class="column goods-box ml20">
-        <text class="xl">{{goods.name}}</text>
+        <view class="column">
+          <text class="xl">{{goods.name}}</text>
+          <text class="muted sm">{{goods.subhead}}</text>
+        </view>
         <view class="row goods-price-box" wx:if="{{goods.sellPrice != 0}}">
           <text class="xl danger ml20">￥{{goods.sellPrice}}</text>
           <text class="muted original-price">￥{{goods.originalPrice}}</text>
