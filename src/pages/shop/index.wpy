@@ -7,7 +7,7 @@
     <ShopHeader />
 
     <!--功能区域-->
-    <ShopNav :mode.sync="mode"/>
+    <ShopNav :mode.sync="mode" @change.user="change"/>
 
     <!--主内容区域-->
     <CategoryBox top="145px" bottom="55px"/>
@@ -63,6 +63,9 @@
       return {};
     }
     methods = {
+      change (mode) {
+        this.mode = mode
+      }
     };
     computed = {
     };

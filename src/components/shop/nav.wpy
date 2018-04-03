@@ -1,12 +1,11 @@
 <template>
   <view class="nav-box row-between {{last == 'true' ? 'nav-box-last' : ''}}">
     <view class="header row">
-      <view class="label primary small" wx:if="{{badgeText}}">{{badgeText}}</view>
+      <!--<view class="label primary small" wx:if="{{badgeText}}">{{badgeText}}</view>-->
       <text>{{title}}</text>
     </view>
-    <view class="footer row" @tap="goto">
-      <text class="muted">个人中心</text>
-      <icon class="more" color="gary"/>
+    <view class="footer row" @tap="change({{mode}})">
+      <icon class="exchange" color="gray"/>
     </view>
   </view>
 </template>
@@ -15,7 +14,7 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
-  import Tips from '../../utils/Tips';
+  // import Tips from '../../utils/Tips';
 
   @connect({
     shop: store.get('shop'),
@@ -27,43 +26,53 @@
       mode: {}
     };
     methods = {
-      goto() {
-        this.$root.$switch('/pages/customer/index_template');
+      change (mode) {
+        if (mode == 1) {
+          this.mode = 2
+        } else {
+          this.mode = 1
+        }
+        this.$emit('change', this.mode)
       }
     };
     computed = {
       // 需要进行优化
       title() {
-        if (this.shop == null || this.shop.type == null || this.version == null) return;
-        const type = this.shop.type;
-        // 状态加载失败
-        if (this.status == null) {
-          return '休息中';
+        if (this.mode == 2) {
+          return `堂食/外带`
+        } else {
+          return `外卖`
         }
-        // 关门的情况
-        if (this.status.open == false) {
-          if (!this.init) {
-            Tips.modal(this.status.closeTips);
-          }
-          return this.status.closeTips;
-        }
-        // 在线商城/在线点餐
-        if (this.mode == '1') {
-          const name = this.version.isOrder ? type.name : type.basicName;
-          wepy.setNavigationBarTitle({ title: name });
-          return name;
-        }
-        // 外卖
-        if (this.mode == '2') {
-          wepy.setNavigationBarTitle({ title: '堂食点餐' });
-          return '点堂食/外带';
-        }
-      },
-      badgeText() {
-        if (this.shop == null || this.shop.type == null || this.version == null) return;
-        const type = this.shop.type;
-        const text = this.version.isOrder ? type.badgeText : type.basicBadgeText;
-        return this.mode == 2 ? '堂食' : text;
+        // if (this.shop == null || this.shop.type == null || this.version == null) return;
+        // const type = this.shop.type;
+        // // 状态加载失败
+        // if (this.status == null) {
+        //   return '休息中';
+        // }
+        // // 关门的情况
+        // if (this.status.open == false) {
+        //   if (!this.init) {
+        //     Tips.modal(this.status.closeTips);
+        //   }
+        //   return this.status.closeTips;
+        // }
+        // // 在线商城/在线点餐
+        // if (this.mode == '1') {
+        //   const name = this.version.isOrder ? type.name : type.basicName;
+        //   wepy.setNavigationBarTitle({ title: name });
+        //   return name;
+        // }
+        // // 外卖
+        // if (this.mode == '2') {
+        //   wepy.setNavigationBarTitle({ title: '堂食点餐' });
+        //   return '点堂食/外带';
+        // }
+      // },
+      // badgeText() {
+      //   if (this.shop == null || this.shop.type == null || this.version == null) return;
+      //   const type = this.shop.type;
+      //   const text = this.version.isOrder ? type.badgeText : type.basicBadgeText;
+      //   return this.mode == 2 ? '堂食' : text;
       }
     }
   }

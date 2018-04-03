@@ -61,7 +61,7 @@
       </view>
 
       <!--优惠券-->
-      <view class="weui-cell weui-cell_access" @tap="coupon">
+      <view class="weui-cell weui-cell_access" @tap="coupon" wx:if="{{type !== 'group' && type !== 'join' && type !== 'bargain'}}">
         <view class="weui-cell__bd">优惠券
           <view class="label small primary pain" wx:if="{{coupons.length > 0}}">{{couponLabel}}</view>
         </view>
@@ -196,7 +196,7 @@
       bonusPicker: null,
       selectedBonus: null,
       balanceText: '',
-      type: '' // buy/group/join
+      type: '' // buy/group/join/bargain
     };
     cartManager = Cart.create();
     async onLoad (params, {preload}) {
@@ -220,7 +220,9 @@
       // 刷新价格
       this.updateTradePrice();
       // 可用卡券
-      this.coupons = await coupon.available(this.trade.orderGoodsInfos);
+      if (this.type !== 'group' && this.type !== 'join' && this.type !== 'bargain') {
+        this.coupons = await coupon.available(this.trade.orderGoodsInfos);
+      }
       // 自动选择优惠券
       this.setDefaultCoupon();
       this.loaded();
