@@ -173,8 +173,8 @@
       tab: {},
       cartType: 'BAR',
       buyPanelType: 'POPUP',
-      isTab: true,
       isCoupon: true,
+      isTab: true,
       isComment: true,
       isSales: true,
       isContact: true

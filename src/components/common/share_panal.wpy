@@ -10,10 +10,10 @@
           <image class="icon-size" src="/images/icons/friends.png"/>
           <text class="xs muted">微信</text>
         </button>
-        <view class="column-between friends-btn" @tap="shareFriendsCircle">
+        <button class="column-between friends-btn" plain @tap="shareFriendsCircle">
           <image class="icon-size" src="/images/icons/circle-friends.png"/>
-          <text class="xs muted mb10">朋友圈</text>
-        </view>
+          <text class="xs muted">朋友圈</text>
+        </button>
       </view>
     </view>
   </view>
@@ -155,7 +155,7 @@
     }
     .share-area{
       padding: 10rpx;
-      height: 22%;
+      height: 23%;
       margin: 40rpx;
       border-radius: 15rpx;
       background-color: white;
@@ -163,15 +163,15 @@
         margin: 15rpx;
       }
       .btn-box{
-        padding: 30rpx;
         border-top: $border-line;
         .friends-btn{
+          border: none;
           width: 176rpx;
           height: 174rpx;
         }
         .icon-size{
-          width: 120rpx;
-          height: 120rpx;
+          width: 60px;
+          height: 60px;
         }
       }
     }

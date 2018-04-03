@@ -30,6 +30,20 @@ export default class Canvas {
   }
 
   /**
+   * 圆角矩形
+   * */
+  static canvasDrawRoundRect (color, padding, height, wight) {
+    // Draw coordinates
+    this.context.beginPath();
+    this.context.arc(padding + 10, padding, 10, 1.0 * Math.PI, 1.5 * Math.PI);
+    this.context.arc(padding - 10 + wight, padding, 10, 1.5 * Math.PI, 0);
+    this.context.arc(padding - 10 + wight, padding + height - 20, 10, 0, 0.5 * Math.PI);
+    this.context.arc(padding + 10, padding + height - 20, 10, 0.5 * Math.PI, 1.0 * Math.PI);
+    this.context.setFillStyle(color);
+    this.context.fill();
+  }
+
+  /**
    * 画笔文字绘制工具
    * */
   static canvasTextLeft(padding, text, size, color, x, y) {
@@ -121,7 +135,8 @@ export default class Canvas {
     // 创建基本画布
     this.createCanvasContext(params.canvasName);
     // 绘制画布
-    this.setCanvas('#ffffff', params.canvasPadding, params.canvasWidth, params.canvasHeight);
+    // this.setCanvas('#ffffff', params.canvasPadding, params.canvasWidth, params.canvasHeight);
+    this.canvasDrawRoundRect('#ffffff', params.canvasPadding, params.canvasHeight, params.canvasWidth);
     // 绘制图片
     this.canvasImage(image);
     // 绘制店铺名称
