@@ -1,5 +1,5 @@
 <template>
-  <view class="image-box row-around" style="background-color: {{param.backgroundColor}};padding: {{param.padding}} 0;">
+  <scorll-view class="image-box row-around" style="background-color: {{param.backgroundColor}};padding: {{param.padding}} 0;">
 
 
     <block wx:for="{{param.data}}" wx:for-item="image" wx:key="seq">
@@ -13,7 +13,7 @@
         <text wx:if="{{param.isShowTitle}}" class="image-title" style="color: {{param.color}}">{{image.title}}</text>
       </view>
     </block>
-  </view>
+  </scorll-view>
 
 </template>
 
@@ -31,6 +31,7 @@
 <style lang="scss">
   @import "../../styles/variable";
   .image-box{
+    width: 750rpx;
     background-color: white;
     .image-title{
       margin-top: 3px;
