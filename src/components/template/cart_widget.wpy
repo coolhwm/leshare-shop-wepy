@@ -32,7 +32,8 @@
     bottom: 10px;
     right: 10px;
     .cart-icon {
-      font-size: 46px;
+      font-size: 45px;
+      line-height: 45px;
       background-color: white;
       width: 45px;
       height: 45px;

@@ -42,7 +42,7 @@
 <script>
   import wepy from 'wepy';
   import Event from '../../utils/Event';
-  import booking from '../../api/booking'
+  // import booking from '../../api/booking'
 
   export default class OrderBar extends wepy.component {
     props = {
@@ -55,8 +55,8 @@
       await this.load();
     }
     async load() {
-      this.count = await booking.count();
-      this.$apply();
+      // this.count = await booking.count();
+      // this.$apply();
     }
     methods = {
       list(status) {
