@@ -10,7 +10,7 @@
         <text wx:elif="{{detail.status === 'PROCESSING'}}" class="sm primary">处理中</text>
         <text wx:elif="{{detail.status === 'TIMEOUT'}}" class="sm primary">已过期</text>
         <text wx:elif="{{detail.status === 'CANCEL'}}" class="sm primary">已取消</text>
-        <text wx:elif="{{detail.status === 'FINISH'}}" class="sm primary">已结束</text>
+        <text wx:elif="{{detail.status === 'FINISH'}}" class="sm primary">已完成</text>
       </view>
     </view>
 
