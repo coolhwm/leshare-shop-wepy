@@ -19,7 +19,7 @@
     <PopupPanel />
 
     <!--悬浮购物车-->
-    <FloatCart />
+    <!--<FloatCart />-->
   </view>
 </template>
 

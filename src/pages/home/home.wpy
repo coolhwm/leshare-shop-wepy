@@ -34,7 +34,7 @@
       <view class="row-between">
         <button class="shop-btn" plain form-type="submit" @tap="goto" data-url="/pages/shop/index?mode=1">
           <image class="icon-xl" src="http://img.leshare.shop/shop/home/food.png"></image>
-          <text class="weak">{{shop.type.name}}</text>
+          <text class="weak">外卖</text>
         </button>
 
         <!--堂食模式-->

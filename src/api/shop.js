@@ -1,26 +1,9 @@
 
 import base from './base';
-import goods from './goods';
 import wepy from 'wepy';
 import Page from '../utils/Page';
 
 export default class shop extends base {
-  static TYPE = {
-    '1': {
-      key: '1',
-      name: '在线商城',
-      badgeText: '商城',
-      basicName: '商品展示',
-      basicBadgeText: '商城'
-    },
-    '2': {
-      key: '2',
-      name: '点外卖',
-      badgeText: '外卖',
-      basicName: '在线菜单',
-      basicBadgeText: '菜单'
-    }
-  };
 
   /**
    * 访问店铺
@@ -45,8 +28,8 @@ export default class shop extends base {
    * 获取店铺类型
    */
   static type() {
-    const type = wepy.$instance.globalData.shopType;
-    return this.TYPE[type];
+    // const type = wepy.$instance.globalData.shopType;
+    // return this.TYPE[type];
   }
   /**
    * 获取店铺状态
@@ -78,13 +61,6 @@ export default class shop extends base {
     const url = `${this.baseUrl}/reduce_rule`;
     return this.get(url).then(data => this._processReduce(data));
   }
-  /**
-   * 查询版本及配额信息
-   */
-  // static chargeLimit () {
-  //   const url = `${this.baseUrl}/shop_charge_limit`;
-  //   return this.get(url).then(data => this._precoessVersion(data));
-  // }
 
   /**
    * 上报FORM
@@ -152,23 +128,6 @@ export default class shop extends base {
     }
     return data;
   }
-  /**
-   * 处理版本
-   */
-  // static _precoessVersion(data) {
-  //   if (data == null) {
-  //     // 没有初始化收费配置的情况下，开启所有权限
-  //     return {
-  //       isMember: true,
-  //       isOrder: true
-  //     }
-  //   } else {
-  //     const version = data.chargeVersion;
-  //     data.isMember = [2, 3, 6, 7].some(value => value == version);
-  //     data.isOrder = [4, 5, 6, 7].some(value => value == version);
-  //     return data;
-  //   }
-  // }
   /**
    * 处理满减
    */
