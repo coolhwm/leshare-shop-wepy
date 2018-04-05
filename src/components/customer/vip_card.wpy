@@ -13,7 +13,7 @@
   </view>
 
   <!-- 会员卡区域 -->
-  <view class="vip-box column-between flex-start" @tap="detail" wx:if="{{member != null}}">
+  <view class="vip-box column-between flex-start" style="background-image: url('{{param.backgroundImageUrl}}');background-repeat:no-repeat; background-size:100% 100%;" @tap="detail" wx:if="{{member != null}}">
 
     <view class="row-between" style="width: 100%">
       <view class="row">
@@ -57,6 +57,7 @@
   })
   export default class VipCard extends wepy.component {
     props = {
+      param: {},
       isDetail: {
         default: 'true'
       }

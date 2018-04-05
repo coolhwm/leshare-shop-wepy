@@ -12,7 +12,7 @@
 
       <!--会员卡-->
       <block wx:if="{{item.type == 'VIP_CARD'}}">
-        <VipCard />
+        <VipCard :param.sync="item"/>
       </block>
 
       <!--余额充值-->

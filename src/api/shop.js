@@ -28,8 +28,6 @@ export default class shop extends base {
    * 获取店铺类型
    */
   static type() {
-    // const type = wepy.$instance.globalData.shopType;
-    // return this.TYPE[type];
   }
   /**
    * 获取店铺状态
