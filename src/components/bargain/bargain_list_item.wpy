@@ -28,8 +28,8 @@
     <!--汇总信息-->
     <view wx:if="{{detail.status === 'ORDERED' && detail.order.status == 2}}" class="order.order-footer-container row-end">
       <text>合计:</text>
-      <text class="major xl mr20">￥{{detail.balance}}</text>
-      <text>(含运费￥0)</text>
+      <text class="major xl mr20">￥{{detail.order.finalPrice}}</text>
+      <text>(含运费￥{{detail.order.postFee}})</text>
     </view>
 
     <!--操作栏-->

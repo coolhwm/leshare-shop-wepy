@@ -30,14 +30,14 @@
         <NavGrid :param.sync="item" />
       </block>
 
-      <!--订单栏-->
+      <!--预约订单栏-->
       <block wx:if="{{item.type == 'BOOKING_BAR'}}">
-        <BookingBar :param.sync="item" />
+        <BookingBar :param.sync="item" :count.sync="count"/>
       </block>
 
       <!--订单栏-->
       <block wx:if="{{item.type == 'ORDER_BAR'}}">
-        <OrderBar :param.sync="item" />
+        <OrderBar :param.sync="item" :count.sync="count"/>
       </block>
 
       <!--版权栏-->
@@ -75,6 +75,9 @@
   import VipCard from '../../components/customer/vip_card';
   import BalanceBar from '../../components/customer/balance_bar';
   import Copyright from '../../components/common/copyright';
+  import order from '../../api/order';
+  import booking from '../../api/booking';
+  import Event from '../../utils/Event';
 
   @connect({
     shop: store.get('shop'),
@@ -85,7 +88,8 @@
       init: false,
       components: null,
       plugins: null,
-      triggers: []
+      triggers: [],
+      count: null
     };
     async onLoad () {
       const result = await auth.user({block: true, redirect: true});
@@ -101,8 +105,29 @@
         this.plugins = page.plugins;
         this.triggers = page.triggers;
       }
+      Event.listen(Event.ORDER_LIST_UPDATE, this.countUpDate.bind(this), this);
+      this.countUpDate();
       this.loaded();
     };
+    /***
+     * 订单栏刷新
+     */
+    async countUpDate () {
+      let orderBarType = '';
+      this.components.forEach(item => {
+        if (item.type == 'BOOKING_BAR') {
+          orderBarType = 'BOOKING_BAR';
+        } else {
+          orderBarType = 'ORDER_BAR';
+        }
+      });
+      if (orderBarType == 'BOOKING_BAR') {
+        this.count = await booking.count();
+      } else {
+        this.count = await order.count();
+      }
+      this.loaded();
+    }
     /**
      * 下拉刷新
      */

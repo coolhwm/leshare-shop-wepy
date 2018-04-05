@@ -6,10 +6,11 @@
         <view class="user-info-container">
           <text class="sm ml10">预约时间：{{detail.serviceTime}}</text>
         </view>
-        <text wx:if="{{detail.status === 'WAITING_PROCCESS'}}" class="sm primary">处理中</text>
+        <text wx:if="{{detail.status === 'WAITING_PROCCESS'}}" class="sm primary">待处理</text>
+        <text wx:elif="{{detail.status === 'PROCESSING'}}" class="sm primary">处理中</text>
         <text wx:elif="{{detail.status === 'TIMEOUT'}}" class="sm primary">已过期</text>
         <text wx:elif="{{detail.status === 'CANCEL'}}" class="sm primary">已取消</text>
-        <text wx:elif="{{detail.status === 'FINISH'}}" class="sm primary">已结束</text>
+        <text wx:elif="{{detail.status === 'FINISH'}}" class="sm primary">已完成</text>
       </view>
     </view>
 

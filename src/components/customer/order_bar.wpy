@@ -41,33 +41,19 @@
 
 <script>
   import wepy from 'wepy';
-  import order from '../../api/order';
-  import Event from '../../utils/Event';
 
   export default class OrderBar extends wepy.component {
     props = {
+      count: {}
     };
-    data = {
-      count: null
-    };
-    async onLoad() {
-      Event.listen(Event.ORDER_LIST_UPDATE, this.load.bind(this), this);
-      await this.load();
-    }
-    async load() {
-      this.count = await order.count();
-      this.$apply();
-    }
+    data = {};
+    async onLoad() {}
     methods = {
       list(status) {
         this.$root.$navigate(`/pages/order/list?status=${status}`);
       }
     };
-    events = {
-      async refresh() {
-        await this.load();
-      }
-    };
+    events = {};
   }
 </script>
 

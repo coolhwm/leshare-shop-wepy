@@ -4,7 +4,7 @@
     <view class="column goods-box ml20">
       <view class="column">
         <text class="xl">{{goods.name}}</text>
-        <text class="muted sm">{{goods.subhead}}</text>
+        <text class="muted sm" wx:if="{{goods.subhead != null}}">{{goods.subhead}}</text>
       </view>
       <view class="row goods-price-box" wx:if="{{goods.sellPrice != 0}}">
         <text class="xl danger ml20">￥{{goods.sellPrice}}</text>

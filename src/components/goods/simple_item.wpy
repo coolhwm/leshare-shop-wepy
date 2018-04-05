@@ -10,7 +10,7 @@
         <view class="row">
           <view class="column goods-subhead">
             <text class="xxs muted inline"  wx:if="{{goods.subhead != null}}">{{goods.subhead}}</text>
-            <view class="row">
+            <view class="row sale-tag-box">
               <text class="xxs muted">已售{{goods.salesVolume}}件</text>
               <block wx:for="{{goods.tags}}" wx:key="index" wx:index="index" wx:for-item="item">
                 <text wx:if="{{item.show}}" class="xxs primary tag-box ml10">{{item.tag}}</text>
@@ -93,6 +93,7 @@
       min-height: 140rpx;
       .goods-name,.goods-subhead{
         max-width: 370rpx;
+        overflow:hidden;
       }
       .goods-sku-badge{
         background-color: $color-primary;
@@ -101,6 +102,9 @@
         padding: 4rpx 10rpx;
         font-size: $text-xxs;
         width: 72rpx;
+      }
+      .sale-tag-box text{
+        white-space:nowrap;
       }
       .tag-box{
         border:1px solid $color-primary;

@@ -41,15 +41,21 @@
 
 <script>
   import wepy from 'wepy';
+<<<<<<< HEAD
+=======
   import Event from '../../utils/Event';
   // import booking from '../../api/booking'
+>>>>>>> 9a58f761cb2589c94421361d82ffc9edae90d3a1
 
-  export default class OrderBar extends wepy.component {
+  export default class BookingBar extends wepy.component {
     props = {
+      count: {}
     };
     data = {
-      count: null
     };
+<<<<<<< HEAD
+    async onLoad() {}
+=======
     async onLoad() {
       Event.listen(Event.ORDER_LIST_UPDATE, this.load.bind(this), this);
       await this.load();
@@ -58,16 +64,13 @@
       // this.count = await booking.count();
       // this.$apply();
     }
+>>>>>>> 9a58f761cb2589c94421361d82ffc9edae90d3a1
     methods = {
       list(status) {
         this.$root.$navigate(`/pages/booking/list?status=${status}`);
       }
     };
-    events = {
-      async refresh() {
-        await this.load();
-      }
-    };
+    events = {};
   }
 </script>
 
