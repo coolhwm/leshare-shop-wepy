@@ -41,33 +41,20 @@
 
 <script>
   import wepy from 'wepy';
-  import Event from '../../utils/Event';
-  import booking from '../../api/booking'
 
-  export default class OrderBar extends wepy.component {
+  export default class BookingBar extends wepy.component {
     props = {
+      count: {}
     };
     data = {
-      count: null
     };
-    async onLoad() {
-      Event.listen(Event.ORDER_LIST_UPDATE, this.load.bind(this), this);
-      await this.load();
-    }
-    async load() {
-      this.count = await booking.count();
-      this.$apply();
-    }
+    async onLoad() {}
     methods = {
       list(status) {
         this.$root.$navigate(`/pages/booking/list?status=${status}`);
       }
     };
-    events = {
-      async refresh() {
-        await this.load();
-      }
-    };
+    events = {};
   }
 </script>
 

@@ -62,7 +62,7 @@
         <text>运费</text>
         <text class="major">+￥{{order.postFee}}</text>
       </view>
-      <view class="price-box row-between" wx:if="{{shop.type.key == 1}}">
+      <view class="price-box row-between" wx:if="{{order.foodBoxFee > 0}}">
         <text>餐盒费</text>
         <text class="major">+￥{{order.foodBoxFee}}</text>
       </view>
