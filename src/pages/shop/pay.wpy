@@ -14,7 +14,7 @@
         <text class="lg">付款金额</text>
         <view class="row input-box">
           <text class="xxl mr10">￥</text>
-          <input focus type="digit" confirm-type="确认付款" bindinput="dealPriceInput" maxlength="12"/>
+          <input type="digit" confirm-type="确认付款" bindinput="dealPriceInput" placeholder="请输入付款金额" maxlength="4"/>
         </view>
         <view class="coupon-box row">
           <view class="weui-cell__bd">优惠券
@@ -209,6 +209,11 @@
     }
     validate() {
       const rules = [
+        {
+          value: this.dealPrice,
+          method: 'money',
+          message: '请输入正确的价格'
+        },
         {
           value: this.dealPrice,
           method: 'money',

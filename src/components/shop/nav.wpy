@@ -2,10 +2,13 @@
   <view class="nav-box row-between {{last == 'true' ? 'nav-box-last' : ''}}">
     <view class="header row">
       <!--<view class="label primary small" wx:if="{{badgeText}}">{{badgeText}}</view>-->
+      <icon class="sender mr10" color="primary" wx:if="{{mode == 1}}"/>
+      <icon class="inshop mr10" color="primary" wx:if="{{mode == 2}}"/>
       <text>{{title}}</text>
     </view>
-    <view class="footer row" @tap="change({{mode}})">
-      <icon class="exchange" color="gray"/>
+    <view class="footer row" @tap="change({{mode}})" wx:if="{{shop.inShop == 1}}">
+      <text class="xs mr10 muted">{{exchangeText}}</text>
+      <icon class="exchange" color="primary"/>
     </view>
   </view>
 </template>
@@ -14,16 +17,19 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
-  // import Tips from '../../utils/Tips';
 
   @connect({
     shop: store.get('shop'),
-    status: store.get('status'),
-    version: store.get('version')
+    status: store.get('status')
   })
   export default class ShopNav extends wepy.component {
     props = {
-      mode: {}
+      mode: {
+        default: 1
+      }
+    };
+    data = {
+      exchangeText: null
     };
     methods = {
       change (mode) {
@@ -39,40 +45,12 @@
       // 需要进行优化
       title() {
         if (this.mode == 2) {
+          this.exchangeText = '点击切换到外卖点餐';
           return `堂食/外带`
         } else {
-          return `外卖`
+          this.exchangeText = '点击切换到堂食点餐';
+          return `外卖点餐`
         }
-        // if (this.shop == null || this.shop.type == null || this.version == null) return;
-        // const type = this.shop.type;
-        // // 状态加载失败
-        // if (this.status == null) {
-        //   return '休息中';
-        // }
-        // // 关门的情况
-        // if (this.status.open == false) {
-        //   if (!this.init) {
-        //     Tips.modal(this.status.closeTips);
-        //   }
-        //   return this.status.closeTips;
-        // }
-        // // 在线商城/在线点餐
-        // if (this.mode == '1') {
-        //   const name = this.version.isOrder ? type.name : type.basicName;
-        //   wepy.setNavigationBarTitle({ title: name });
-        //   return name;
-        // }
-        // // 外卖
-        // if (this.mode == '2') {
-        //   wepy.setNavigationBarTitle({ title: '堂食点餐' });
-        //   return '点堂食/外带';
-        // }
-      // },
-      // badgeText() {
-      //   if (this.shop == null || this.shop.type == null || this.version == null) return;
-      //   const type = this.shop.type;
-      //   const text = this.version.isOrder ? type.badgeText : type.basicBadgeText;
-      //   return this.mode == 2 ? '堂食' : text;
       }
     }
   }

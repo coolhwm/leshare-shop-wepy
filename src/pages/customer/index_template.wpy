@@ -105,14 +105,14 @@
         this.plugins = page.plugins;
         this.triggers = page.triggers;
       }
-      Event.listen(Event.ORDER_LIST_UPDATE, this.countUpDate.bind(this), this);
-      this.countUpDate();
+      Event.listen(Event.ORDER_LIST_UPDATE, this.loadOrderCount.bind(this), this);
       this.loaded();
+      this.loadOrderCount();
     };
     /***
      * 订单栏刷新
      */
-    async countUpDate () {
+    async loadOrderCount () {
       let orderBarType = '';
       this.components.forEach(item => {
         if (item.type == 'BOOKING_BAR') {
