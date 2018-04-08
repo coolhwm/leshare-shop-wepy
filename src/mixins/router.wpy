@@ -323,7 +323,7 @@
             break;
           case 'TEMPLATE':
             // 模板页面
-            this.$root.$navigate(`/pages/home/template?pageId=${targetId}`);
+            this.$root.$navigate(`/pages/home/template_nav?pageId=${targetId}`);
             break;
           case 'SHOP_INFO':
             // 店铺信息
