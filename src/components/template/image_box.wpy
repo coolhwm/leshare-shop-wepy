@@ -1,19 +1,22 @@
 <template>
-  <scorll-view class="image-box row-around" style="background-color: {{param.backgroundColor}};padding: {{param.padding}} 0;">
 
+  <!--水平滚动-->
+  <scroll-view wx:if="{{param.layout == 'ROW'}}" class="image-row-box"  scroll-x style="height:{{param.height}}; background-color: {{param.backgroundColor}};padding: {{param.padding}} 0;">
+    <block wx:for="{{param.data}}" wx:for-item="image" wx:key="seq">
+      <image style="width:{{param.width}};height:{{param.height}};" mode="aspectFill" src="{{image.url}}" @tap="routeByAction({{image}})" ></image>
+    </block>
+  </scroll-view>
 
+  <!--横向滚动-->
+  <view wx:else class="image-box row-around" style="background-color: {{param.backgroundColor}};padding: {{param.padding}} 0;">
     <block wx:for="{{param.data}}" wx:for-item="image" wx:key="seq">
       <!--普通的图片-->
-      <button plain class="column-around" wx:if="{{image.action == 'SHARE'}}" open-type="share">
-        <image style="width:{{param.width}};height:{{param.height}} " mode="aspectFill" src="{{image.url}}" @tap="routeByAction({{image}})"></image>
+      <button plain class="column-around" open-type="{{image.openType}}" @tap="routeByAction({{image}})">
+        <image style="width:{{param.width}};height:{{param.height}} " mode="aspectFill" src="{{image.url}}" ></image>
         <text wx:if="{{param.isShowTitle}}" class="image-title" style="color: {{param.color}}">{{image.title}}</text>
       </button>
-      <view class="column-around" wx:else >
-        <image style="width:{{param.width}};height:{{param.height}} " mode="aspectFill" src="{{image.url}}" @tap="routeByAction({{image}})"></image>
-        <text wx:if="{{param.isShowTitle}}" class="image-title" style="color: {{param.color}}">{{image.title}}</text>
-      </view>
     </block>
-  </scorll-view>
+  </view>
 
 </template>
 
@@ -30,6 +33,15 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .image-row-box{
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    background-color: white;
+    image{
+      margin-right: 5px;
+    }
+  }
   .image-box{
     width: 750rpx;
     background-color: white;

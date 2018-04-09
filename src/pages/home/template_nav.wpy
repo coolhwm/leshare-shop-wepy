@@ -26,28 +26,13 @@
   import store from '../../store/utils';
   import { connect } from 'wepy-redux';
   import auth from '../../api/auth';
-  import shop from '../../api/shop';
   import config from '../../api/config';
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import Loading from '../../components/common/loading';
-  import SearchBar from '../../components/template/search_bar';
   import SwiperBar from '../../components/template/swiper_bar';
-  import ShopBar from '../../components/shop/header';
   import ImageBox from '../../components/template/image_box';
-  import GoodsBox from '../../components/template/goods_box';
-  import CouponBox from '../../components/template/coupon_box';
-  import GoodsPanel from '../../components/goods/slider_buy_panel';
-  import SkuSelector from '../../components/goods/popup_buy_panel';
-  import CartWidget from '../../components/template/cart_widget';
-  import NoticeBar from '../../components/template/notice_bar';
   import HotAreaBox from '../../components/template/hot_area_box';
-  import Copyright from '../../components/common/copyright';
-  import ButtonWidget from '../../components/template/button_widget';
-  import GroupBox from '../../components/template/group_box';
-  import BargainBox from '../../components/template/bargain_box';
-  import Separator from '../../components/template/separator';
-  import AddressBox from '../../components/template/address_box';
   import _ from 'underscore';
 
   @connect({

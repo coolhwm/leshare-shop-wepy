@@ -81,7 +81,7 @@
       height: $size;
     }
     .goods-title{
-      height: 80rpx;
+      max-height: 80rpx;
       padding: 0 10rpx;
       text{
         word-break: break-all;
