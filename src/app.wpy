@@ -141,7 +141,8 @@
         'pages/booking/list',
         'pages/booking/booking_detail',
         'pages/shop/top_up',
-        'pages/shop/billing_record'
+        'pages/shop/billing_record',
+        'pages/shop/invite'
       ],
       window: {
         backgroundTextStyle: 'dark',
