@@ -8,6 +8,17 @@
       <BookingGoodsInfoBar :goods.sync="goods"/>
     </block>
 
+    <!--订单信息区域-->
+    <view class="row-between order-box" wx:if="{{detail.order}}">
+      <text>订单信息</text>
+      <view @tap="order">
+        <text class="muted sm">· 收件人</text>
+        <text class="muted sm ml10">· 收货地址 </text>
+        <text class="muted sm ml10">· 成团时间</text>
+        <icon class="more ml10" color="gray"/>
+      </view>
+    </view>
+
     <!--预约信息区域-->
     <form>
       <view class="booking-box">
@@ -112,6 +123,9 @@
       this.loaded();
     };
     methods = {
+      order() {
+        this.$navigate(`/pages/order/detail?orderId=${this.detail.orderId}`);
+      }
     };
     computed = {
     };
@@ -128,6 +142,12 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .order-box{
+    background-color: white;
+    margin: 0 20rpx;
+    padding: 20rpx;
+    border-radius: 20rpx;
+  }
   .booking-box{
     background-color: white;
     margin: 20rpx;
