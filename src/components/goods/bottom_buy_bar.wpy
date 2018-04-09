@@ -14,6 +14,19 @@
       <text class="white">立即预约</text>
     </view>
   </view>
+  <view class="row buy-bar-box" wx:elif="{{goods.type === 'digit'}}">
+    <view class="column-center  btn-fav">
+      <icon class="service" color="gray"/>
+      <text>客服</text>
+    </view>
+    <view class="column-center btn-goto-cart" @tap="cart">
+      <icon class="home" color="gray"/>
+      <text>首页</text>
+    </view>
+    <view class="column-center btn-service" @tap="handleDigit({{goods}})">
+      <text class="white">立即购买</text>
+    </view>
+  </view>
   <view class="row buy-bar-box" wx:else>
     <view class="column-center  btn-fav" @tap="fav">
       <icon class="like{{!isFav ? '' : '-fill'}}" style="color: {{!isFav ? 'gray' : 'red'}}"/>

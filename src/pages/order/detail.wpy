@@ -36,6 +36,17 @@
     <!--订单项目-->
     <OrderItem :order.sync="order" action="0"></OrderItem>
 
+    <!--使用虚拟产品栏-->
+    <view class="row-between digit-box mt10" wx:if="{{order.orderType == '90'}}"  @tap="digit">
+      <view>
+        <icon class="qrcode" color="gray"/>
+        <text class="ml10">查看二维码</text>
+      </view>
+      <view>
+        <icon class="more ml10" color="gray"/>
+      </view>
+    </view>
+
     <!--订单详情-->
     <view class="weui-cells weui-cells-show mt10">
       <view class="weui-cell">
@@ -257,6 +268,12 @@
       const refundStr = JSON.stringify(curRefund);
       this.$navigate(`/pages/order/refund_detail?refund=${refundStr}`);
     }
+    /**
+     * 查看二维码
+     */
+    qrCode(order) {
+      console.info(order)
+    }
     methods = {
       action(funcName, order) {
         console.info('[action]' + funcName);
@@ -269,6 +286,9 @@
       },
       sender() {
         wepy.makePhoneCall({phoneNumber: this.order.orderExpress.telPhone});
+      },
+      digit() {
+        console.info(this.order)
       }
     };
     computed = {
@@ -367,6 +387,15 @@
     bottom: 0;
     border-top: $border;
     padding-right: 10rpx;
+  }
+
+  // 虚拟商品使用
+  .digit-box{
+    background-color: white;
+    margin-bottom: 10rpx;
+    padding: 10rpx 30rpx;
+    border-top: $border;
+    border-bottom: $border;
   }
 
 

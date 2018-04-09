@@ -109,7 +109,7 @@
     async onLoad ({bookingId}) {
       this.detail = await booking.bookingDetail(bookingId);
       this.goods = this.detail.goods;
-      if (this.detail.extraParam != null) {
+      if (this.detail.extraParam != null && this.detail.booking != null) {
         const param = JSON.parse(this.detail.extraParam);
         this.extraParam = JSON.parse(this.detail.goods.booking.extraParam).map(item => {
           for (let key in param) {

@@ -46,6 +46,14 @@
           </block>
         </view>
 
+        <!--虚拟商品按钮-->
+        <view wx:elif="{{goods.type == 'digit'}}">
+          <block>
+            <icon class="plus normal" wx:if="{{goods.totalStock > 0}}" @tap.stop="digit({{goods.id}})" />
+            <text class="sm muted" wx:else>已售罄</text>
+          </block>
+        </view>
+
         <!--加入购物车按钮-->
         <view wx:else>
           <block wx:if="{{goods.isCart || goods.isCart == null}}">
@@ -69,6 +77,9 @@
     };
     methods = {
       service (id) {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${id}`)
+      },
+      digit (id) {
         this.$root.$navigate(`/pages/goods/detail?goodsId=${id}`)
       }
     };
@@ -129,6 +140,7 @@
       color: white;
       padding: 5rpx 10rpx;
       border-radius: 10rpx;
+      line-height: 29px;
     }
     .tag-box{
       border:1px solid $color-primary;

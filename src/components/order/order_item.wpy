@@ -154,6 +154,12 @@
       this.$root.$preload('data', scores);
       this.$root.$navigate(`/pages/goods/comment_edit?orderId=${order.orderId}`);
     }
+    /**
+     * 查看二维码
+     */
+    qrCode(order) {
+      console.info(order)
+    }
     methods = {
       action(funcName, order) {
         console.info('[action]' + funcName);

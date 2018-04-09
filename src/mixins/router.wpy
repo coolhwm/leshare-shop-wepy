@@ -19,6 +19,14 @@
       Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
     }
     /**
+     * 虚拟商品
+     */
+    digit(goods) {
+      const source = this.$root.$wxpage.route;
+      const action = 'digit';
+      Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
+    }
+    /**
      * 拼团
      */
     group(goods, details, id, state, groupId) {
@@ -164,10 +172,16 @@
         this.plusCart(goods);
       },
       /**
-       * 处理加入购物车事件
+       * 处理加入普通购买事件
        */
       handleBuy(goods) {
         this.buy(goods);
+      },
+      /**
+       * 处理加入虚拟商品购买事件
+       */
+      handleDigit(goods) {
+        this.digit(goods);
       },
       /**
        * 处理拼团事件

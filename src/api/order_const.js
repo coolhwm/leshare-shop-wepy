@@ -11,7 +11,8 @@ const TYPE = {
   GROUP: 50,
   BOOKING: 60,
   BARGAIN: 70,
-  BALANCE: 80
+  BALANCE: 80,
+  DIGIT: 90
 };
 /**
  * 支付方式
@@ -149,6 +150,11 @@ const ACTION = {
     primary: false,
     name: '再来一单',
     func: 'again'
+  },
+  QRCODE: {
+    primary: false,
+    name: '查看二维码',
+    func: 'qrCode'
   }
 };
 /**
@@ -198,8 +204,10 @@ const STATUS_ACTIONS = {
   '70-1-3': [ACTION.RECEIVE],
   '70-1-4': [ACTION.COMMENT],
   // 充值
-  '80-1-1': [ACTION.CLOSE, ACTION.PAY]
-};
+  '80-1-1': [ACTION.CLOSE, ACTION.PAY],
+  // 虚拟
+  '90-1-6': [ACTION.QRCODE]
+}
 
 /**  内部方法 **/
 const statusDict = (type, status, index) => {
