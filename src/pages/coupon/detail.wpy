@@ -3,6 +3,11 @@
   <view wx:if="{{init}}">
     <CouponItem :coupon.sync="coupon" />
 
+    <!--子商户-->
+    <view class="shop-box" wx:if="{{subShop != null}}">
+      <ShopInfoBar :subShop.sync="subShop"/>
+    </view>
+
     <view class="success-box column-center"  wx:if="{{success}}">
       <text>{{message}}</text>
     </view>
@@ -23,6 +28,7 @@
 
 <script>
   import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import base from '../../mixins/base';
   import input from '../../mixins/input';
@@ -32,13 +38,20 @@
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
   import FormTips from '../../components/weui/tips';
+  import ShopInfoBar from '../../components/goods/shop_info_bar';
+
   let interval = null;
+
+  @connect({
+    shop: store.get('shop')
+  })
   export default class CouponDetail extends wepy.page {
     data = {
       init: false,
       coupon: null,
       success: false,
-      message: ''
+      message: '',
+      subShop: null
     };
     onLoad (options, {preload}) {
       this.coupon = preload.coupon;
@@ -57,6 +70,7 @@
           this.$apply();
         }
       }, 3000);
+      this.subShop = this.shop;
       this.loaded();
       Qrcode.init('qrcode', `${this.coupon.couponId}#${this.coupon.id}`);
     };
@@ -97,6 +111,7 @@
     events = {};
     components = {
       CouponItem: CouponItem,
+      ShopInfoBar: ShopInfoBar,
       Tips: FormTips
     };
     mixins = [base, input];
@@ -130,5 +145,15 @@
   }
   .middle{
     margin-left: 200rpx;
+  }
+  .shop-box{
+    margin: 20rpx;
+    border-left: $border;
+    border-right: $border;
+  }
+  .shop-info-bar{
+    .shop-address-box,.shop-name-box{
+      width: 380rpx;
+    }
   }
 </style>

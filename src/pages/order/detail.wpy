@@ -33,6 +33,11 @@
       <InShopStatus :order.sync="order" />
     </block>
 
+    <!--子商户-->
+    <view class="mb10 mt10">
+      <ShopInfoBar :subShop.sync="subShop"/>
+    </view>
+
     <!--订单项目-->
     <OrderItem :order.sync="order" action="0"></OrderItem>
 
@@ -132,6 +137,8 @@
   import OrderItem from '../../components/order/order_item';
   import InShopStatus from '../../components/order/inshop_status';
   import Loading from '../../components/common/loading';
+  import ShopInfoBar from '../../components/goods/shop_info_bar';
+
   @connect({
     shop: store.get('shop')
   })
@@ -143,7 +150,8 @@
       },
       express: {},
       address: {},
-      init: false
+      init: false,
+      subShop: {}
     };
     async onLoad ({orderId}) {
       const result = await auth.user({block: true, redirect: true});
@@ -156,6 +164,8 @@
         simpleAddress: this.order.address,
         phone: this.order.receivePhone
       };
+      this.subShop = this.order.subShop != null ? this.order.subShop : this.shop;
+      console.info(this.subShop)
       this.loaded();
     };
     /**
@@ -307,6 +317,7 @@
       Address: Address,
       OrderItem: OrderItem,
       InShopStatus: InShopStatus,
+      ShopInfoBar: ShopInfoBar,
       Loading: Loading
     };
 
