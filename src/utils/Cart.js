@@ -26,10 +26,10 @@ export default class Cart {
   save() {
     this.computeCart();
     // 保存到存储
-    wepy.setStorage({
-      key: 'carts',
-      data: this
-    });
+    // wepy.setStorage({
+    //   key: 'carts',
+    //   data: this
+    // });
     // 保存到Store
     console.time('[cart] save cart store');
     store.save('cart', this.export());
@@ -135,7 +135,7 @@ export default class Cart {
       discountText: goods.discountText
     };
   }
-  /***git
+  /**
    * 新增购物车数据
    */
   plus(goods, selText, num = 1) {
