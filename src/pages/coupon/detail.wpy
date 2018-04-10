@@ -70,7 +70,7 @@
           this.$apply();
         }
       }, 3000);
-      this.subShop = this.shop;
+      this.subShop = this.coupon.subShop;
       this.loaded();
       Qrcode.init('qrcode', `${this.coupon.couponId}#${this.coupon.id}`);
     };
