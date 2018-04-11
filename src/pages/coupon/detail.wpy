@@ -8,6 +8,17 @@
       <ShopInfoBar :subShop.sync="subShop"/>
     </view>
 
+    <!--订单信息栏-->
+    <view class="row-between coupon-order-box"  @tap="order" wx:if="{{orderId != 0}}">
+      <view>
+        <icon class="order mr10" color="gray"/>
+        <text>订单信息</text>
+      </view>
+      <view>
+        <icon class="more ml10" color="gray"/>
+      </view>
+    </view>
+
     <view class="success-box column-center"  wx:if="{{success}}">
       <text>{{message}}</text>
     </view>
@@ -53,9 +64,13 @@
       message: '',
       subShop: null
     };
-    onLoad (options, {preload}) {
-      this.coupon = preload.coupon;
-      const id = preload.coupon.id;
+    async onLoad (options, {preload}) {
+      const id = preload.coupon ? preload.coupon.id : preload.couponId;
+      if (preload.coupon) {
+        this.coupon = preload.coupon;
+      } else {
+        this.coupon = await coupon.detail(id)
+      }
       interval = setInterval(async () => {
         const ownList = await coupon.own();
         const target = ownList ? ownList.find(item => item.id == id) : null;
@@ -106,6 +121,9 @@
         Event.emit(Event.COUPON_LIST_UPDATE);
         await store.refresh('coupon');
         wepy.navigateBack();
+      },
+      order () {
+        this.$navigate(`/pages/order/detail?orderId=${this.coupon.orderId}`)
       }
     };
     events = {};
@@ -150,6 +168,12 @@
     margin: 20rpx;
     border-left: $border;
     border-right: $border;
+  }
+  .coupon-order-box{
+    margin: 20rpx;
+    background-color: white;
+    padding: 20rpx;
+    border: $border;
   }
   .shop-info-bar{
     .shop-address-box,.shop-name-box{

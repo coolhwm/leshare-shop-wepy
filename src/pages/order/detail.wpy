@@ -42,7 +42,7 @@
     <OrderItem :order.sync="order" action="0"></OrderItem>
 
     <!--使用虚拟产品栏-->
-    <view class="row-between digit-box mt10" wx:if="{{order.orderType == '90'}}"  @tap="digit">
+    <view class="row-between digit-box mt10" wx:if="{{order.orderType == '90'}}"  @tap="checkQrCode">
       <view>
         <icon class="qrcode" color="gray"/>
         <text class="ml10">查看二维码</text>
@@ -165,7 +165,6 @@
         phone: this.order.receivePhone
       };
       this.subShop = this.order.subShop != null ? this.order.subShop : this.shop;
-      console.info(this.subShop)
       this.loaded();
     };
     /**
@@ -282,7 +281,7 @@
      * 查看二维码
      */
     qrCode(order) {
-      console.info(order)
+      this.$root.$navigate(`/pages/coupon/detail?couponId=${order.couponCustomerInfo.id}`)
     }
     methods = {
       action(funcName, order) {
@@ -297,7 +296,7 @@
       sender() {
         wepy.makePhoneCall({phoneNumber: this.order.orderExpress.telPhone});
       },
-      digit() {
+      checkQrCode () {
         console.info(this.order)
       }
     };

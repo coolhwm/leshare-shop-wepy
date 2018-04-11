@@ -158,7 +158,9 @@
      * 查看二维码
      */
     qrCode(order) {
-      console.info(order)
+      const couponId = order.couponCustomerInfo.id
+      this.$root.$preload('couponId', couponId);
+      this.$root.$navigate(`/pages/coupon/detail`)
     }
     methods = {
       action(funcName, order) {
