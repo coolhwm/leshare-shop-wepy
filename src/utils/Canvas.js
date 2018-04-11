@@ -112,6 +112,9 @@ export default class Canvas {
     if (params.canvasName == 'groupShare') {
       this.inviteShareTemplete(params);
     }
+    if (params.canvasName == 'superPoster') {
+      this.superPosterTemplete(params);
+    }
   }
 
   /**
@@ -135,7 +138,6 @@ export default class Canvas {
     // 创建基本画布
     this.createCanvasContext(params.canvasName);
     // 绘制画布
-    // this.setCanvas('#ffffff', params.canvasPadding, params.canvasWidth, params.canvasHeight);
     this.canvasDrawRoundRect('#ffffff', params.canvasPadding, params.canvasHeight, params.canvasWidth);
     // 绘制图片
     this.canvasImage(image);
@@ -226,7 +228,6 @@ export default class Canvas {
    * 邀请卡分享的画布模板
    * */
   static async inviteShareTemplete(params) {
-    console.log(params);
     // 图片
     const shareBg = {};
     shareBg.tempFilePath = '/images/icons/share-bg.jpg';
@@ -283,5 +284,11 @@ export default class Canvas {
     this.canvasImage(code);
 
     this.context.draw();
+  }
+  /**
+   * 超级海报
+   * */
+  static async superPosterTemplete(param) {
+
   }
 }

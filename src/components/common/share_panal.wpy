@@ -1,4 +1,5 @@
 <template>
+  <!-- 商品、首页分享样式-->
   <view class="sheet-box" wx:if="{{sheetParams.sheetHidden}}">
     <view class="clear-area" @tap="hidden"/>
     <view class="share-area">
@@ -18,6 +19,7 @@
     </view>
   </view>
 
+  <!-- 团分享样式 -->
   <view class="canvas-box" @tap="grayArea" wx:if="{{canvasParams.canvasHidden && canvasParams.canvasTemplateId == 0}}">
     <view class="column-center">
       <canvas disable-scroll="true" @touchmove="contentArea" style="width: 100%; height: {{canvasParams.canvasHeight + 40}}px;" canvas-id="{{canvasParams.canvasName}}"/>
@@ -27,6 +29,9 @@
       <text class="mt20 xs white">长按图保存图片到相册</text>
     </view>
   </view>
+
+
+  <!-- 画布按钮 -->
   <view class="column-center" wx:if="{{canvasParams.canvasHidden && canvasParams.canvasTemplateId == 1}}">
     <canvas  class="canvas-group-box" style="width: {{canvasParams.canvasWidth}}px; height: {{canvasParams.canvasHeight}}px;" canvas-id="{{canvasParams.canvasName}}" @longtap="saveCanvas"/>
   </view>
@@ -135,6 +140,10 @@
         this.canvasParams.canvasHeight = system.windowHeight * 0.8;
         this.user = wepy.getStorageSync('user');
         this.canvasParams.code = await code.getCode(this.user.openId, 'pages/home/home');
+      }
+      if (params.canvasName == 'superPoster') {
+        this.canvasParams.canvasWidth = system.windowWidth;
+        this.canvasParams.canvasHeight = system.windowHeight;
       }
     }
   }
