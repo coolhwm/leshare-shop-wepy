@@ -1,6 +1,6 @@
 <template>
   <view class="row group_more_item">
-    <image class="img-box" src="{{item.goodsImage}}"/>
+    <image class="img-box mr10" src="{{item.goodsImage}}"/>
     <view class="column content-box">
       <text class="lg">{{item.goodsName}}</text>
       <view class="row-between">

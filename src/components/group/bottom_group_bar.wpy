@@ -14,7 +14,10 @@
       <text class="xxl money-box">￥{{rule.goods.priceLable}}</text>
       <text>单独购买</text>
     </view>
-    <view class="column-center btn-group" @tap="handleGroup({{rule.goods}}, {{rule.goodsGroupSkuDetails}}, {{rule.id}}, {{state}}, {{groupId}})">
+    <view wx:if="{{rule.isTimeOut}}" class="column-center btn-disabled">
+      <text>活动已过期</text>
+    </view>
+    <view wx:else class="column-center btn-group" @tap="handleGroup({{rule.goods}}, {{rule.goodsGroupSkuDetails}}, {{rule.id}}, {{state}}, {{groupId}})">
       <text class="xxl money-box">￥{{rule.price}}</text>
       <text>{{groupText}}</text>
     </view>
@@ -118,6 +121,15 @@
     }
     .btn-group{
       background-color:$color-primary;
+      text{
+        color: #fff;
+      }
+    }
+    .btn-disabled{
+      height: 100%;
+      width: $btn-width;
+      border-left: $border;
+      background-color:$color-weak;
       text{
         color: #fff;
       }

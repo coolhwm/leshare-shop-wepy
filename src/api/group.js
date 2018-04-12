@@ -79,6 +79,9 @@ export default class group extends base {
     // 处理价格标签
     this._processGoodsPriceLabel(detail);
 
+    // 处理活动到期
+    this._processTimeOut(detail);
+
     return detail;
   }
 
@@ -405,5 +408,12 @@ export default class group extends base {
     if (rule.limitCustomer > data.list.length) {
       for (let i = 1; i < rule.limitCustomer; i++) data.list.push({})
     }
+  }
+
+  /***
+   * 处理活动到期
+   */
+  static _processTimeOut(detail) {
+    detail.isTimeOut = new Date(detail.endTime).getTime() < new Date().getTime();
   }
 }

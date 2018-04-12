@@ -1,7 +1,7 @@
 <template>
   <view class="buy-bar-placeholder">
   </view>
-  <view class="row group-bar-box">
+  <view class="row bargain-bar-box">
     <view class="column-center btn-home" @tap="home">
       <icon class="home normal" color="gray"/>
       <text class="xs">首页</text>
@@ -14,7 +14,10 @@
       <text class="xxl money-box">￥{{rule.goodsPrice}}</text>
       <text>单独购买</text>
     </view>
-    <view class="column-center btn-group" @tap="handleBargain({{rule.goods}}, {{rule.id}}, {{state}}, {{id}})">
+    <view wx:if="{{rule.isTimeOut}}" class="column-center btn-disabled">
+      <text>活动已过期</text>
+    </view>
+    <view wx:else class="column-center btn-bargain" @tap="handleBargain({{rule.goods}}, {{rule.id}}, {{state}}, {{id}})">
       <text class="xxl money-box">￥{{rule.floorPrice}}</text>
       <text>发起砍价</text>
     </view>
@@ -29,8 +32,7 @@
 
   export default class BargainBar extends wepy.component {
     props = {
-      rule: {},
-      detail: {}
+      rule: {}
     };
     data = {
       isFav: false,
@@ -72,7 +74,7 @@
 
   $btn-width: 260rpx;
   $btn-sm-width: (750rpx - $btn-width * 2) / 2;
-  .group-bar-box{
+  .bargain-bar-box{
     position: fixed;
     bottom: 0;
     height: 105rpx;
@@ -86,7 +88,7 @@
       width: $btn-sm-width;
       height: inherit;
     }
-    .btn-buy, .btn-group{
+    .btn-buy, .btn-bargain{
       height: 100%;
       width: $btn-width;
       background-color: white;
@@ -98,8 +100,17 @@
         font-weight: bold;
       }
     }
-    .btn-group{
+    .btn-bargain{
       background-color:$color-primary;
+      text{
+        color: #fff;
+      }
+    }
+    .btn-disabled{
+      height: 100%;
+      width: $btn-width;
+      border-left: $border;
+      background-color:$color-weak;
       text{
         color: #fff;
       }

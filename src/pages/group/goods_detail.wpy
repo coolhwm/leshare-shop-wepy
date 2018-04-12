@@ -17,6 +17,11 @@
     <!--商品基本信息展示及服务信息-->
     <GoodsMsgBar :rule.sync="rules"/>
 
+    <!--子商户区域-->
+    <view class="mb10">
+      <ShopInfoBar :subShop.sync="subShop"/>
+    </view>
+
     <!--拼团栏-->
     <GroupInfoBar :processing.sync="processing" :info.sync="info"/>
 
@@ -48,7 +53,8 @@
   import SilderPanel from '../../components/goods/slider_buy_panel';
   import group from '../../api/group';
   import DetailList from '../../components/goods/detail_list';
-  import GoodsMsgBar from '../../components/group/goods_msg_bar'
+  import GoodsMsgBar from '../../components/group/goods_msg_bar';
+  import ShopInfoBar from '../../components/goods/shop_info_bar';
 
   export default class GroupGoodsDetail extends wepy.page {
     data = {
@@ -59,7 +65,8 @@
       groupTime: '',
       ruleId: '',
       rules: {},
-      processing: {}
+      processing: {},
+      subShop: {}
     };
     async onLoad ({ruleId}) {
       await auth.login();
@@ -75,6 +82,7 @@
     }
     async update (ruleId) {
       this.rules = await group.rules(ruleId);
+      this.subShop = this.rules.goods.subShop != null ? this.rules.goods.subShop : this.shop;
       this.processing = await group.processing(ruleId);
       this.endTime = this.rules.endTime;
       this.goodsId = this.rules.goodsId;
@@ -121,7 +129,8 @@
       SilderPanel: SilderPanel,
       Loading: Loading,
       DetailList: DetailList,
-      GoodsMsgBar: GoodsMsgBar
+      GoodsMsgBar: GoodsMsgBar,
+      ShopInfoBar: ShopInfoBar
     };
     mixins = [base];
     config = {

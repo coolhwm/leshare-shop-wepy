@@ -17,11 +17,17 @@
     <!--商品基本信息展示及服务信息-->
     <GoodsMsgBar :rule.sync="rule"/>
 
+    <!--子商户区域-->
+    <view class="mb10">
+      <ShopInfoBar :subShop.sync="subShop"/>
+    </view>
+
     <!--砍价玩法栏-->
     <BargainRuleBar/>
 
     <!--评论预览-->
     <CommentPreview :goodsId.sync="goodsId"/>
+
 
     <!--商品详情-->
     <DetailList :detail.sync="detail" />
@@ -38,6 +44,7 @@
 <script>
   import wepy from 'wepy';
   import auth from '../../api/auth';
+  import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import base from '../../mixins/base';
   import Loading from '../../components/common/loading';
@@ -48,8 +55,12 @@
   import SilderPanel from '../../components/goods/slider_buy_panel';
   import bargain from '../../api/bargain';
   import DetailList from '../../components/goods/detail_list';
-  import GoodsMsgBar from '../../components/bargain/goods_msg_bar'
+  import GoodsMsgBar from '../../components/bargain/goods_msg_bar';
+  import ShopInfoBar from '../../components/goods/shop_info_bar';
 
+  @connect({
+    shop: store.get('shop')
+  })
   export default class BargainGoodsDetail extends wepy.page {
     data = {
       init: false,
@@ -59,7 +70,8 @@
       groupTime: '',
       ruleId: '',
       rule: {},
-      detail: {}
+      detail: {},
+      subShop: {}
     };
     async onLoad ({ruleId}) {
       await auth.login();
@@ -76,6 +88,7 @@
     async update (ruleId) {
       this.rule = await bargain.rule(ruleId);
       this.detail = this.rule.goods;
+      this.subShop = this.detail.subShop != null ? this.detail.subShop : this.shop;
       this.endTime = this.rule.endTime;
       this.goodsId = this.rule.goods.id;
       this.loaded();
@@ -117,7 +130,8 @@
       SilderPanel: SilderPanel,
       Loading: Loading,
       DetailList: DetailList,
-      GoodsMsgBar: GoodsMsgBar
+      GoodsMsgBar: GoodsMsgBar,
+      ShopInfoBar: ShopInfoBar
     };
     mixins = [base];
     config = {
