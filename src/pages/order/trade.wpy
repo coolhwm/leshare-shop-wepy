@@ -1,4 +1,4 @@
-<template>
+<template xmlns:wx="http://java.sun.com/JSP/Page">
   <Tips/>
   <Loading :init.sync="init"/>
   <view class="container" wx:if="{{init}}">
@@ -9,7 +9,7 @@
     </block>
 
     <!--需要配送的订单展现地址选择栏-->
-    <block wx:if="{{trade.isDeliveryOrder}}">
+    <block wx:if="{{trade.isDeliveryOrder && type !== 'digit'}}">
       <AddressSelector :address.sync="selectedAddress" @select.user="address" />
     </block>
 
@@ -55,7 +55,7 @@
 
 
       <!--需要配送的订单, 需要选择配送方式-->
-      <view class="weui-cell weui-cell_access" @tap="delivery" wx:if="{{trade.isDeliveryOrder}}">
+      <view class="weui-cell weui-cell_access" @tap="delivery" wx:if="{{trade.isDeliveryOrder && type !=='digit'}}">
         <view class="weui-cell__bd">配送方式</view>
         <text class="weui-cell__ft {{delilveryCount > 1 ? 'weui-cell__ft_in-access' : ''}}">{{delilveryText}} </text>
       </view>
@@ -90,7 +90,7 @@
         <text>商品金额</text>
         <text class="major">￥{{trade.dealPrice}}</text>
       </view>
-      <view class="price-box row-between" >
+      <view class="price-box row-between" wx:if="{{type !== 'digit'}}">
         <text>配送费</text>
         <text class="major">+￥{{trade.postFee}}</text>
       </view>
@@ -161,7 +161,8 @@
   import {PAYMENT, TYPE, orderUtils} from '../../api/order_const';
   import shop from '../../api/shop';
   import group from '../../api/group';
-  import bargain from '../../api/bargain'
+  import bargain from '../../api/bargain';
+  import digit from '../../api/digit';
   import FormTips from '../../components/weui/tips';
   import ActionBar from '../../components/common/action_bar';
   import AddressSelector from '../../components/address/select_item';
@@ -418,8 +419,9 @@
           const result = await group.goodsGroup(trade, address);
           return result.order;
         } else if (this.type === 'bargain') {
-          console.info('bargain');
           return await bargain.order(trade, address);
+        } else if (this.type === 'digit') {
+          return await digit.order(trade);
         } else {
           // 普通订单
           return await order.createOrder(trade, address);
@@ -470,7 +472,7 @@
       if (this.delilveries.length > 0) {
         this.selectedDelivery = this.delilveries[0];
         this.trade.deliveryType = this.selectedDelivery.type;
-        this.trade.postFee = Number(this.selectedDelivery.fee).toFixed(2);
+        this.trade.postFee = this.type === 'digit' ? 0 : Number(this.selectedDelivery.fee).toFixed(2);
       } else {
         this.selectedDelivery = null;
       }

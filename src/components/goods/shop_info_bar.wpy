@@ -1,10 +1,10 @@
 <template>
   <view class="shop-info-bar row-between">
     <view class="row">
-      <image class="avatar-box" src="{{shop.avatar}}"/>
+      <image class="avatar-box" src="{{subShop.avatar}}"/>
       <view class="column ml20">
-        <text class="lg inline name-box">{{shop.name}}</text>
-        <text class="xs muted inline address-box" @tap="address">{{shop.address}}</text>
+        <text class="lg inline shop-name-box">{{subShop.name}}</text>
+        <text class="xs muted inline shop-address-box" @tap="address">{{subShop.address}}</text>
       </view>
     </view>
     <view class="">
@@ -16,14 +16,11 @@
 
 <script>
   import wepy from 'wepy';
-  import { connect } from 'wepy-redux';
-  import store from '../../store/utils';
 
-  @connect({
-    shop: store.get('shop')
-  })
   export default class ShopInfoBar extends wepy.component {
-    props = {};
+    props = {
+      subShop: {}
+    };
     methods = {
       /**
        * 打电话
@@ -35,13 +32,13 @@
        * 导航
        */
       address () {
-        const longitude = this.shop.longitude;
-        const latitude = this.shop.latitude;
+        const longitude = this.subShop.longitude;
+        const latitude = this.subShop.latitude;
         wepy.openLocation({
           latitude: Number(latitude),
           longitude: Number(longitude),
-          name: this.shop.name,
-          address: this.shop.address
+          name: this.subShop.name,
+          address: this.subShop.address
         });
       }
     };
@@ -53,10 +50,9 @@
   .shop-info-bar{
     background-color: white;
     padding: 20rpx;
-    margin-top: 20rpx;
     border-top: $border;
     border-bottom: $border;
-    .address-box,.name-box{
+    .shop-address-box,.shop-name-box{
       width: 420rpx;
     }
     .avatar-box{

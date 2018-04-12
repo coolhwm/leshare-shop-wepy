@@ -33,8 +33,24 @@
       <InShopStatus :order.sync="order" />
     </block>
 
+    <!--子商户-->
+    <view class="mb10 mt10">
+      <ShopInfoBar :subShop.sync="subShop"/>
+    </view>
+
     <!--订单项目-->
     <OrderItem :order.sync="order" action="0"></OrderItem>
+
+    <!--使用虚拟产品栏-->
+    <view class="row-between digit-box mt10" wx:if="{{order.orderType == '90'}}"  @tap="checkQrCode">
+      <view>
+        <icon class="qrcode" color="gray"/>
+        <text class="ml10">查看二维码</text>
+      </view>
+      <view>
+        <icon class="more ml10" color="gray"/>
+      </view>
+    </view>
 
     <!--订单详情-->
     <view class="weui-cells weui-cells-show mt10">
@@ -121,6 +137,8 @@
   import OrderItem from '../../components/order/order_item';
   import InShopStatus from '../../components/order/inshop_status';
   import Loading from '../../components/common/loading';
+  import ShopInfoBar from '../../components/goods/shop_info_bar';
+
   @connect({
     shop: store.get('shop')
   })
@@ -132,7 +150,8 @@
       },
       express: {},
       address: {},
-      init: false
+      init: false,
+      subShop: {}
     };
     async onLoad ({orderId}) {
       const result = await auth.user({block: true, redirect: true});
@@ -145,6 +164,7 @@
         simpleAddress: this.order.address,
         phone: this.order.receivePhone
       };
+      this.subShop = this.order.subShop != null ? this.order.subShop : this.shop;
       this.loaded();
     };
     /**
@@ -257,6 +277,12 @@
       const refundStr = JSON.stringify(curRefund);
       this.$navigate(`/pages/order/refund_detail?refund=${refundStr}`);
     }
+    /**
+     * 查看二维码
+     */
+    qrCode(order) {
+      this.$root.$navigate(`/pages/coupon/detail?couponId=${order.couponCustomerInfo.id}`)
+    }
     methods = {
       action(funcName, order) {
         console.info('[action]' + funcName);
@@ -269,6 +295,9 @@
       },
       sender() {
         wepy.makePhoneCall({phoneNumber: this.order.orderExpress.telPhone});
+      },
+      checkQrCode () {
+        console.info(this.order)
       }
     };
     computed = {
@@ -287,6 +316,7 @@
       Address: Address,
       OrderItem: OrderItem,
       InShopStatus: InShopStatus,
+      ShopInfoBar: ShopInfoBar,
       Loading: Loading
     };
 
@@ -367,6 +397,15 @@
     bottom: 0;
     border-top: $border;
     padding-right: 10rpx;
+  }
+
+  // 虚拟商品使用
+  .digit-box{
+    background-color: white;
+    margin-bottom: 10rpx;
+    padding: 10rpx 30rpx;
+    border-top: $border;
+    border-bottom: $border;
   }
 
 

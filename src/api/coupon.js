@@ -98,6 +98,15 @@ export default class coupon extends base {
     return this.post(url, visit);
   }
   /**
+   * 根据id查询卡卷详情
+   */
+  static detail(id) {
+    const url = `${this.baseUrl}/coupons/info/${id}`;
+    return this.get(url).then(data => {
+      return this._processCouponItem(data)
+    });
+  }
+  /**
    * 处理可以领取的优惠券
    */
   static _processPickItem (coupon) {
@@ -114,6 +123,7 @@ export default class coupon extends base {
       return null;
     }
     const coupon = data.coupon;
+    coupon.orderId = root.orderId;
     coupon.imgUrl = root.imgUrl;
     coupon.status = root.status;
     coupon.id = root.id;

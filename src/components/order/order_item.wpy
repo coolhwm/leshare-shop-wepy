@@ -154,6 +154,14 @@
       this.$root.$preload('data', scores);
       this.$root.$navigate(`/pages/goods/comment_edit?orderId=${order.orderId}`);
     }
+    /**
+     * 查看二维码
+     */
+    qrCode(order) {
+      const couponId = order.couponCustomerInfo.id
+      this.$root.$preload('couponId', couponId);
+      this.$root.$navigate(`/pages/coupon/detail`)
+    }
     methods = {
       action(funcName, order) {
         console.info('[action]' + funcName);

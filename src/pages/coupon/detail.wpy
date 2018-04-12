@@ -3,6 +3,22 @@
   <view wx:if="{{init}}">
     <CouponItem :coupon.sync="coupon" />
 
+    <!--子商户-->
+    <view class="shop-box" wx:if="{{subShop != null}}">
+      <ShopInfoBar :subShop.sync="subShop"/>
+    </view>
+
+    <!--订单信息栏-->
+    <view class="row-between coupon-order-box"  @tap="order" wx:if="{{orderId != 0}}">
+      <view>
+        <icon class="order mr10" color="gray"/>
+        <text>订单信息</text>
+      </view>
+      <view>
+        <icon class="more ml10" color="gray"/>
+      </view>
+    </view>
+
     <view class="success-box column-center"  wx:if="{{success}}">
       <text>{{message}}</text>
       <text class="mt10 xs">{{tips}}</text>
@@ -39,6 +55,8 @@
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
   import FormTips from '../../components/weui/tips';
+  import ShopInfoBar from '../../components/goods/shop_info_bar';
+
   let interval = null;
   @connect({
     shop: store.get('shop')
@@ -49,13 +67,19 @@
       coupon: null,
       success: false,
       message: '',
-      tips: ''
+      tips: '',
+      subShop: null
     };
     async onLoad (options, {preload}) {
       // 初始化全局存储
       await store.init();
       this.coupon = preload.coupon;
-      const id = preload.coupon.id;
+      const id = preload.coupon ? preload.coupon.id : preload.couponId;
+      if (preload.coupon) {
+        this.coupon = preload.coupon;
+      } else {
+        this.coupon = await coupon.detail(id)
+      }
       interval = setInterval(async () => {
         const ownList = await coupon.own();
         const target = ownList ? ownList.find(item => item.id == id) : null;
@@ -70,6 +94,7 @@
           this.$apply();
         }
       }, 3000);
+      this.subShop = this.coupon.subShop;
       this.loaded();
     };
     onUnload () {
@@ -105,11 +130,15 @@
         Event.emit(Event.COUPON_LIST_UPDATE);
         await store.refresh('coupon');
         wepy.navigateBack();
+      },
+      order () {
+        this.$navigate(`/pages/order/detail?orderId=${this.coupon.orderId}`)
       }
     };
     events = {};
     components = {
       CouponItem: CouponItem,
+      ShopInfoBar: ShopInfoBar,
       Tips: FormTips
     };
     mixins = [base, input];
@@ -166,5 +195,21 @@
   }
   .middle{
     margin-left: 200rpx;
+  }
+  .shop-box{
+    margin: 20rpx;
+    border-left: $border;
+    border-right: $border;
+  }
+  .coupon-order-box{
+    margin: 20rpx;
+    background-color: white;
+    padding: 20rpx;
+    border: $border;
+  }
+  .shop-info-bar{
+    .shop-address-box,.shop-name-box{
+      width: 380rpx;
+    }
   }
 </style>

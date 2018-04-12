@@ -93,6 +93,7 @@
   import Event from '../../utils/Event';
   import Cart from '../../utils/Cart';
   import DiscountBadge from './discount_badge';
+  import router from '../../mixins/router'
 
   @connect({
     status: store.get('status')
@@ -154,6 +155,7 @@
       },
       // 确认选择
       async confirm(type) {
+        console.info(type)
         if (!this.sku.next) {
           return;
         }
@@ -201,7 +203,7 @@
           return '已售罄';
         } else if (this.action === 'cart') {
           return '加入购物车'
-        } else if (this.action === 'buy' || this.action === 'bargain') {
+        } else if (this.action === 'buy' || this.action === 'bargain' || this.action === 'digit') {
           return '立即购买';
         } else if (this.action === 'group') {
           return '一键开团';
@@ -235,6 +237,7 @@
       ZanQuantity: ZanQuantity,
       DiscountBadge: DiscountBadge
     };
+    mixins = [router]
     events = {
       clear() {
         console.info('[SilderPanel] clear');

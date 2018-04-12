@@ -18,16 +18,29 @@
         <view class="row">
           <text class=" lg major" >￥{{goods.priceLable}}</text>
         </view>
+        <!--预约按钮-->
+        <view wx:if="{{goods.type == 'service'}}">
+          <block>
+            <text class="service-box sm" wx:if="{{goods.totalStock > 0}}" @tap.stop="service({{goods.id}})">预约</text>
+            <text class="sm muted" wx:else>已售罄</text>
+          </block>
+        </view>
+
+        <!--虚拟商品按钮-->
+        <view wx:elif="{{goods.type == 'digit'}}">
+          <block>
+            <icon class="plus normal" wx:if="{{goods.totalStock > 0}}" @tap.stop="digit({{goods.id}})" />
+            <text class="sm muted" wx:else>已售罄</text>
+          </block>
+        </view>
+
         <!--加入购物车按钮-->
-        <block wx:if="{{goods.isCart || goods.isCart == null}}">
-          <view wx:if="{{goods.type === 'goods'}}">
-            <icon class="plus"  @tap="handlePlusCart({{goods}})" wx:if="{{goods.totalStock > 0}}"/>
-            <text class="xxs muted" wx:else>已售罄</text>
-          </view>
-          <view wx:elif="{{goods.type === 'service'}}">
-            <text class="service-btn-box" @tap="service({{goods.id}}, {{goods.type}})">预约</text>
-          </view>
-        </block>
+        <view wx:else>
+          <block wx:if="{{goods.isCart || goods.isCart == null}}">
+            <icon class="plus normal" wx:if="{{goods.totalStock > 0}}" @tap.stop="handlePlusCart({{goods}})" />
+            <text class="sm muted" wx:else>已售罄</text>
+          </block>
+        </view>
 
       </view>
     </view>
@@ -45,6 +58,9 @@
     methods = {
       service (id, type) {
         this.$root.$navigate(`/pages/goods/detail?goodsId=${id}&type=${type}`)
+      },
+      digit (id) {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${id}`)
       }
     };
     mixins = [router]
@@ -86,11 +102,12 @@
     .content-box{
       padding: 5rpx;
     }
-    .service-btn-box{
-      padding: 0 10rpx;
-      border-radius: 10rpx;
+    .service-box{
       background-color: $color-primary;
       color: white;
+      padding: 5rpx 10rpx;
+      border-radius: 10rpx;
+      line-height: 29px;
     }
   }
 </style>
