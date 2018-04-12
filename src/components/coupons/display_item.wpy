@@ -1,5 +1,5 @@
 <template>
-  <view class="coupon-item-box row {{coupon.status == 'NEVER_USED' ? '' : 'coupon-item-disable'}}"  @tap.stop="select({{coupon}})">
+  <view class="{{coupon.status == 'NEVER_USED' ? '' : 'coupon-item-disable'}} coupon-item-box row "  @tap.stop="select({{coupon}})">
     <!--左侧区域-->
     <view class="coupon-main-box column-center" wx:if="{{coupon.type == 'CASH'}}">
       <view class="coupon-value-box">
@@ -79,7 +79,7 @@
     .coupon-main-box{
       width: 36%;
       height: 100%;
-      background: linear-gradient(to right, #2F80ED, #1296db);
+      background: linear-gradient(to right, lighten($color-primary, 5%), $color-primary-darken);
       .coupon-value{
         font-size: 75rpx;
       }
@@ -104,29 +104,28 @@
       top: 0;
       right: 0;
     }
-
-    /*已使用/已过期情况调整*/
-    .coupon-item-disable{
-      overflow: hidden;
-      .coupon-main-box{
-        background: #C2C2C2;
-        text{
-          color: #FFF;
-        }
-      }
-      .coupon-title-text{
-        color: #A7A7A7;
-      }
-      .coupon-detail-box text{
-        color: #A7A7A7;
+  }
+  /*已使用/已过期情况调整*/
+  .coupon-item-disable{
+    overflow: hidden;
+    .coupon-main-box{
+      background: #C2C2C2;
+      text{
+        color: #FFF;
       }
     }
-    .coupon-used-icon{
-      height: 64px;
-      width: 64px;
-      position: absolute;
-      top: 2px;
-      right: -8px;
+    .coupon-title-text{
+      color: #A7A7A7;
     }
+    .coupon-detail-box text{
+      color: #A7A7A7;
+    }
+  }
+  .coupon-used-icon{
+    height: 64px;
+    width: 64px;
+    position: absolute;
+    top: 2px;
+    right: -8px;
   }
 </style>

@@ -5,11 +5,18 @@
 
     <view class="success-box column-center"  wx:if="{{success}}">
       <text>{{message}}</text>
+      <text class="mt10 xs">{{tips}}</text>
     </view>
 
     <view class="qr-box column-center" wx:if="{{!success}}">
       <text class="muted mb20 lg" wx:if="{{coupon.supportType !=1}}">线下店铺消费时出示</text>
-      <canvas  style="width: 200px; height: 200px;" canvas-id="qrcode" wx:if="{{coupon.supportType !=1}}"></canvas>
+      <view class="code-box">
+        <block wx:if="{{coupon.imgUrl}}">
+          <image  class="code-image" src="{{coupon.imgUrl}}"></image>
+          <image wx:if="{{shop.avatar}}" class="shop-avatar" src="{{shop.avatar}}"/>
+        </block>
+        <text wx:else class="code-fail-box muted">获取二维码失败，请联系客服或使用自助核销</text>
+      </view>
       <text style="width: 200px; height: 200px;" class="muted lg column-center" wx:if="{{coupon.supportType ==1}}">暂不支持线下店铺消费</text>
     </view>
 
@@ -23,24 +30,30 @@
 
 <script>
   import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import base from '../../mixins/base';
   import input from '../../mixins/input';
   import coupon from '../../api/coupon';
   import CouponItem from '../../components/coupons/display_item';
-  import Qrcode from '../../components/wux/qrcode/qrcode';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
   import FormTips from '../../components/weui/tips';
   let interval = null;
+  @connect({
+    shop: store.get('shop')
+  })
   export default class CouponDetail extends wepy.page {
     data = {
       init: false,
       coupon: null,
       success: false,
-      message: ''
+      message: '',
+      tips: ''
     };
-    onLoad (options, {preload}) {
+    async onLoad (options, {preload}) {
+      // 初始化全局存储
+      await store.init();
       this.coupon = preload.coupon;
       const id = preload.coupon.id;
       interval = setInterval(async () => {
@@ -58,7 +71,6 @@
         }
       }, 3000);
       this.loaded();
-      Qrcode.init('qrcode', `${this.coupon.couponId}#${this.coupon.id}`);
     };
     onUnload () {
       clearInterval(interval);
@@ -72,6 +84,7 @@
           this.coupon.status = 'USED';
           this.message = '已自助核销';
           this.success = true;
+          this.tips = '请将该页面出示给店家确认';
           clearInterval(interval);
           await Tips.success('操作成功', 1000);
           this.$apply();
@@ -126,6 +139,29 @@
     text {
       font-size: 27px;
       color: $color-muted;
+    }
+  }
+  .code-fail-box{
+    position: relative;
+    top: 50px;
+    text-align: center;
+  }
+  .code-box{
+    position: relative;
+    width: 200px;
+    height: 200px;
+    .code-image{
+      width: 100%;
+      height: 100%;
+    }
+    $avatar-size: 90px;
+    .shop-avatar{
+      top: 55px;
+      left: 55px;
+      width: $avatar-size;
+      height: $avatar-size;
+      border-radius: 50%;
+      position: absolute;
     }
   }
   .middle{

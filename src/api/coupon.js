@@ -114,7 +114,7 @@ export default class coupon extends base {
       return null;
     }
     const coupon = data.coupon;
-
+    coupon.imgUrl = root.imgUrl;
     coupon.status = root.status;
     coupon.id = root.id;
     coupon.couponId = root.couponId;
