@@ -9,7 +9,7 @@
     </view>
 
     <!--订单信息栏-->
-    <view class="row-between coupon-order-box"  @tap="order" wx:if="{{orderId != 0}}">
+    <view class="row-between coupon-order-box"  @tap="order" wx:if="{{coupon.orderId > 0}}">
       <view>
         <icon class="order mr10" color="gray"/>
         <text>订单信息</text>

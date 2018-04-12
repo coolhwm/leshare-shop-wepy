@@ -6,7 +6,7 @@
     <view class="column content-box">
       <view class="column-center bonus-box">
         <text class="white mb10">已邀请</text>
-        <view class="row number-box">
+        <view class="row number-box mb10">
           <text class="white bonus-text">{{number}}</text>
           <text class="white sm">人</text>
         </view>
