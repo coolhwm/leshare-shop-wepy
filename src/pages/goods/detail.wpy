@@ -226,7 +226,7 @@
           canvasParams: {
             detail: this.detail,
             canvasTemplateId: 0,
-            canvasName: 'goodsShare'
+            canvasName: 'superPoster'
           }
         };
         this.$invoke('SharePanal', 'show', params);

@@ -288,7 +288,23 @@ export default class Canvas {
   /**
    * 超级海报
    * */
-  static async superPosterTemplete(param) {
-
+  static async superPosterTemplete(params) {
+    // 图片
+    const shareBg = await wepy.downloadFile({url: 'http://img.leshare.shop/super_canvas.png'});
+    shareBg.imageWidth = params.canvasWidth;
+    shareBg.imageHeight = params.canvasHeight;
+    // 创建基本画布
+    this.createCanvasContext('superPoster');
+    // 绘制图片
+    this.canvasImage(shareBg);
+    // 二维码
+    const code = await wepy.downloadFile({url: params.code});
+    code.x = params.canvasWidth * 0.38;
+    code.y = params.canvasHeight * 0.60;
+    code.imageWidth = params.canvasWidth * 0.23;
+    code.imageHeight = params.canvasWidth * 0.23;
+    code.padding = 0;
+    this.canvasImage(code);
+    this.context.draw();
   }
 }
