@@ -1,0 +1,141 @@
+<template>
+  <view wx:if="{{init}}">
+    <view class="column content-box">
+      <view class="column-center bonus-box">
+        <text class="xs white">已邀请</text>
+        <view class="row number-box">
+          <text class="white bonus-text">{{number}}</text>
+          <text class="white sm">人</text>
+        </view>
+        <view class="row btn-box">
+          <text class="xs white">去邀请
+          </text>
+          <icon class="more xsmall" color="white"/>
+        </view>
+      </view>
+      <view class="column">
+        <block wx:for="{{list}}" wx:key="index" wx:for-item="item">
+          <view class="row-between item-box">
+            <view class="customer-box row">
+              <image class="avatar-box" src="{{item.avatar}}"/>
+              <text class="ml20">{{item.name}}</text>
+            </view>
+            <view class="column time-bonus-box">
+              <text class="muted sm">{{item.time}}</text>
+              <text class="primary">+{{item.bonus}}</text>
+            </view>
+          </view>
+        </block>
+      </view>
+      <view class="column rule-box">
+        <block wx:for="{{rules}}" wx:key="index" wx:for-item="item">
+          <text class="muted">{{item.rule}}</text>
+        </block>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Invite extends wepy.page {
+    data = {
+      init: false,
+      list: [
+        {
+          name: '小红',
+          bonus: 10,
+          time: '2018-04-04 11:42:00',
+          avatar: 'https://wx.qlogo.cn/mmopen/vi_32/aHuo8HgicmNLHWdl6aicYdccwRKQTPVf3HtcHa9opwOmAh2cCu9ictPLdNkxaJnzbfn8vRvh5KMLkfojnichmThYfA/0'
+        },
+        {
+          name: '小黄',
+          bonus: 10,
+          time: '2018-04-01 11:00:00',
+          avatar: 'https://wx.qlogo.cn/mmopen/vi_32/aHuo8HgicmNLHWdl6aicYdccwRKQTPVf3HtcHa9opwOmAh2cCu9ictPLdNkxaJnzbfn8vRvh5KMLkfojnichmThYfA/0'
+        },
+        {
+          name: '小兰',
+          bonus: 10,
+          time: '2018-04-05 11:12:00',
+          avatar: 'https://wx.qlogo.cn/mmopen/vi_32/aHuo8HgicmNLHWdl6aicYdccwRKQTPVf3HtcHa9opwOmAh2cCu9ictPLdNkxaJnzbfn8vRvh5KMLkfojnichmThYfA/0'
+        },
+        {
+          name: '小绿',
+          bonus: 10,
+          time: '2018-04-02 01:22:00',
+          avatar: 'https://wx.qlogo.cn/mmopen/vi_32/aHuo8HgicmNLHWdl6aicYdccwRKQTPVf3HtcHa9opwOmAh2cCu9ictPLdNkxaJnzbfn8vRvh5KMLkfojnichmThYfA/0'
+        },
+        {
+          name: '小青',
+          bonus: 10,
+          time: '2018-04-03 05:55:00',
+          avatar: 'https://wx.qlogo.cn/mmopen/vi_32/aHuo8HgicmNLHWdl6aicYdccwRKQTPVf3HtcHa9opwOmAh2cCu9ictPLdNkxaJnzbfn8vRvh5KMLkfojnichmThYfA/0'
+        }
+      ],
+      rules: [
+        {
+          rule: '1、每邀请一名好友关注本商城即可获得10积分；'
+        },
+        {
+          rule: '2、可以根据所获得的积分进入本商城的积分商城内兑换产品，产品有限换完为止，抓紧时间哦！'
+        },
+        {
+          rule: '3、最终解释权归本商城所有。'
+        }
+      ],
+      number: 5
+    };
+    onLoad () {
+      this.init = true;
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .bonus-box{
+    background-color: $color-primary;
+    padding: 20rpx;
+    border-radius: 30rpx;
+    margin: 10rpx 10rpx 0;
+    .bonus-text{
+      font-size: 30px;
+      line-height: 30px;
+    }
+    .btn-box{
+      border: 1px solid white;
+      border-radius: 30rpx;
+      padding: 8rpx 20rpx;
+    }
+    .number-box{
+      align-items: flex-end;
+      padding: 10rpx;
+    }
+  }
+  .item-box{
+    padding: 18rpx;
+    margin: 10rpx 10rpx 0;
+    border-radius: 30rpx;
+    background-color: white;
+  }
+  .customer-box{
+    align-items: center;
+    .avatar-box{
+      width: 80rpx;
+      height: 80rpx;
+      border: $border;
+      border-radius: 40rpx;
+    }
+  }
+  .time-bonus-box{
+    align-items: flex-end;
+  }
+  .rule-box{
+    border: 1px dashed $color-muted;
+    border-radius: 30rpx;
+    margin: 10rpx 10rpx 0;
+    padding: 20rpx;
+  }
+</style>
