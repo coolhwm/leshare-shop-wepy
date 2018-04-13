@@ -106,6 +106,7 @@
         this.triggers = page.triggers;
       }
       Event.listen(Event.ORDER_LIST_UPDATE, this.loadOrderCount.bind(this), this);
+      Event.listen(Event.MEMBER_CARD_UPDATE, this.loadMember.bind(this), this);
       this.loaded();
       this.loadOrderCount();
     };
@@ -126,6 +127,13 @@
       } else {
         this.count = await order.count();
       }
+      this.loaded();
+    }
+    /**
+     * 更新会员信息
+     */
+    async loadMember() {
+      await store.refresh('member');
       this.loaded();
     }
     /**

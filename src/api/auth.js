@@ -94,7 +94,7 @@ export default class auth extends base {
    * 服务端解密用户信息
    */
   static async decodePhone(rawUser) {
-    const url = `${this.baseUrl}/auth/decode_phone`;
+    const url = `${this.baseUrl}/auth/register_phone`;
     const param = {
       encryptedData: rawUser.encryptedData,
       iv: rawUser.iv,

@@ -51,6 +51,8 @@
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import base from '../../mixins/base'
+  import Event from '../../utils/Event';
+  import Tips from '../../utils/Tips';
 
   @connect({
     member: store.get('member'),
@@ -66,9 +68,22 @@
     };
     methods = {
       async regist ({detail}) {
-        await auth.doLogin();
-        await auth.decodePhone(detail)
-        // this.$root.$navigate('/pages/customer/registe_member');
+        if (detail.errMsg == 'getPhoneNumber:fail user deny') {
+          await Tips.alert('请允许授权');
+          return;
+        }
+        try {
+          const result = await auth.decodePhone(detail);
+          if (result.memberId) {
+            await Tips.success('注册成功');
+            Event.emit(Event.MEMBER_CARD_UPDATE);
+          } else {
+            this.$root.$navigate('/pages/customer/registe_member');
+          }
+        } catch (e) {
+          console.info('注册失败', e);
+          this.$root.$navigate('/pages/customer/registe_member');
+        }
       },
       detail() {
         if (this.isDetail == 'false') return;
