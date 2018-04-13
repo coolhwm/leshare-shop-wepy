@@ -3,10 +3,12 @@
   </view>
   <view class="row buy-bar-box" wx:if="{{goods.type === 'service'}}">
     <view class="column-center  btn-fav">
-      <icon class="service" color="gray"/>
-      <text>客服</text>
+      <button plain class="column-center" open-type="contact">
+        <icon class="service" color="gray"/>
+        <text>客服</text>
+      </button>
     </view>
-    <view class="column-center btn-goto-cart" @tap="cart">
+    <view class="column-center btn-goto-cart" @tap="home">
       <icon class="home" color="gray"/>
       <text>首页</text>
     </view>
@@ -16,10 +18,12 @@
   </view>
   <view class="row buy-bar-box" wx:elif="{{goods.type === 'digit'}}">
     <view class="column-center  btn-fav">
-      <icon class="service" color="gray"/>
-      <text>客服</text>
+      <button plain class="column-center" open-type="contact">
+        <icon class="service" color="gray"/>
+        <text>客服</text>
+      </button>
     </view>
-    <view class="column-center btn-goto-cart" @tap="cart">
+    <view class="column-center btn-goto-cart" @tap="home">
       <icon class="home" color="gray"/>
       <text>首页</text>
     </view>
@@ -83,6 +87,9 @@
       },
       service (id) {
         this.$root.$navigate(`/pages/booking/order?goodsId=${id}`);
+      },
+      home () {
+        this.$root.$switch(`/pages/home/template`)
       }
     };
     watch = {
@@ -116,6 +123,9 @@
     .btn-fav, .btn-goto-cart{
       width: $btn-sm-width;
       text{font-size: $text-xs}
+      button{
+        line-height: normal;
+      }
     }
     .btn-cart, .btn-buy{
       height: 100%;
