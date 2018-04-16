@@ -49,6 +49,7 @@
       margin-top: 3px;
     }
     button{
+      border-radius: 0;
       padding: 0;
       line-height: 1.2em;
     }

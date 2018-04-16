@@ -47,7 +47,7 @@
         </view>
 
         <!--虚拟商品按钮-->
-        <view wx:elif="{{goods.type == 'digit'}}">
+        <view wx:elif="{{goods.type == 'digit' && goods.isCart}}">
           <block>
             <icon class="plus normal" wx:if="{{goods.totalStock > 0}}" @tap.stop="digit({{goods.id}})" />
             <text class="sm muted" wx:else>已售罄</text>
@@ -56,7 +56,7 @@
 
         <!--加入购物车按钮-->
         <view wx:else>
-          <block wx:if="{{goods.isCart || goods.isCart == null}}">
+          <block wx:if="{{goods.isCart}}">
             <icon class="plus normal" wx:if="{{goods.totalStock > 0}}" @tap.stop="handlePlusCart({{goods}})" />
             <text class="sm muted" wx:else>已售罄</text>
           </block>

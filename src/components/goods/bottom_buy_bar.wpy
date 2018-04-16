@@ -115,7 +115,7 @@
     height: 105rpx;
     width: 100%;
     background-color: white;
-    border: $border;
+    border-top: $border;
     .btn-goto-cart{
       border-left: $border;
       position: relative;

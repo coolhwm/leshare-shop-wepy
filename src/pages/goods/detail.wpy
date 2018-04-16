@@ -49,7 +49,7 @@
         <view class="price row-between mt10">
           <view class="row">
             <text class="major xxl">￥{{detail.priceLable}}</text>
-            <text class="cancel ml10" wx:if="{{detail.discount}}">￥{{detail.originalPrice}}</text>
+            <text class="cancel ml10" wx:if="{{detail.originalPrice}}">￥{{detail.originalPrice}}</text>
           </view>
 
           <!--数量选择器-->
@@ -231,9 +231,9 @@
      * 页面分享
      */
     onShareAppMessage () {
-      const {id, name, imageUrl} = this.detail;
+      const {id, name, imageUrl, priceLable} = this.detail;
       return {
-        title: name,
+        title: `${name} 仅需${priceLable}元`,
         imageUrl: imageUrl,
         path: `/pages/goods/detail?goodsId=${id}`
       };

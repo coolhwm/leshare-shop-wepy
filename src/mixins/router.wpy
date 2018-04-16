@@ -256,20 +256,22 @@
             this.routeToIndex();
             break;
           case 'GOODS_SEARCH':
-            // 商品检索
-            const {categoryId, sort, by, content} = targetId;
             let url = `/pages/goods/search_list?`;
-            if (categoryId != null) {
-              url += `&categoryId=${categoryId}`;
-            }
-            if (sort != null) {
-              url += `&sort=${sort}`;
-            }
-            if (by != null) {
-              url += `&by=${by}`;
-            }
-            if (content != null) {
-              url += `&keyword=${content}`;
+            // 商品检索
+            if (targetId) {
+              const {categoryId, sort, by, content} = targetId;
+              if (categoryId != null) {
+                url += `&categoryId=${categoryId}`;
+              }
+              if (sort != null) {
+                url += `&sort=${sort}`;
+              }
+              if (by != null) {
+                url += `&by=${by}`;
+              }
+              if (content != null) {
+                url += `&keyword=${content}`;
+              }
             }
             this.$root.$navigate(url);
             break;
@@ -350,6 +352,14 @@
           case 'USER_BOOKING':
             // 预约
             this.$root.$navigate(`/pages/booking/list`);
+            break;
+          case 'USER_INVITE':
+            // 邀请页面
+            this.$root.$navigate(`/pages/shop/invite`);
+            break;
+          case 'BARGAIN_LIST':
+            // 邀请页面
+            this.$root.$navigate(`/pages/bargain/bargain_more`);
             break;
           default:
             console.info(`[router] unsupport action=${action}, targetId=${targetId}`)
