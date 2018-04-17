@@ -42,7 +42,7 @@
     <OrderItem :order.sync="order" action="0"></OrderItem>
 
     <!--使用虚拟产品栏-->
-    <view class="row-between digit-box mt10" wx:if="{{order.orderType == '90'}}"  @tap="checkQrCode">
+    <view class="row-between digit-box mt10" wx:if="{{order.orderType == '90' || order.orderGoodsInfos[0].goodsType == 'digit'}}"  @tap="checkQrCode">
       <view>
         <icon class="qrcode" color="gray"/>
         <text class="ml10">查看二维码</text>

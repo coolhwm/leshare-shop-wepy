@@ -8,7 +8,7 @@
           <text class="xxs muted">最低砍至</text>
           <text class="primary xxl">￥{{detail.floorPrice}}</text>
         </view>
-        <text class="muted sm origin">￥{{detail.goods.sellPrice	}}</text>
+        <text class="muted sm origin">￥{{detail.goodsPrice}}</text>
       </view>
       <view class="row-between">
         <text class="muted sm">已砍成{{detail.successCount}}件</text>

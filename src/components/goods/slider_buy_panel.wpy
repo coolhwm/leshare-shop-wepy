@@ -61,7 +61,7 @@
         <text class="buy-panel-stock-text" >{{sku.stockText}}</text>
       </view>
 
-      <view class="buy-panel-num-selector">
+      <view class="buy-panel-num-selector"  wx:if="{{goods.type != 'digit'}}">
         <ZanQuantity :quantity.sync="quantity" @change.user="num"/>
       </view>
     </view>
