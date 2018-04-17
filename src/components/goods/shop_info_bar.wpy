@@ -26,7 +26,7 @@
        * 打电话
        */
       phone() {
-        wepy.makePhoneCall({phoneNumber: this.shop.phone});
+        wepy.makePhoneCall({phoneNumber: this.subShop.phone});
       },
       /**
        * 导航
