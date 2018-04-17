@@ -47,6 +47,19 @@ export default class group extends base {
     return this.post(url, param);
   }
 
+  /***
+   * 虚拟商品砍价完成下单
+   */
+  static digitOrder (trade) {
+    const url = `${this.baseUrl}/goods_bargain/order`;
+    const param = {
+      ruleId: trade.ruleId,
+      order: trade,
+      id: trade.id
+    };
+    return this.post(url, param);
+  }
+
   /**
    * 返回砍价列表
    */
@@ -54,6 +67,16 @@ export default class group extends base {
     const url = `${this.baseUrl}/goods_bargain/rules?status=${status}`;
     return new Page(url, item => {
       this._processBargainListItem(item);
+    });
+  }
+
+  /***
+   * 查看砍价商品列表
+   */
+  static bargainGoodsList () {
+    const url = `${this.baseUrl}/goods_bargain/rules/status`;
+    return new Page(url, item => {
+      api._processGoodsPreview(item);
     });
   }
   // 处理方法

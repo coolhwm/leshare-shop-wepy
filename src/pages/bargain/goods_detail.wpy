@@ -30,7 +30,7 @@
 
 
     <!--商品详情-->
-    <DetailList :detail.sync="detail" />
+    <DetailList :detail.sync="goodsDetail" />
 
     <!--滑出购物面板-->
     <block >
@@ -70,7 +70,7 @@
       groupTime: '',
       ruleId: '',
       rule: {},
-      detail: {},
+      goodsDetail: {},
       subShop: {}
     };
     async onLoad ({ruleId}) {
@@ -87,8 +87,8 @@
     }
     async update (ruleId) {
       this.rule = await bargain.rule(ruleId);
-      this.detail = this.rule.goods;
-      this.subShop = this.detail.subShop != null ? this.detail.subShop : this.shop;
+      this.goodsDetail = this.rule.goods;
+      this.subShop = this.goodsDetail.subShop != null ? this.goodsDetail.subShop : this.shop;
       this.endTime = this.rule.endTime;
       this.goodsId = this.rule.goods.id;
       this.loaded();

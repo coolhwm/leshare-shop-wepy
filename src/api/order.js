@@ -135,7 +135,8 @@ export default class order extends base {
         goodsSellPrice: goods.originalPrice,
         discount: goods.discount,
         discountRate: goods.discountRate,
-        discountText: goods.discountText
+        discountText: goods.discountText,
+        goodsType: goods.goodsType
       };
       orderGoodsInfos.push(info);
       price += goods.goodsPrice * goods.goodsNum;

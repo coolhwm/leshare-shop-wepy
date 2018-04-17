@@ -11,7 +11,7 @@
         </view>
         <text class="primary ml10">现价：￥{{bargain.balance}}</text>
         <view class="row-between ml10">
-          <text class="muted sellPrice-box">￥{{bargain.rule.skuDetail == null ? bargain.rule.goodsPrice : bargain.rule.skuDetail.price}}</text>
+          <text class="muted sellPrice-box">￥{{bargain.rule.goodsPrice}}</text>
           <text class="bargain-price-box">[砍完价￥{{bargain.rule.floorPrice}}]</text>
         </view>
       </view>

@@ -206,6 +206,7 @@ const STATUS_ACTIONS = {
   // 充值
   '80-1-1': [ACTION.CLOSE, ACTION.PAY],
   // 虚拟
+  '90-1-1': [ACTION.CLOSE, ACTION.PAY],
   '90-1-6': [ACTION.QRCODE]
 }
 

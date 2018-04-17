@@ -1,11 +1,11 @@
 <template>
   <!--商品基本信息展示-->
   <view class="row-between goods-msg-box">
-    <view class="column">
+    <view class="column name-box">
       <view class="row mb20">
         <text class="xl">￥</text><text class="price-box">{{rule.floorPrice}}</text>
         <view class="column ml20">
-          <text class="muted sellPrice-box sm">￥{{rule.goods.maxPrice ? rule.goods.maxPrice : rule.goodsPrice}}</text>
+          <text class="muted sellPrice-box sm">￥{{rule.goodsPrice}}</text>
           <view class="price-rule-box">
             <text class="xxs">{{saveText}}{{saveNum}}</text>
           </view>
@@ -58,9 +58,7 @@
     };
     watch = {
       rule (rule) {
-        if (rule.floorPrice && rule.goods.maxPrice) {
-          this.saveNum = (rule.goods.maxPrice * 1 - rule.floorPrice * 1).toFixed(2);
-        }
+        this.saveNum = (rule.goodsPrice * 1 - rule.floorPrice * 1).toFixed(2);
       }
     };
     mixins = [router, countdown];
@@ -73,6 +71,9 @@
   .goods-msg-box{
     background: white;
     padding: 20rpx;
+    .name-box{
+      width: 550rpx;
+    }
     .price-box{
       font-size: 80rpx;
       line-height: 80rpx;

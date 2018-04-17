@@ -46,7 +46,6 @@
     };
     watch = {
       param (param) {
-        console.info(param)
       }
     }
   }

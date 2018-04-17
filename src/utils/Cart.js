@@ -132,7 +132,8 @@ export default class Cart {
       // 折扣相关属性
       discount: goods.discount,
       discountRate: goods.discountRate,
-      discountText: goods.discountText
+      discountText: goods.discountText,
+      goodsType: goods.type
     };
   }
   /**
