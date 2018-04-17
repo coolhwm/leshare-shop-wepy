@@ -10,14 +10,18 @@
       <icon class="like{{!isFav ? '' : '-fill'}} normal" style="color: {{!isFav ? 'gray' : 'red'}}" />
       <text class="xs">收藏</text>
     </view>
-    <view class="column-center btn-buy" @tap="handleBuy({{rule.goods}})">
+    <view class="column-center btn-buy" @tap="handleDigit({{rule.goods}})" wx:if="{{rule.goods.type == 'digit'}}">
+      <text class="xxl money-box">￥{{rule.goods.minPrice ? rule.goods.maxPrice : rule.goods.sellPrice}}</text>
+      <text>单独购买</text>
+    </view>
+    <view class="column-center btn-buy" @tap="handleBuy({{rule.goods}})" wx:else>
       <text class="xxl money-box">￥{{rule.goods.minPrice ? rule.goods.maxPrice : rule.goods.sellPrice}}</text>
       <text>单独购买</text>
     </view>
     <view wx:if="{{rule.isTimeOut}}" class="column-center btn-disabled">
       <text>活动已过期</text>
     </view>
-    <view wx:else class="column-center btn-bargain" @tap="handleBargain({{rule.goods}}, {{rule.id}}, {{state}}, {{id}})">
+    <view wx:else class="column-center btn-bargain" @tap="handleBargain({{rule}}, {{rule.id}}, {{state}}, {{id}})">
       <text class="xxl money-box">￥{{rule.floorPrice}}</text>
       <text>发起砍价</text>
     </view>

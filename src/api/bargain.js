@@ -136,13 +136,13 @@ export default class group extends base {
     if (data.rule.skuDetail != null) {
       goodsPrice = data.rule.skuDetail.price;
     } else {
-      goodsPrice = data.rule.goods.sellPrice;
+      goodsPrice = data.rule.goodsPrice;
     }
     // 砍价省多少钱
     if (data.rule.skuDetail != null) {
       data.disparityPrice = (data.rule.skuDetail.price * 1 - data.rule.floorPrice * 1).toFixed(2)
     } else {
-      data.disparityPrice = (data.rule.goods.sellPrice * 1 - data.rule.floorPrice * 1).toFixed(2)
+      data.disparityPrice = (data.rule.goodsPrice * 1 - data.rule.floorPrice * 1).toFixed(2)
     }
     // 剩余多少钱
     data.balance = (goodsPrice * 1 - data.allPrice * 1).toFixed(2);
