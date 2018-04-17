@@ -359,6 +359,10 @@
             // 邀请页面
             this.$root.$navigate(`/pages/shop/invite`);
             break;
+          case 'USER_BARGAIN':
+            // 我的砍价
+            this.$root.$navigate(`/pages/bargain/list`);
+            break;
           case 'BARGAIN_LIST':
             // 邀请页面
             this.$root.$navigate(`/pages/bargain/bargain_more`);

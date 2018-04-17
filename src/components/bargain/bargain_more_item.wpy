@@ -1,6 +1,6 @@
 <template>
   <view class="row bargain_more_item">
-    <image class="img-box mr10" src="{{detail.goods.imageUrl}}"/>
+    <image class="img-box mr20" src="{{detail.goods.imageUrl}}"/>
     <view class="column content-box">
       <text class="lg">{{detail.goods.name}}</text>
       <view class="row-between">
@@ -11,7 +11,7 @@
         <text class="muted sm origin">￥{{detail.goodsPrice}}</text>
       </view>
       <view class="row-between">
-        <text class="muted sm">已砍成{{detail.successCount}}件</text>
+        <text class="muted sm">已砍成{{detail.successCount ? detail.successCount : '0'}}件</text>
         <view class="btn-box" @tap="bargain({{detail.id}})">去砍价<icon class="more ml10 xsmall" color="white"/></view>
       </view>
     </view>

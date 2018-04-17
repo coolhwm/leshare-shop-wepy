@@ -18,7 +18,7 @@
     <Loadmore :page.sync="page"/>
 
     <!--占位符-->
-    <Placeholder :show.sync="isPageEmpty" message="您还没有历史积分" @tap.user="add"/>
+    <Placeholder top="250px" :show.sync="isPageEmpty" message="您还没有历史积分" @tap.user="add"/>
   </view>
 </template>
 <script>
@@ -55,7 +55,8 @@
     config = {
       navigationBarTitleText: '积分中心',
       enablePullDownRefresh: true,
-      navigationBarBackgroundColor: '#FF8929'
+      navigationBarBackgroundColor: '#FF8929',
+      navigationBarTextStyle: 'white'
     };
     components = {
       BonusItem: BonusItem,
