@@ -47,6 +47,19 @@ export default class group extends base {
     return this.post(url, param);
   }
 
+  /***
+   * 虚拟商品砍价完成下单
+   */
+  static digitOrder (trade) {
+    const url = `${this.baseUrl}/goods_bargain/order`;
+    const param = {
+      ruleId: trade.ruleId,
+      order: trade,
+      id: trade.id
+    };
+    return this.post(url, param);
+  }
+
   /**
    * 返回砍价列表
    */
@@ -54,6 +67,16 @@ export default class group extends base {
     const url = `${this.baseUrl}/goods_bargain/rules?status=${status}`;
     return new Page(url, item => {
       this._processBargainListItem(item);
+    });
+  }
+
+  /***
+   * 查看砍价商品列表
+   */
+  static bargainGoodsList () {
+    const url = `${this.baseUrl}/goods_bargain/rules/status`;
+    return new Page(url, item => {
+      api._processGoodsPreview(item);
     });
   }
   // 处理方法
@@ -113,13 +136,13 @@ export default class group extends base {
     if (data.rule.skuDetail != null) {
       goodsPrice = data.rule.skuDetail.price;
     } else {
-      goodsPrice = data.rule.goodsPrice;
+      goodsPrice = data.rule.goods.sellPrice;
     }
     // 砍价省多少钱
     if (data.rule.skuDetail != null) {
       data.disparityPrice = (data.rule.skuDetail.price * 1 - data.rule.floorPrice * 1).toFixed(2)
     } else {
-      data.disparityPrice = (data.rule.goodsPrice * 1 - data.rule.floorPrice * 1).toFixed(2)
+      data.disparityPrice = (data.rule.goods.sellPrice * 1 - data.rule.floorPrice * 1).toFixed(2)
     }
     // 剩余多少钱
     data.balance = (goodsPrice * 1 - data.allPrice * 1).toFixed(2);

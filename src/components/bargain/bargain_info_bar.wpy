@@ -21,9 +21,9 @@
     </view>
     <view wx:if="{{bargain.isHead}}">
       <view class="back-box">
-        <view class="msg-box" style="width: {{bargain.bargainRate}}%;">
-          <icon class="msg-bar xxlarge" color="primary"></icon>
-          <text class="price-box xxs primary">{{bargain.balance}}</text>
+        <view class="msg-box" style="width: {{bargain.bargainRate}}%;min-width: 180rpx;">
+          <icon class="down" style="font-size: 10px; line-height: 10px;"/>
+          <text class="price-box xxs primary">现价：￥{{bargain.balance}}</text>
         </view>
         <view class="back-msg-box"></view>
       </view>
@@ -151,7 +151,6 @@
   }
 
   .price-box {
-    position: absolute;
     top: 8px;
     left: 8px;
   }

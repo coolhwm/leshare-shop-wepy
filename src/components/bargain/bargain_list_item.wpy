@@ -16,12 +16,14 @@
 
     <!--商品区域-->
     <view class="row-between bargain-goods-box">
-      <image src="{{detail.rule.goods.imageUrl}}" style="width: 150rpx;height: 150rpx;"/>
-      <view class="column">
-        <text>{{detail.rule.goods.name}}</text>
-        <text class="muted mt20">原价:￥{{detail.rule.skuDetail.price ? detail.rule.skuDetail.price : detail.rule.goodsPrice}}</text>
+      <view class="row">
+        <image src="{{detail.rule.goods.imageUrl}}" style="width: 150rpx;height: 150rpx;"/>
+        <view class="column ml20 info-box">
+          <text class="sm">{{detail.rule.goods.name}}</text>
+          <text class="muted mt20 sm">原价:￥{{detail.rule.skuDetail.price ? detail.rule.skuDetail.price : detail.rule.goodsPrice}}</text>
+        </view>
       </view>
-      <text class="primary xxl">现价:￥{{detail.balance}}</text>
+      <text class="primary lg">现价:￥{{detail.balance}}</text>
     </view>
 
 
@@ -144,6 +146,9 @@
   .bargain-goods-box{
     padding: 10rpx 20rpx;
     background-color: $color-bg-item;
+    .info-box{
+      width: 300rpx;
+    }
   }
 
   .group-bottom-box{

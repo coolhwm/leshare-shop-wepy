@@ -9,7 +9,7 @@
     </block>
 
     <!--需要配送的订单展现地址选择栏-->
-    <block wx:if="{{trade.isDeliveryOrder && type !== 'digit'}}">
+    <block wx:if="{{trade.isDeliveryOrder && type !=='digit' && trade.orderGoodsInfos[0].goodsType !== 'digit'}}">
       <AddressSelector :address.sync="selectedAddress" @select.user="address" />
     </block>
 
@@ -55,7 +55,7 @@
 
 
       <!--需要配送的订单, 需要选择配送方式-->
-      <view class="weui-cell weui-cell_access" @tap="delivery" wx:if="{{trade.isDeliveryOrder && type !=='digit'}}">
+      <view class="weui-cell weui-cell_access" @tap="delivery" wx:if="{{trade.isDeliveryOrder && type !=='digit' && trade.orderGoodsInfos[0].goodsType !== 'digit'}}">
         <view class="weui-cell__bd">配送方式</view>
         <text class="weui-cell__ft {{delilveryCount > 1 ? 'weui-cell__ft_in-access' : ''}}">{{delilveryText}} </text>
       </view>
@@ -90,7 +90,7 @@
         <text>商品金额</text>
         <text class="major">￥{{trade.dealPrice}}</text>
       </view>
-      <view class="price-box row-between" wx:if="{{type !== 'digit'}}">
+      <view class="price-box row-between" wx:if="{{type !== 'digit' && trade.orderGoodsInfos[0].goodsType !== 'digit'}}">
         <text>配送费</text>
         <text class="major">+￥{{trade.postFee}}</text>
       </view>
@@ -419,7 +419,11 @@
           const result = await group.goodsGroup(trade, address);
           return result.order;
         } else if (this.type === 'bargain') {
-          return await bargain.order(trade, address);
+          if (this.trade.orderGoodsInfos[0].goodsType === 'digit') {
+            return await bargain.digitOrder(trade);
+          } else {
+            return await bargain.order(trade, address);
+          }
         } else if (this.type === 'digit') {
           return await digit.order(trade);
         } else {
@@ -472,7 +476,7 @@
       if (this.delilveries.length > 0) {
         this.selectedDelivery = this.delilveries[0];
         this.trade.deliveryType = this.selectedDelivery.type;
-        this.trade.postFee = this.type === 'digit' ? 0 : Number(this.selectedDelivery.fee).toFixed(2);
+        this.trade.postFee = this.type === 'digit' && this.trade.orderGoodsInfos[0].goodsType !== 'digit' ? 0 : Number(this.selectedDelivery.fee).toFixed(2);
       } else {
         this.selectedDelivery = null;
       }
@@ -566,8 +570,12 @@
         let confirmStatus = false;
         let deliveryText = '暂不支持配送';
         let confirmText = '立即下单';
+        if (this.trade.orderGoodsInfos.length <= 0) return;
         if (this.trade.isInShopOrder) {
           // 在店内的订单不需要进行校验
+          confirmStatus = true;
+          confirmText = '立即下单';
+        } else if (this.trade.orderGoodsInfos[0].goodsType == 'digit') {
           confirmStatus = true;
           confirmText = '立即下单';
         } else {

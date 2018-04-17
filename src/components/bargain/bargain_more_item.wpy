@@ -1,18 +1,18 @@
 <template>
-  <view class="row group_more_item">
-    <image class="img-box mr10" src="{{item.goodsImage}}"/>
+  <view class="row bargain_more_item">
+    <image class="img-box mr10" src="{{detail.goods.imageUrl}}"/>
     <view class="column content-box">
-      <text class="lg">{{item.goodsName}}</text>
+      <text class="lg">{{detail.goods.name}}</text>
       <view class="row-between">
         <view class="row">
           <text class="xxs muted">最低砍至</text>
-          <text class="primary xxl">￥{{item.goodsPrice}}</text>
+          <text class="primary xxl">￥{{detail.floorPrice}}</text>
         </view>
-        <text class="muted sm origin">￥{{item.originPrice	}}</text>
+        <text class="muted sm origin">￥{{detail.goods.sellPrice	}}</text>
       </view>
       <view class="row-between">
-        <text class="muted sm">已砍成{{item.successCount}}件</text>
-        <view class="btn-box" @tap="group({{item.bargainId}})">去砍价<icon class="more ml10 xsmall" color="white"/></view>
+        <text class="muted sm">已砍成{{detail.successCount}}件</text>
+        <view class="btn-box" @tap="bargain({{detail.id}})">去砍价<icon class="more ml10 xsmall" color="white"/></view>
       </view>
     </view>
   </view>
@@ -24,15 +24,15 @@
 
   export default class BargainMoreItem extends wepy.component {
     prop = {
-      item: {}
+      detail: {}
     };
     data = {
     };
     async onLoad () {
     };
     methods = {
-      group (id) {
-        this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${id}`)
+      bargain (id) {
+        this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${id}`)
       }
     };
     computed = {
@@ -48,7 +48,7 @@
 <style lang="scss">
   @import "../../styles/variable";
   $img-width:180rpx;
-  .group_more_item{
+  .bargain_more_item{
     background-color: white;
     margin: 10rpx 10rpx 0;
     padding: 20rpx;

@@ -31,7 +31,7 @@
         </view>
         <view class="buy-panel-sku-list">
           <block wx:for-item="skuValue" wx:for="{{label.value}}" wx:key="*this" >
-            <view class="label{{sku.disabledSkuValues[skuValue] ? 'disabled' : '' }} {{sku.selected[label.key] == skuValue ? 'primary' : ''}}"
+            <view class="label {{sku.disabledSkuValues[skuValue] ? 'disabled' : '' }} {{sku.selected[label.key] == skuValue ? 'primary' : ''}}"
                   @tap="selectSkU({{label.key}}, {{skuValue}})">{{skuValue}}</view>
           </block>
         </view>

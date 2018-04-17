@@ -46,7 +46,11 @@
         }
         const {num} = this.sku;
         const goods = this.detail.rule.goods;
-        goods.originalPrice = this.detail.rule.skuDetail.price * 1;
+        if (this.detail.rule.skuDetail != null) {
+          goods.originalPrice = this.detail.rule.skuDetail.price * 1;
+        } else {
+          goods.originalPrice = this.detail.rule.goods.sellPrice * 1;
+        }
         goods.sellPrice = this.detail.balance * 1;
         const selText = {
           skuSelected: '',
