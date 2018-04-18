@@ -6,7 +6,8 @@
         <text class="white">￥</text>
         <text class="white coupon-value">{{coupon.price}}</text>
       </view>
-      <text class="white">满{{coupon.limitPrice}}元可用</text>
+      <text class="white" wx:if="{{coupon.limitPrice > 0}}">满{{coupon.limitPrice}}元可用</text>
+      <text class="white nm mt10" wx:if="{{coupon.limitPrice == 0}}">无门槛</text>
     </view>
     <!--左侧区域-->
     <view class="coupon-main-box column-center" wx:if="{{coupon.type == 'EXCHANGE'}}">

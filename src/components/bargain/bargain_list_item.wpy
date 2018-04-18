@@ -9,13 +9,13 @@
         <text wx:if="{{detail.status === 'PROCESSING'}}" class="sm primary">砍价进行中</text>
         <text wx:elif="{{detail.status === 'BARGAINED'}}" class="sm primary">商品已砍至底价</text>
         <text wx:elif="{{detail.status === 'TIMEOUT'}}" class="sm primary">砍价已过期</text>
-        <text wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 1}}" class="sm primary">已下单</text>
-        <text wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 2}}" class="sm primary">已购买</text>
+        <text wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 1}}" class="sm primary">待付款</text>
+        <text wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 6}}" class="sm primary">已购买</text>
       </view>
     </view>
 
     <!--商品区域-->
-    <view class="row-between bargain-goods-box">
+    <view class="row-between bargain-goods-box" @tap="orderDetail">
       <view class="row">
         <image src="{{detail.rule.goods.imageUrl}}" style="width: 150rpx;height: 150rpx;"/>
         <view class="column ml20 info-box">
@@ -40,6 +40,7 @@
       <view wx:elif="{{detail.status === 'BARGAINED'}}" class="group-btn-box" @tap="help({{detail.id}})">立即购买</view>
       <view wx:elif="{{detail.status === 'TIMEOUT'}}" class="group-btn-box" @tap="bargain({{detail.rule.id}})">再砍一单</view>
       <view wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 1}}" class="group-btn-box" @tap="pay({{detail.order.orderId}})">立即支付</view>
+      <view wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 6}}" class="group-btn-box" @tap="orderDetail({{detail.order.orderId}})">查看订单</view>
     </view>
   </view>
 </template>
@@ -86,6 +87,11 @@
           await Tips.success('支付取消');
         }
         Event.emit(Event.BARGAIN_LIST_UPDATE);
+      },
+      orderDetail() {
+        if (this.detail.status === 'ORDERED') {
+          this.$root.$navigate(`/pages/order/detail?orderId=${this.detail.order.orderId}`)
+        }
       }
     };
     components = {
