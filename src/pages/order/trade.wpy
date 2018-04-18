@@ -69,7 +69,7 @@
       </view>
 
       <!--店铺开始积分且会员已注册的情况下才显示-->
-      <view class="weui-cell weui-cell_access" wx:if="{{isBonus}}">
+      <view class="weui-cell weui-cell_access" wx:if="{{isBonus && type !=='digit' && trade.orderGoodsInfos[0].goodsType !== 'digit'}}">
         <view class="weui-cell__bd">会员积分
           <view class="label small primary pain">共{{member.bonus}}分</view>
         </view>
@@ -102,7 +102,7 @@
         <text>优惠券</text>
         <text class="major">-￥{{trade.couponPrice}}</text>
       </view>
-      <view class="price-box row-between" wx:if="{{trade.bonusPrice > 0 && type !=='digit' && trade.orderGoodsInfos[0].goodsType !== 'digit'}}">
+      <view class="price-box row-between" wx:if="{{trade.bonusPrice > 0}}">
         <text>积分抵扣</text>
         <text class="major">-￥{{trade.bonusPrice}}</text>
       </view>
