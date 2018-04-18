@@ -1,4 +1,6 @@
 <template>
+  <Loading :init.sync="init"/>
+
   <view class="container" wx:if="{{init}}">
     <view class="bonus-title-box column-center">
       <text class="bonus-number">{{member.bonus}}</text>
@@ -31,6 +33,8 @@
   import pagination from '../../mixins/pagination';
   import Placeholder from '../../components/common/placeholder';
   import Loadmore from '../../components/weui/loadmore';
+  import Loading from '../../components/common/loading';
+
   @connect({
     member: store.get('member')
   })
@@ -61,7 +65,8 @@
     components = {
       BonusItem: BonusItem,
       Placeholder: Placeholder,
-      Loadmore: Loadmore
+      Loadmore: Loadmore,
+      Loading: Loading
     };
     mixins = [base, pagination];
   }
