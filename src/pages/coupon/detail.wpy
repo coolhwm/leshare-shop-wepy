@@ -74,30 +74,41 @@
       // 初始化全局存储
       await store.init();
       this.coupon = preload.coupon;
+      this.subShop = this.coupon.subShop;
       const id = preload.coupon ? preload.coupon.id : preload.couponId;
       if (preload.coupon) {
         this.coupon = preload.coupon;
       } else {
         this.coupon = await coupon.detail(id)
       }
-      interval = setInterval(async () => {
-        const ownList = await coupon.own();
-        const target = ownList ? ownList.find(item => item.id == id) : null;
-        if (target == null) {
-          this.coupon.status = 'USED';
-          this.message = '店家已核销';
-          this.success = true;
-          clearInterval(interval);
-          Event.emit(Event.COUPON_LIST_UPDATE);
-          await store.refresh('coupon');
-          await Tips.success('已核销', 1000);
-          this.$apply();
-        }
-      }, 3000);
-      this.subShop = this.coupon.subShop;
+      if (this.coupon.status == 'USED') {
+        this.message = '优惠券已核销';
+        this.success = true;
+      } else if (this.coupon.status == 'EXPIRED') {
+        this.message = '优惠券已过期';
+        this.success = true;
+      } else {
+        console.info(`[coupon] check coupon status, start interval=${interval}`);
+        interval = setInterval(async () => {
+          const ownList = await coupon.own();
+          const target = ownList ? ownList.find(item => item.id == id) : null;
+          if (target == null) {
+            this.coupon.status = 'USED';
+            this.message = '店家已核销';
+            this.success = true;
+            console.info(`[coupon] coupon use success, clear interval=${interval}`);
+            clearInterval(interval);
+            Event.emit(Event.COUPON_LIST_UPDATE);
+            await store.refresh('coupon');
+            await Tips.success('已核销', 1000);
+            this.$apply();
+          }
+        }, 3000);
+      }
       this.loaded();
     };
     onUnload () {
+      console.info(`[coupon] exit page, clear interval=${interval}`);
       clearInterval(interval);
     }
     methods = {

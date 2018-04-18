@@ -1,7 +1,7 @@
 <template>
   <view class="column-center loading-wrap" wx:if="{{!init}}">
     <image class="loading-icon" src="/images/icons/loading.png"></image>
-    <text class="muted mt20 lg">加载中...</text>
+    <text class="muted mt20 lg">加载中</text>
   </view>
 
 </template>

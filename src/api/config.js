@@ -6,7 +6,7 @@ import member from './member';
 export default class config extends base {
   static fieldsToCopy = {
     SWIPER: ['height'],
-    IMAGE_BOX: ['heigth', 'width', 'isTitle'],
+    IMAGE_BOX: ['heigth', 'width', 'isTitle', 'gutter'],
     GOODS_BOX: ['isCart', 'isPrice', 'isGoodsName', 'isSales', 'skuMode', 'isTips', 'goodsBorder']
   };
 
