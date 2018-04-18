@@ -102,7 +102,7 @@
         <text>优惠券</text>
         <text class="major">-￥{{trade.couponPrice}}</text>
       </view>
-      <view class="price-box row-between" wx:if="{{trade.bonusPrice > 0}}">
+      <view class="price-box row-between" wx:if="{{trade.bonusPrice > 0 && type !=='digit' && trade.orderGoodsInfos[0].goodsType !== 'digit'}}">
         <text>积分抵扣</text>
         <text class="major">-￥{{trade.bonusPrice}}</text>
       </view>
