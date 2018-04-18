@@ -1,0 +1,39 @@
+<template>
+  <view class="container" wx:if="{{init}}">
+    <SharePanal/>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import SharePanal from '../../components/common/share_panal';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  @connect({
+    member: store.get('member')
+  })
+  export default class SuperPoster extends wepy.page {
+    def = {
+      member: {},
+      init: false
+    };
+    data = {...this.def};
+    async onLoad () {
+      await store.init();
+      const canvasParams = {
+        canvasName: 'superPoster',
+        member: this.member
+      };
+      this.$invoke('SharePanal', 'shareFriendsCircle', canvasParams);
+      this.loaded();
+    };
+    mathods = {};
+    mixins = [base];
+    components = {
+      SharePanal: SharePanal
+    }
+  }
+</script>
+<style lang="scss">
+  @import "../../styles/variable";
+</style>
