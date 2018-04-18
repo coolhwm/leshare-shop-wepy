@@ -57,6 +57,7 @@
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import tip from '../../utils/Tips';
+  import base from '../../mixins/base';
   @connect({
     member: store.get('member')
   })
@@ -113,7 +114,12 @@
       /**
        * 分享到微信朋友圈
        * */
-      async shareFriendsCircle() {
+      async shareFriendsCircle(param) {
+        await store.init();
+        console.log(this.member);
+        if (param != null) {
+          this.canvasParams = param.canvasParams
+        }
         if (this.member.inviteCode == null && this.canvasParams.canvasName == 'superPoster') {
           tip.error('暂无邀请码')
         }
@@ -171,6 +177,7 @@
         this.canvasParams.code = this.member.inviteCode;
       }
     }
+    mixins = [base];
   }
 </script>
 <style lang="scss">

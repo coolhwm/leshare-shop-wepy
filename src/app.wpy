@@ -131,7 +131,8 @@
         'pages/group/group_info_list',
         'pages/customer/balance',
         'pages/distribution/index',
-        'pages/shop/pay'
+        'pages/shop/pay',
+        'pages/shop/super_poster'
       ],
       window: {
         backgroundTextStyle: 'dark',
