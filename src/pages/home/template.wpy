@@ -27,7 +27,6 @@
         <HotAreaBox :param.sync="item" />
       </block>
 
-
       <!--优惠券橱窗-->
       <block wx:if="{{item.type == 'COUPON_BOX'}}">
         <CouponBox :param.sync="item" />

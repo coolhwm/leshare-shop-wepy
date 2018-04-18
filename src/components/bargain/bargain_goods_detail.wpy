@@ -3,17 +3,15 @@
     <view class="bargain-goods-image">
       <image src="{{bargain.rule.goods.imageUrl}}" mode="aspectFill"/>
     </view>
-    <view class="column ml20 bargain-goods-msg-box">
-      <text class="bargain-goods-name lg ml10">{{bargain.rule.goods.name}}</text>
-      <view>
-        <view class="mb20 ml10">
-          <text class="weak xs">砍价立省{{bargain.disparityPrice}}</text>
+    <view class="column bargain-goods-msg-box">
+      <text class="bargain-goods-name lg">{{bargain.rule.goods.name}}</text>
+      <view class="column">
+        <!--<text class="primary ml10">现价：￥{{bargain.balance}}</text>-->
+        <view class="row mt10">
+          <text class="bargain-price-box">底价:￥{{bargain.rule.floorPrice}}</text>
+          <text class="muted sellPrice-box sm">￥{{bargain.rule.goodsPrice}}</text>
         </view>
-        <text class="primary ml10">现价：￥{{bargain.balance}}</text>
-        <view class="row-between ml10">
-          <text class="muted sellPrice-box">￥{{bargain.rule.goodsPrice}}</text>
-          <text class="bargain-price-box">[砍完价￥{{bargain.rule.floorPrice}}]</text>
-        </view>
+        <!--<text class="weak xs">立省{{bargain.disparityPrice}}</text>-->
       </view>
     </view>
   </view>
@@ -59,10 +57,13 @@
   .bargain-goods-msg-box{
     flex: 1;
     height: $img-height;
+    padding-left: 20rpx;
     .bargain-price-box{
+      font-size: $text-lg;
       color: #e64340;
     }
     .sellPrice-box{
+      margin-left: 10rpx;
       text-decoration: line-through;
     }
   }

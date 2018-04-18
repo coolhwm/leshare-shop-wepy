@@ -20,7 +20,7 @@
     </view>
 
     <view class="success-box column-center"  wx:if="{{success}}">
-      <text>{{message}}</text>
+      <text  style="font-size: 27px">{{message}}</text>
       <text class="mt10 xs">{{tips}}</text>
     </view>
 
@@ -74,30 +74,43 @@
       // 初始化全局存储
       await store.init();
       this.coupon = preload.coupon;
+
       const id = preload.coupon ? preload.coupon.id : preload.couponId;
+      console.info(preload);
       if (preload.coupon) {
         this.coupon = preload.coupon;
       } else {
         this.coupon = await coupon.detail(id)
       }
-      interval = setInterval(async () => {
-        const ownList = await coupon.own();
-        const target = ownList ? ownList.find(item => item.id == id) : null;
-        if (target == null) {
-          this.coupon.status = 'USED';
-          this.message = '店家已核销';
-          this.success = true;
-          clearInterval(interval);
-          Event.emit(Event.COUPON_LIST_UPDATE);
-          await store.refresh('coupon');
-          await Tips.success('已核销', 1000);
-          this.$apply();
-        }
-      }, 3000);
+      if (this.coupon.status == 'USED') {
+        this.message = '优惠券已核销';
+        this.success = true;
+      } else if (this.coupon.status == 'EXPIRED') {
+        this.message = '优惠券已过期';
+        this.success = true;
+      } else {
+        interval = setInterval(async () => {
+          const ownList = await coupon.own();
+          const target = ownList ? ownList.find(item => item.id == id) : null;
+          if (target == null) {
+            this.coupon.status = 'USED';
+            this.message = '店家已核销';
+            this.success = true;
+            console.info(`[coupon] coupon use success, clear interval=${interval}`);
+            clearInterval(interval);
+            Event.emit(Event.COUPON_LIST_UPDATE);
+            await store.refresh('coupon');
+            await Tips.success('已核销', 1000);
+            this.$apply();
+          }
+        }, 3000);
+        console.info(`[coupon] check coupon status, start interval=${interval}`);
+      }
       this.subShop = this.coupon.subShop;
       this.loaded();
     };
     onUnload () {
+      console.info(`[coupon] exit page, clear interval=${interval}`);
       clearInterval(interval);
     }
     methods = {
@@ -111,6 +124,7 @@
           this.success = true;
           this.tips = '请将该页面出示给店家确认';
           clearInterval(interval);
+          console.info(`[coupon] coupon self check success, clear interval=${interval}`);
           await Tips.success('操作成功', 1000);
           this.$apply();
           Event.emit(Event.COUPON_LIST_UPDATE);
@@ -166,7 +180,6 @@
     height: 100px;
     border: $border;
     text {
-      font-size: 27px;
       color: $color-muted;
     }
   }

@@ -7,6 +7,13 @@
     </block>
   </scroll-view>
 
+  <!--纵向分布-->
+  <view wx:elif="{{param.layout == 'COLUMN'}}" class="image-column-box" style="background-color: {{param.backgroundColor}};padding: {{param.padding}} 0;">
+    <block wx:for="{{param.data}}" wx:for-item="image" wx:key="seq">
+      <image mode="widthFix" src="{{image.url}}" style="width:{{image.width}};margin-bottom:{{image.gutter}}" @tap="routeByAction({{image}})"></image>
+    </block>
+  </view>
+
   <!--横向滚动-->
   <view wx:else class="image-box row-around" style="background-color: {{param.backgroundColor}};padding: {{param.padding}} 0;">
     <block wx:for="{{param.data}}" wx:for-item="image" wx:key="seq">
@@ -33,6 +40,18 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .image-column-box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 750rpx;
+    background-color: white;
+    image{
+      width: 750rpx;
+    }
+  }
+
   .image-row-box{
     display: flex;
     align-items: center;

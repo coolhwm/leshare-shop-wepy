@@ -141,6 +141,7 @@
      */
     async onPullDownRefresh() {
       await store.refresh('member');
+      await this.loadOrderCount ();
       this.$broadcast('refresh');
       this.loaded();
       wepy.stopPullDownRefresh();

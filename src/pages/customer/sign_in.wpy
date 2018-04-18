@@ -207,7 +207,7 @@
   .sign_state {
     font-size: 40rpx;
     font-weight: 600;
-    color: $color-primary;
+    color: $color-primary-blue;
     margin-bottom: 15rpx;
     margin-top: 25rpx;
     display: block;
@@ -220,7 +220,7 @@
   .sign_times {
     font-size: 30rpx;
     margin-top: 15rpx;
-    color: $color-primary;
+    color: $color-primary-blue;
     display: block;
   }
   .sign_doc {

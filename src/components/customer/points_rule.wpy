@@ -31,7 +31,7 @@
   .jf_rule {
     border-top: 1px solid #efefef;
     background: #fff;
-    padding: 33px 20rpx;
+    padding: 5px 20rpx;
     margin-top: 10rpx;
     .title {
       font-size: 36rpx;

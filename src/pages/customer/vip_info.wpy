@@ -8,15 +8,15 @@
       </view>
 
       <view class="dash-line"/>
-      <view class="column-center member-box">
-        <!--<image class="avatar-image" src="{{user.avatarUrl}}"/>-->
+      <view class="member-box">
+        <image class="avatar-image" src="{{user.avatarUrl}}"/>
         <image class="qrcode-image" src="{{member.codeUrl}}"/>
       </view>
     </view>
     <view class="column-center number-box">
       <view class="column-center mt20 mb20">
-        <text class="number-text mb20">{{numberText}}</text>
-        <text class="muted mt10 mb20" wx:if="{{card.description}}">{{card.description}}</text>
+        <text class="number-text mb20" >{{numberText}}</text>
+        <text class="tips-box"  wx:if="{{card.description}}">{{card.description}}</text>
       </view>
       <view class="dash-line"/>
       <view wx:if="{{success}}">
@@ -185,19 +185,21 @@
     }
     .member-box{
       margin-top: 30rpx;
-      /*position: relative;*/
+      position: relative;
       /*top: 110px;*/
       .qrcode-image {
       /*position: absolute;*/
-      width: 200px;
-      height: 200px;
+      width: 400rpx;
+      height: 400rpx;
       }
       .avatar-image {
-        /*position: absolute;*/
+        left: 110rpx;
+        top: 110rpx;
+        position: absolute;
         z-index: 1;
         border-radius: 50%;
-        width: 90px;
-        height: 90px;
+        width: 180rpx;
+        height: 180rpx;
       }
     }
     .avatar-box{
@@ -213,6 +215,12 @@
     }
     .number-text{
       font-size: 40rpx;
+    }
+    .tips-box{
+      color: $color-muted;
+      text-align: center;
+      padding: 30rpx;
+      margin-top: 20px;
     }
   }
 </style>
