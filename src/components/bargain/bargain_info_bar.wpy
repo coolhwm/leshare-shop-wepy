@@ -4,7 +4,7 @@
       <image class="top-avatar-box" src="{{bargain.header.customer.avatarUrl}}" />
       <view>
         <text class="mr20 xl">{{bargain.header.customer.nickName}}</text>
-        <text class="primary xl">成功参与活动，快快让好友助自己一臂之力</text>
+        <text class="primary">成功参与活动，快快让好友助自己一臂之力</text>
       </view>
     </view>
     <view class="column-center">
@@ -23,7 +23,7 @@
       <view class="back-box">
         <view class="msg-box" style="width: {{bargain.bargainRate}}%;min-width: 180rpx;">
           <icon class="down" style="font-size: 10px; line-height: 10px;"/>
-          <text class="price-box xxs primary">现价：￥{{bargain.balance}}</text>
+          <text class="price-box xs primary">现价：￥{{bargain.balance}}</text>
         </view>
         <view class="back-msg-box"></view>
       </view>
@@ -106,7 +106,7 @@
   }
 
   .info-top-box {
-    margin-bottom: 20rpx;
+    // margin-bottom: 20rpx;
   }
 
   .top-avatar-box{
@@ -183,6 +183,9 @@
     height: 60rpx;
     border-radius: 30rpx;
     border: $border;
+  }
+  .status-time-box{
+    padding: 10rpx 0;
   }
 
 </style>

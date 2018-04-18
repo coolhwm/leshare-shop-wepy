@@ -377,16 +377,19 @@
           await Tips.success('支付成功');
           isPay = true;
         } else {
-          // 检查是否为离线订单
           if (trade.paymentType == PAYMENT.OFFLINE) {
-            Tips.success('下单成功');
+            // 检查是否为离线订单
+            await Tips.success('下单成功');
+          } else if (trade.finalPrice == 0) {
+            // 检查是否为0元订单
+            await Tips.success('下单成功');
           } else {
             // 发起支付
             isPay = await this.requestWxPayment(trade);
             if (isPay) {
-              Tips.success('支付成功');
+              await Tips.success('支付成功');
             } else {
-              Tips.alert('支付取消');
+              await Tips.alert('支付取消');
             }
           }
         }

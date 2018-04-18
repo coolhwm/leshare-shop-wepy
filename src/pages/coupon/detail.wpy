@@ -74,8 +74,9 @@
       // 初始化全局存储
       await store.init();
       this.coupon = preload.coupon;
-      this.subShop = this.coupon.subShop;
+
       const id = preload.coupon ? preload.coupon.id : preload.couponId;
+      console.info(preload);
       if (preload.coupon) {
         this.coupon = preload.coupon;
       } else {
@@ -88,7 +89,6 @@
         this.message = '优惠券已过期';
         this.success = true;
       } else {
-        console.info(`[coupon] check coupon status, start interval=${interval}`);
         interval = setInterval(async () => {
           const ownList = await coupon.own();
           const target = ownList ? ownList.find(item => item.id == id) : null;
@@ -104,7 +104,9 @@
             this.$apply();
           }
         }, 3000);
+        console.info(`[coupon] check coupon status, start interval=${interval}`);
       }
+      this.subShop = this.coupon.subShop;
       this.loaded();
     };
     onUnload () {
@@ -122,6 +124,7 @@
           this.success = true;
           this.tips = '请将该页面出示给店家确认';
           clearInterval(interval);
+          console.info(`[coupon] coupon self check success, clear interval=${interval}`);
           await Tips.success('操作成功', 1000);
           this.$apply();
           Event.emit(Event.COUPON_LIST_UPDATE);
