@@ -123,7 +123,6 @@
         'pages/customer/vip_info',
         'pages/customer/sign_in',
         'pages/coupon/use',
-        'pages/shop/pay',
         'pages/shop/about_us',
         'pages/customer/comment_list',
         'pages/group/index',
@@ -132,7 +131,6 @@
         'pages/group/group_detail',
         'pages/group/group_info_list',
         'pages/customer/balance',
-        'pages/distribution/index',
         'pages/bargain/goods_detail',
         'pages/bargain/bargain_detail',
         'pages/bargain/list',
@@ -143,7 +141,10 @@
         'pages/booking/booking_detail',
         'pages/shop/top_up',
         'pages/shop/billing_record',
-        'pages/shop/invite'
+        'pages/shop/invite',
+        'pages/distribution/index',
+        'pages/shop/pay',
+        'pages/shop/super_poster'
       ],
       window: {
         backgroundTextStyle: 'dark',

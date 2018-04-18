@@ -9,7 +9,7 @@ module.exports = {
   eslint: true,
   compilers: {
     sass: {
-      outputStyle: 'compact'
+      outputStyle: 'compressed'
     },
     babel: {
       sourceMap: false,

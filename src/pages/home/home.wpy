@@ -102,7 +102,23 @@
     </view>
     <Copyright />
   </form>
+  <modal class="modal" hidden="0" no-cancel bindconfirm="modalOk" confirmText="我知道了">
+    <view class="dew">
+      <image src="../../images/ts.png" alt="" class="age"></image>
+      <view class="vedw">根据您当前所在位置，向您推荐以下服务站点，该服务点服务范围周边3公里</view>
+      <view class="po_w">
 
+        <block wx:for="{{agentList}}" wx:for-item="a" wx:key="a.name">
+          <view class="ved">
+            <view class="titd">{{a.name}}</view>
+            <view class="addd">{{a.cityName}}{{a.districtName}}{{a.address}}</view>
+          </view>
+        </block>
+
+      </view>
+
+    </view>
+  </modal>
 
 </template>
 
