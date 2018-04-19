@@ -89,10 +89,32 @@ export default class Canvas {
     wx.canvasToTempFilePath({
       canvasId: canvasId,
       success(res) {
+        console.info('save success', res);
         wx.saveImageToPhotosAlbum({
           filePath: res.tempFilePath,
           success(info) {
+            console.info('saveImageToPhotosAlbum success', info);
             tips.success('保存成功');
+          },
+          fail(error) {
+            console.error(error);
+            if (error.errMsg == 'saveImageToPhotosAlbum:fail auth deny') {
+              tips.error('请授权');
+              wx.authorize({
+                scope: 'scope.writePhotosAlbum',
+                success() {
+                  tips.success('授权成功');
+                },
+                fail(error) {
+                  console.error(error);
+                  tips.error('授权失败');
+                  wx.openSetting({
+                  })
+                }
+              })
+            } else {
+              tips.error('保存失败');
+            }
           }
         })
       }
@@ -290,6 +312,7 @@ export default class Canvas {
    * 超级海报
    * */
   static async superPosterTemplete(params) {
+    console.info('[inviate] invite poster params=', params);
     // 图片
     const shareBg = await wepy.downloadFile({url: 'http://img.leshare.shop/super_canvas.png'});
     shareBg.imageWidth = params.canvasWidth;
@@ -299,7 +322,7 @@ export default class Canvas {
     // 绘制图片
     this.canvasImage(shareBg);
     // 二维码
-    const code = await wepy.downloadFile({url: params.code});
+    const code = await wepy.downloadFile({url: params.member.inviteCode});
     code.x = params.canvasWidth * 0.38;
     code.y = params.canvasHeight * 0.60;
     code.imageWidth = params.canvasWidth * 0.23;

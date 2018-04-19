@@ -29,9 +29,11 @@
               <text class="xxs muted">{{detail.subhead}}</text>
             </view>
           </view>
-          <view class="column-center" @tap="shareGoods">
-            <icon class="share small" />
-            <text class="sm">分享</text>
+          <view class="share-box">
+            <button open-type="share" plain class="column-center"  wx:if="{{isShare}}">
+              <icon class="share small" />
+              <text class="sm">分享</text>
+            </button>
           </view>
         </view>
 

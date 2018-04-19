@@ -38,10 +38,10 @@
         <canvas disable-scroll="true" style="width: 100%; height: {{canvasParams.canvasHeight + 40}}px;" canvas-id="{{canvasParams.canvasName}}"/>
         <text class="mt20 white" wx:if="{{canvasParams.canvasName != 'superPoster'}}">长按图保存图片到相册</text>
       </view>
-      <cover-view class="float-save-box">
-        <cover-view class= "save-icon" @tap="savaCanvasAsImage"/>
+      <cover-view class="float-save-box" @tap="savaCanvasAsImage">
+        <cover-view class= "save-icon" />
         <cover-view class="xl save-icon-green"/>
-        <cover-view class="save-text">保存</cover-view>
+        <cover-view class="save-text">保存到相册</cover-view>
       </cover-view>
     </view>
   </view>
@@ -105,6 +105,7 @@
        * 保存图片到相册
        * */
       savaCanvasAsImage() {
+        console.info('[canvas] save to image');
         canvas.saveImage(this.canvasParams.canvasName);
         this.canvasHidden = false;
       },
@@ -245,7 +246,7 @@
     .save-text{
       position: absolute;
       color: white;
-      left: 217rpx;
+      left: 160rpx;
       top: 25rpx;
       font-size: 40rpx;
     }

@@ -11,7 +11,7 @@
           <text class="white sm">人</text>
         </view>
         <view class="row btn-box">
-          <text class="sm white">去邀请
+          <text class="sm white" @tap="invite">去邀请
           </text>
           <icon class="more xsmall" color="white"/>
         </view>
@@ -73,6 +73,11 @@
       this.number = await invite.count();
       await this.next();
     }
+    methods = {
+      invite() {
+        this.$navigate("/pages/shop/super_poster");
+      }
+    };
     computed = {
       rules () {
         if (this.card == null) return;
