@@ -1,11 +1,11 @@
 @import "variable";
 @font-face {
   font-family: 'iconfont';  /* project id 553949 */
-  src: url('//at.alicdn.com/t/font_553949_x6jwvxdye4revcxr.eot');
-  src: url('//at.alicdn.com/t/font_553949_x6jwvxdye4revcxr.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_553949_x6jwvxdye4revcxr.woff') format('woff'),
-  url('//at.alicdn.com/t/font_553949_x6jwvxdye4revcxr.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_553949_x6jwvxdye4revcxr.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_553949_irxvjsrxhg58kt9.eot');
+  src: url('//at.alicdn.com/t/font_553949_irxvjsrxhg58kt9.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_553949_irxvjsrxhg58kt9.woff') format('woff'),
+  url('//at.alicdn.com/t/font_553949_irxvjsrxhg58kt9.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_553949_irxvjsrxhg58kt9.svg#iconfont') format('svg');
 }
 @mixin icon-size($size){
   line-height: $size;
@@ -139,3 +139,4 @@ icon.exchange:before { content: "\e665"; }
 icon.down:before { content: "\e629"; }
 icon.bargain:before { content: "\e62a"; }
 icon.calendar:before { content: "\e6a6"; }
+icon.available:before { content: "\e62b"; }
