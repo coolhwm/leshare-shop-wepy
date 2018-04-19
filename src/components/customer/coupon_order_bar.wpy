@@ -18,7 +18,7 @@
         <view class="weui-badge" wx:if="{{count[5] > 0}}">{{count[5]}}</view>
       </view>
       <view class="row-center my-order-box item-box" @tap="list(0)">
-        <view class="column-center" @tap="list(5)">
+        <view class="column-center">
           <icon class="order normal" color="gray"/>
           <text class="sm">我的订单</text>
         </view>
@@ -48,7 +48,7 @@
         this.$root.$navigate(`/pages/order/list?status=${status}`);
       },
       coupon() {
-        this.$root.$navigate(`/pages/coupon/coupon_order_list`)
+        this.$root.$navigate(`/pages/coupon/list`)
       }
     };
     events = {};

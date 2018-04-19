@@ -146,7 +146,7 @@
      * 下拉刷新
      */
     async onPullDownRefresh() {
-      await store.refresh('member');
+      await store.refresh('member', 'coupon');
       await this.loadOrderCount();
       this.$broadcast('refresh');
       this.loaded();

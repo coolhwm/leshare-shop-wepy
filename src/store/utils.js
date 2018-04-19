@@ -120,6 +120,18 @@ const reflesh = async (...fields) => {
 };
 
 /**
+ * 延迟刷新
+ */
+const delayReflesh = (...fields) => {
+  console.info(`[store] delay reflesh store start: fields=${fields}`);
+  setTimeout(() => {
+    load(fields).then(() => {
+      console.info(`[store] delay reflesh store success: fields=${fields}`);
+    });
+  }, 500)
+};
+
+/**
  * 加载数据， 返回Promise
  */
 const fetch = (field) => {
@@ -180,4 +192,4 @@ const exists = key => {
   return interval < CACHE_TIMEOUT;
 };
 
-export default {get, save, use, refresh: reflesh, init}
+export default {get, save, use, refresh: reflesh, init, delayReflesh}

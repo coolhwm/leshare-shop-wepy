@@ -142,7 +142,6 @@
         'pages/shop/top_up',
         'pages/shop/billing_record',
         'pages/shop/invite',
-        'pages/coupon/coupon_order_list',
         'pages/distribution/index',
         'pages/shop/pay',
         'pages/shop/super_poster'

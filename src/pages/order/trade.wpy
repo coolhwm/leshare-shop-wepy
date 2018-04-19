@@ -396,8 +396,8 @@
         // 清空购物车
         this.cartManager.clear();
         // 卡券领取更新
-        if (trade.couponUsedId) {
-          await store.refresh('coupon');
+        if (trade.couponUsedId || this.trade.orderGoodsInfos[0].goodsTypedc === 'digit') {
+          store.delayReflesh('coupon');
         }
         // 刷新会员信息
         if (trade.bonusPrice > 0) {
