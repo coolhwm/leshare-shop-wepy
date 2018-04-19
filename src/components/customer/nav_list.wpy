@@ -8,6 +8,10 @@
               <icon class="{{item.iconClass}} mr20" style="color: {{item.iconColor}}; font-size: {{item.iconSize}}; line-height: {{item.iconSize}};" />
               <text>{{item.title}}</text>
             </view>
+
+            <view class="weui-badge" wx:if="{{item.action == 'COUPON_OWN' && ownCoupons.length > 0}}">{{ownCoupons.length}}</view>
+            <view class="weui-badge" wx:if="{{item.action == 'MEMBER_BONUS' && member.bonus > 0}}">{{member.bonus}}</view>
+            <view class="weui-badge" wx:if="{{item.action == 'COUPON_PICK' && pickCoupons.length > 0}}">{{pickCoupons.length}}</view>
             <view class="weui-cell__ft weui-cell__ft_in-access">{{item.explain}}</view>
           </button>
         </block>
@@ -19,6 +23,14 @@
 <script>
   import wepy from 'wepy'
   import router from '../../mixins/router';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+
+  @connect({
+    ownCoupons: store.get('ownCoupons'),
+    member: store.get('member'),
+    pickCoupons: store.get('pickCoupons')
+  })
 
   export default class NavList extends wepy.component {
     props = {

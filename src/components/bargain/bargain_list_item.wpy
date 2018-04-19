@@ -15,7 +15,7 @@
     </view>
 
     <!--商品区域-->
-    <view class="row-between bargain-goods-box" @tap="orderDetail">
+    <view class="row-between bargain-goods-box" @tap="orderDetail({{detail}})">
       <view class="row">
         <image src="{{detail.rule.goods.imageUrl}}" style="width: 150rpx;height: 150rpx;"/>
         <view class="column ml20 info-box">
@@ -88,9 +88,12 @@
         }
         Event.emit(Event.BARGAIN_LIST_UPDATE);
       },
-      orderDetail() {
-        if (this.detail.status === 'ORDERED') {
-          this.$root.$navigate(`/pages/order/detail?orderId=${this.detail.order.orderId}`)
+      orderDetail(detail) {
+        if (detail.status === 'ORDERED') {
+          this.$root.$navigate(`/pages/order/detail?orderId=${detail.order.orderId}`)
+        } else {
+          console.info(detail.ruleId)
+          this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${detail.id}`)
         }
       }
     };
