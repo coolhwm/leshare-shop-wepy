@@ -40,6 +40,11 @@
         <OrderBar :param.sync="item" :count.sync="count"/>
       </block>
 
+      <!--卡卷订单栏-->
+      <block wx:if="{{item.type == 'COUPON_ORDER_BAR'}}">
+        <couponOrderBar :param.sync="item" :count.sync="count"/>
+      </block>
+
       <!--版权栏-->
       <block wx:if="{{item.type == 'COPYRIGHT'}}">
         <Copyright :param.sync="item" />
@@ -78,6 +83,7 @@
   import order from '../../api/order';
   import booking from '../../api/booking';
   import Event from '../../utils/Event';
+  import couponOrderBar from '../../components/customer/coupon_order_bar'
 
   @connect({
     shop: store.get('shop'),
@@ -141,7 +147,7 @@
      */
     async onPullDownRefresh() {
       await store.refresh('member');
-      await this.loadOrderCount ();
+      await this.loadOrderCount();
       this.$broadcast('refresh');
       this.loaded();
       wepy.stopPullDownRefresh();
@@ -168,7 +174,8 @@
       NavGrid: NavGrid,
       BalanceBar: BalanceBar,
       Copyright: Copyright,
-      BookingBar: BookingBar
+      BookingBar: BookingBar,
+      couponOrderBar: couponOrderBar
     };
     computed = {
     };
