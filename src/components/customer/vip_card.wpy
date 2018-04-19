@@ -1,6 +1,6 @@
 <template>
   <!-- 会员卡注册区域 -->
-  <view class="vip-box column-between" style="background-image: url('{{param.backgroundImageUrl}}');background-repeat:no-repeat; background-size:100% 100%;" wx:if="{{member == null}}">
+  <view class="vip-box column-between" style="background-image: url('{{card.backgroundPicUrl}}');background-repeat:no-repeat; background-size:100% 100%;" wx:if="{{member == null}}">
     <view class="column-center">
       <image class="avatar"  src="{{avatarUrl}}"/>
       <text>{{nickName}}</text>
@@ -14,7 +14,7 @@
   </view>
 
   <!-- 会员卡区域 -->
-  <view class="vip-box column-between flex-start" style="background-image: url('{{param.backgroundImageUrl}}');background-repeat:no-repeat; background-size:100% 100%;" @tap="detail" wx:if="{{member != null}}">
+  <view class="vip-box column-between flex-start" style="background-image: url('{{card.backgroundPicUrl}}');background-repeat:no-repeat; background-size:100% 100%;" @tap="detail" wx:if="{{member != null}}">
 
     <view class="row-between" style="width: 100%">
       <view class="row">
@@ -73,6 +73,7 @@
           return;
         }
         try {
+          Tips.loading();
           const result = await auth.decodePhone(detail);
           if (result.memberId) {
             await Tips.success('注册成功');
@@ -80,8 +81,10 @@
           } else {
             this.$root.$navigate('/pages/customer/registe_member');
           }
+          Tips.loaded();
         } catch (e) {
           console.info('注册失败', e);
+          Tips.loaded();
           this.$root.$navigate('/pages/customer/registe_member');
         }
       },

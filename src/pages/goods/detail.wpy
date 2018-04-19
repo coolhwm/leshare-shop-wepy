@@ -135,6 +135,9 @@
     <block wx:if="{{isContact}}">
       <ContactWidget />
     </block>
+
+    <!--分享方式-->
+    <SharePanal/>
   </view>
 
 </template>
@@ -164,6 +167,7 @@
   import CartWidget from '../../components/template/cart_widget';
   import DetailList from '../../components/goods/detail_list';
   import ShopInfoBar from '../../components/goods/shop_info_bar';
+  import SharePanal from '../../components/common/share_panal';
 
   @connect({
     pickCoupons: store.get('pickCoupons'),
@@ -239,6 +243,17 @@
       };
     }
     methods = {
+      /**
+       * 显示sheet
+       */
+      shareGoods () {
+        const canvasParams = {
+          detail: this.detail,
+          canvasTemplateId: 0,
+          canvasName: 'goodsShare'
+        };
+        this.$invoke('SharePanal', 'show', canvasParams);
+      },
       /**
        * 打开领取优惠券面板
        */
@@ -321,7 +336,8 @@
       CouponPickPanel: CouponPickPanel,
       CartWidget: CartWidget,
       DetailList: DetailList,
-      ShopInfoBar: ShopInfoBar
+      ShopInfoBar: ShopInfoBar,
+      SharePanal: SharePanal
     };
     mixins = [base, pagination, router];
     config = {
@@ -414,4 +430,22 @@
     text-align: center;
   }
 
+  .detail-box{
+    margin-top: 20rpx;
+    background-color: #FFF;
+    border-top: $border;
+    .detail-title{
+      height: 90rpx;
+      border-bottom: $border;
+    }
+    .detail-list{
+      padding-bottom: 20rpx;
+      image{
+        width: 100%;
+      }
+      text{
+        padding: 20rpx;
+      }
+    }
+  }
 </style>

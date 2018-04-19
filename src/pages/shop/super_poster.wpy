@@ -1,0 +1,54 @@
+<template>
+  <view class="container" wx:if="{{init}}">
+    <view class="loading-tips">
+      <text>加载中...</text>
+    </view>
+    <SharePanal/>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import auth from '../../api/auth';
+  import SharePanal from '../../components/common/share_panal';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  @connect({
+    member: store.get('member')
+  })
+  export default class SuperPoster extends wepy.page {
+    def = {
+      member: {},
+      init: false
+    };
+    data = {...this.def};
+    async onLoad () {
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
+      await store.init();
+      const canvasParams = {
+        canvasName: 'superPoster',
+        member: this.member
+      };
+      this.$invoke('SharePanal', 'shareFriendsCircle', canvasParams);
+      this.loaded();
+    };
+    mathods = {};
+    mixins = [base];
+    components = {
+      SharePanal: SharePanal
+    }
+  }
+</script>
+<style lang="scss">
+  @import "../../styles/variable";
+  .loading-tips{
+    width: 750rpx;
+    text-align: center;
+    padding: 200rpx 0;
+    text{
+      font-size: 30px;
+      color: $color-muted;
+    }
+  }
+</style>

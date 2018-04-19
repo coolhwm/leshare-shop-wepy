@@ -397,7 +397,11 @@
         this.cartManager.clear();
         // 卡券领取更新
         if (trade.couponUsedId) {
-          await store.refresh('coupon', 'member');
+          await store.refresh('coupon');
+        }
+        // 刷新会员信息
+        if (trade.bonusPrice > 0) {
+          await store.refresh('member')
         }
         // 刷新列表
         Event.emit(Event.ORDER_LIST_UPDATE);
