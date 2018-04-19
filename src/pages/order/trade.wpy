@@ -396,7 +396,7 @@
         // 清空购物车
         this.cartManager.clear();
         // 卡券领取更新
-        if (trade.couponUsedId || this.trade.orderGoodsInfos[0].goodsTypedc === 'digit') {
+        if (trade.couponUsedId || this.trade.orderGoodsInfos[0].goodsType === 'digit') {
           store.delayReflesh('coupon');
         }
         // 刷新会员信息
