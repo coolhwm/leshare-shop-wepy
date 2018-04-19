@@ -39,7 +39,7 @@
       </view>
     </view>
     <view wx:else class="column-center info-btn-box">
-      <view class="help-text">
+      <view class="help-text" wx:if="{{bargain.isHelp || bargain.isFloor}}">
         <text wx:if="{{bargain.isHelp}}" class="primary">您一出手就帮好友砍掉了{{bargain.reducePrice}}元，功力了得啊~</text>
         <text wx:elif="{{bargain.isFloor}}">该商品已砍至底价，快去通知您的好友下单购买吧！</text>
       </view>

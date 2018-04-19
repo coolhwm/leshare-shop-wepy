@@ -75,7 +75,7 @@
     }
     methods = {
       invite() {
-        this.$navigate("/pages/shop/super_poster");
+        this.$navigate('/pages/shop/super_poster');
       }
     };
     computed = {
