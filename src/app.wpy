@@ -142,13 +142,10 @@
         'pages/shop/top_up',
         'pages/shop/billing_record',
         'pages/shop/invite',
-<<<<<<< HEAD
-        'pages/coupon/coupon_order_list'
-=======
+        'pages/coupon/coupon_order_list',
         'pages/distribution/index',
         'pages/shop/pay',
         'pages/shop/super_poster'
->>>>>>> bfd6d5c3d56e4b3c03892b090bc6adcd5171997a
       ],
       window: {
         backgroundTextStyle: 'dark',
