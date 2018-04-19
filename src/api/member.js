@@ -21,6 +21,13 @@ export default class member extends base {
     return this.post(url, param);
   }
   /**
+   * 查看海报
+   */
+  static async poster() {
+    const url = `${this.baseUrl}/members/invite/poster`;
+    return this.get(url);
+  }
+  /**
    * 手机验证码
    */
   static async code(phone) {

@@ -3,22 +3,22 @@
 
   <view wx:if="{{init}}">
     <!--头部汇总-->
-    <view class="column content-box">
+    <view class="column content-box" @tap="invite">
       <view class="column-center bonus-box">
-        <text class="white mb10">已邀请</text>
+        <text class="white mb10">已成功邀请</text>
         <view class="row number-box mb10">
           <text class="white bonus-text">{{number}}</text>
-          <text class="white sm">人</text>
+          <text class="white sm mt10">人</text>
         </view>
-        <view class="row btn-box">
-          <text class="sm white" @tap="invite">去邀请
-          </text>
-          <icon class="more xsmall" color="white"/>
-        </view>
+        <!--<view class="row btn-box">-->
+          <!--<text class="sm white" @tap="invite">我的邀请码-->
+          <!--</text>-->
+        <!--</view>-->
       </view>
 
       <!--邀请规则区域-->
       <view class="column rule-box">
+        <text class="muted">活动规则：</text>
         <block wx:for="{{rules}}" wx:key="index" wx:for-item="item">
           <text class="muted">{{item.rule}}</text>
         </block>
@@ -43,7 +43,12 @@
 
     <!-- 加载提示 -->
     <Loadmore :page.sync="page"/>
+
+    <!--操作栏-->
+    <ActionBar @tap.user="invite" okText="我的邀请码" cancelText="返回"/>
   </view>
+
+  <ButtonWidget/>
 
 </template>
 
@@ -57,6 +62,8 @@
   import Loadmore from '../../components/weui/loadmore';
   import Loading from '../../components/common/loading';
   import invite from '../../api/invite'
+  import ActionBar from '../../components/common/action_bar';
+  import ButtonWidget from '../../components/template/button_widget';
 
   @connect({
     card: store.get('card')
@@ -83,21 +90,26 @@
         if (this.card == null) return;
         return [
           {
-            rule: `1、每邀请一名好友关注本商城即可获得${this.card.bonusRule ? this.card.bonusRule.inviteBonus : 0}积分；`
+            rule: `1. 通过邀请码邀请好友关注公众号即可获得${this.card.bonusRule ? this.card.bonusRule.inviteBonus : 0}积分；`
           },
           {
-            rule: '2、可以根据所获得的积分进入本商城的积分商城内兑换产品，产品有限换完为止，抓紧时间哦！'
+            rule: '2. 每100积分在商城内可以直接抵扣1元现金；'
           },
           {
-            rule: '3、最终解释权归本商城所有。'
+            rule: '3. 多款商品免费兑换，产品有限，兑完为止；'
+          },
+          {
+            rule: '4. 本活动最终解释权归一品品所有。'
           }
         ]
       }
     };
     components = {
+      ActionBar: ActionBar,
       Placeholder: Placeholder,
       Loadmore: Loadmore,
-      Loading: Loading
+      Loading: Loading,
+      ButtonWidget: ButtonWidget
     };
     mixins = [base, pagination];
     config = {
@@ -111,11 +123,11 @@
   @import "../../styles/variable";
   .bonus-box{
     background-color: $color-primary;
-    padding: 20rpx;
+    padding: 30rpx;
     border-radius: 30rpx;
     margin: 10rpx 10rpx 0;
     .bonus-text{
-      font-size: 30px;
+      font-size: 33px;
       line-height: 30px;
     }
     .btn-box{

@@ -128,7 +128,7 @@ const delayReflesh = (...fields) => {
     load(fields).then(() => {
       console.info(`[store] delay reflesh store success: fields=${fields}`);
     });
-  }, 500)
+  }, 800)
 };
 
 /**

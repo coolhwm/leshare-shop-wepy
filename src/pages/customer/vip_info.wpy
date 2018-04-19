@@ -24,6 +24,7 @@
       </view>
     </view>
   </view>
+  <ButtonWidget/>
 </template>
 <script>
   import wepy from 'wepy';
@@ -35,6 +36,7 @@
   import Tips from '../../utils/Tips';
   import WxUtils from '../../utils/WxUtils';
   import Loading from '../../components/common/loading';
+  import ButtonWidget from '../../components/template/button_widget';
   let interval = null;
 
   @connect({
@@ -160,7 +162,8 @@
       navigationBarTitleText: '会员卡号'
     };
     components = {
-      Loading: Loading
+      Loading: Loading,
+      ButtonWidget: ButtonWidget
     };
     mixins = [base];
   }

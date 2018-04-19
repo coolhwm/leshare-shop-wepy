@@ -59,6 +59,7 @@
       </repeat>
     </view>
   </view>
+  <ButtonWidget/>
 </template>
 <script>
   import wepy from 'wepy';
@@ -68,6 +69,7 @@
   import base from '../../mixins/base';
   import VipCard from '../../components/customer/vip_card';
   import Loading from '../../components/common/loading';
+  import ButtonWidget from '../../components/template/button_widget';
 
   @connect({
     member: store.get('member'),
@@ -173,7 +175,8 @@
     };
     components = {
       VipCard: VipCard,
-      Loading: Loading
+      Loading: Loading,
+      ButtonWidget: ButtonWidget
     };
     mixins = [base];
     config = {

@@ -16,6 +16,8 @@
       <DetailBottom :detail.sync="detail"/>
     </block>
 
+    <ButtonWidget/>
+
     <!--提示框-->
     <Notice/>
 
@@ -33,6 +35,7 @@
   import auth from '../../api/auth';
   import Notice from '../../components/shop/notice';
   import Event from '../../utils/Event';
+  import ButtonWidget from '../../components/template/button_widget';
 
   export default class BargainDetail extends wepy.page {
     data = {
@@ -99,7 +102,8 @@
       BargainInfoBar: BargainInfoBar,
       BargainRuleBar: BargainRuleBar,
       DetailBottom: DetailBottom,
-      Notice: Notice
+      Notice: Notice,
+      ButtonWidget: ButtonWidget
     };
     mixins = [base];
     config = {

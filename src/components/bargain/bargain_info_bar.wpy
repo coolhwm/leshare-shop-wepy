@@ -96,7 +96,6 @@
     watch = {
       bargain (bargain) {
         if (bargain != null) {
-          console.info(bargain)
           this.countdowm(bargain.createTime, 'groupTime');
         }
       }
