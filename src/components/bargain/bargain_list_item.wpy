@@ -11,6 +11,7 @@
         <text wx:elif="{{detail.status === 'TIMEOUT'}}" class="sm primary">砍价已过期</text>
         <text wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 1}}" class="sm primary">待付款</text>
         <text wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 6}}" class="sm primary">已购买</text>
+        <text wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 7}}" class="sm primary">已关闭</text>
       </view>
     </view>
 

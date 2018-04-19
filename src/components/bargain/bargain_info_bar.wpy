@@ -7,7 +7,7 @@
         <text class="primary">成功参与活动，快快让好友助自己一臂之力</text>
       </view>
     </view>
-    <view class="column-center">
+    <view class="column-center" wx:if="{{bargain.status != 'ORDERED'}}">
       <view class="status-time-box row">
         <text class="mr10">剩余</text>
         <view class="time-num-box">{{content.hour}}</view>
@@ -43,7 +43,8 @@
         <text wx:if="{{bargain.isHelp}}" class="primary">您一出手就帮好友砍掉了{{bargain.reducePrice}}元，功力了得啊~</text>
         <text wx:elif="{{bargain.isFloor}}">该商品已砍至底价，快去通知您的好友下单购买吧！</text>
       </view>
-      <view wx:if="{{!bargain.isHelp && !bargain.isFloor}}" class="btn-box" @tap="help({{bargain.rule.id}}, {{bargain.id}})">帮TA砍一刀</view>
+      <view wx:if="{{!bargain.isHelp && !bargain.isFloor && bargain.status != 'ORDERED'}}" class="btn-box" @tap="help({{bargain.rule.id}}, {{bargain.id}})">帮TA砍一刀</view>
+      <view wx:elif="{{bargain.status == 'ORDERED'}}" class="btn-end-box">砍价已结束</view>
       <view wx:else class="btn-box" @tap="want({{bargain.rule.id}})">我也要</view>
     </view>
     <view class="row-between mt20">
@@ -95,6 +96,7 @@
     watch = {
       bargain (bargain) {
         if (bargain != null) {
+          console.info(bargain)
           this.countdowm(bargain.createTime, 'groupTime');
         }
       }
@@ -167,6 +169,16 @@
     padding: 20rpx;
     .btn-box{
       background-color: $color-primary;
+      color:white;
+      padding: 10rpx 0;
+      width: 500rpx;
+      border-radius: 5rpx;
+      margin: 20rpx 0;
+      text-align: center;
+      font-size: 34rpx;
+    }
+    .btn-end-box{
+      background-color: $color-muted;
       color:white;
       padding: 10rpx 0;
       width: 500rpx;
