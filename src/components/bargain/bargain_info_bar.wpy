@@ -47,7 +47,7 @@
       <view wx:else class="btn-box" @tap="want({{bargain.rule.id}})">我也要</view>
     </view>
     <view class="row-between mt20">
-      <view class="row">
+      <view class="row" @tap="open({{bargain.details}})">
         <view class="bottom-img-box" wx:for="{{bargain.details}}" wx:key="index" wx:for-item="item" wx:for-index="index">
           <image class="bottom-img" src="{{item.customer.avatarUrl}}"/>
         </view>
@@ -57,6 +57,8 @@
         <text class="primary">{{bargain.allPrice}}元</text>
       </view>
     </view>
+
+    <customerList />
   </view>
 
 </template>
@@ -65,6 +67,7 @@
   import wepy from 'wepy';
   import countdown from '../../mixins/countdown';
   import bargain from '../../api/bargain';
+  import customerList from '../../components/bargain/customer_list'
 
   export default class BargainInfoBar extends wepy.component {
     props = {
@@ -81,9 +84,13 @@
       },
       async want (ruleId) {
         this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${ruleId}`)
+      },
+      open(customers) {
+        this.$invoke('customerList', 'open', {content: customers})
       }
     };
     components = {
+      customerList: customerList
     };
     watch = {
       bargain (bargain) {

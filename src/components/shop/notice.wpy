@@ -28,7 +28,7 @@
       btnText: '我知道了'
     };
     methods = {
-      open({title, btnText, content}) {
+      open({content}) {
         this.display = true;
         this.title = title;
         this.btnText = btnText;
