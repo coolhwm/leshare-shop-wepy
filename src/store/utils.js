@@ -8,7 +8,7 @@ import member from '../api/member';
 
 const store = getStore();
 // 元数据
-const meta = {};
+let meta = {};
 // 是否调试
 const IS_DEBUG = false;
 // 超时时间
@@ -64,12 +64,18 @@ const init = async () => {
     // 开始初始化
     console.info('[store] start init store');
     isLoading = true;
-    await use(...INIT_KEY);
-    // 清空等待队列
-    console.info('[store] store init completed');
-    isLoading = false;
-    loadingQueue.forEach(callback => callback());
-    loadingQueue = [];
+    try {
+      await use(...INIT_KEY);
+      // 清空等待队列
+      console.info('[store] store init completed');
+      loadingQueue.forEach(callback => callback());
+    } catch (err) {
+      console.info('[store] store init fail, rest store status');
+      meta = {};
+    } finally {
+      isLoading = false;
+      loadingQueue = [];
+    }
   }
 };
 

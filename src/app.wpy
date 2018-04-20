@@ -115,7 +115,6 @@
         'pages/coupon/detail',
         'pages/coupon/pick',
         'pages/customer/index_template',
-        'pages/customer/index',
         'pages/customer/registe_member',
         'pages/customer/vip_detail',
         'pages/customer/address_list',

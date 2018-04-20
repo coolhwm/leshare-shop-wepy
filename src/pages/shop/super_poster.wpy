@@ -36,6 +36,10 @@
         this.loaded();
       },
       async save() {
+        if (!this.init) {
+          Tips.alert('请等待');
+          return;
+        }
         await Tips.modal('邀请图需要保存到相册后再发送给微信好友，长按识别关注公众号即可获得积分！');
         try {
           Tips.loading();

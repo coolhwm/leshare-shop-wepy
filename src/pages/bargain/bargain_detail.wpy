@@ -48,7 +48,8 @@
     async onLoad ({bargainId, isBegin}) {
       this.bargainId = bargainId;
       // 用户信息
-      await auth.user();
+      const result = await auth.user({block: true, redirect: true });
+      if (!result) return;
       await this.update(bargainId);
       if (isBegin) {
         const notice = {

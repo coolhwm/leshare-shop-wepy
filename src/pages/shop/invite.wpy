@@ -55,6 +55,7 @@
 <script>
   import wepy from 'wepy'
   import { connect } from 'wepy-redux';
+  import auth from '../../api/auth';
   import store from '../../store/utils';
   import base from '../../mixins/base';
   import pagination from '../../mixins/pagination.wpy';
@@ -64,18 +65,28 @@
   import invite from '../../api/invite'
   import ActionBar from '../../components/common/action_bar';
   import ButtonWidget from '../../components/template/button_widget';
+  import Tips from '../../utils/Tips';
 
   @connect({
-    card: store.get('card')
+    card: store.get('card'),
+    member: store.get('member')
   })
   export default class Invite extends wepy.page {
     data = {
       init: false,
       page: {},
-      number: 5
+      number: 0
     };
     async onLoad () {
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
       await store.init();
+      if (this.member == null) {
+        console.info('[invite]member info is empty');
+        await Tips.modal('请先注册会员');
+        this.$switch('/pages/customer/index_template');
+        return;
+      }
       this.page = await invite.page();
       this.number = await invite.count();
       await this.next();
