@@ -1,54 +1,74 @@
 <template>
-  <view class="container" wx:if="{{init}}">
-    <view class="loading-tips">
-      <text>加载中...</text>
-    </view>
-    <SharePanal/>
+  <Loading :init.sync="init"/>
+  <view class="container">
+    <image bindload="onImageLoad" class="poster-image" mode="widthFix" src="{{url}}"></image>
   </view>
+  <!--操作栏-->
+  <ActionBar @tap.user="save" okText="保存到相册" cancelText="返回"/>
+
+  <ButtonWidget/>
 </template>
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
-  import auth from '../../api/auth';
-  import SharePanal from '../../components/common/share_panal';
+  import member from '../../api/member';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
+  import Loading from '../../components/common/loading';
+  import ActionBar from '../../components/common/action_bar';
+  import Tips from '../../utils/Tips';
+  import ButtonWidget from '../../components/template/button_widget';
   @connect({
     member: store.get('member')
   })
   export default class SuperPoster extends wepy.page {
-    def = {
-      member: {},
-      init: false
+    data = {
+      init: false,
+      url: null
     };
-    data = {...this.def};
     async onLoad () {
-      const result = await auth.user({block: true, redirect: true});
-      if (!result) return;
-      await store.init();
-      const canvasParams = {
-        canvasName: 'superPoster',
-        member: this.member
-      };
-      this.$invoke('SharePanal', 'shareFriendsCircle', canvasParams);
-      this.loaded();
+      const result = await member.poster();
+      this.url = result.img_url;
+      this.$apply();
     };
-    mathods = {};
+    methods = {
+      onImageLoad() {
+        this.loaded();
+      },
+      async save() {
+        if (!this.init) {
+          Tips.alert('请等待');
+          return;
+        }
+        await Tips.modal('邀请图需要保存到相册后再发送给微信好友，长按识别关注公众号即可获得积分！');
+        try {
+          Tips.loading();
+          const file = await wepy.downloadFile({url: this.url});
+          Tips.loaded();
+          await wepy.saveImageToPhotosAlbum({filePath: file.tempFilePath});
+        } catch (e) {
+          if (e.errMsg == 'saveImageToPhotosAlbum:fail auth deny') {
+            await Tips.modal('邀请图需要保存到相册，请在弹出页面中开启授权');
+            wepy.openSetting({});
+          } else if (e.errMsg == 'saveImageToPhotosAlbum:fail cancel') {
+            Tips.error('尚未保存');
+          } else {
+            Tips.error('保存失败');
+          }
+        }
+      }
+    };
     mixins = [base];
     components = {
-      SharePanal: SharePanal
+      ActionBar: ActionBar,
+      Loading: Loading,
+      ButtonWidget: ButtonWidget
     }
   }
 </script>
 <style lang="scss">
   @import "../../styles/variable";
-  .loading-tips{
-    width: 750rpx;
-    text-align: center;
-    padding: 200rpx 0;
-    text{
-      font-size: 30px;
-      color: $color-muted;
-    }
+  .poster-image{
+    width: 100%;
   }
 </style>

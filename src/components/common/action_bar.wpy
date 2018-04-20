@@ -39,6 +39,7 @@
         this.$emit('tap');
       },
       back() {
+        this.$emit('back');
         wepy.navigateBack();
       }
     }

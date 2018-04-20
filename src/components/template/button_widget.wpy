@@ -1,5 +1,5 @@
 <template>
-  <view class="column share-box" style="bottom: {{param.bottom}}">
+  <view class="column share-box" style="bottom:{{bottom ? bottom : param.bottom}}">
     <block wx:for="{{param.buttons}}" wx:key="action" wx:for-index="index" wx:for-item="button">
       <button plain hover-class="none"  @tap="routeByAction({{button}})" open-type="{{button.openType}}">
         <icon class="{{button.iconClass}}" color="gray"/>
@@ -14,7 +14,26 @@
 
   export default class ButtonWidget extends wepy.component {
     props = {
-      param: {}
+      bottom: {
+      },
+      param: {
+        default: {
+          bottom: '100rpx',
+          buttons: [
+            {
+              iconClass: 'home',
+              action: 'PAGE_SWITCH',
+              targetId: '/pages/home/template'
+            },
+            {
+              iconClass: 'service',
+              action: 'CONTACT',
+              openType: 'contact',
+              targetId: null
+            }
+          ]
+        }
+      }
     };
     mixins = [router];
   }

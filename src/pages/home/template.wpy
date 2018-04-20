@@ -167,6 +167,8 @@
       this.renderNavigationBar();
       // 执行触发器
       this.runTriggers();
+      // 尝试获取授权
+      auth.user().then();
     };
     /**
      * 渲染页面

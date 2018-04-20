@@ -34,6 +34,7 @@
   import Placeholder from '../../components/common/placeholder';
   import Loadmore from '../../components/weui/loadmore';
   import Loading from '../../components/common/loading';
+  import Tips from '../../utils/Tips';
 
   @connect({
     member: store.get('member')
@@ -48,6 +49,11 @@
     };
     async onLoad() {
       await store.init();
+      if (this.member == null) {
+        await Tips.modal('请先注册会员');
+        this.$switch('/pages/customer/index_template');
+        return;
+      }
       this.page = await member.bonus();
       await this.next();
     };

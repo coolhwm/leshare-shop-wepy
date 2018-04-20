@@ -59,6 +59,7 @@
       </repeat>
     </view>
   </view>
+  <ButtonWidget/>
 </template>
 <script>
   import wepy from 'wepy';
@@ -68,6 +69,8 @@
   import base from '../../mixins/base';
   import VipCard from '../../components/customer/vip_card';
   import Loading from '../../components/common/loading';
+  import ButtonWidget from '../../components/template/button_widget';
+  import Tips from '../../utils/Tips';
 
   @connect({
     member: store.get('member'),
@@ -87,7 +90,8 @@
       await store.init();
       // 没注册的会员引导注册
       if (this.member == null) {
-        this.$redirect('/pages/customer/registe_member');
+        await Tips.modal('请先注册会员');
+        this.$switch('/pages/customer/index_template');
         return;
       }
       this.loaded();
@@ -173,7 +177,8 @@
     };
     components = {
       VipCard: VipCard,
-      Loading: Loading
+      Loading: Loading,
+      ButtonWidget: ButtonWidget
     };
     mixins = [base];
     config = {

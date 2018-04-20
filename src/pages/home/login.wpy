@@ -50,7 +50,7 @@
           if (!result) return;
           Tips.success('授权成功');
           if (this.redirect == 'true') {
-            WxUtils.backOrRedirect('/pages/customer/index');
+            this.$switch('/pages/customer/index_template');
           } else {
             wepy.navigateBack();
           }
@@ -60,7 +60,7 @@
       },
       back() {
         if (this.redirect == 'true') {
-          WxUtils.backOrRedirect('/pages/home/home');
+          this.$switch('/pages/home/template');
         } else {
           wepy.navigateBack();
         }

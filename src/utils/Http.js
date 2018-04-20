@@ -1,4 +1,5 @@
 import wepy from 'wepy';
+import Tips from '../utils/Tips'
 
 // HTTP工具类
 export default class http {
@@ -11,7 +12,7 @@ export default class http {
     if (loading) {
       // Tips.loading();
     }
-    console.info(`[http]request url=${url}`)
+    console.info(`[http]request url=${url}`);
     const res = await wepy.request(param);
     if (this.isSuccess(res)) {
       return res.data.data;
@@ -25,6 +26,11 @@ export default class http {
    */
   static isSuccess (res) {
     const wxCode = res.statusCode;
+    // 权限问题跳转
+    if (wxCode == 403) {
+      Tips.modal('微信登录状态失效，请重新访问');
+      wepy.switchTab({url: '/pages/home/template'});
+    }
     // 微信请求错误
     if (wxCode !== 200) {
       return false;
