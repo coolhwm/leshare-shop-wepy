@@ -21,6 +21,9 @@
     <view wx:if="{{rule.isTimeOut}}" class="column-center btn-disabled">
       <text>活动已过期</text>
     </view>
+    <view wx:elif="{{rule.unBargain}}" class="column-center btn-disabled">
+      <text>限购{{rule.limitTimes}}件</text>
+    </view>
     <view wx:else class="column-center btn-bargain" @tap="handleBargain({{rule}}, {{rule.id}}, {{state}}, {{id}})">
       <text class="xxl money-box">￥{{rule.floorPrice}}</text>
       <text>发起砍价</text>
