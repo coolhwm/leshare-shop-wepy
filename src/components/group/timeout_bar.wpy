@@ -4,7 +4,7 @@
       <view class="title mr20 ">{{title}}</view>
       <view class="describe-box">{{describe}}</view>
     </view>
-    <view class="column-center time-box" wx:if="{{content.sec}}">
+    <view class="column-center time-box" wx:if="{{!isTimeOut}}">
       <text class="danger xxs">距结束仅剩</text>
       <view class="row">
         <view class="time-num-box">{{content.day}}</view>
@@ -16,6 +16,9 @@
         <view class="time-num-box">{{content.sec}}</view>
         <text class="xxs">秒</text>
       </view>
+    </view>
+    <view class="column-center time-box" wx:else>
+      <text class="white">活动已结束</text>
     </view>
   </view>
 </template>
@@ -39,12 +42,15 @@
         default: '拼团'
       }
     };
-    data = {};
+    data = {
+      isTimeOut: false
+    };
     methods = {
     };
     watch = {
       endTime(endTime) {
         this.countdowm(endTime.replace(/-/g, '/'), 'endTime');
+        this.isTimeOut = new Date(endTime).getTime() < new Date().getTime();
       }
     };
     mixins = [countdown];

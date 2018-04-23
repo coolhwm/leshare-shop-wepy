@@ -38,8 +38,7 @@
     <!--操作栏-->
     <view class="group-bottom-box row">
       <view wx:if="{{detail.status === 'PROCESSING'}}" class="group-btn-box" @tap="help({{detail.id}})">找人帮砍</view>
-      <view wx:elif="{{detail.status === 'BARGAINED'}}" class="group-btn-box" @tap="help({{detail.id}})">立即购买</view>
-      <view wx:elif="{{detail.status === 'TIMEOUT'}}" class="group-btn-box" @tap="bargain({{detail.rule.id}})">再砍一单</view>
+      <view wx:elif="{{detail.status === 'BARGAINED' || detail.status === 'TIMEOUT'}}" class="group-btn-box" @tap="help({{detail.id}})">立即购买</view>
       <view wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 1}}" class="group-btn-box" @tap="pay({{detail.order.orderId}})">立即支付</view>
       <view wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 6}}" class="group-btn-box" @tap="orderDetail({{detail.order.orderId}})">查看订单</view>
     </view>
@@ -70,9 +69,6 @@
       help (bargainId) {
         this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${bargainId}`)
       },
-      bargain (ruleId) {
-        this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${ruleId}`)
-      },
       /**
        * 订单支付
        */
@@ -93,7 +89,6 @@
         if (detail.status === 'ORDERED') {
           this.$root.$navigate(`/pages/order/detail?orderId=${detail.order.orderId}`)
         } else {
-          console.info(detail.ruleId)
           this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${detail.id}`)
         }
       }

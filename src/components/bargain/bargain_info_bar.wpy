@@ -7,7 +7,10 @@
         <text class="primary">成功参与活动，快快让好友助自己一臂之力</text>
       </view>
     </view>
-    <view class="column-center" wx:if="{{bargain.status != 'ORDERED'}}">
+    <view class="column-center" wx:if="{{bargain.status == 'TIMEOUT'}}">
+      <text>您的砍价活动已过期</text>
+    </view>
+    <view class="column-center" wx:elif="{{bargain.status != 'ORDERED'}}">
       <view class="status-time-box row">
         <text class="mr10">剩余</text>
         <view class="time-num-box">{{content.hour}}</view>
@@ -18,6 +21,9 @@
         <text class="ml10">结束</text>
       </view>
       <text wx:if="{{bargain.isFloor && bargain.isHead}}">该商品已砍至底价，快去下单购买吧~</text>
+    </view>
+    <view class="column-center" wx:elif="{{bargain.status == 'TIMEOUT'}}">
+      <text>已结束</text>
     </view>
     <view wx:if="{{bargain.isHead}}">
       <view class="back-box">
@@ -49,12 +55,13 @@
     </view>
     <view class="row-between mt20">
       <view class="row" @tap="open({{bargain.details}})">
-        <view class="bottom-img-box" wx:for="{{bargain.details}}" wx:key="index" wx:for-item="item" wx:for-index="index">
+        <view class="bottom-img-box" wx:for="{{showCustomer}}" wx:key="index" wx:for-item="item" wx:for-index="index">
           <image class="bottom-img" src="{{item.customer.avatarUrl}}"/>
         </view>
       </view>
       <view>
-        <text class="muted">一共砍了</text>
+        <text class="primary">{{bargain.details.length}}人</text>
+        <text class="muted">砍了</text>
         <text class="primary">{{bargain.allPrice}}元</text>
       </view>
     </view>
@@ -88,6 +95,12 @@
       },
       open(customers) {
         this.$invoke('customerList', 'open', {content: customers})
+      }
+    };
+    computed = {
+      showCustomer () {
+        if (this.bargain == null) return;
+        return this.bargain.details.slice(-8)
       }
     };
     components = {

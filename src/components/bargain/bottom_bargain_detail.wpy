@@ -2,7 +2,7 @@
   <view class="buy-bar-placeholder">
   </view>
   <view class="row bargain-bar-box">
-    <button wx:if="{{detail.isFloor}}" class="column-center btn-buy" plain open-type="share" disabled>
+    <button wx:if="{{detail.isFloor || detail.status == 'TIMEOUT'}}" class="column-center btn-buy" plain open-type="share" disabled>
       <text class="muted">找人帮砍</text>
     </button>
     <button wx:else class="column-center btn-buy" plain open-type="share">
