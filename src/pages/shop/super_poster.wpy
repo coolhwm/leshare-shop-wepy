@@ -1,7 +1,7 @@
 <template>
   <Loading :init.sync="init"/>
   <view class="container">
-    <image bindload="onImageLoad" class="poster-image" mode="widthFix" src="{{url}}"></image>
+    <image bindload="onImageLoad" class="poster-image" mode="widthFix" src="{{url}}/w750" wx:if="{{url}}"></image>
   </view>
   <!--操作栏-->
   <ActionBar @tap.user="save" okText="保存到相册" cancelText="返回"/>
