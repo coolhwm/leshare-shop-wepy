@@ -65,6 +65,16 @@
       this.rule = this.detail.rule;
       this.loaded();
     }
+    onShow() {
+      if (this.init) {
+        this.$invoke('BargainInfoBar', 'start', {
+          timestamp: this.detail.createTime, status: 'groupTime'
+        });
+      }
+    };
+    onHide() {
+      this.$invoke('BargainInfoBar', 'clear');
+    };
     onUnload() {
       this.$invoke('BargainInfoBar', 'clear');
     };
