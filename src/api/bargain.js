@@ -100,6 +100,10 @@ export default class group extends base {
     data.rule.skuDetail = data.rule.skuDetails.find(item => item.sku === data.sku);
     // 处理价格
     this._processPrice(data);
+    // 处理状态
+    this._processStatus(data);
+    // 砍价订单动作
+    this._processAction(data);
     return data;
   }
 
@@ -150,5 +154,47 @@ export default class group extends base {
     data.bargainRate = (data.balance / goodsPrice) * 100;
     // 是否已至底价
     data.isFloor = data.balance == data.rule.floorPrice;
+  }
+
+  // 处理状态
+  static _processStatus (data) {
+    const BARGAIN_STATUS = {
+      PROCESSING: '进行中',
+      BARGAINED: '已至底',
+      TIMEOUT: '已过期'
+    };
+    const BARGAIN_ORDER_STATUS = {
+      1: '待付款',
+      6: '已购买',
+      7: '已关闭'
+    };
+    data.statusText = data.status === 'ORDERED' ? BARGAIN_ORDER_STATUS[data.order.status] : BARGAIN_STATUS[data.status]
+  }
+  // 处理我的砍价动作
+  static _processAction (data) {
+    const BARGAIN_ACTION_NAME = {
+      PROCESSING: '找人帮砍',
+      BARGAINED: '立即购买',
+      TIMEOUT: '再砍一单'
+    };
+    const BARGAIN_ORDER_ACTION_NAME = {
+      1: '立即购买',
+      6: '查看订单',
+      7: '查看订单'
+    };
+    const BARGAIN_ACTION_FUNCNAME = {
+      PROCESSING: 'help',
+      BARGAINED: 'buy',
+      TIMEOUT: 'again'
+    };
+    const BARGAIN_ORDER_ACTION_FUNCNAME = {
+      1: 'pay',
+      6: 'order',
+      7: 'order'
+    };
+    const action = {};
+    action.name = data.status === 'ORDERED' ? BARGAIN_ORDER_ACTION_NAME[data.order.status] : BARGAIN_ACTION_NAME[data.status]
+    action.funcName = data.status === 'ORDERED' ? BARGAIN_ORDER_ACTION_FUNCNAME[data.order.status] : BARGAIN_ACTION_FUNCNAME[data.status]
+    data.action = action
   }
 }

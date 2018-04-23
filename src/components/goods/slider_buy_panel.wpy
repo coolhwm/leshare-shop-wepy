@@ -172,10 +172,15 @@
           this.$apply();
           this.cartManager.plus(this.goods, selText, num);
         } else if (type === 'begin' || type === 'help') {
-          const result = await bargain.GoodsBargain(this.goods.ruleId, this.goods.id, this.sku.skuText);
-          await Tips.success('砍价成功');
-          const isBegin = true;
-          this.$root.$redirect(`../bargain/bargain_detail?bargainId=${result.id}&&isBegin=${isBegin}`);
+          try {
+            const result = await bargain.GoodsBargain(this.goods.ruleId, this.goods.id, this.sku.skuText);
+            await Tips.success('砍价成功');
+            const isBegin = true;
+            this.$root.$redirect(`../bargain/bargain_detail?bargainId=${result.id}&&isBegin=${isBegin}`);
+          } catch (err) {
+            await Tips.confirm(err.message);
+            wepy.navigateBack();
+          }
         } else {
           const cart = this.cartManager.createCart(this.goods, selText, num);
           const trade = order.createCartTrade([cart], {orderType: 10});
