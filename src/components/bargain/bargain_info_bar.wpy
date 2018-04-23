@@ -90,8 +90,9 @@
         const price = result.details.find(item => item.customer.id === userId).reducePrice;
         this.$emit('help', price, bargainId);
       },
-      async want (ruleId) {
-        this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${ruleId}`)
+      async want () {
+        this.$root.$navigate(`/pages/bargain/bargain_more`);
+        // this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${ruleId}`)
       },
       open(customers) {
         this.$invoke('customerList', 'open', {content: customers})

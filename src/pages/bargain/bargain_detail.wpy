@@ -36,7 +36,6 @@
   import Notice from '../../components/shop/notice';
   import Event from '../../utils/Event';
   import ButtonWidget from '../../components/template/button_widget';
-
   export default class BargainDetail extends wepy.page {
     data = {
       bargainId: null,
@@ -48,7 +47,7 @@
     async onLoad ({bargainId, isBegin}) {
       this.bargainId = bargainId;
       // 用户信息
-      const result = await auth.user({block: true, redirect: true });
+      const result = await auth.user({block: true, redirect: true});
       if (!result) return;
       await this.update(bargainId);
       if (isBegin) {
