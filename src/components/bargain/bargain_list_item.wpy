@@ -6,12 +6,7 @@
         <view class="user-info-container">
           <text class="sm">{{detail.createTime}}</text>
         </view>
-        <text wx:if="{{detail.status === 'PROCESSING'}}" class="sm primary">砍价进行中</text>
-        <text wx:elif="{{detail.status === 'BARGAINED'}}" class="sm primary">商品已砍至底价</text>
-        <text wx:elif="{{detail.status === 'TIMEOUT'}}" class="sm primary">砍价已过期</text>
-        <text wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 1}}" class="sm primary">待付款</text>
-        <text wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 6}}" class="sm primary">已购买</text>
-        <text wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 7}}" class="sm primary">已关闭</text>
+        <text class="sm primary">{{detail.statusText}}</text>
       </view>
     </view>
 
@@ -37,10 +32,7 @@
 
     <!--操作栏-->
     <view class="group-bottom-box row">
-      <view wx:if="{{detail.status === 'PROCESSING'}}" class="group-btn-box" @tap="help({{detail.id}})">找人帮砍</view>
-      <view wx:elif="{{detail.status === 'BARGAINED' || detail.status === 'TIMEOUT'}}" class="group-btn-box" @tap="help({{detail.id}})">立即购买</view>
-      <view wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 1}}" class="group-btn-box" @tap="pay({{detail.order.orderId}})">立即支付</view>
-      <view wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 6}}" class="group-btn-box" @tap="orderDetail({{detail.order.orderId}})">查看订单</view>
+      <view class="group-btn-box" @tap="action({{detail.action.funcName}}, {{detail}})">{{detail.action.name}}</view>
     </view>
   </view>
 </template>
@@ -65,31 +57,53 @@
     };
     onLoad () {
     }
+    help (detail) {
+      const bargainId = detail.id;
+      this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${bargainId}`)
+    }
+    buy (detail) {
+      const bargainId = detail.id;
+      this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${bargainId}`)
+    }
+    again (detail) {
+      const ruleId = detail.ruleId;
+      this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${ruleId}`)
+    }
+    /**
+     * 订单支付
+     */
+    async pay(detail) {
+      const orderId = detail.order.orderId;
+      try {
+        Tips.loading();
+        const payment = await order.prepayOrder(orderId);
+        Tips.loaded();
+        await order.wxpayOrder(payment);
+        await Tips.success('支付成功');
+      } catch (e) {
+        console.warn(e);
+        await Tips.success('支付取消');
+      }
+      Event.emit(Event.BARGAIN_LIST_UPDATE);
+    }
+    order(detail) {
+      this.$root.$navigate(`/pages/order/detail?orderId=${detail.order.orderId}`)
+    }
     methods = {
-      help (bargainId) {
-        this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${bargainId}`)
-      },
-      /**
-       * 订单支付
-       */
-      async pay(orderId) {
-        try {
-          Tips.loading();
-          const payment = await order.prepayOrder(orderId);
-          Tips.loaded();
-          await order.wxpayOrder(payment);
-          await Tips.success('支付成功');
-        } catch (e) {
-          console.warn(e);
-          await Tips.success('支付取消');
-        }
-        Event.emit(Event.BARGAIN_LIST_UPDATE);
-      },
       orderDetail(detail) {
         if (detail.status === 'ORDERED') {
           this.$root.$navigate(`/pages/order/detail?orderId=${detail.order.orderId}`)
         } else {
           this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${detail.id}`)
+        }
+      },
+      action(funcName, detail) {
+        console.info('[action]' + funcName);
+        if (this[funcName]) {
+          const func = this[funcName].bind(this);
+          func(detail);
+        } else {
+          Tips.error('未知错误');
         }
       }
     };
