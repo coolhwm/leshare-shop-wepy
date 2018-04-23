@@ -90,6 +90,8 @@ export default class group extends base {
     this._processBargainUser(data);
     // 处理价格
     this._processPrice(data);
+    // 处理帮砍价格提示
+    this._processHelpText(data)
     return data;
   }
 
@@ -196,5 +198,19 @@ export default class group extends base {
     action.name = data.status === 'ORDERED' ? BARGAIN_ORDER_ACTION_NAME[data.order.status] : BARGAIN_ACTION_NAME[data.status]
     action.funcName = data.status === 'ORDERED' ? BARGAIN_ORDER_ACTION_FUNCNAME[data.order.status] : BARGAIN_ACTION_FUNCNAME[data.status]
     data.action = action
+  }
+  // 处理帮砍价格提示
+  static _processHelpText(data) {
+    if (data.isHelp) {
+      if (data.reducePrice > 10) {
+        data.helpText = `您一出手就帮好友砍掉了${data.reducePrice}元，功力了得啊~`;
+      } else if (data.reducePrice > 1) {
+        data.helpText = `您太棒了！一出手就帮好友砍掉了${data.reducePrice}元！`;
+      } else {
+        data.helpText = `您一出手就帮好友砍掉了${data.reducePrice}元，下次可以换个姿势试一试！`;
+      }
+    } else if (data.isFloor) {
+      data.helpText = `该商品已砍至底价，快去通知您的好友下单购买吧！`
+    }
   }
 }

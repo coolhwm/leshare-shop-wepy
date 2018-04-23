@@ -40,14 +40,13 @@
         <view class="back"></view>
       </view>
       <view class="row-between mt10">
-        <text class="muted">原价：￥{{bargain.rule.skuDetail == null ? bargain.rule.goodsPrice : bargain.rule.skuDetail.price}}</text>
+        <text class="muted">原价：￥{{bargain.rule.goodsPrice}}</text>
         <text class="primary">底价：￥{{bargain.rule.floorPrice}}</text>
       </view>
     </view>
     <view wx:else class="column-center info-btn-box">
       <view class="help-text" wx:if="{{bargain.isHelp || bargain.isFloor}}">
-        <text wx:if="{{bargain.isHelp}}" class="primary">您一出手就帮好友砍掉了{{bargain.reducePrice}}元，功力了得啊~</text>
-        <text wx:elif="{{bargain.isFloor}}">该商品已砍至底价，快去通知您的好友下单购买吧！</text>
+        <text class="{{bargain.isHelp ? 'primary' : ''}}">{{bargain.helpText}}</text>
       </view>
       <view wx:if="{{!bargain.isHelp && !bargain.isFloor && bargain.status != 'ORDERED'}}" class="btn-box" @tap="help({{bargain.rule.id}}, {{bargain.id}})">帮TA砍一刀</view>
       <view wx:elif="{{bargain.status == 'ORDERED'}}" class="btn-end-box">砍价已结束</view>
