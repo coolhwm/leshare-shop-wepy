@@ -167,6 +167,10 @@ export default class order extends base {
       orderGoodsInfos: orderGoodsInfos,
       shopName: this.shopName
     };
+    // 餐桌号
+    if (param.scene) {
+      trade.scene = param.scene
+    }
     // 初始化订单类型标志位
     this._processTypeFlag(trade);
     // 堂食打包初始化出餐时间

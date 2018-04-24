@@ -23,7 +23,7 @@
     <tab :tab.sync="tab" fixed="0"/>
     <scroll-view scroll-y="true" class="swiper-item-box">
       <!-- 积分规则 -->
-      <pointsRule wx:if="{{tab.selectedId==0}}"/>
+      <pointsRule wx:if="{{tab.selectedId==0}}" :signIn.sync="signIn"/>
       <!-- 积分记录 -->
       <repeat for="{{page.list}}" key="index" index="index" item="item" wx:if="{{tab.selectedId==1}}">
         <BonusItem :bonusInfo.sync="item"/>
@@ -59,7 +59,7 @@
       tab: {
         list: [
           {id: 0, title: '积分规则'},
-          {id: 1, title: '获得记录'}
+          {id: 1, title: '签到记录'}
         ],
         selectedId: 0
       },
@@ -67,8 +67,7 @@
         list: []
       },
       signed: false,
-      signDay: [],
-      signIn: {},
+      signIn: null,
       type: ''
     };
     params () {
@@ -80,12 +79,10 @@
     };
     async getUserSign () {
       this.signIn = await shop.signList(this.member.memberId);
-      this.signed = this.signIn.lastDate == Lang.dateFormate(new Date(), 'yyyyMMdd')
       if (this.signIn) {
         this.page = await shop.signHistory();
         this.next();
       }
-      this.dateAdd();
     }
     // 点击签到
     async doSign () {
@@ -114,17 +111,30 @@
         }
       }
     };
-    computed = {};
-    // 日期数组填充7天区分是否签到
-    dateAdd () {
-      for (let i = 6; i >= 0; i--) {
-        let date = new Date();
-        date.setDate(date.getDate() - i);
-        if (this.signIn.sevenHistory.find(item => item.signDate == Lang.dateFormate(date, 'yyyyMMdd'))) {
-          this.signDay.push({signTime: date.getDate(), signed: 1});
-        } else {
-          this.signDay.push({signTime: date.getDate(), signed: 0});
+    computed = {
+      // 判断当天是否签到
+      signs () {
+        const now = new Date();
+        if (!this.signIn) {
+          return;
         }
+        if (this.signIn.lastDate == Lang.dateFormate(now, 'yyyyMMdd')) {
+          this.signed = true;
+        }
+      },
+      signDay() {
+        if (this.signIn == null) return;
+        const day = [];
+        for (let i = 6; i >= 0; i--) {
+          let date = new Date();
+          date.setDate(date.getDate() - i);
+          if (this.signIn.sevenHistory.find(item => item.signDate == Lang.dateFormate(date, 'yyyyMMdd'))) {
+            day.push({signTime: date.getDate(), signed: 1});
+          } else {
+            day.push({signTime: date.getDate(), signed: 0});
+          }
+        }
+        return day;
       }
     };
     config = {

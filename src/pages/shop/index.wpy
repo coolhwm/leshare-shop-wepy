@@ -7,19 +7,23 @@
     <ShopHeader />
 
     <!--功能区域-->
-    <ShopNav :mode.sync="mode" @change.user="change"/>
+    <block>
+      <ShopNav :mode.sync="mode" @change.user="change" :scene.sync="scene"/>
+    </block>
 
     <!--主内容区域-->
     <CategoryBox top="145px" bottom="55px"/>
 
     <!-- 购物车 -->
     <block>
-      <SliderCart @buy.user="buy" :mode.sync="mode"/>
+      <SliderCart @buy.user="buy" :mode.sync="mode" :scene.sync="scene"/>
     </block>
 
     <!--SKU选择器-->
     <SkuSelector/>
 
+    <!--桌号弹出框-->
+    <Notice />
   </view>
 </template>
 
@@ -37,6 +41,7 @@
   import SkuSelector from '../../components/goods/popup_buy_panel';
   import SliderCart from '../../components/shop/slider_cart';
   import Loading from '../../components/common/loading';
+  import Notice from '../../components/shop/notice';
 
   @connect({
     member: store.get('member'),
@@ -45,10 +50,24 @@
   export default class ShopIndex extends wepy.page {
     data = {
       init: false,
-      mode: 1
+      mode: 1,
+      scene: null
     };
-    async onLoad ({mode}) {
-      this.mode = mode;
+    async onLoad ({mode, scene}) {
+      if (scene != null) {
+        this.scene = scene;
+        this.mode = 2;
+        const number = scene.slice(6);
+        const notice = {
+          title: '提示',
+          btnText: '我知道了',
+          content: `您当前在${number}号桌，在线下单支付后餐品会按桌位号送达。`
+        };
+        this.$invoke('Notice', 'open', notice);
+      } else {
+        this.mode = mode;
+        this.scene = null
+      }
       // 用户信息
       await auth.user();
       // 初始化Store
@@ -74,7 +93,8 @@
       SliderCart: SliderCart,
       SkuSelector: SkuSelector,
       CategoryBox: CategoryBox,
-      Loading: Loading
+      Loading: Loading,
+      Notice: Notice
     };
     mixins = [base, pagination, router];
     config = {
