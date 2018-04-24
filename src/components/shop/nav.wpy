@@ -26,6 +26,9 @@
     props = {
       mode: {
         default: 1
+      },
+      scene: {
+        default: null
       }
     };
     data = {
@@ -44,12 +47,17 @@
     computed = {
       // 需要进行优化
       title() {
-        if (this.mode == 2) {
+        if (this.mode == 2 && this.scene == null) {
           this.exchangeText = '点击切换到外卖点餐';
           return `堂食/外带`
-        } else {
+        } else if (this.mode == 1) {
           this.exchangeText = '点击切换到堂食点餐';
           return `外卖点餐`
+        } else {
+          if (this.scene == null) return;
+          const number = this.scene.slice(6);
+          this.exchangeText = '点击切换到外卖点餐';
+          return `当前餐桌号：${number}`
         }
       }
     }

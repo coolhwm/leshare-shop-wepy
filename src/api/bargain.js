@@ -64,7 +64,7 @@ export default class group extends base {
    * 返回砍价列表
    */
   static list (status) {
-    const url = `${this.baseUrl}/goods_bargain/rules?status=${status}`;
+    const url = `${this.baseUrl}/goods_bargain/list?status=${status}`;
     return new Page(url, item => {
       this._processBargainListItem(item);
     });
@@ -74,7 +74,7 @@ export default class group extends base {
    * 查看砍价商品列表
    */
   static bargainGoodsList () {
-    const url = `${this.baseUrl}/goods_bargain/rules/status`;
+    const url = `${this.baseUrl}/goods_bargain/rules/list`;
     return new Page(url, item => {
       api._processGoodsPreview(item);
     });
@@ -180,7 +180,7 @@ export default class group extends base {
       TIMEOUT: '再砍一单'
     };
     const BARGAIN_ORDER_ACTION_NAME = {
-      1: '立即购买',
+      1: '立即支付',
       6: '查看订单',
       7: '查看订单'
     };
@@ -195,7 +195,7 @@ export default class group extends base {
       7: 'order'
     };
     const action = {};
-    action.name = data.status === 'ORDERED' ? BARGAIN_ORDER_ACTION_NAME[data.order.status] : BARGAIN_ACTION_NAME[data.status]
+    action.name = data.status === 'ORDERED' ? BARGAIN_ORDER_ACTION_NAME[data.order.status] : BARGAIN_ACTION_NAME[data.status];
     action.funcName = data.status === 'ORDERED' ? BARGAIN_ORDER_ACTION_FUNCNAME[data.order.status] : BARGAIN_ACTION_FUNCNAME[data.status]
     data.action = action
   }

@@ -22,9 +22,15 @@
     <view class="weui-cells weui-cells-show" >
 
       <!--堂食/打包才有预约时间-->
-      <view class="weui-cell weui-cell_access" @tap="arriveTime"  wx:if="{{trade.isInShop}}">
+      <view class="weui-cell weui-cell_access" @tap="arriveTime"  wx:if="{{trade.isInShopOrder}}">
         <view class="weui-cell__bd">预约时间</view>
         <text class="weui-cell__ft weui-cell__ft_in-access">{{trade.arriveTime}} </text>
+      </view>
+
+      <!--餐桌号-->
+      <view class="weui-cell weui-cell_access" wx:if="{{trade.scene}}">
+        <view class="weui-cell__bd">桌位号</view>
+        <view class="weui-cell__ft">{{trade.tableNum}}</view>
       </view>
 
       <!--支付类型-->
@@ -52,7 +58,6 @@
           </view>
         </block>
       </block>
-
 
       <!--需要配送的订单, 需要选择配送方式-->
       <view class="weui-cell weui-cell_access" @tap="delivery" wx:if="{{trade.isDeliveryOrder && type !=='digit' && trade.orderGoodsInfos[0].goodsType !== 'digit'}}">
@@ -226,6 +231,10 @@
       }
       // 自动选择优惠券
       this.setDefaultCoupon();
+      // 餐桌号
+      if (this.trade.scene) {
+        this.trade.tableNum = this.trade.scene.slice(6)
+      }
       this.loaded();
       // 事件注册
       Event.listen(Event.TRADE_ADDRESS_UPDATE, this.updateAddress.bind(this), this);

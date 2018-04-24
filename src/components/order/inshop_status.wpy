@@ -2,7 +2,8 @@
   <view class="inshop-box row-between">
     <view class="row" wx:if="{{order.orderType == '30'}}">
       <icon class="inshop normal"/>
-      <text>到店堂食</text>
+      <text wx:if="{{order.tableNum}}">到店堂食({{order.tableNum}})</text>
+      <text wx:else>到店堂食</text>
     </view>
     <view class="row"  wx:if="{{order.orderType == '33'}}">
       <icon class="package normal"/>

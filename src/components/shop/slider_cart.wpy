@@ -86,7 +86,8 @@
     props = {
       mode: {
         default: 1
-      }
+      },
+      scene: {}
     };
     data = {
       buyStatus: 0,
@@ -148,6 +149,10 @@
           } else {
             // 外卖订单
             param.orderType = 20;
+          }
+          // 是否有餐桌号
+          if (this.scene != null) {
+            param.scene = this.scene
           }
           // 跳转订单
           const trade = order.createCartTrade(this.carts, param);

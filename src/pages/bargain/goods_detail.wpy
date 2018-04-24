@@ -86,6 +86,7 @@
       wepy.stopPullDownRefresh();
     }
     async update (ruleId) {
+      console.info(`bargain_rule_id=${ruleId}`)
       this.rule = await bargain.rule(ruleId);
       this.goodsDetail = this.rule.goods;
       this.subShop = this.goodsDetail.subShop != null ? this.goodsDetail.subShop : this.shop;
