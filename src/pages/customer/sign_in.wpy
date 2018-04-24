@@ -13,7 +13,7 @@
           </view>
         </view>
       </view>
-      <view class="sign_doc" wx:if="{{signed}}">今日已签到，获得10积分</view>
+      <view class="sign_doc" wx:if="{{signed}}">今日已签到，获得{{signIn.sevenHistory[0].bonusResult}}积分</view>
       <view class="sign_doc" wx:if="{{!signed}}">今日还未签到</view>
     </view>
     <view class="line-box">
@@ -80,6 +80,7 @@
     };
     async getUserSign () {
       this.signIn = await shop.signList(this.member.memberId);
+      this.signed = this.signIn.lastDate == Lang.dateFormate(new Date(), 'yyyyMMdd')
       if (this.signIn) {
         this.page = await shop.signHistory();
         this.next();
@@ -113,18 +114,7 @@
         }
       }
     };
-    computed = {
-      // 判断当天是否签到
-      signs () {
-        const now = new Date();
-        if (!this.signIn) {
-          return;
-        }
-        if (this.signIn.lastDate == Lang.dateFormate(now, 'yyyyMMdd')) {
-          this.signed = true;
-        }
-      }
-    };
+    computed = {};
     // 日期数组填充7天区分是否签到
     dateAdd () {
       for (let i = 6; i >= 0; i--) {
