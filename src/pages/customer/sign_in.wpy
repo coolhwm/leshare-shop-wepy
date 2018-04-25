@@ -1,4 +1,5 @@
 <template>
+  <Loading :init.sync="init"/>
   <view class="sgin_in" wx:if="{{init}}">
     <image src="http://img.leshare.shop/shop/other/bc_qdyl.jpg" class="head_bc"></image>
     <view class="qd_content">
@@ -36,6 +37,7 @@
 
 <script>
   import wepy from 'wepy';
+  import auth from '../../api/auth';
   import base from '../../mixins/base';
   import shop from '../../api/shop';
   import Tab from '../../components/zanui/tab';
@@ -49,6 +51,7 @@
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import Lang from '../../utils/Lang'
+  import Loading from '../../components/common/loading';
 
   @connect({
     member: store.get('member')
@@ -92,7 +95,15 @@
     }
 
     async onLoad () {
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
       await store.init();
+      if (this.member == null) {
+        console.info('[invite]member info is empty');
+        await Tips.modal('请先注册会员');
+        this.$switch('/pages/customer/index_template');
+        return;
+      }
       await this.getUserSign();
       this.loaded();
     }
@@ -146,7 +157,8 @@
       wepySignTime: WepySignTime,
       Placeholder: Placeholder,
       Loadmore: Loadmore,
-      BonusItem: BonusItem
+      BonusItem: BonusItem,
+      Loading: Loading
     };
     mixins = [base, pagination];
   }

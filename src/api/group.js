@@ -43,6 +43,19 @@ export default class group extends base {
     return this.post(url, param);
   }
 
+  /***
+   * 虚拟商品开团/参团
+   */
+  static digitGroup (trade) {
+    const url = `${this.baseUrl}/goods_group`;
+    const param = {
+      ruleId: trade.ruleId,
+      order: trade,
+      id: trade.groupId
+    };
+    return this.post(url, param);
+  }
+
   /**
    * 返回参团列表
    */

@@ -8,7 +8,8 @@
     </view>
     <view class="column-center">
       <!--<text class="registe-btn" @tap="regist">会员注册</text>-->
-      <button  open-type="getPhoneNumber" class="registe-btn" bindgetphonenumber="regist">会员注册</button>
+      <button  class="registe-btn" wx:if="{{card.extraParam != null}}" @tap="complexRegist">会员注册</button>
+      <button  open-type="getPhoneNumber" class="registe-btn" bindgetphonenumber="regist" wx:else>会员注册</button>
       <text class="xxs mt10">立即注册会员可享受积分与折扣特权</text>
     </view>
   </view>
@@ -87,6 +88,9 @@
           Tips.loaded();
           this.$root.$navigate('/pages/customer/registe_member');
         }
+      },
+      complexRegist() {
+        this.$root.$navigate('/pages/customer/registe_member');
       },
       detail() {
         if (this.isDetail == 'false') return;
