@@ -201,7 +201,7 @@
   }
 
   .help-text{
-    height: 40rpx;
+    max-width: 600rpx;
   }
 
   /*底部样式*/
