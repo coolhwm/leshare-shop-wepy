@@ -1,12 +1,11 @@
 <template>
   <view class="nav-box row-between {{last == 'true' ? 'nav-box-last' : ''}}">
     <view class="header row">
-      <!--<view class="label primary small" wx:if="{{badgeText}}">{{badgeText}}</view>-->
       <icon class="sender mr10" color="primary" wx:if="{{mode == 1}}"/>
       <icon class="inshop mr10" color="primary" wx:if="{{mode == 2}}"/>
       <text>{{title}}</text>
     </view>
-    <view class="footer row" @tap="change({{mode}})" wx:if="{{shop.inShop == 0}}">
+    <view class="footer row" @tap="change({{mode}})" wx:if="{{shop.inShop == 1}}">
       <text class="xs mr10 muted">{{exchangeText}}</text>
       <icon class="exchange" color="primary"/>
     </view>

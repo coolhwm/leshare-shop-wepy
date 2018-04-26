@@ -74,7 +74,8 @@
       subShop: {}
     };
     async onLoad ({ruleId}) {
-      await auth.login();
+      await auth.user();
+      // await auth.login();
       await store.init();
       await this.update(ruleId);
     };
@@ -86,7 +87,6 @@
       wepy.stopPullDownRefresh();
     }
     async update (ruleId) {
-      console.info(`bargain_rule_id=${ruleId}`)
       this.rule = await bargain.rule(ruleId);
       this.goodsDetail = this.rule.goods;
       this.subShop = this.goodsDetail.subShop != null ? this.goodsDetail.subShop : this.shop;
@@ -99,11 +99,11 @@
      */
     onShareAppMessage () {
       const {name, imageUrl} = this.rule.goods;
-      const shareName = `${name} 底价低至${this.rule.floorPrice}元，快邀请好友帮你砍一刀吧~`;
+      const shareName = `${name} 底价低至${this.rule.floorPrice}元，赶快发起砍价吧~`;
       return {
         title: shareName,
         imageUrl: imageUrl,
-        path: `/pages/group/goods_detail?groupId=${this.ruleId}`
+        path: `/pages/bargain/bargain_detail?ruleId=${this.ruleId}`
       };
     }
     methods = {
