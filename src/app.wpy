@@ -141,10 +141,11 @@
         'pages/shop/top_up',
         'pages/shop/billing_record',
         'pages/shop/invite',
-        'pages/distribution/index',
+        'pages/agent/index',
         'pages/shop/pay',
         'pages/shop/super_poster',
-        'pages/customer/info'
+        'pages/customer/info',
+        'pages/agent/apply'
       ],
       window: {
         backgroundTextStyle: 'dark',

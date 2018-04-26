@@ -15,6 +15,7 @@
             <view class="column-center item-box" wx:else @tap="selected({{index}})">
               <text>{{item.baseFee}}元</text>
               <text class="muted xs" wx:if="{{item.giftFee > 0}}">送{{item.giftFee}}元</text>
+              <text class="muted xs" wx:if="{{item.giftCoupon > 0}}">送1张劵</text>
             </view>
           </block>
         </view>
