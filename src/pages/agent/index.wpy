@@ -38,15 +38,18 @@
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
+  import auth from '../../api/auth';
   import store from '../../store/utils';
   import base from '../../mixins/base';
   import tips from '../../utils/Tips';
   import Copyright from '../../components/common/copyright';
+  import agent from '../../api/agent'
+
   @connect({
     user: store.get('user'),
     shop: store.get('shop')
   })
-  export default class Distribution extends wepy.page {
+  export default class Agent extends wepy.page {
     data = {
       init: false,
       reference: '分销员1',
@@ -94,7 +97,9 @@
       check: true
     };
     async onLoad () {
+      await auth.user();
       await store.init();
+      await agent.agent(this.user.id);
       this.loaded();
     };
     methods = {

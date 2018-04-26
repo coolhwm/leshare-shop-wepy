@@ -1,0 +1,149 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <Tips/>
+  <view wx:if="{{init}}">
+    <form @submit="submit">
+      <view class="weui-cells weui-cells-form form-box">
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd">
+            <view class="weui-label">姓名</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input class="weui-input" name="name" id="name" placeholder="请输入您的姓名" @change="input"/>
+          </view>
+        </view>
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd">
+            <view class="weui-label">手机</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input class="weui-input" name="phone" id="phone" placeholder="请输入您的手机号" type="number" maxlength="11" @change="input"/>
+          </view>
+        </view>
+      </view>
+      <view class="booking-btn-box row-center">
+        <button form-type="submit" type="primary" class="weui-btn form-btn-box">
+          申请成为分销商
+        </button>
+      </view>
+    </form>
+
+    <view class="distribution-rule-box">
+      <view class="item-rule-box">
+        <text>分销商特权</text>
+      </view>
+      <view class="item-rule-box">
+        <view class="row">
+          <icon class="qrcode" style="color: #0C94AD"/>
+          <view class="column ml20">
+            <text>成为分销商</text>
+            <text>拥有自己的推广二维码</text>
+          </view>
+        </view>
+      </view>
+      <view class="item-rule-box">
+        <view class="row">
+          <icon class="recharge" style="color: #FD9000"/>
+          <view class="column ml20">
+            <text>销售拿佣金</text>
+            <text>每卖出一件商品就可以获得佣金</text>
+          </view>
+        </view>
+      </view>
+      <view class="item-rule-box">
+        <text>分销商的商品销售由店家直接收款、发货并提供售后服务，分销佣金由厂家统一按约定好的比例返回</text>
+      </view>
+    </view>
+  </view>
+
+  <Copyright buttom="true" />
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import input from '../../mixins/input';
+  import Copyright from '../../components/common/copyright';
+  import Loading from '../../components/common/loading';
+  import FormTips from '../../components/weui/tips';
+  import agent from '../../api/agent'
+
+  export default class Apply extends wepy.page {
+    data = {
+      init: false
+    };
+    async onLoad () {
+      this.loaded()
+    };
+    methods = {
+      async submit () {
+        if (!this.validate()) {
+          return;
+        }
+        await agent.apply(this.input)
+      }
+    };
+    validate () {
+      const rules = [
+        {
+          value: this.input.name,
+          method: 'required',
+          message: '姓名不能为空'
+        }, {
+          value: this.input.phone,
+          method: 'required',
+          message: '联系电话不能为空'
+        }, {
+          value: this.input.phone,
+          method: 'maxlength',
+          param: 11
+        }, {
+          value: this.input.phone,
+          method: 'number',
+          message: '联系电话只能为数字'
+        }, {
+          value: this.input.phone,
+          method: 'tel',
+          message: '请输入正确的手机格式'
+        }
+      ];
+      return this.check(rules);
+    }
+    components = {
+      Loading: Loading,
+      Tips: FormTips,
+      Copyright: Copyright
+    };
+    mixins = [base, input];
+    config = {
+      navigationBarTitleText: '分销中心',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTextStyle: 'black'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .form-box{
+    margin: 20rpx;
+    border-left: $border;
+    border-right: $border;
+  }
+  .form-btn-box{
+    width: 710rpx;
+    border-radius: 0;
+  }
+  .distribution-rule-box{
+    padding: 20rpx;
+    .item-rule-box{
+      border-radius: 10rpx;
+      background-color: white;
+      padding: 20rpx;
+    }
+    .item-rule-box + .item-rule-box{
+      margin-top: 10rpx;
+    }
+  }
+</style>
