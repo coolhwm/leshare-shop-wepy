@@ -9,18 +9,19 @@
           <block wx:for="{{rules}}" wx:key="index" wx:index="index" wx:for-item="item">
             <view wx:if="{{item.isSelected}}" class="sel-item-box column-center" @tap="selected({{index}})">
               <text>{{item.baseFee}}元</text>
-              <text class="muted xs">送{{item.giftFee}}元</text>
+              <text class="muted xs" wx:if="{{item.giftCoupon != null}}">送1张劵</text>
+              <text class="muted xs" wx:elif="{{item.giftFee > 0  }}">送{{item.giftFee}}元</text>
               <icon class="top-up-selected icon-box"/>
             </view>
             <view class="column-center item-box" wx:else @tap="selected({{index}})">
               <text>{{item.baseFee}}元</text>
-              <text class="muted xs" wx:if="{{item.giftFee > 0}}">送{{item.giftFee}}元</text>
-              <text class="muted xs" wx:if="{{item.giftCoupon > 0}}">送1张劵</text>
+              <text class="muted xs" wx:if="{{item.giftCoupon != null}}">送1张劵</text>
+              <text class="muted xs" wx:elif="{{item.giftFee > 0  }}">送{{item.giftFee}}元</text>
             </view>
           </block>
         </view>
       </view>
-      <view class="input-box">
+      <view class="input-box" wx:if="{{card.customTopup}}">
         <input class="weui-input" name="money" placeholder="请输入您要充值的金额" type="digit" bindinput="bindMoney" value="{{money}}"/>
       </view>
     </view>
@@ -32,19 +33,26 @@
       <text class="muted sm">2、实际支付的充值本金会构成您的账户余额，充值本金不可提现、转移、转增、充值余额无有效期</text>
       <text class="muted sm">3、根据全国税务局规定，预定充值业务只能在充值时开具增值税普通发票，开票内容为预付卡销售和充值，不能开具增值税专用发票，且用储值消费时不再另外开具发票</text>
     </view>
+
+    <Notice />
   </view>
 </template>
 
 <script>
   import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
   import base from '../../mixins/base';
   import topUp from '../../api/top_up';
   import Tips from '../../utils/Tips';
   import order from '../../api/order';
-  import store from '../../store/utils';
   import Loading from '../../components/common/loading';
   import WxUtils from '../../utils/WxUtils';
+  import Notice from '../../components/shop/notice';
 
+  @connect({
+    card: store.get('card')
+  })
   export default class TopUp extends wepy.page {
     data = {
       init: false,
@@ -53,12 +61,25 @@
       money: null
     };
     async onLoad () {
+      await store.init();
       this.rules = await topUp.getTopUp();
       this.loaded();
     };
     async upDateMember () {
       await store.refresh('member');
       this.loaded();
+    }
+    open () {
+      let content = '';
+      for (let i in this.rule.coupons) {
+        if (i < this.rule.coupons.length) {
+          content = content + this.rule.coupons[i].name + '\n';
+        } else {
+          content = content + this.rule.coupons[i].name;
+        }
+      }
+      console.info(content);
+      this.$invoke('Notice', 'open', {title: '送券详情', content: content});
     }
     methods = {
       selected (idx) {
@@ -67,6 +88,7 @@
         });
         this.rule = this.rules[idx];
         this.money = null;
+        this.open()
       },
       bindMoney (e) {
         this.rules.forEach(item => {
@@ -118,7 +140,8 @@
     computed = {
     };
     components = {
-      Loading: Loading
+      Loading: Loading,
+      Notice: Notice
     };
     mixins = [base];
     config = {

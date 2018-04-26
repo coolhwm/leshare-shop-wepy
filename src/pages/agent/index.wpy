@@ -43,6 +43,8 @@
   import base from '../../mixins/base';
   import tips from '../../utils/Tips';
   import Copyright from '../../components/common/copyright';
+  import agent from '../../api/agent'
+
   @connect({
     user: store.get('user'),
     shop: store.get('shop')
@@ -97,6 +99,7 @@
     async onLoad () {
       await auth.user();
       await store.init();
+      await agent.agent(this.user.id);
       this.loaded();
     };
     methods = {

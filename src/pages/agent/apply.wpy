@@ -18,8 +18,7 @@
             <view class="weui-label">手机</view>
           </view>
           <view class="weui-cell__bd">
-            <input class="weui-input" name="phone" id="phone" placeholder="请输入您的手机号" type="number"
-                   maxlength="11" @change="input"/>
+            <input class="weui-input" name="phone" id="phone" placeholder="请输入您的手机号" type="number" maxlength="11" @change="input"/>
           </view>
         </view>
       </view>
