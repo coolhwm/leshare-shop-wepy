@@ -30,9 +30,9 @@ export default class goods extends base {
   /***
    * 查看分销员子代理列表
    */
-  static agentDetail (agentId) {
-    const url = `${this.baseUrl}/agent/details/${agentId}`;
-    return new Page(url);
+  static agentCash (param) {
+    const url = `${this.baseUrl}/agent/cash`;
+    return this.post(url, param);
   }
 
   /** ********************* 数据处理方法 ***********************/

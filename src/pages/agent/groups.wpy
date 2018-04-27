@@ -48,7 +48,7 @@
       page: {}
     };
     async onLoad ({id}) {
-      console.info(id)
+      console.info(id);
       this.page = await agent.agentGroups(id);
       await this.next();
     }

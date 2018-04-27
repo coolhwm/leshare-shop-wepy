@@ -2,16 +2,16 @@
   <view wx:if="{{init}}">
     <view class="column information-box" >
       <view class="row top-box">
-        <image class="mr20" src="{{user.avatarUrl}}" style="width: 60px;height:60px;"/>
+        <image class="mr20" src="{{detail.customer.avatarUrl}}" style="width: 60px;height:60px;"/>
         <text class="lg">推荐人：{{reference}}</text>
       </view>
       <view class="column money-box">
         <view class="row-between">
           <view class="column">
             <text class="lg">可提现佣金</text>
-            <text class="mt20 lg">0.00元</text>
+            <text class="mt20 lg">{{detail.balance}}元</text>
           </view>
-          <button>提现</button>
+          <button @tap="open({{detail.id}})">提现</button>
         </view>
         <view class="column">
           <text class="mt20 lg">成功提现佣金</text>
@@ -21,7 +21,7 @@
     </view>
     <view class="column content-box">
       <view class="row-between row-box" wx:for="{{list}}" wx:for-index="columnIndex" wx:for-item="column" wx:key="columnIndex">
-        <view class="column-center column-box" wx:for="{{column}}" wx:for-index="rowIndex" wx:for-item="row" wx:key="rowIndex" @tap="action({{row.icon}}, {{agentId}})">
+        <view class="column-center column-box" wx:for="{{column}}" wx:for-index="rowIndex" wx:for-item="row" wx:key="rowIndex" @tap="action({{row.icon}}, {{detail.id}})">
           <icon class="{{row.icon}}" style="color: {{row.color}};font-size: 25px;line-height: 25px;" />
           <text class="lg mb10">{{row.title}}</text>
           <view class="row number-box">
@@ -32,21 +32,22 @@
     </view>
   </view>
 
+  <Cash />
+
   <Copyright buttom="true" />
 </template>
 
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
-  import auth from '../../api/auth';
   import store from '../../store/utils';
   import base from '../../mixins/base';
   import tips from '../../utils/Tips';
   import Copyright from '../../components/common/copyright';
+  import Cash from '../../components/agent/cash'
   // import agent from '../../api/agent'
 
   @connect({
-    user: store.get('user'),
     shop: store.get('shop')
   })
   export default class Agent extends wepy.page {
@@ -95,12 +96,10 @@
         ]
       ],
       check: true,
-      agentId: 0
+      detail: null
     };
-    async onLoad ({id}) {
-      await auth.user();
-      await store.init();
-      this.agentId = id;
+    async onLoad (options, {preload}) {
+      this.detail = preload.detail;
       this.loaded();
     };
     methods = {
@@ -112,10 +111,14 @@
       },
       action(name, id) {
         this.$navigate(`/pages/agent/${name}`, {id: id})
+      },
+      open (id) {
+        this.$invoke('Cash', 'open', {id: id});
       }
     };
     components = {
-      Copyright: Copyright
+      Copyright: Copyright,
+      Cash: Cash
     };
     mixins = [base];
     config = {

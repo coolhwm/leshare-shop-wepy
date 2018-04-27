@@ -99,7 +99,8 @@
     async onLoad () {
       this.input = await agent.agentInfo();
       if (this.input.status == 'ENABLE') {
-        this.$navigate(`/pages/agent/index`, {id: this.input.id})
+        this.$preload('detail', this.input);
+        this.$navigate(`/pages/agent/index`)
       }
       this.loaded()
     };
