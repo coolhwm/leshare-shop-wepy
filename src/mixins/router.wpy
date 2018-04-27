@@ -363,6 +363,15 @@
             // 我的砍价
             this.$root.$navigate(`/pages/bargain/list`);
             break;
+          case 'FOOD_LIST':
+            // 在线点餐
+            this.$root.$preload('mode', targetId);
+            this.$root.$switch(`/pages/shop/index`);
+            // 发射事件
+            if (targetId) {
+              Event.emit(Event.FOOD_TYPE_UPDATE, targetId);
+            }
+            break;
           case 'BARGAIN_LIST':
             // 邀请页面
             this.$root.$navigate(`/pages/bargain/bargain_more`);

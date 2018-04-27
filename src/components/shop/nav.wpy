@@ -47,16 +47,22 @@
       // 需要进行优化
       title() {
         if (this.mode == 2 && this.scene == null) {
-          this.exchangeText = '点击切换到外卖点餐';
-          return `堂食/外带`
+          return `堂食点餐`
         } else if (this.mode == 1) {
-          this.exchangeText = '点击切换到堂食点餐';
           return `外卖点餐`
         } else {
           if (this.scene == null) return;
           const number = this.scene.slice(6);
-          this.exchangeText = '点击切换到外卖点餐';
           return `当前餐桌号：${number}`
+        }
+      },
+      exchangeText() {
+        if (this.mode == 2) {
+          return '切换到外卖';
+        } else if (this.mode == 1) {
+          return '切换到堂食';
+        } else {
+          return '';
         }
       }
     }

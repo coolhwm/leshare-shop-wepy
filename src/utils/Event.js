@@ -47,6 +47,8 @@ export default class Event {
   static GOODS_PANEL_OPEN = 'GOOD_PANEL_OPEN';
   static GOODS_PANEL_PLUS = 'GOODS_PANEL_PLUS';
   static GOODS_PANEL_MINUS = 'GOODS_PANEL_MINUS';
+  // 点餐类型
+  static FOOD_TYPE_UPDATE = 'FOOD_TYPE_UPDATE';
   static listen(eventName, callback, observer) {
     // 先移除监听
     this.remove(eventName, observer);

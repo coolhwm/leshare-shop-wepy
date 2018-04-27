@@ -8,7 +8,7 @@
 
     <!--功能区域-->
     <block>
-      <ShopNav :mode.sync="mode" @change.user="change" :scene.sync="scene"/>
+      <ShopNav :mode.sync="mode" @change.user="change" :scene.sync="tableNum"/>
     </block>
 
     <!--主内容区域-->
@@ -42,6 +42,8 @@
   import SliderCart from '../../components/shop/slider_cart';
   import Loading from '../../components/common/loading';
   import Notice from '../../components/shop/notice';
+  import WxUtils from '../../utils/WxUtils';
+  import Event from '../../utils/Event';
 
   @connect({
     member: store.get('member'),
@@ -51,29 +53,50 @@
     data = {
       init: false,
       mode: 1,
-      scene: null
+      tableNum: null
     };
-    async onLoad ({mode, scene}) {
-      if (scene != null) {
-        this.scene = scene;
-        this.mode = 2;
-        const number = scene.slice(6);
-        const notice = {
-          title: '提示',
-          btnText: '我知道了',
-          content: `您当前在${number}号桌，在线下单支付后餐品会按桌位号送达。`
-        };
-        this.$invoke('Notice', 'open', notice);
-      } else {
+    async onLoad ({mode, scene}, {preload}) {
+      // 处理点餐模式
+      if (mode != null) {
         this.mode = mode;
-        this.scene = null
+      }
+      else if (preload && preload.mode) {
+        this.mode = preload.mode;
+      }
+      // 处理扫描桌码点餐
+      const tableNum = WxUtils.parseQrScene(scene, 'table');
+      if (tableNum != null) {
+        this.tableNum = tableNum;
+        this.mode = 2;
+        this.showTableNumNotice(tableNum);
       }
       // 用户信息
       await auth.user();
       // 初始化Store
       await store.init();
+      Event.listen(Event.FOOD_TYPE_UPDATE, this.switchMode.bind(this), this);
       this.loaded();
     };
+    /**
+     * 切换模式
+     */
+    switchMode(mode) {
+      this.mode = mode;
+      this.$apply();
+    }
+    /**
+     * 堂食点餐
+     */
+    showTableNumNotice(tableNum) {
+      const content = tableNum == '@' ? '当前为堂食点餐，在线下单支付后产品会送达餐桌'
+        : `您当前在${tableNum}号桌，在线下单支付后餐品会按桌位号送达。`;
+      const notice = {
+        title: '提示',
+        btnText: '我知道了',
+        content: content
+      };
+      this.$invoke('Notice', 'open', notice);
+    }
     /**
      * 页面分享
      */
