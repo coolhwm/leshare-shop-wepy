@@ -1,5 +1,5 @@
 <template>
-  <view wx:if="{{init}}" @tap="tips">
+  <view wx:if="{{init}}">
     <view class="column information-box" >
       <view class="row top-box">
         <image class="mr20" src="{{user.avatarUrl}}" style="width: 60px;height:60px;"/>
@@ -21,7 +21,7 @@
     </view>
     <view class="column content-box">
       <view class="row-between row-box" wx:for="{{list}}" wx:for-index="columnIndex" wx:for-item="column" wx:key="columnIndex">
-        <view class="column-center column-box" wx:for="{{column}}" wx:for-index="rowIndex" wx:for-item="row" wx:key="rowIndex">
+        <view class="column-center column-box" wx:for="{{column}}" wx:for-index="rowIndex" wx:for-item="row" wx:key="rowIndex" @tap="action({{row.icon}}, {{agentId}})">
           <icon class="{{row.icon}}" style="color: {{row.color}};font-size: 25px;line-height: 25px;" />
           <text class="lg mb10">{{row.title}}</text>
           <view class="row number-box">
@@ -43,7 +43,7 @@
   import base from '../../mixins/base';
   import tips from '../../utils/Tips';
   import Copyright from '../../components/common/copyright';
-  import agent from '../../api/agent'
+  // import agent from '../../api/agent'
 
   @connect({
     user: store.get('user'),
@@ -94,12 +94,13 @@
           {}
         ]
       ],
-      check: true
+      check: true,
+      agentId: 0
     };
-    async onLoad () {
+    async onLoad ({id}) {
       await auth.user();
       await store.init();
-      await agent.agent(this.user.id);
+      this.agentId = id;
       this.loaded();
     };
     methods = {
@@ -108,6 +109,9 @@
       },
       close() {
         this.check = false;
+      },
+      action(name, id) {
+        this.$navigate(`/pages/agent/${name}`, {id: id})
       }
     };
     components = {

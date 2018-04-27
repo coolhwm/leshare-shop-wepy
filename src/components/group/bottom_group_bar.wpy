@@ -17,6 +17,12 @@
     <view wx:if="{{rule.isTimeOut}}" class="column-center btn-disabled">
       <text>活动已过期</text>
     </view>
+    <view wx:elif="{{rule.limitCount < rule.joinCount}}" class="column-center btn-disabled">
+      <text>限团{{rule.limitCount}}件</text>
+    </view>
+    <view wx:elif="{{rule.stock < rule.totalCount}}" class="column-center btn-disabled">
+      <text>已售罄</text>
+    </view>
     <view wx:else class="column-center btn-group" @tap="handleGroup({{rule.goods}}, {{rule.goodsGroupSkuDetails}}, {{rule.id}}, {{state}}, {{groupId}})">
       <text class="xxl money-box">￥{{rule.price}}</text>
       <text>{{groupText}}</text>

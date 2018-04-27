@@ -15,7 +15,7 @@
             </view>
             <view class="column-center item-box" wx:else @tap="selected({{index}})">
               <text>{{item.baseFee}}元</text>
-              <text class="muted xs" wx:if="{{item.giftCoupon != null}}">送1张劵</text>
+              <text class="muted xs" wx:if="{{item.giftCoupon != null}}">送{{item.coupons.length}}张劵</text>
               <text class="muted xs" wx:elif="{{item.giftFee > 0  }}">送{{item.giftFee}}元</text>
             </view>
           </block>
@@ -73,9 +73,9 @@
       let content = '';
       for (let i in this.rule.coupons) {
         if (i < this.rule.coupons.length) {
-          content = content + this.rule.coupons[i].name + '\n';
+          content = content + `${this.rule.coupons[i].name}(满${this.rule.coupons[i].limitPrice}减${this.rule.coupons[i].price})\n`;
         } else {
-          content = content + this.rule.coupons[i].name;
+          content = content + `${this.rule.coupons[i].name}(满${this.rule.coupons[i].limitPrice}减${this.rule.coupons[i].price})`;
         }
       }
       console.info(content);

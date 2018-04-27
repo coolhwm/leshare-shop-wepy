@@ -1,0 +1,93 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view wx:if="{{init}}">
+
+    <!--TAB 页-->
+    <ZanTab :tab.sync="tab" @change.user="switchTab" />
+
+    <view>分销佣金</view>
+
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from '../../mixins/base';
+  import pagination from '../../mixins/pagination.wpy';
+  import Placeholder from '../../components/common/placeholder';
+  import Loadmore from '../../components/weui/loadmore';
+  import Loading from '../../components/common/loading';
+  import agent from '../../api/agent';
+  import ZanTab from '../../components/zanui/tab';
+
+  export default class Recharge extends wepy.page {
+    data = {
+      init: false,
+      page: {},
+      tab: {
+        list: [
+          {id: '0', title: '全部', status: '-1'},
+          {id: '1', title: '佣金', status: '0'},
+          {id: '2', title: '提现', status: '1'}
+        ],
+        selectedId: '1'
+      }
+    };
+    async onLoad ({id}) {
+      console.info(id);
+      this.page = await agent.agentDetail(id);
+      await this.next();
+    }params() {
+      const status = this.tab.list.find(item => item.id === this.tab.selectedId);
+      return {type: status.status};
+    }
+    methods = {
+      switchTab() {
+        this.reload();
+      }
+    };
+    computed = {};
+    components = {
+      Placeholder: Placeholder,
+      Loadmore: Loadmore,
+      Loading: Loading,
+      ZanTab: ZanTab
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '分销佣金',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .item-box{
+    padding: 18rpx;
+    margin: 10rpx 10rpx 0;
+    border-radius: 30rpx;
+    background-color: white;
+  }
+  .customer-box{
+    align-items: center;
+    .avatar-box{
+      width: 80rpx;
+      height: 80rpx;
+      border: $border;
+      border-radius: 40rpx;
+    }
+    .name-box{
+      width: 350rpx;
+    }
+  }
+  .time-bonus-box{
+    align-items: flex-end;
+  }
+</style>

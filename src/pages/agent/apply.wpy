@@ -3,7 +3,7 @@
 
   <Tips/>
   <view wx:if="{{init}}">
-    <form @submit="submit">
+    <form @submit="submit" wx:if="{{input == null}}">
       <view class="weui-cells weui-cells-form form-box">
         <view class="weui-cell weui-cell_input">
           <view class="weui-cell__hd">
@@ -22,10 +22,33 @@
           </view>
         </view>
       </view>
-      <view class="booking-btn-box row-center">
+      <view class="row-center">
         <button form-type="submit" type="primary" class="weui-btn form-btn-box">
           申请成为分销商
         </button>
+      </view>
+    </form>
+    <form>
+      <view class="weui-cells weui-cells-form form-box">
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd">
+            <view class="weui-label">姓名</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input class="weui-input" value="{{input.name}}" />
+          </view>
+        </view>
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd">
+            <view class="weui-label">手机</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input class="weui-input" value="{{input.phone}}" />
+          </view>
+        </view>
+      </view>
+      <view class="row-center agent-status-box">
+        <text class="white xl">{{input.statusText}}</text>
       </view>
     </form>
 
@@ -74,6 +97,10 @@
       init: false
     };
     async onLoad () {
+      this.input = await agent.agentInfo();
+      if (this.input.status == 'ENABLE') {
+        this.$navigate(`/pages/agent/index`, {id: this.input.id})
+      }
       this.loaded()
     };
     methods = {
@@ -145,5 +172,12 @@
     .item-rule-box + .item-rule-box{
       margin-top: 10rpx;
     }
+  }
+  .agent-status-box{
+    border: $border;
+    background-color: $color-primary;
+    flex: 1;
+    padding: 20rpx 0;
+    margin: 20rpx 20rpx 0;
   }
 </style>

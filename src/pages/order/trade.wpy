@@ -376,7 +376,7 @@
         // 创建订单
         const trade = await this.requestCreateOrder(this.trade, this.selectedAddress);
         // 检查是否下单成功
-        if (trade == null) {
+        if (trade == null && (this.type !== 'join' && this.type !== 'group')) {
           await Tips.alert('下单失败');
           return;
         }
@@ -432,12 +432,17 @@
         // 创建订单
         if (this.type === 'join' || this.type === 'group') {
           // 拼团订单
-          if (this.trade.orderGoodsInfos[0].goodsType === 'digit') {
-            const result = await group.digitGroup(trade);
-            return result.order;
-          } else {
-            const result = await group.goodsGroup(trade, address);
-            return result.order;
+          try {
+            if (this.trade.orderGoodsInfos[0].goodsType === 'digit') {
+              const result = await group.digitGroup(trade);
+              return result.order;
+            } else {
+              const result = await group.goodsGroup(trade, address);
+              return result.order;
+            }
+          } catch (err) {
+            await Tips.confirm(err.message);
+            this.$switch(`/pages/home/template`)
           }
         } else if (this.type === 'bargain') {
           if (this.trade.orderGoodsInfos[0].goodsType === 'digit') {
