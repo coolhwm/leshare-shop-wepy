@@ -29,7 +29,7 @@
     };
     onShareAppMessage () {
       return {
-        title: '一品品疯狂砍价，超值底价等你来砍',
+        title: '一品品疯狂砍价，超值底价等你来砍'
       };
     }
     methods = {
