@@ -87,7 +87,7 @@
       mode: {
         default: 1
       },
-      scene: {}
+      tableNum: {}
     };
     data = {
       buyStatus: 0,
@@ -151,8 +151,8 @@
             param.orderType = 20;
           }
           // 是否有餐桌号
-          if (this.scene != null) {
-            param.scene = this.scene
+          if (this.tableNum != null) {
+            param.tableNum = this.tableNum
           }
           // 跳转订单
           const trade = order.createCartTrade(this.carts, param);

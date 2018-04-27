@@ -26,7 +26,7 @@
       mode: {
         default: 1
       },
-      scene: {
+      tableNum: {
         default: null
       }
     };
@@ -46,14 +46,16 @@
     computed = {
       // 需要进行优化
       title() {
-        if (this.mode == 2 && this.scene == null) {
-          return `堂食点餐`
+        if (this.mode == 2) {
+          if (this.tableNum == null || this.tableNum == '@') {
+            return '堂食点餐';
+          } else {
+            return `当前餐桌号：${this.tableNum}桌`;
+          }
         } else if (this.mode == 1) {
-          return `外卖点餐`
+          return `外卖点餐`;
         } else {
-          if (this.scene == null) return;
-          const number = this.scene.slice(6);
-          return `当前餐桌号：${number}`
+          return '在线点餐';
         }
       },
       exchangeText() {

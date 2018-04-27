@@ -8,7 +8,7 @@
 
     <!--功能区域-->
     <block>
-      <ShopNav :mode.sync="mode" @change.user="change" :scene.sync="tableNum"/>
+      <ShopNav :mode.sync="mode" @change.user="change" :tableNum.sync="tableNum"/>
     </block>
 
     <!--主内容区域-->
@@ -16,7 +16,7 @@
 
     <!-- 购物车 -->
     <block>
-      <SliderCart @buy.user="buy" :mode.sync="mode" :scene.sync="scene"/>
+      <SliderCart @buy.user="buy" :mode.sync="mode" :tableNum.sync="tableNum"/>
     </block>
 
     <!--SKU选择器-->
@@ -59,14 +59,13 @@
       // 处理点餐模式
       if (mode != null) {
         this.mode = mode;
-      }
-      else if (preload && preload.mode) {
+      } else if (preload && preload.mode) {
         this.mode = preload.mode;
       }
       // 处理扫描桌码点餐
       const tableNum = WxUtils.parseQrScene(scene, 'table');
       if (tableNum != null) {
-        this.tableNum = tableNum;
+        this.tableNum = tableNum == '@' ? null : tableNum;
         this.mode = 2;
         this.showTableNumNotice(tableNum);
       }
@@ -91,7 +90,7 @@
       const content = tableNum == '@' ? '当前为堂食点餐，在线下单支付后产品会送达餐桌'
         : `您当前在${tableNum}号桌，在线下单支付后餐品会按桌位号送达。`;
       const notice = {
-        title: '提示',
+        title: '点餐提示',
         btnText: '我知道了',
         content: content
       };

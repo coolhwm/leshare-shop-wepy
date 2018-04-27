@@ -168,8 +168,8 @@ export default class order extends base {
       shopName: this.shopName
     };
     // 餐桌号
-    if (param.scene) {
-      trade.scene = param.scene
+    if (param.tableNum) {
+      trade.tableNum = param.tableNum
     }
     // 初始化订单类型标志位
     this._processTypeFlag(trade);
