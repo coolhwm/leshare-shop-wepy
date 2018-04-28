@@ -8,7 +8,7 @@
       </view>
     </view>
     <view class="column time-bonus-box">
-      <text class="muted sm">{{detail.inviteTime}}</text>
+      <text class="muted sm">{{detail.time}}</text>
     </view>
   </view>
 </template>

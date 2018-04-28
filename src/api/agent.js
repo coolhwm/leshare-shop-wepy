@@ -29,11 +29,13 @@ export default class goods extends base {
   }
 
   /***
-   * 查看分销员子代理列表
+   * 查看佣金/提现信息
    */
   static agentDetail (agentId) {
     const url = `${this.baseUrl}/agent/details/${agentId}`;
-    return new Page(url);
+    return new Page(url, item => {
+      this._processDetail(item);
+    });
   }
 
   /***
@@ -41,7 +43,9 @@ export default class goods extends base {
    */
   static agentRels (agentId) {
     const url = `${this.baseUrl}/agent/rels/${agentId}`;
-    return new Page(url);
+    return new Page(url, item => {
+      this._processInviteTime(item)
+    });
   }
 
   /***
@@ -65,7 +69,14 @@ export default class goods extends base {
     // 处理分销状态
     this._processStatus(data);
     // 处理时间
-    this._processTime(data);
+    this._processCreateTime(data);
+    return data;
+  }
+  static _processDetail(data) {
+    // 处理时间
+    this._processCreateTime(data);
+    // 处理价格
+    this._processPrice(data);
     return data;
   }
 
@@ -82,9 +93,24 @@ export default class goods extends base {
   }
 
   /***
-   * 处理时间
+   * 处理创建时间
    */
-  static _processTime(data) {
-    data.time = data.createTime.slice(0, 10)
+  static _processCreateTime(data) {
+    data.time = data.createTime.slice(0, 10);
+  }
+
+  /***
+   * 处理创建时间
+   */
+  static _processInviteTime(data) {
+    data.time = data.inviteTime.slice(0, 10);
+  }
+
+  /***
+   * 处理佣金
+   */
+  static _processPrice(data) {
+    data.costFee = data.costFee.toFixed(2);
+    data.leftFee = data.leftFee.toFixed(2);
   }
 }

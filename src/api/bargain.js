@@ -91,7 +91,7 @@ export default class group extends base {
     // 处理价格
     this._processPrice(data);
     // 处理帮砍价格提示
-    this._processHelpText(data)
+    this._processHelpText(data);
     return data;
   }
 

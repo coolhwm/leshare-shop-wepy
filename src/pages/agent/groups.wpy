@@ -55,25 +55,5 @@
 
 <style lang="scss">
   @import "../../styles/variable";
-  .item-box{
-    padding: 18rpx;
-    margin: 10rpx 10rpx 0;
-    border-radius: 30rpx;
-    background-color: white;
-  }
-  .customer-box{
-    align-items: center;
-    .avatar-box{
-      width: 80rpx;
-      height: 80rpx;
-      border: $border;
-      border-radius: 40rpx;
-    }
-    .name-box{
-      width: 350rpx;
-    }
-  }
-  .time-bonus-box{
-    align-items: flex-end;
-  }
+
 </style>
