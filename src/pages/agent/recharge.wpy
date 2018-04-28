@@ -3,31 +3,11 @@
 
   <view wx:if="{{init}}">
 
-    <!--TAB 页-->
-    <ZanTab :tab.sync="tab" @change.user="switchTab" />
-
     <view class="column">
-      <block wx:for="{{page.list}}" wx:key="index" wx:for-item="item">
-        <view class="column  item-box">
-          <view class="row-between top-box">
-            <view class="customer-box row">
-              <text class="muted">{{item.createTime}}</text>
-            </view>
-            <view class="time-bonus-box">
-              <text>余额：{{item.leftFee}}</text>
-            </view>
-          </view>
-          <view class="row-between mt10">
-            <view class="customer-box row">
-              <text>{{item.typeDesc}}</text>
-            </view>
-            <view class="time-bonus-box">
-              <text wx:if="{{item.type === 'cash'}}" class="muted">-{{item.costFee}}</text>
-              <text wx:else class="danger">{{item.costFee}}</text>
-            </view>
-          </view>
-        </view>
-      </block>
+      <!--列表展现-->
+      <repeat for="{{page.list}}" key="index" index="index" item="item">
+        <DetailItem :detail.sync="item"/>
+      </repeat>
     </view>
 
     <!-- 加载提示 -->
@@ -46,29 +26,20 @@
   import Placeholder from '../../components/common/placeholder';
   import Loadmore from '../../components/weui/loadmore';
   import Loading from '../../components/common/loading';
+  import DetailItem from '../../components/agent/detailItem'
   import agent from '../../api/agent';
-  import ZanTab from '../../components/zanui/tab';
 
   export default class Recharge extends wepy.page {
     data = {
       init: false,
-      page: {},
-      tab: {
-        list: [
-          {id: '0', title: '全部', status: '-1'},
-          {id: '1', title: '佣金', status: '0'},
-          {id: '2', title: '提现', status: '1'}
-        ],
-        selectedId: '1'
-      }
+      page: {}
     };
     async onLoad ({id}) {
-      console.info(id);
       this.page = await agent.agentDetail(id);
       await this.next();
-    }params() {
-      const status = this.tab.list.find(item => item.id === this.tab.selectedId);
-      return {type: status.status};
+    };
+    params() {
+      return {type: 0};
     }
     methods = {
       switchTab() {
@@ -80,7 +51,7 @@
       Placeholder: Placeholder,
       Loadmore: Loadmore,
       Loading: Loading,
-      ZanTab: ZanTab
+      DetailItem: DetailItem
     };
     mixins = [base, pagination];
     config = {
@@ -92,20 +63,5 @@
 
 <style lang="scss">
   @import "../../styles/variable";
-  .item-box{
-    padding: 18rpx;
-    margin: 10rpx 10rpx 0;
-    border-radius: 30rpx;
-    background-color: white;
-    .top-box{
-      border-bottom: $border;
-      padding-bottom: 10rpx;
-    }
-  }
-  .customer-box{
-    align-items: center;
-  }
-  .time-bonus-box{
-    align-items: flex-end;
-  }
+
 </style>

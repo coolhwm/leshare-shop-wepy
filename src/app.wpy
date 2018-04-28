@@ -147,7 +147,10 @@
         'pages/customer/info',
         'pages/agent/apply',
         'pages/agent/groups',
-        'pages/agent/recharge'
+        'pages/agent/recharge',
+        'pages/agent/balance',
+        'pages/agent/customer',
+        'pages/agent/order'
       ],
       window: {
         backgroundTextStyle: 'dark',

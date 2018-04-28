@@ -5,7 +5,7 @@
 
     <view class="column">
       <repeat for="{{page.list}}" key="index" index="index" item="item">
-        <GroupItem :item.sync="item.customer" :detail.item="item"/>
+        <CustomerItem :item.sync="item.inviteeCustomer" :detail.item="item"/>
       </repeat>
     </view>
 
@@ -15,7 +15,7 @@
   </view>
 
   <!--占位符-->
-  <Placeholder :show.sync="isPageEmpty" message="您还没有相关团队信息"/>
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关客户信息"/>
 </template>
 
 <script>
@@ -26,15 +26,15 @@
   import Loadmore from '../../components/weui/loadmore';
   import Loading from '../../components/common/loading';
   import agent from '../../api/agent';
-  import GroupItem from '../../components/agent/groupItem'
+  import CustomerItem from '../../components/agent/customerItem'
 
-  export default class Groups extends wepy.page {
+  export default class Customer extends wepy.page {
     data = {
       init: false,
       page: {}
     };
     async onLoad ({id}) {
-      this.page = await agent.agentGroups(id);
+      this.page = await agent.agentRels(id);
       await this.next();
     }
     methods = {};
@@ -43,11 +43,11 @@
       Placeholder: Placeholder,
       Loadmore: Loadmore,
       Loading: Loading,
-      GroupItem: GroupItem
+      CustomerItem: CustomerItem
     };
     mixins = [base, pagination];
     config = {
-      navigationBarTitleText: '我的团队',
+      navigationBarTitleText: '我的客户',
       enablePullDownRefresh: true
     };
   }
@@ -55,25 +55,5 @@
 
 <style lang="scss">
   @import "../../styles/variable";
-  .item-box{
-    padding: 18rpx;
-    margin: 10rpx 10rpx 0;
-    border-radius: 30rpx;
-    background-color: white;
-  }
-  .customer-box{
-    align-items: center;
-    .avatar-box{
-      width: 80rpx;
-      height: 80rpx;
-      border: $border;
-      border-radius: 40rpx;
-    }
-    .name-box{
-      width: 350rpx;
-    }
-  }
-  .time-bonus-box{
-    align-items: flex-end;
-  }
+
 </style>

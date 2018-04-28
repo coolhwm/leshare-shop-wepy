@@ -1,6 +1,5 @@
 import base from './base';
-import api from "./group";
-import Page from "../utils/Page";
+import Page from '../utils/Page';
 
 export default class goods extends base {
   /**
@@ -24,11 +23,37 @@ export default class goods extends base {
    */
   static agentGroups (agentId) {
     const url = `${this.baseUrl}/agent/list/${agentId}`;
-    return new Page(url);
+    return new Page(url, item => {
+      this._processAgent(item);
+    });
   }
 
   /***
    * 查看分销员子代理列表
+   */
+  static agentDetail (agentId) {
+    const url = `${this.baseUrl}/agent/details/${agentId}`;
+    return new Page(url);
+  }
+
+  /***
+   * 查看客户列表
+   */
+  static agentRels (agentId) {
+    const url = `${this.baseUrl}/agent/rels/${agentId}`;
+    return new Page(url);
+  }
+
+  /***
+   * 查看订单列表
+   */
+  static agentOrder (agentId) {
+    const url = `${this.baseUrl}/agent/orders/${agentId}`;
+    return new Page(url);
+  }
+
+  /***
+   * 提现
    */
   static agentCash (param) {
     const url = `${this.baseUrl}/agent/cash`;
@@ -38,12 +63,28 @@ export default class goods extends base {
   /** ********************* 数据处理方法 ***********************/
   static _processAgent(data) {
     // 处理分销状态
+    this._processStatus(data);
+    // 处理时间
+    this._processTime(data);
+    return data;
+  }
+
+  /***
+   * 处理状态
+   */
+  static _processStatus(data) {
     const AGENT_STATUS = {
       AUDITTING: '待审核',
       ENABLE: '生效中',
       DISABLE: '已失效'
     };
     data.statusText = AGENT_STATUS[data.status];
-    return data;
+  }
+
+  /***
+   * 处理时间
+   */
+  static _processTime(data) {
+    data.time = data.createTime.slice(0, 10)
   }
 }

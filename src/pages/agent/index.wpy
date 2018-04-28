@@ -32,7 +32,7 @@
     </view>
   </view>
 
-  <Cash />
+  <Cash @cash.user="cash"/>
 
   <Copyright buttom="true" />
 </template>
@@ -45,7 +45,7 @@
   import tips from '../../utils/Tips';
   import Copyright from '../../components/common/copyright';
   import Cash from '../../components/agent/cash'
-  // import agent from '../../api/agent'
+  import agent from '../../api/agent'
 
   @connect({
     shop: store.get('shop')
@@ -92,16 +92,27 @@
             color: '#8DD38A',
             num: ''
           },
-          {}
+          {
+            icon: 'customer',
+            title: '我的客户',
+            color: '#DABC69',
+            num: 0,
+            unit: '个'
+          }
         ]
       ],
       check: true,
-      detail: null
+      detail: null,
+      agentId: 0
     };
-    async onLoad (options, {preload}) {
-      this.detail = preload.detail;
+    async onLoad () {
+      this.load();
       this.loaded();
     };
+    async load() {
+      this.detail = await agent.agentInfo();
+      this.$apply();
+    }
     methods = {
       tips() {
         tips.success('敬请期待');
@@ -114,6 +125,9 @@
       },
       open (id) {
         this.$invoke('Cash', 'open', {id: id});
+      },
+      cash(detail) {
+        this.detail = detail
       }
     };
     components = {

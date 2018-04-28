@@ -78,9 +78,8 @@
         <text>分销商的商品销售由店家直接收款、发货并提供售后服务，分销佣金由厂家统一按约定好的比例返回</text>
       </view>
     </view>
+    <Copyright buttom="true" />
   </view>
-
-  <Copyright buttom="true" />
 </template>
 
 <script>
@@ -90,7 +89,7 @@
   import Copyright from '../../components/common/copyright';
   import Loading from '../../components/common/loading';
   import FormTips from '../../components/weui/tips';
-  import agent from '../../api/agent'
+  import agent from '../../api/agent';
 
   export default class Apply extends wepy.page {
     data = {
@@ -99,10 +98,10 @@
     async onLoad () {
       this.input = await agent.agentInfo();
       if (this.input.status == 'ENABLE') {
-        this.$preload('detail', this.input);
-        this.$navigate(`/pages/agent/index`)
+        this.$redirect(`/pages/agent/index`);
+      } else {
+        this.loaded();
       }
-      this.loaded()
     };
     methods = {
       async submit () {

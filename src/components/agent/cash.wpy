@@ -57,7 +57,9 @@
         await agent.agentCash(param);
         await Tips.success('提现成功');
         this.display = false;
-        this.$apply()
+        const detail = await agent.agentInfo();
+        this.$emit('cash', detail);
+        this.$apply();
       }
     };
     components = {
