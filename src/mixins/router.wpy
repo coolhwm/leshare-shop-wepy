@@ -347,6 +347,10 @@
             // 店铺信息
             this.$root.$navigate(`/pages/shop/about_us`);
             break;
+          case 'USER_INFO':
+            // 用户资料
+            this.$root.$navigate(`/pages/customer/info`);
+            break;
           case 'BOOKING':
             // 预约
             this.$root.$navigate(`/pages/booking/order?goodsId=${targetId}`);
