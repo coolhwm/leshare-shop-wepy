@@ -5,7 +5,7 @@
 
     <view class="column">
       <repeat for="{{page.list}}" key="index" index="index" item="item">
-        <OrderItem :order.sync="item" @tap.user="detail"/>
+        <CustomerItem :item.sync="item.inviteeCustomer" :detail.item="item"/>
       </repeat>
     </view>
 
@@ -26,15 +26,15 @@
   import Loadmore from '../../components/weui/loadmore';
   import Loading from '../../components/common/loading';
   import agent from '../../api/agent';
-  import OrderItem from '../../components/order/order_item';
+  import CustomerItem from '../../components/agent/customerItem'
 
-  export default class Order extends wepy.page {
+  export default class Clientele extends wepy.page {
     data = {
       init: false,
       page: {}
     };
     async onLoad ({id}) {
-      this.page = await agent.agentOrder(id);
+      this.page = await agent.agentRels(id);
       await this.next();
     }
     methods = {};
@@ -43,11 +43,11 @@
       Placeholder: Placeholder,
       Loadmore: Loadmore,
       Loading: Loading,
-      OrderItem: OrderItem
+      CustomerItem: CustomerItem
     };
     mixins = [base, pagination];
     config = {
-      navigationBarTitleText: '我的订单',
+      navigationBarTitleText: '我的客户',
       enablePullDownRefresh: true
     };
   }

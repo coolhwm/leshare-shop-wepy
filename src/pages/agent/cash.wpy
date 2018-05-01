@@ -28,7 +28,7 @@
   import DetailItem from '../../components/agent/detailItem';
   import agent from '../../api/agent';
 
-  export default class Balance extends wepy.page {
+  export default class Cash extends wepy.page {
     data = {
       init: false,
       page: {}

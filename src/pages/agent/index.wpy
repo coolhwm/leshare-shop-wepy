@@ -15,7 +15,7 @@
         </view>
         <view class="column">
           <text class="mt20 lg">成功提现佣金</text>
-          <text class="mt20 lg">0.00元</text>
+          <text class="mt20 lg">{{detail.cash}}元</text>
         </view>
       </view>
     </view>
@@ -64,14 +64,14 @@
             unit: '元'
           },
           {
-            icon: 'order',
+            icon: 'singular',
             title: '分销订单',
             color: '#37B1D7',
             num: 0,
-            unit: '元'
+            unit: '单'
           },
           {
-            icon: 'balance',
+            icon: 'cash',
             title: '提现明细',
             color: '#FF4544',
             num: 0,
@@ -93,7 +93,7 @@
             num: ''
           },
           {
-            icon: 'customer',
+            icon: 'clientele',
             title: '我的客户',
             color: '#DABC69',
             num: 0,
@@ -111,6 +111,19 @@
     };
     async load() {
       this.detail = await agent.agentInfo();
+      const {recharge, cash, balance} = this.detail;
+      this.detail.recharge = recharge.toFixed(2);
+      this.detail.cash = cash.toFixed(2);
+      this.detail.balance = balance.toFixed(2);
+      this.list.forEach(listItem => {
+        listItem.forEach(item => {
+          for (let key in this.detail) {
+            if (key === item.icon) {
+              item.num = this.detail[key]
+            }
+          }
+        })
+      });
       this.$apply();
     }
     methods = {
@@ -126,8 +139,8 @@
       open (id) {
         this.$invoke('Cash', 'open', {id: id});
       },
-      cash(detail) {
-        this.detail = detail
+      cash() {
+        this.load()
       }
     };
     components = {
