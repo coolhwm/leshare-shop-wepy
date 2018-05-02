@@ -3,8 +3,8 @@
     <view class="customer-box row">
       <image class="avatar-box" src="{{item.avatarUrl}}"/>
       <view class="column name-box">
-        <text class="ml20 inline">{{item.nickName}}</text>
-        <text class="ml20">{{item.phone ? item.phone : detail.phone}}</text>
+        <text class="ml20 inline">{{detail.name}}</text>
+        <text class="ml20">{{detail.phone}}</text>
       </view>
     </view>
     <view class="column time-bonus-box">
