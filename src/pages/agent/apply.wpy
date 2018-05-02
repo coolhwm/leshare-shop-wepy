@@ -3,7 +3,7 @@
 
   <Tips/>
   <view wx:if="{{init}}">
-    <form @submit="submit" wx:if="{{input == null}}">
+    <form @submit="submit" wx:if="{{info == null}}">
       <view class="weui-cells weui-cells-form form-box">
         <view class="weui-cell weui-cell_input">
           <view class="weui-cell__hd">
@@ -28,14 +28,14 @@
         </button>
       </view>
     </form>
-    <form>
+    <form wx:else>
       <view class="weui-cells weui-cells-form form-box">
         <view class="weui-cell weui-cell_input">
           <view class="weui-cell__hd">
             <view class="weui-label">姓名</view>
           </view>
           <view class="weui-cell__bd">
-            <input class="weui-input" value="{{input.name}}" />
+            <input class="weui-input" value="{{info.name}}" disabled/>
           </view>
         </view>
         <view class="weui-cell weui-cell_input">
@@ -43,12 +43,12 @@
             <view class="weui-label">手机</view>
           </view>
           <view class="weui-cell__bd">
-            <input class="weui-input" value="{{input.phone}}" />
+            <input class="weui-input" value="{{info.phone}}" disabled/>
           </view>
         </view>
       </view>
       <view class="row-center agent-status-box">
-        <text class="white xl">{{input.statusText}}</text>
+        <text class="white xl">{{info.statusText}}</text>
       </view>
     </form>
 
@@ -90,14 +90,20 @@
   import Loading from '../../components/common/loading';
   import FormTips from '../../components/weui/tips';
   import agent from '../../api/agent';
+  import Tips from '../../utils/Tips';
 
   export default class Apply extends wepy.page {
     data = {
-      init: false
+      init: false,
+      isEmpty: false,
+      infoData: null
     };
     async onLoad () {
-      this.input = await agent.agentInfo();
-      if (this.input.status == 'ENABLE') {
+      this.infoData = await agent.agentInfo();
+      if (this.infoData != null) {
+        this.input = this.infoData
+      }
+      if (this.input != null && this.input.status == 'ENABLE') {
         this.$redirect(`/pages/agent/index`);
       } else {
         this.loaded();
@@ -108,7 +114,21 @@
         if (!this.validate()) {
           return;
         }
-        await agent.apply(this.input)
+        try {
+          Tips.loading();
+          await agent.apply(this.input);
+          this.infoData = await agent.agentInfo();
+          await Tips.success('申请提交');
+          this.$apply();
+        } catch (err) {
+          Tips.loaded();
+          await Tips.confirm(err.message);
+        }
+      }
+    };
+    computed = {
+      info () {
+        return this.infoData;
       }
     };
     validate () {

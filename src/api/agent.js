@@ -66,10 +66,12 @@ export default class goods extends base {
 
   /** ********************* 数据处理方法 ***********************/
   static _processAgent(data) {
-    // 处理分销状态
-    this._processStatus(data);
-    // 处理时间
-    this._processCreateTime(data);
+    if (data != null) {
+      // 处理分销状态
+      this._processStatus(data);
+      // 处理时间
+      this._processCreateTime(data);
+    }
     return data;
   }
   static _processDetail(data) {
