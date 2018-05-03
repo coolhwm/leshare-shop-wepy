@@ -35,7 +35,7 @@
       </view>
       <text style="width: 200px; height: 200px;" class="muted lg column-center" wx:if="{{coupon.supportType ==1}}">暂不支持线下店铺消费</text>
     </view>
-    <view class="tips-box column">
+    <view class="tips-box column" wx:if="{{coupon.desc}}">
       <text>使用说明：</text>
       <text>{{coupon.desc}}</text>
     </view>

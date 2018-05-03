@@ -89,7 +89,6 @@
       pages: [
         'pages/home/template',
         'pages/home/template_nav',
-        'pages/home/home',
         'pages/home/login',
         'pages/shop/index',
         'pages/goods/cart',

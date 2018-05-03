@@ -1,5 +1,6 @@
 <script>
   import wepy from 'wepy';
+  import shop from '../api/shop';
   import Event from '../utils/Event';
   import Tips from '../utils/Tips';
   import api from '../api/goods';
@@ -149,6 +150,9 @@
       }
     }
     methods = {
+      reportFormId({detail}) {
+        shop.reportFormId(detail.formId);
+      },
       routeToCart() {
         this.routeToCart();
       },

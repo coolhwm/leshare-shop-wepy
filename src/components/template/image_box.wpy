@@ -1,30 +1,30 @@
 <template>
+  <form report-submit="true" @submit="reportFormId" >
+    <!--水平滚动-->
+    <scroll-view wx:if="{{param.layout == 'ROW'}}" class="image-row-box"  scroll-x style="height:{{param.height}}; background-color: {{param.backgroundColor}};padding: {{param.padding}} 0;">
+      <block wx:for="{{param.data}}" wx:for-item="image" wx:key="seq">
+        <image style="width:{{param.width}};height:{{param.height}};" mode="aspectFill" src="{{image.url}}" @tap="routeByAction({{image}})" ></image>
+      </block>
+    </scroll-view>
 
-  <!--水平滚动-->
-  <scroll-view wx:if="{{param.layout == 'ROW'}}" class="image-row-box"  scroll-x style="height:{{param.height}}; background-color: {{param.backgroundColor}};padding: {{param.padding}} 0;">
-    <block wx:for="{{param.data}}" wx:for-item="image" wx:key="seq">
-      <image style="width:{{param.width}};height:{{param.height}};" mode="aspectFill" src="{{image.url}}" @tap="routeByAction({{image}})" ></image>
-    </block>
-  </scroll-view>
-
-  <!--纵向分布-->
-  <view wx:elif="{{param.layout == 'COLUMN'}}" class="image-column-box" style="background-color: {{param.backgroundColor}};padding: {{param.padding}} 0;">
-    <block wx:for="{{param.data}}" wx:for-item="image" wx:key="seq">
-      <image mode="widthFix" src="{{image.url}}" style="width:{{image.width}};margin-bottom:{{image.gutter}}" @tap="routeByAction({{image}})"></image>
-    </block>
-  </view>
-
-  <!--横向滚动-->
-  <view wx:else class="image-box row-around" style="background-color: {{param.backgroundColor}};padding: {{param.padding}} 0;">
-    <block wx:for="{{param.data}}" wx:for-item="image" wx:key="seq">
-      <!--普通的图片-->
-      <button plain class="column-around" open-type="{{image.openType}}" @tap="routeByAction({{image}})">
-        <image style="width:{{param.width}};height:{{param.height}} " mode="aspectFill" src="{{image.url}}" ></image>
-        <text wx:if="{{param.isShowTitle}}" class="image-title" style="color: {{param.color}}">{{image.title}}</text>
+    <!--纵向分布-->
+    <view wx:elif="{{param.layout == 'COLUMN'}}" class="image-column-box" style="background-color: {{param.backgroundColor}};padding: {{param.padding}} 0;">
+      <button plain wx:for="{{param.data}}" wx:for-item="image" wx:key="seq" form-type="submit" @tap="routeByAction({{image}})">
+        <image mode="widthFix" src="{{image.url}}" style="width:{{image.width}};margin-bottom:{{image.gutter}}" ></image>
       </button>
-    </block>
-  </view>
+    </view>
 
+    <!--横向滚动-->
+    <view wx:else class="image-box row-around" style="background-color: {{param.backgroundColor}};padding: {{param.padding}} 0;">
+      <block wx:for="{{param.data}}" wx:for-item="image" wx:key="seq">
+        <!--普通的图片-->
+        <button plain class="column-around" form-type="submit" open-type="{{image.openType}}" @tap="routeByAction({{image}})">
+          <image style="width:{{param.width}};height:{{param.height}} " mode="aspectFill" src="{{image.url}}" ></image>
+          <text wx:if="{{param.isShowTitle}}" class="image-title" style="color: {{param.color}}">{{image.title}}</text>
+        </button>
+      </block>
+    </view>
+  </form>
 </template>
 
 <script>
@@ -49,6 +49,11 @@
     background-color: white;
     image{
       width: 750rpx;
+    }
+    button{
+      border-radius: 0;
+      padding: 0;
+      line-height: 1.2em;
     }
   }
 

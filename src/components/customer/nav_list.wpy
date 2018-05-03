@@ -1,9 +1,9 @@
 <template>
-  <view class="nav-list-box">
+  <form class="nav-list-box" report-submit="true" @submit="reportFormId">
     <view class="list-item-box" wx:for="{{param.data}}" wx:key="cellIndex" wx:for-item="cell" wx:for-index="cellIndex">
       <view class="column cell-box weui-cells weui-cells-show">
         <block wx:for="{{cell}}" wx:key="itemIndex" wx:for-index="itemIndex" wx:for-item="item">
-          <button plain class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="routeByAction({{item}})" open-type="{{item.openType}}">
+          <button plain  form-type="submit"  class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="routeByAction({{item}})" open-type="{{item.openType}}">
             <view class="weui-cell__bd">
               <icon class="{{item.iconClass}} mr20" style="color: {{item.iconColor}}; font-size: {{item.iconSize}}; line-height: {{item.iconSize}};" />
               <text>{{item.title}}</text>
@@ -19,7 +19,7 @@
         </block>
       </view>
     </view>
-  </view>
+  </form>
 </template>
 
 <script>
