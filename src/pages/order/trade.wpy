@@ -99,7 +99,7 @@
         <text>配送费</text>
         <text class="major">+￥{{trade.postFee}}</text>
       </view>
-      <view class="price-box row-between" wx:if="{{trade.foodBoxFee > 0}}">
+      <view class="price-box row-between" wx:if="{{trade.foodBoxFee > 0 && trade.orderType != 30}}">
         <text>餐盒费</text>
         <text class="major">+￥{{trade.foodBoxFee}}</text>
       </view>
@@ -253,6 +253,7 @@
        */
       switchInShopType(type) {
         this.trade.orderType = type;
+        this.updateTradePrice();
       },
       /**
        * 选择配送方式
@@ -568,7 +569,10 @@
       // 运费
       trade.finalPrice += trade.postFee ? parseFloat(trade.postFee) : 0;
       // 餐盒费
-      trade.finalPrice += trade.foodBoxFee ? parseFloat(trade.foodBoxFee) : 0;
+      if (trade.orderType != 30) {
+        console.info(trade.orderType)
+        trade.finalPrice += trade.foodBoxFee ? parseFloat(trade.foodBoxFee) : 0;
+      }
       // 优惠券
       trade.finalPrice -= trade.couponPrice ? parseFloat(trade.couponPrice) : 0;
       // 积分
