@@ -29,9 +29,10 @@
     <button class="btn-box" @tap="topUp">立即充值</button>
 
     <view class="rule-box column" >
-      <text class="muted sm">1、会员可对账户进行充值</text>
-      <text class="muted sm">2、实际支付的充值本金会构成您的账户余额，充值本金不可提现、转移、转增、充值余额无有效期</text>
-      <text class="muted sm">3、根据全国税务局规定，预定充值业务只能在充值时开具增值税普通发票，开票内容为预付卡销售和充值，不能开具增值税专用发票，且用储值消费时不再另外开具发票</text>
+      <text class="muted sm">充值须知：</text>
+      <text class="muted sm">• 会员可对账户进行充值</text>
+      <text class="muted sm">• 实际支付的充值本金会构成您的账户余额，充值本金不可提现、转移、转增、充值余额无有效期</text>
+      <text class="muted sm">• 根据全国税务局规定，预定充值业务只能在充值时开具增值税普通发票，且用储值消费时不再另外开具发票</text>
     </view>
 
     <Notice />
@@ -70,6 +71,9 @@
       this.loaded();
     }
     open () {
+      if (this.rule.coupons == null || this.rule.coupons.length < 0) {
+        return;
+      }
       let content = '';
       for (let i in this.rule.coupons) {
         if (i < this.rule.coupons.length) {
@@ -78,7 +82,6 @@
           content = content + this.rule.coupons[i].name;
         }
       }
-      console.info(content);
       this.$invoke('Notice', 'open', {title: '送券详情', content: content});
     }
     methods = {
@@ -116,11 +119,11 @@
         const isPay = await this.requestWxPayment(trade);
         if (isPay) {
           await Tips.success('支付成功');
+          WxUtils.backOrRedirect('/pages/customer/index_template');
+          await this.upDateMember();
         } else {
           await Tips.alert('支付取消');
         }
-        this.upDateMember();
-        WxUtils.backOrRedirect('/pages/customer/index_template');
       }
     };
     /**
