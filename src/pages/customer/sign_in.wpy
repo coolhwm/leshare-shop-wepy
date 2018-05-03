@@ -89,7 +89,9 @@
     }
     // 点击签到
     async doSign () {
+      Tips.loading();
       await shop.sign(this.member.memberId);
+      Tips.loaded();
       Tips.success('签到成功');
       await this.getUserSign();
     }
@@ -114,6 +116,8 @@
           Tips.alert('你今天已签过了!');
         } else {
           await this.doSign();
+          await store.refresh('member');
+          this.$apply();
         }
         if (this.type == 'home') {
           setTimeout(() => {

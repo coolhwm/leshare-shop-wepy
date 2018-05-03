@@ -1,0 +1,54 @@
+<template>
+  <view class="column  detail-box">
+    <view class="row-between top-box">
+      <view class="customer-box row">
+        <text class="muted">{{detail.createTime}}</text>
+      </view>
+      <view class="time-bonus-box">
+        <text>余额：{{detail.leftFee}}</text>
+      </view>
+    </view>
+    <view class="row-between mt10">
+      <view class="customer-box row">
+        <text>{{detail.typeDesc}}</text>
+      </view>
+      <view class="time-bonus-box">
+        <text wx:if="{{detail.type === 'cash'}}" class="muted">-{{detail.costFee}}</text>
+        <text wx:else class="danger">{{detail.costFee}}</text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class Notice extends wepy.component {
+    props = {
+      detail: {}
+    };
+    data = {};
+    methods = {};
+    components = {};
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .detail-box{
+    padding: 18rpx;
+    margin: 10rpx 10rpx 0;
+    border-radius: 30rpx;
+    background-color: white;
+    .top-box{
+      border-bottom: $border;
+      padding-bottom: 10rpx;
+    }
+  }
+  .customer-box{
+    align-details: center;
+  }
+  .time-bonus-box{
+    align-details: flex-end;
+  }
+</style>

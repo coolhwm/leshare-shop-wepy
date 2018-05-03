@@ -12,7 +12,7 @@
     <BargainRuleBar/>
 
     <!--底栏-->
-    <block wx:if="{{detail.isHead || detail.status == 'TIMEOUT'}}">
+    <block wx:if="{{detail.isHead && detail.status !== 'TIMEOUT'}}">
       <DetailBottom :detail.sync="detail"/>
     </block>
 

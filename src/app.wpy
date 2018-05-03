@@ -145,7 +145,12 @@
         'pages/shop/super_poster',
         'pages/customer/info',
         'pages/agent/index',
-        'pages/agent/apply'
+        'pages/agent/apply',
+        'pages/agent/groups',
+        'pages/agent/recharge',
+        'pages/agent/cash',
+        'pages/agent/clientele',
+        'pages/agent/singular'
       ],
       window: {
         backgroundTextStyle: 'dark',

@@ -17,7 +17,7 @@
       <view wx:if="{{item.isPar}}" @tap.stop="joined({{item}})">
         <text class="ml20 btn-box">已参团</text>
       </view>
-      <view wx:else @tap.stop="handleGroup({{item.rule.goods}}, {{item.rule.goodsGroupSkuDetails}}, {{item.rule.id}}, 'join', {{item.id}})">
+      <view wx:else @tap.stop="joined({{item}})">
         <text class="ml20 btn-box">去参团</text>
       </view>
     </view>

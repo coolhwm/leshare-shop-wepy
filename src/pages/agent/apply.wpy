@@ -3,7 +3,7 @@
 
   <Tips/>
   <view wx:if="{{init}}">
-    <form @submit="submit">
+    <form @submit="submit" wx:if="{{info == null}}">
       <view class="weui-cells weui-cells-form form-box">
         <view class="weui-cell weui-cell_input">
           <view class="weui-cell__hd">
@@ -22,10 +22,33 @@
           </view>
         </view>
       </view>
-      <view class="booking-btn-box row-center">
+      <view class="row-center">
         <button form-type="submit" type="primary" class="weui-btn form-btn-box">
           申请成为分销商
         </button>
+      </view>
+    </form>
+    <form wx:else>
+      <view class="weui-cells weui-cells-form form-box">
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd">
+            <view class="weui-label">姓名</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input class="weui-input" value="{{info.name}}" disabled/>
+          </view>
+        </view>
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd">
+            <view class="weui-label">手机</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input class="weui-input" value="{{info.phone}}" disabled/>
+          </view>
+        </view>
+      </view>
+      <view class="row-center agent-status-box">
+        <text class="white xl">{{info.statusText}}</text>
       </view>
     </form>
 
@@ -55,9 +78,8 @@
         <text>分销商的商品销售由店家直接收款、发货并提供售后服务，分销佣金由厂家统一按约定好的比例返回</text>
       </view>
     </view>
+    <Copyright buttom="true" />
   </view>
-
-  <Copyright buttom="true" />
 </template>
 
 <script>
@@ -67,21 +89,46 @@
   import Copyright from '../../components/common/copyright';
   import Loading from '../../components/common/loading';
   import FormTips from '../../components/weui/tips';
-  import agent from '../../api/agent'
+  import agent from '../../api/agent';
+  import Tips from '../../utils/Tips';
 
   export default class Apply extends wepy.page {
     data = {
-      init: false
+      init: false,
+      isEmpty: false,
+      infoData: null
     };
     async onLoad () {
-      this.loaded()
+      this.infoData = await agent.agentInfo();
+      if (this.infoData != null) {
+        this.input = this.infoData
+      }
+      if (this.input != null && this.input.status == 'ENABLE') {
+        this.$redirect(`/pages/agent/index`);
+      } else {
+        this.loaded();
+      }
     };
     methods = {
       async submit () {
         if (!this.validate()) {
           return;
         }
-        await agent.apply(this.input)
+        try {
+          Tips.loading();
+          await agent.apply(this.input);
+          this.infoData = await agent.agentInfo();
+          await Tips.success('申请提交');
+          this.$apply();
+        } catch (err) {
+          Tips.loaded();
+          await Tips.confirm(err.message);
+        }
+      }
+    };
+    computed = {
+      info () {
+        return this.infoData;
       }
     };
     validate () {
@@ -145,5 +192,12 @@
     .item-rule-box + .item-rule-box{
       margin-top: 10rpx;
     }
+  }
+  .agent-status-box{
+    border: $border;
+    background-color: $color-primary;
+    flex: 1;
+    padding: 20rpx 0;
+    margin: 20rpx 20rpx 0;
   }
 </style>

@@ -12,7 +12,7 @@
     </swiper>
 
     <!--砍价倒计时栏-->
-    <TimeOutBar :endTime.sync="endTime" :callback="callback" describe="邀请好友帮砍 低价购" title="砍价" />
+    <TimeOutBar :rule.sync="rule" :callback="callback" describe="邀请好友帮砍 低价购" title="砍价" />
 
     <!--商品基本信息展示及服务信息-->
     <GoodsMsgBar :rule.sync="rule"/>
@@ -65,7 +65,6 @@
     data = {
       init: false,
       buyPanelType: 'POPUP',
-      endTime: '',
       goodsId: '',
       groupTime: '',
       ruleId: '',
@@ -90,7 +89,6 @@
       this.rule = await bargain.rule(ruleId);
       this.goodsDetail = this.rule.goods;
       this.subShop = this.goodsDetail.subShop != null ? this.goodsDetail.subShop : this.shop;
-      this.endTime = this.rule.endTime;
       this.goodsId = this.rule.goods.id;
       this.loaded();
     }
