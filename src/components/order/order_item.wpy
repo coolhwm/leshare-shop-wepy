@@ -58,6 +58,7 @@
 </template>
 <script>
   import wepy from 'wepy';
+  import store from '../../store/utils';
   import order from '../../api/order';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
@@ -98,13 +99,16 @@
     /**
      * 订单支付
      */
-    async pay({orderId}) {
+    async pay(trade) {
       try {
         Tips.loading();
-        const payment = await order.prepayOrder(orderId);
+        const payment = await order.prepayOrder(trade.orderId);
         Tips.loaded();
         await order.wxpayOrder(payment);
         await Tips.success('支付成功');
+        if (trade.couponUsedId || trade.orderGoodsInfos[0].goodsType === 'digit') {
+          store.delayReflesh('coupon');
+        }
       } catch (e) {
         console.warn(e);
         await Tips.success('支付取消');
