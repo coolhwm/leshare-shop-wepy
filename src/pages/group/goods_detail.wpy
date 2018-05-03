@@ -1,4 +1,4 @@
-<template>
+g<template>
   <Loading :init.sync="init"/>
 
   <!--轮播展示图-->
