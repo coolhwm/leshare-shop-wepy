@@ -67,7 +67,7 @@
     };
     methods = {
       open() {
-        this.$root.$navigate(`/pages/group/goods_detail?ruldId=${this.detail.rule.id}`);
+        this.$root.$navigate(`/pages/group/goods_detail?ruleId=${this.detail.ruleId}`);
       },
       join() {
         const {goods, goodsGroupSkuDetails, id} = this.detail.rule;

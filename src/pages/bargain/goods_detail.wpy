@@ -101,7 +101,7 @@
       return {
         title: shareName,
         imageUrl: imageUrl,
-        path: `/pages/bargain/bargain_detail?ruleId=${this.ruleId}`
+        path: `/pages/bargain/goods_detail?ruleId=${this.ruleId}`
       };
     }
     methods = {

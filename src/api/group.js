@@ -419,7 +419,7 @@ export default class group extends base {
   static _processGroupListLength (data, rule) {
     rule.spareCustomer = rule.limitCustomer - data.list.length;
     if (rule.limitCustomer > data.list.length) {
-      for (let i = 1; i < rule.limitCustomer; i++) data.list.push({})
+      for (let i = 1; i <= rule.spareCustomer; i++) data.list.push({})
     }
   }
 
