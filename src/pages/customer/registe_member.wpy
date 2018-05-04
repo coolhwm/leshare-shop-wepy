@@ -121,6 +121,7 @@
         }
         // 发送验证码
         try {
+          Tips.loading();
           await member.code(this.input.phone);
           this.$invoke('VCode', 'cd', 60);
           Tips.success('验证码已发送');
@@ -136,12 +137,15 @@
       },
       async add ({detail}) {
         if (!this.validate(detail.value.code)) return;
-        const param = {};
-        this.extraParam.forEach(item => {
-          param[item.name] = this.input[item.name]
-        });
         this.registeInfo = this.input;
-        this.registeInfo.extraParam = JSON.stringify(param);
+        // 处理额外字段
+        if (this.extraParam && this.extraParam.length > 0) {
+          const param = {};
+          this.extraParam.forEach(item => {
+            param[item.name] = this.input[item.name]
+          });
+          this.registeInfo.extraParam = JSON.stringify(param);
+        }
         try {
           Tips.loading();
           await member.regist(this.registeInfo, detail.value.code);
