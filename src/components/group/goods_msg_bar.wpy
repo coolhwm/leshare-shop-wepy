@@ -15,10 +15,12 @@
       </view>
       <text class="goods-name-box">{{rule.goods.name}}</text>
     </view>
-    <button class="column-center" plain open-type="share">
-      <icon class="share small" color="gray"/>
-      <text class="muted sm">分享有惊喜</text>
-    </button>
+    <view class="share-box">
+      <button class="column-center" plain open-type="share">
+        <icon class="share small"/>
+        <text class="sm">分享</text>
+      </button>
+    </view>
   </view>
 
   <!--服务标签-->
@@ -95,6 +97,20 @@
     .goods-name-box{
       font-size: 30rpx;
       line-height: 30rpx;
+    }
+    .share-box {
+      width: 40px;
+      min-width: 40px;
+      padding-left: 5px;
+      border-left: $border;
+      button {
+        align-items: center;
+        padding: 0;
+        text {
+          line-height: 26 rpx;
+          margin-top: 15 rpx;
+        }
+      }
     }
   }
   .goods-des-box{
