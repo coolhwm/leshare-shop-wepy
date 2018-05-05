@@ -39,8 +39,7 @@
       detail (ruleId) {
         this.$root.$navigate(`/pages/group/goods_detail?ruleId=${ruleId}`)
       },
-      more (data) {
-        this.$root.$preload('param', data);
+      more () {
         this.$root.$navigate(`/pages/group/group_more`)
       }
     };

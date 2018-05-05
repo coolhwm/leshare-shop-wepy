@@ -4,7 +4,7 @@
   <view class="column" wx:if="{{init}}">
     <image src="http://img.leshare.shop/shop/other/group_bar.jpg" mode="aspectFill" style="width: 750rpx; height:200rpx;"/>
 
-    <repeat for="{{param}}" key="index" index="index" item="item">
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
       <block>
         <GroupItem :item.sync="item"/>
       </block>
@@ -15,17 +15,19 @@
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
+  import pagination from '../../mixins/pagination';
   import Loading from '../../components/common/loading';
-  import GroupItem from '../../components/group/group_more_item'
+  import GroupItem from '../../components/group/group_more_item';
+  import group from '../../api/group'
 
   export default class ShopIndex extends wepy.page {
     data = {
       init: false,
-      param: {}
+      page: []
     };
-    async onLoad (options, {preload}) {
-      this.param = preload.param;
-      this.loaded();
+    async onLoad () {
+      this.page = await group.groupGoodsList();
+      await this.next();
     };
     methods = {
     };
@@ -35,7 +37,7 @@
       Loading: Loading,
       GroupItem: GroupItem
     };
-    mixins = [base];
+    mixins = [base, pagination];
     config = {
       navigationBarTitleText: '拼团商品'
     };

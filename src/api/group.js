@@ -74,6 +74,16 @@ export default class group extends base {
     return this.get(url).then(data => this._processGroupDetail(data));
   }
 
+  /***
+   * 查看拼团商品列表
+   */
+  static groupGoodsList () {
+    const url = `${this.baseUrl}/goods_group/rules`;
+    return new Page(url, item => {
+      this._processGoodsPreview(item);
+    });
+  }
+
   // *** 数据处理方法
 
   /**

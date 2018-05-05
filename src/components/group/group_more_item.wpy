@@ -1,15 +1,15 @@
 <template>
   <view class="row group_more_item">
-    <image class="img-box mr20" src="{{item.goodsImage}}"/>
+    <image class="img-box mr20" src="{{item.goods.imageUrl}}"/>
     <view class="column content-box">
-      <text class="lg inline">{{item.goodsName}}</text>
+      <text class="lg inline">{{item.goods.name}}</text>
       <view class="row-between">
-        <text class="primary xxl">￥{{item.goodsPrice}}</text>
-        <text class="muted sm origin">￥{{item.originPrice	}}</text>
+        <text class="primary xxl">￥{{item.price}}</text>
+        <text class="muted sm origin">￥{{item.goods.sellPrice	}}</text>
       </view>
       <view class="row-between">
-        <text class="muted sm">{{item.limitCustomer}}人团/已成团{{item.successCount}}件</text>
-        <view class="btn-box" @tap="group({{item.ruleId}})">去拼团<icon class="more ml10 xsmall" color="white"/></view>
+        <text class="muted sm">{{item.limitCustomer}}人团/已成团{{item.totalCount}}件</text>
+        <view class="btn-box" @tap="group({{item.id}})">去拼团<icon class="more ml10 xsmall" color="white"/></view>
       </view>
     </view>
   </view>
