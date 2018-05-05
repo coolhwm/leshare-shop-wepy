@@ -7,6 +7,20 @@ export default class WxUtils {
     '/pages/shop/index': '/pages/home/template',
     '/pages/home/home': '/pages/home/template'
   };
+  static parseQrScene(scene, key) {
+    if (scene == null || key == null) return null;
+    const paramStr = decodeURIComponent(scene);
+    const paramMap = paramStr.split('=');
+    if (paramMap == null || paramMap.length != 2) {
+      console.error('[scene]parse scene error', scene);
+      return null;
+    }
+    if (paramMap[0] != key) {
+      console.error('[scene]can not find scene key', scene);
+      return null;
+    }
+    return paramMap[1];
+  }
 
   static isTab (url) {
     const type = wepy.$instance.globalData.shopType;

@@ -1,7 +1,7 @@
 <template>
   <Loading :init.sync="init"/>
   <view class="container">
-    <image bindload="onImageLoad" class="poster-image" mode="widthFix" src="{{url}}"></image>
+    <image bindload="onImageLoad" class="poster-image" mode="widthFix" src="{{url}}/w750" wx:if="{{url}}"></image>
   </view>
   <!--操作栏-->
   <ActionBar @tap.user="save" okText="保存到相册" cancelText="返回"/>
@@ -46,15 +46,11 @@
           const file = await wepy.downloadFile({url: this.url});
           Tips.loaded();
           await wepy.saveImageToPhotosAlbum({filePath: file.tempFilePath});
+          Tips.success('保存成功');
         } catch (e) {
-          if (e.errMsg == 'saveImageToPhotosAlbum:fail auth deny') {
-            await Tips.modal('邀请图需要保存到相册，请在弹出页面中开启授权');
-            wepy.openSetting({});
-          } else if (e.errMsg == 'saveImageToPhotosAlbum:fail cancel') {
-            Tips.error('尚未保存');
-          } else {
-            Tips.error('保存失败');
-          }
+          console.error(e);
+          await Tips.modal('邀请图需要保存到相册，请在弹出页面中开启授权');
+          wepy.openSetting({});
         }
       }
     };

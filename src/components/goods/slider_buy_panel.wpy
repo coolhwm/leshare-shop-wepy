@@ -173,12 +173,13 @@
           this.cartManager.plus(this.goods, selText, num);
         } else if (type === 'begin' || type === 'help') {
           try {
+            Tips.loading();
             const result = await bargain.GoodsBargain(this.goods.ruleId, this.goods.id, this.sku.skuText);
             await Tips.success('砍价成功');
             const isBegin = true;
             this.$root.$redirect(`../bargain/bargain_detail?bargainId=${result.id}&&isBegin=${isBegin}`);
           } catch (err) {
-            await Tips.confirm(err.message);
+            await Tips.modal(err.message);
             wepy.navigateBack();
           }
         } else {

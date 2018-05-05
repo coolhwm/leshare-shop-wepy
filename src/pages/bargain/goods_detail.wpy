@@ -12,7 +12,7 @@
     </swiper>
 
     <!--砍价倒计时栏-->
-    <TimeOutBar :endTime.sync="endTime" :callback="callback" describe="邀请好友帮砍 低价购" title="砍价" />
+    <TimeOutBar :rule.sync="rule" :callback="callback" describe="邀请好友帮砍 低价购" title="砍价" />
 
     <!--商品基本信息展示及服务信息-->
     <GoodsMsgBar :rule.sync="rule"/>
@@ -65,7 +65,6 @@
     data = {
       init: false,
       buyPanelType: 'POPUP',
-      endTime: '',
       goodsId: '',
       groupTime: '',
       ruleId: '',
@@ -74,7 +73,8 @@
       subShop: {}
     };
     async onLoad ({ruleId}) {
-      await auth.login();
+      await auth.user();
+      // await auth.login();
       await store.init();
       await this.update(ruleId);
     };
@@ -86,11 +86,9 @@
       wepy.stopPullDownRefresh();
     }
     async update (ruleId) {
-      console.info(`bargain_rule_id=${ruleId}`)
       this.rule = await bargain.rule(ruleId);
       this.goodsDetail = this.rule.goods;
       this.subShop = this.goodsDetail.subShop != null ? this.goodsDetail.subShop : this.shop;
-      this.endTime = this.rule.endTime;
       this.goodsId = this.rule.goods.id;
       this.loaded();
     }
@@ -99,11 +97,11 @@
      */
     onShareAppMessage () {
       const {name, imageUrl} = this.rule.goods;
-      const shareName = `${name} 底价低至${this.rule.floorPrice}元，快邀请好友帮你砍一刀吧~`;
+      const shareName = `${name} 底价低至${this.rule.floorPrice}元，赶快发起砍价吧~`;
       return {
         title: shareName,
         imageUrl: imageUrl,
-        path: `/pages/group/goods_detail?groupId=${this.ruleId}`
+        path: `/pages/bargain/goods_detail?ruleId=${this.ruleId}`
       };
     }
     methods = {

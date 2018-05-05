@@ -1,12 +1,11 @@
 <template>
   <view class="nav-box row-between {{last == 'true' ? 'nav-box-last' : ''}}">
     <view class="header row">
-      <!--<view class="label primary small" wx:if="{{badgeText}}">{{badgeText}}</view>-->
       <icon class="sender mr10" color="primary" wx:if="{{mode == 1}}"/>
       <icon class="inshop mr10" color="primary" wx:if="{{mode == 2}}"/>
       <text>{{title}}</text>
     </view>
-    <view class="footer row" @tap="change({{mode}})" wx:if="{{shop.inShop == 0}}">
+    <view class="footer row" @tap="change({{mode}})" wx:if="{{shop.inShop == 1}}">
       <text class="xs mr10 muted">{{exchangeText}}</text>
       <icon class="exchange" color="primary"/>
     </view>
@@ -27,7 +26,7 @@
       mode: {
         default: 1
       },
-      scene: {
+      tableNum: {
         default: null
       }
     };
@@ -47,17 +46,25 @@
     computed = {
       // 需要进行优化
       title() {
-        if (this.mode == 2 && this.scene == null) {
-          this.exchangeText = '点击切换到外卖点餐';
-          return `堂食/外带`
+        if (this.mode == 2) {
+          if (this.tableNum == null || this.tableNum == '@') {
+            return '堂食点餐';
+          } else {
+            return `当前餐桌号：${this.tableNum}桌`;
+          }
         } else if (this.mode == 1) {
-          this.exchangeText = '点击切换到堂食点餐';
-          return `外卖点餐`
+          return `外卖点餐`;
         } else {
-          if (this.scene == null) return;
-          const number = this.scene.slice(6);
-          this.exchangeText = '点击切换到外卖点餐';
-          return `当前餐桌号：${number}`
+          return '在线点餐';
+        }
+      },
+      exchangeText() {
+        if (this.mode == 2) {
+          return '切换到外卖';
+        } else if (this.mode == 1) {
+          return '切换到堂食';
+        } else {
+          return '';
         }
       }
     }

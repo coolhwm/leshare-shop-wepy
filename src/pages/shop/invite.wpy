@@ -10,10 +10,6 @@
           <text class="white bonus-text">{{number}}</text>
           <text class="white sm mt10">人</text>
         </view>
-        <!--<view class="row btn-box">-->
-          <!--<text class="sm white" @tap="invite">我的邀请码-->
-          <!--</text>-->
-        <!--</view>-->
       </view>
 
       <!--邀请规则区域-->

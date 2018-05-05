@@ -64,6 +64,9 @@ export default class shop extends base {
    * 上报FORM
    */
   static reportFormId(id, delay = 3000) {
+    if (id == 'the formId is a mock one') {
+      return;
+    }
     try {
       const url = `${this.baseUrl}/visit_shops/form_id`;
       const param = [{

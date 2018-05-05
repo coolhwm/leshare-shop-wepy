@@ -61,7 +61,7 @@
       this.extraParam = JSON.parse(this.card.extraParam);
       const param = JSON.parse(this.member.extraParam);
       this.extraParam.forEach(item => {
-        item.value = param[item.name]
+        item.value = param[item.name];
       });
       this.loaded();
     };

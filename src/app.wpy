@@ -89,7 +89,6 @@
       pages: [
         'pages/home/template',
         'pages/home/template_nav',
-        'pages/home/home',
         'pages/home/login',
         'pages/shop/index',
         'pages/goods/cart',
@@ -141,11 +140,16 @@
         'pages/shop/top_up',
         'pages/shop/billing_record',
         'pages/shop/invite',
-        'pages/agent/index',
         'pages/shop/pay',
         'pages/shop/super_poster',
         'pages/customer/info',
-        'pages/agent/apply'
+        'pages/agent/index',
+        'pages/agent/apply',
+        'pages/agent/groups',
+        'pages/agent/recharge',
+        'pages/agent/cash',
+        'pages/agent/clientele',
+        'pages/agent/singular'
       ],
       window: {
         backgroundTextStyle: 'dark',

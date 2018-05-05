@@ -28,9 +28,9 @@
       </view>
 
       <!--餐桌号-->
-      <view class="weui-cell weui-cell_access" wx:if="{{trade.scene}}">
+      <view class="weui-cell weui-cell_access" wx:if="{{trade.tableNum}}">
         <view class="weui-cell__bd">桌位号</view>
-        <view class="weui-cell__ft">{{trade.tableNum}}</view>
+        <view class="weui-cell__ft">{{trade.tableNum}}桌</view>
       </view>
 
       <!--支付类型-->
@@ -99,7 +99,7 @@
         <text>配送费</text>
         <text class="major">+￥{{trade.postFee}}</text>
       </view>
-      <view class="price-box row-between" wx:if="{{trade.foodBoxFee > 0}}">
+      <view class="price-box row-between" wx:if="{{trade.foodBoxFee > 0 && trade.orderType != 30}}">
         <text>餐盒费</text>
         <text class="major">+￥{{trade.foodBoxFee}}</text>
       </view>
@@ -231,10 +231,6 @@
       }
       // 自动选择优惠券
       this.setDefaultCoupon();
-      // 餐桌号
-      if (this.trade.scene) {
-        this.trade.tableNum = this.trade.scene.slice(6)
-      }
       this.loaded();
       // 事件注册
       Event.listen(Event.TRADE_ADDRESS_UPDATE, this.updateAddress.bind(this), this);
@@ -253,6 +249,7 @@
        */
       switchInShopType(type) {
         this.trade.orderType = type;
+        this.updateTradePrice();
       },
       /**
        * 选择配送方式
@@ -376,7 +373,7 @@
         // 创建订单
         const trade = await this.requestCreateOrder(this.trade, this.selectedAddress);
         // 检查是否下单成功
-        if (trade == null) {
+        if (trade == null && (this.type !== 'join' && this.type !== 'group')) {
           await Tips.alert('下单失败');
           return;
         }
@@ -432,12 +429,17 @@
         // 创建订单
         if (this.type === 'join' || this.type === 'group') {
           // 拼团订单
-          if (this.trade.orderGoodsInfos[0].goodsType === 'digit') {
-            const result = await group.digitGroup(trade);
-            return result.order;
-          } else {
-            const result = await group.goodsGroup(trade, address);
-            return result.order;
+          try {
+            if (this.trade.orderGoodsInfos[0].goodsType === 'digit') {
+              const result = await group.digitGroup(trade);
+              return result.order;
+            } else {
+              const result = await group.goodsGroup(trade, address);
+              return result.order;
+            }
+          } catch (err) {
+            await Tips.confirm(err.message);
+            this.$switch(`/pages/home/template`)
           }
         } else if (this.type === 'bargain') {
           if (this.trade.orderGoodsInfos[0].goodsType === 'digit') {
@@ -563,7 +565,10 @@
       // 运费
       trade.finalPrice += trade.postFee ? parseFloat(trade.postFee) : 0;
       // 餐盒费
-      trade.finalPrice += trade.foodBoxFee ? parseFloat(trade.foodBoxFee) : 0;
+      if (trade.orderType != 30) {
+        console.info(trade.orderType)
+        trade.finalPrice += trade.foodBoxFee ? parseFloat(trade.foodBoxFee) : 0;
+      }
       // 优惠券
       trade.finalPrice -= trade.couponPrice ? parseFloat(trade.couponPrice) : 0;
       // 积分

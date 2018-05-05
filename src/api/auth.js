@@ -32,8 +32,11 @@ export default class auth extends base {
     try {
       // 检查
       if (this.hasConfig('user')) {
-        store.save('user', this.getConfig('user'));
-        return true;
+        const user = this.getConfig('user');
+        if (user != null && user.avatarUrl != null) {
+          store.save('user', user);
+          return true;
+        }
       }
       console.info('[auth] user check fail');
       // 重新登录

@@ -168,7 +168,7 @@
     align-items: flex-start;
   }
   .registe-btn {
-    background: $color-primary;
+    background: transparent;
     color: white;
     font-size: $text-nm;
     border: 1px solid white;

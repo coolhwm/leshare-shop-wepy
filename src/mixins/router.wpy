@@ -1,5 +1,6 @@
 <script>
   import wepy from 'wepy';
+  import shop from '../api/shop';
   import Event from '../utils/Event';
   import Tips from '../utils/Tips';
   import api from '../api/goods';
@@ -149,6 +150,9 @@
       }
     }
     methods = {
+      reportFormId({detail}) {
+        shop.reportFormId(detail.formId);
+      },
       routeToCart() {
         this.routeToCart();
       },
@@ -347,6 +351,10 @@
             // 店铺信息
             this.$root.$navigate(`/pages/shop/about_us`);
             break;
+          case 'USER_INFO':
+            // 用户资料
+            this.$root.$navigate(`/pages/customer/info`);
+            break;
           case 'BOOKING':
             // 预约
             this.$root.$navigate(`/pages/booking/order?goodsId=${targetId}`);
@@ -363,8 +371,21 @@
             // 我的砍价
             this.$root.$navigate(`/pages/bargain/list`);
             break;
+          case 'USER_GROUP':
+            // 我的拼团
+            this.$root.$navigate(`/pages/group/list`);
+            break;
+          case 'FOOD_LIST':
+            // 在线点餐
+            this.$root.$preload('mode', targetId);
+            this.$root.$switch(`/pages/shop/index`);
+            // 发射事件
+            if (targetId) {
+              Event.emit(Event.FOOD_TYPE_UPDATE, targetId);
+            }
+            break;
           case 'BARGAIN_LIST':
-            // 邀请页面
+            // 砍价列表
             this.$root.$navigate(`/pages/bargain/bargain_more`);
             break;
           default:

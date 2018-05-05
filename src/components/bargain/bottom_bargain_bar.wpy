@@ -18,7 +18,10 @@
       <text class="xxl money-box">￥{{rule.goods.minPrice ? rule.goods.maxPrice : rule.goods.sellPrice}}</text>
       <text>单独购买</text>
     </view>
-    <view wx:if="{{rule.isTimeOut}}" class="column-center btn-disabled">
+    <view wx:if="{{rule.isBegin}}" class="column-center btn-disabled">
+      <text>活动未开启</text>
+    </view>
+    <view wx:elif="{{rule.isTimeOut}}" class="column-center btn-disabled">
       <text>活动已过期</text>
     </view>
     <view wx:elif="{{rule.limitTimes <= rule.joinTimes}}" class="column-center btn-disabled">

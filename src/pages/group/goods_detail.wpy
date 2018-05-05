@@ -1,4 +1,4 @@
-<template>
+g<template>
   <Loading :init.sync="init"/>
 
   <!--轮播展示图-->
@@ -12,7 +12,7 @@
     </swiper>
 
     <!--拼团倒计时栏-->
-    <TimeOutBar :endTime.sync="endTime" :callback="callback" />
+    <TimeOutBar :rule.sync="rules" :callback="callback" />
 
     <!--商品基本信息展示及服务信息-->
     <GoodsMsgBar :rule.sync="rules"/>
@@ -60,7 +60,7 @@
     data = {
       init: false,
       buyPanelType: 'POPUP',
-      endTime: '',
+      time: null,
       goodsId: '',
       groupTime: '',
       ruleId: '',
@@ -84,7 +84,10 @@
       this.rules = await group.rules(ruleId);
       this.subShop = this.rules.goods.subShop != null ? this.rules.goods.subShop : this.shop;
       this.processing = await group.processing(ruleId);
-      this.endTime = this.rules.endTime;
+      this.time = {
+        endTime: this.rules.endTime,
+        beginTime: this.rules.beginTime
+      };
       this.goodsId = this.rules.goodsId;
       this.groupTime = this.processing.map(item => {
         return item.groupTime

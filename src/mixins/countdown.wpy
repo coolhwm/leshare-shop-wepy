@@ -8,14 +8,24 @@
     onLoad() {
       this.clear();
     }
+    onUnload() {
+      this.clearTime();
+    }
     clear() {
-      this.clearTime()
+      this.clearTime();
+    }
+    start({timestamp, status}) {
+      if (this.timer == null) {
+        console.info('[interval] restart ', timestamp, status);
+        this.countdowm(timestamp, status);
+      }
     }
     /***
      * 拼团倒计时计算
      */
     countdowm (timestamp, status) {
       this.clear();
+      console.info(`[interval] start timer, id =${this.timer}`);
       this.timer = setInterval(() => {
         const time = status === 'groupTime' ? new Date(timestamp) - new Date() + 1000 * 60 * 60 * 24 : new Date(timestamp) - new Date();
         if (time > 0) {
@@ -34,6 +44,7 @@
             sec: sec
           };
         } else {
+          console.info(`[interval] timer end id=${this.timer}`);
           this.clear();
         }
         this.$apply();

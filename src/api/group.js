@@ -102,8 +102,8 @@ export default class group extends base {
     // 处理价格标签
     this._processGoodsPriceLabel(detail);
 
-    // 处理活动到期
-    this._processTimeOut(detail);
+    // 处理活动时间状态
+    this._processTimeStatus(detail);
 
     return detail;
   }
@@ -429,14 +429,15 @@ export default class group extends base {
   static _processGroupListLength (data, rule) {
     rule.spareCustomer = rule.limitCustomer - data.list.length;
     if (rule.limitCustomer > data.list.length) {
-      for (let i = 1; i < rule.limitCustomer; i++) data.list.push({})
+      for (let i = 1; i <= rule.spareCustomer; i++) data.list.push({})
     }
   }
 
   /***
-   * 处理活动到期
+   * 处理活动时间状态
    */
-  static _processTimeOut(detail) {
+  static _processTimeStatus(detail) {
     detail.isTimeOut = new Date(detail.endTime).getTime() < new Date().getTime();
+    detail.isBegin = new Date(detail.beginTime).getTime() > new Date().getTime();
   }
 }

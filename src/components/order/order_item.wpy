@@ -7,7 +7,7 @@
           <icon class="shop" color="gray" />
           <text class="sm ml10">{{shopName}}</text>
         </view>
-        <text class="sm primary" wx:if="{{order.statusText}}">{{order.statusText}}{{order.paymentType == 0 ? '(线下支付)' : ''}}</text>
+        <text class="sm primary" wx:if="{{order.statusText}}">{{order.statusText}}{{order.paymentType == 0 ? '(线下支付)' : ''}}{{order.tableNum ? '(' + order.tableNum + '桌)': ''}}</text>
       </view>
       <view class="order-info-container row-between">
         <text>{{order.orderTime}}</text>
@@ -41,7 +41,7 @@
     <!--操作栏-->
     <view class="order-action-bar row-between" wx:if="{{order.actions.length > 0}}">
       <view>
-        <view class="small label primary ml20" wx:if="{{order.orderType == 30}}">堂食 {{order.tableNum ? order.tableNum : ''}}</view>
+        <view class="small label primary ml20" wx:if="{{order.orderType == 30}}">堂食</view>
         <view class="small label primary ml20" wx:if="{{order.orderType == 33}}">打包</view>
         <view class="small label primary ml20" wx:if="{{order.orderType == 50}}">拼团</view>
         <view class="small label primary ml20" wx:if="{{order.orderType == 60}}">预约</view>
@@ -58,6 +58,7 @@
 </template>
 <script>
   import wepy from 'wepy';
+  import store from '../../store/utils';
   import order from '../../api/order';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
@@ -98,13 +99,16 @@
     /**
      * 订单支付
      */
-    async pay({orderId}) {
+    async pay(trade) {
       try {
         Tips.loading();
-        const payment = await order.prepayOrder(orderId);
+        const payment = await order.prepayOrder(trade.orderId);
         Tips.loaded();
         await order.wxpayOrder(payment);
         await Tips.success('支付成功');
+        if (trade.couponUsedId || trade.orderGoodsInfos[0].goodsType === 'digit') {
+          store.delayReflesh('coupon');
+        }
       } catch (e) {
         console.warn(e);
         await Tips.success('支付取消');

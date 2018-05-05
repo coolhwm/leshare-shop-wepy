@@ -1,16 +1,17 @@
 <template>
+  <Loading :init.sync="init"/>
   <view class="sgin_in" wx:if="{{init}}">
     <image src="http://img.leshare.shop/shop/other/bc_qdyl.jpg" class="head_bc"></image>
     <view class="qd_content">
       <view class="jf">积分 : {{member.bonus}}</view>
       <view class="out_crl">
         <view class="second_crl" @tap="sign">
-          <view class="in_crl">
+          <form class="in_crl" report-submit="true" @submit="reportFormId" >
             <text class="sign_state" wx:if="{{signed}}">已签到</text>
-            <text class="sign_state" wx:if="{{!signed}}">签到</text>
+            <button plain class="sign_state" form-type="submit" wx:if="{{!signed}}"><text>签到</text></button>
             <view class="line"/>
             <text class="sign_times">连续{{signIn.continuationTimes}}天</text>
-          </view>
+          </form>
         </view>
       </view>
       <view class="sign_doc" wx:if="{{signed}}">今日已签到，获得{{signIn.sevenHistory[0].bonusResult}}积分</view>
@@ -36,8 +37,10 @@
 
 <script>
   import wepy from 'wepy';
+  import auth from '../../api/auth';
   import base from '../../mixins/base';
   import shop from '../../api/shop';
+  import router from '../../mixins/router';
   import Tab from '../../components/zanui/tab';
   import Tips from '../../utils/Tips';
   import BonusItem from '../../components/customer/bonus_item';
@@ -49,6 +52,7 @@
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import Lang from '../../utils/Lang'
+  import Loading from '../../components/common/loading';
 
   @connect({
     member: store.get('member')
@@ -86,13 +90,23 @@
     }
     // 点击签到
     async doSign () {
+      Tips.loading();
       await shop.sign(this.member.memberId);
+      Tips.loaded();
       Tips.success('签到成功');
       await this.getUserSign();
     }
 
     async onLoad () {
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
       await store.init();
+      if (this.member == null) {
+        console.info('[invite]member info is empty');
+        await Tips.modal('请先注册会员');
+        this.$switch('/pages/customer/index_template');
+        return;
+      }
       await this.getUserSign();
       this.loaded();
     }
@@ -103,6 +117,8 @@
           Tips.alert('你今天已签过了!');
         } else {
           await this.doSign();
+          await store.refresh('member');
+          this.$apply();
         }
         if (this.type == 'home') {
           setTimeout(() => {
@@ -146,9 +162,10 @@
       wepySignTime: WepySignTime,
       Placeholder: Placeholder,
       Loadmore: Loadmore,
-      BonusItem: BonusItem
+      BonusItem: BonusItem,
+      Loading: Loading
     };
-    mixins = [base, pagination];
+    mixins = [base, pagination, router];
   }
 </script>
 
@@ -205,12 +222,19 @@
     background-color: rgba(255, 255, 255, 0.2);
   }
   .sign_state {
-    font-size: 40rpx;
-    font-weight: 600;
-    color: $color-primary-blue;
+    line-height: normal;
+    padding: 0;
     margin-bottom: 15rpx;
     margin-top: 25rpx;
     display: block;
+    font-size: 40rpx;
+    font-weight: 600;
+    color: $color-primary-blue;
+    text{
+      font-size: 40rpx;
+      font-weight: 600;
+      color: $color-primary-blue;
+    }
   }
   .line {
     border: 1rpx solid #dcdcdc;
