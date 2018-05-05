@@ -196,7 +196,7 @@ export default class group extends base {
     };
     const action = {};
     action.name = data.status === 'ORDERED' ? BARGAIN_ORDER_ACTION_NAME[data.order.status] : BARGAIN_ACTION_NAME[data.status];
-    action.funcName = data.status === 'ORDERED' ? BARGAIN_ORDER_ACTION_FUNCNAME[data.order.status] : BARGAIN_ACTION_FUNCNAME[data.status]
+    action.funcName = data.status === 'ORDERED' ? BARGAIN_ORDER_ACTION_FUNCNAME[data.order.status] : BARGAIN_ACTION_FUNCNAME[data.status];
     data.action = action
   }
   // 处理帮砍价格提示

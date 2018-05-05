@@ -71,6 +71,8 @@ export default class goods extends base {
       this._processStatus(data);
       // 处理时间
       this._processCreateTime(data);
+      // 处理上级代理人
+      this._processParentAgent(data);
     }
     return data;
   }
@@ -114,5 +116,16 @@ export default class goods extends base {
   static _processPrice(data) {
     data.costFee = data.costFee.toFixed(2);
     data.leftFee = data.leftFee.toFixed(2);
+  }
+
+  /***
+   * 处理上级代理人
+   */
+  static _processParentAgent(data) {
+    if (data.parentAgent != null) {
+      data.parentAgentName = data.parentAgent.name
+    } else {
+      data.parentAgentName = '总店'
+    }
   }
 }

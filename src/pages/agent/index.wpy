@@ -3,7 +3,10 @@
     <view class="column information-box" >
       <view class="row top-box">
         <image class="mr20" src="{{detail.customer.avatarUrl}}" style="width: 60px;height:60px;"/>
-        <text class="lg">推荐人：{{reference}}</text>
+        <view class="column">
+          <text>{{detail.name}}</text>
+          <text class="xs">上级代理：{{detail.parentAgentName}}</text>
+        </view>
       </view>
       <view class="column money-box">
         <view class="row-between">
