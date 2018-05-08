@@ -55,7 +55,6 @@
         goods.originalPrice = goods.sellPrice;
         // 拼团的销售价等于规则内的拼团价
         goods.sellPrice = goods.rulePrice;
-
       }
       const source = this.$root.$wxpage.route;
       const action = state;
@@ -391,6 +390,10 @@
           case 'BARGAIN_LIST':
             // 砍价列表
             this.$root.$navigate(`/pages/bargain/bargain_more`);
+            break;
+          case 'GROUP_LIST':
+            // 拼团列表
+            this.$root.$navigate(`/pages/group/group_more`);
             break;
           default:
             console.info(`[router] unsupport action=${action}, targetId=${targetId}`)
