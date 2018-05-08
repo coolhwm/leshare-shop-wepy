@@ -3,6 +3,8 @@
 
   <Tips/>
   <view wx:if="{{init}}">
+    <image src="https://img.leshare.shop/shop/other/agent.jpg" mode="aspectFill" style="width: 750rpx; height:380rpx;"/>
+
     <form @submit="submit" wx:if="{{info == null}}">
       <view class="weui-cells weui-cells-form form-box">
         <view class="weui-cell weui-cell_input">
@@ -78,6 +80,9 @@
         <text>分销商的商品销售由店家直接收款、发货并提供售后服务，分销佣金由厂家统一按约定好的比例返回</text>
       </view>
     </view>
+
+    <view class="bottom-box"></view>
+
     <Copyright buttom="true" />
   </view>
 </template>
@@ -104,7 +109,8 @@
         this.input = this.infoData
       }
       if (this.input != null && this.input.status == 'ENABLE') {
-        this.$redirect(`/pages/agent/index`);
+        // this.$redirect(`/pages/agent/index`);
+        this.loaded();
       } else {
         this.loaded();
       }
@@ -199,5 +205,8 @@
     flex: 1;
     padding: 20rpx 0;
     margin: 20rpx 20rpx 0;
+  }
+  .bottom-box{
+    height: 200rpx;
   }
 </style>

@@ -350,9 +350,7 @@ export default class group extends base {
     order.postFee = this._fixedPrice(order.postFee);
     order.dealPrice = this._fixedPrice(order.dealPrice);
     order.finalPrice = this._fixedPrice(order.finalPrice);
-    order.couponPrice = this._fixedPrice(order.couponPrice);
     order.reduceFee = this._fixedPrice(order.reduceFee);
-    order.bonusPrice = this._fixedPrice(order.bonusPrice);
   }
 
   static _fixedPrice (price) {
