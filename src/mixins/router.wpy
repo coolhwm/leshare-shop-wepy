@@ -51,7 +51,11 @@
         })
       } else {
         goods.priceLable = goods.rulePrice;
+        // 拼团原价为商品的销售价（要改成统一的拼团原价）
+        goods.originalPrice = goods.sellPrice;
+        // 拼团的销售价等于规则内的拼团价
         goods.sellPrice = goods.rulePrice;
+
       }
       const source = this.$root.$wxpage.route;
       const action = state;

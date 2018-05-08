@@ -14,7 +14,7 @@
           <button @tap="open({{detail.id}})">提现</button>
         </view>
         <view class="column">
-          <text class="mt20 lg">成功提现佣金</text>
+          <text class="mt20 lg">已提现佣金</text>
           <text class="mt20 lg">{{detail.cash}}元</text>
         </view>
       </view>

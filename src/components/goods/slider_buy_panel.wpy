@@ -14,7 +14,7 @@
         <view class="panel-price-box row">
           <text class="buy-panel-price" wx:if="{{goods.ruleGoodsPrice}}">￥{{goods.ruleGoodsPrice}}</text>
           <text class="buy-panel-price" wx:else>￥{{sku.isReady ? sku.detail.price : goods.priceLable}}</text>
-          <text class="cancel ml10" wx:if="{{goods.discount}}">￥{{goods.originalPrice}}</text>
+          <text class="cancel ml10" wx:if="{{goods.originalPrice && goods.originalPrice > 0}}">￥{{goods.originalPrice}}</text>
           <DiscountBadge :goods.sync="goods" />
         </view>
       </view>

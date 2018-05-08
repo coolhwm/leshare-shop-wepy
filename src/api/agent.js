@@ -2,6 +2,17 @@ import base from './base';
 import Page from '../utils/Page';
 
 export default class goods extends base {
+
+  /**
+   * 申请
+   */
+  static invite (parentId) {
+    const url = `${this.baseUrl}/agent/invite`;
+    return this.post(url, {
+      inviteCustomerId: parentId
+    });
+  }
+
   /**
    * 申请
    */
@@ -87,9 +98,9 @@ export default class goods extends base {
    */
   static _processStatus(data) {
     const AGENT_STATUS = {
-      AUDITTING: '待审核',
+      AUDITTING: '审核中，请耐心等待',
       ENABLE: '生效中',
-      DISABLE: '已失效'
+      DISABLE: '申请被拒绝，请联系总店'
     };
     data.statusText = AGENT_STATUS[data.status];
   }
