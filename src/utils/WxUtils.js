@@ -12,11 +12,11 @@ export default class WxUtils {
     const paramStr = decodeURIComponent(scene);
     const paramMap = paramStr.split('=');
     if (paramMap == null || paramMap.length != 2) {
-      console.error('[scene]parse scene error', scene);
+      console.warn('[scene]parse scene error', scene);
       return null;
     }
     if (paramMap[0] != key) {
-      console.error('[scene]can not find scene key', scene);
+      console.warn('[scene]can not find scene key', scene);
       return null;
     }
     return paramMap[1];

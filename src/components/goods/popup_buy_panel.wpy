@@ -14,7 +14,7 @@
           <!--规格区域-->
           <view class="sku-list-box column"  wx:if="{{goods.goodsSkuInfo != null}}">
             <view class="row">
-              <text class="weak sm mr10">规格:</text>
+              <text class="weak sm mr10">{{skuKey}}:</text>
               <DisplayBadge :goods.sync="goods" />
             </view>
             <view class="sku-item-box row">
@@ -160,7 +160,7 @@
         if (sku.max) {
           return;
         }
-        skuData.select('规格', skuValue);
+        skuData.select(this.skuKey, skuValue);
         this.skuSelected = skuValue;
         this.price = skuData.detail.price;
         this.originalPrice = skuData.detail.originalPrice;
@@ -221,6 +221,11 @@
           }
         });
         return stocks;
+      },
+      skuKey() {
+        if (skuData != null && skuData.labels != null && skuData.labels.length > 0) {
+          return skuData.labels[0].key;
+        }
       },
       properties () {
         if (this.goods == null || this.carts == null) {
