@@ -7,7 +7,11 @@
     <repeat for="{{page.list}}" key="index" index="index" item="item">
       <BargainItem :detail.sync="item"/>
     </repeat>
+
+    <!--占位符-->
+    <Placeholder :show.sync="isPageEmpty" message="您还没有相关砍价商品" />
   </view>
+
 </template>
 
 <script>
@@ -16,7 +20,8 @@
   import pagination from '../../mixins/pagination';
   import Loading from '../../components/common/loading';
   import BargainItem from '../../components/bargain/bargain_more_item'
-  import bargain from '../../api/bargain'
+  import bargain from '../../api/bargain';
+  import Placeholder from '../../components/common/placeholder';
 
   export default class ShopIndex extends wepy.page {
     data = {
@@ -38,7 +43,8 @@
     };
     components = {
       Loading: Loading,
-      BargainItem: BargainItem
+      BargainItem: BargainItem,
+      Placeholder: Placeholder
     };
     mixins = [base, pagination];
     config = {

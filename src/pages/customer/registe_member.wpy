@@ -17,8 +17,41 @@
               </view>
             </view>
           </block>
+          <block wx:if="{{item.type == 'number'}}">
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">{{item.label}}</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" type="number" maxlength="11" name="{{item.name}}" placeholder="请输入您的{{item.label}}"/>
+              </view>
+            </view>
+          </block>
+          <block wx:if="{{item.type == 'picker'}}">
+            <view class="weui-cell weui-cell_input"
+                  wx:if="{{item.pickerType == 'date' ||item.pickerType == 'time'}}">
+              <view class="weui-cell__hd">
+                <view class="weui-label">{{item.label}}</view>
+              </view>
+              <view class="weui-cell__bd">
+                <picker mode="{{item.pickerType == 'date' ? 'date' : 'time'}}" value="{{item.default}}"
+                        bindchange="{{item.pickerType == 'date' ? 'change' : 'change'}}" id="{{item.name}}">
+                  <view class="weui-input">{{item.default}}</view>
+                </picker>
+              </view>
+            </view>
+            <view class="weui-cell weui-cell_input" wx:else>
+              <view class="weui-cell__hd">
+                <view class="weui-label">{{item.label}}</view>
+              </view>
+              <view class="weui-cell__bd">
+                <picker bindchange="change" value="{{item.index}}" range="{{item.data}}" id="{{item.name}}">
+                  <view class="weui-input">{{item.data[item.index]}}</view>
+                </picker>
+              </view>
+            </view>
+          </block>
         </block>
-
         <view class="weui-cell weui-cell_input weui-cell_vcode">
           <view class="weui-cell__hd">
             <view class="weui-label">手机号码</view>
@@ -91,6 +124,21 @@
     };
 
     methods = {
+      change (e) {
+        if (this.extraParam != null) {
+          this.extraParam.forEach(item => {
+            if (e.currentTarget.id == item.name) {
+              if (item.pickerType === 'time' || item.pickerType == 'date') {
+                item.default = e.detail.value;
+                this.input[item.name] = item.default
+              } else {
+                item.index = e.detail.value;
+                this.input[item.name] = item.data[item.index]
+              }
+            }
+          });
+        }
+      },
       async code() {
         let rules = [];
         if (this.extraParam != null) {

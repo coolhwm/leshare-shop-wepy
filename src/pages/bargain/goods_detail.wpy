@@ -87,6 +87,7 @@
     }
     async update (ruleId) {
       this.rule = await bargain.rule(ruleId);
+      this.ruleId = ruleId;
       this.goodsDetail = this.rule.goods;
       this.subShop = this.goodsDetail.subShop != null ? this.goodsDetail.subShop : this.shop;
       this.goodsId = this.rule.goods.id;

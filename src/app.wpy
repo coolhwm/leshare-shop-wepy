@@ -149,7 +149,8 @@
         'pages/agent/recharge',
         'pages/agent/cash',
         'pages/agent/clientele',
-        'pages/agent/singular'
+        'pages/agent/singular',
+        'pages/coupon/pick_detail'
       ],
       window: {
         backgroundTextStyle: 'dark',

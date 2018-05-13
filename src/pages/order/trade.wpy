@@ -376,6 +376,10 @@
         if (trade == null && (this.type !== 'join' && this.type !== 'group')) {
           await Tips.alert('下单失败');
           return;
+        } else if (trade === 'offShelves') {
+          await Tips.alert('商品已下架');
+          wepy.navigateBack();
+          return;
         }
         let isPay = false;
         if (trade.onlinePayType === 'balance') {
@@ -454,6 +458,26 @@
           return await order.createOrder(trade, address);
         }
       } catch (e) {
+        if (e.serverCode == 20005) {
+          let msg = JSON.parse(e.message);
+          let nodeList = msg.map(value => {
+            return {
+              value: value,
+              num: value.indexOf(',')
+            }
+          });
+          const data = nodeList.map(item => {
+            return {
+              id: item.value.substring(0, item.num),
+              sku: item.value.substring(item.num + 1)
+            }
+          });
+          console.info(data);
+          data.forEach(item => {
+            this.cartManager.removeGoods(item.id, item.sku)
+          });
+          return 'offShelves';
+        }
         console.error(e);
         return null;
       }
@@ -566,7 +590,6 @@
       trade.finalPrice += trade.postFee ? parseFloat(trade.postFee) : 0;
       // 餐盒费
       if (trade.orderType != 30) {
-        console.info(trade.orderType)
         trade.finalPrice += trade.foodBoxFee ? parseFloat(trade.foodBoxFee) : 0;
       }
       // 优惠券

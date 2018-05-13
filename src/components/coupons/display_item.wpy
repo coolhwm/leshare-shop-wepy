@@ -99,6 +99,9 @@
         margin-top: 5rpx;
         border-top: 1px dotted #EFF0F2;
       }
+      .coupon-title-box{
+        margin-right: 50rpx;
+      }
     }
     .coupon-new-icon{
       position: absolute;
@@ -114,6 +117,9 @@
       text{
         color: #FFF;
       }
+    }
+    .coupon-title-box {
+      margin-right: 50 rpx;
     }
     .coupon-title-text{
       color: #A7A7A7;

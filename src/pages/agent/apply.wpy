@@ -48,6 +48,14 @@
             <input class="weui-input" value="{{info.phone}}" disabled/>
           </view>
         </view>
+        <view class="weui-cell weui-cell_input" wx:if="{{info.status === 'DISABLE'}}">
+          <view class="weui-cell__hd">
+            <view class="weui-label">失效理由</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input class="weui-input" value="{{info.remark}}" disabled/>
+          </view>
+        </view>
       </view>
       <view class="row-center agent-status-box">
         <text class="white xl">{{info.statusText}}</text>
@@ -84,11 +92,16 @@
     <view class="bottom-box"></view>
 
     <Copyright buttom="true" />
+
+    <!--提示框-->
+    <Notice @close.user="close"/>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
   import base from '../../mixins/base';
   import input from '../../mixins/input';
   import Copyright from '../../components/common/copyright';
@@ -96,21 +109,41 @@
   import FormTips from '../../components/weui/tips';
   import agent from '../../api/agent';
   import Tips from '../../utils/Tips';
+  import Notice from '../../components/shop/notice';
 
+  @connect({
+    shop: store.get('shop')
+  })
   export default class Apply extends wepy.page {
     data = {
       init: false,
       isEmpty: false,
-      infoData: null
+      infoData: null,
+      rule: null
     };
     async onLoad () {
+      this.rule = await agent.rule();
+      if (this.rule == null && this.rule.isUse == 0) {
+        const notice = {
+          title: '提示',
+          btnText: '确定',
+          content: `目前商家还未开放成为分销商服务，详情请拨打电话:${this.shop.phone}`
+        };
+        this.$invoke('Notice', 'open', notice);
+      } else if (this.rule.autoJoin == 0) {
+        const notice = {
+          title: '提示',
+          btnText: '确定',
+          content: `目前商家还未开放自助申请成为分销商服务，如要申请成为分销商请拨打电话:${this.shop.phone},进行咨询`
+        };
+        this.$invoke('Notice', 'open', notice);
+      }
       this.infoData = await agent.agentInfo();
       if (this.infoData != null) {
         this.input = this.infoData
       }
       if (this.input != null && this.input.status == 'ENABLE') {
-        // this.$redirect(`/pages/agent/index`);
-        this.loaded();
+        this.$redirect(`/pages/agent/index`);
       } else {
         this.loaded();
       }
@@ -125,11 +158,17 @@
           await agent.apply(this.input);
           this.infoData = await agent.agentInfo();
           await Tips.success('申请提交');
+          if (this.infoData.status == 'ENABLE') {
+            this.$redirect(`/pages/agent/index`);
+          }
           this.$apply();
         } catch (err) {
           Tips.loaded();
           await Tips.confirm(err.message);
         }
+      },
+      close() {
+        wepy.navigateBack();
       }
     };
     computed = {
@@ -166,7 +205,8 @@
     components = {
       Loading: Loading,
       Tips: FormTips,
-      Copyright: Copyright
+      Copyright: Copyright,
+      Notice: Notice
     };
     mixins = [base, input];
     config = {

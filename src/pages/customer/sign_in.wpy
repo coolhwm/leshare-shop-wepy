@@ -14,7 +14,8 @@
           </form>
         </view>
       </view>
-      <view class="sign_doc" wx:if="{{signed}}">今日已签到，获得{{signIn.sevenHistory[0].bonusResult}}积分</view>
+      <view class="sign_doc" wx:if="{{signed && signIn.sevenHistory[0].bonusType == 0}}">今日已签到，获得{{signIn.sevenHistory[0].bonusResult}}积分</view>
+      <view class="sign_doc" wx:elif="{{signed && signIn.sevenHistory[0].bonusType == 1}}">今日已签到，获得一张优惠券，快去查看吧</view>
       <view class="sign_doc" wx:if="{{!signed}}">今日还未签到</view>
     </view>
     <view class="line-box">
@@ -32,6 +33,9 @@
       <!-- 加载提示 -->
       <Loadmore :page.sync="page"/>
     </scroll-view>
+
+    <!--提示框-->
+    <Notice/>
   </view>
 </template>
 
@@ -53,6 +57,7 @@
   import store from '../../store/utils';
   import Lang from '../../utils/Lang'
   import Loading from '../../components/common/loading';
+  import Notice from '../../components/shop/notice';
 
   @connect({
     member: store.get('member')
@@ -95,6 +100,12 @@
       Tips.loaded();
       Tips.success('签到成功');
       await this.getUserSign();
+      const notice = {
+        title: '签到奖励',
+        btnText: '确定',
+        content: this.signIn.sevenHistory[0].bonusType == 0 ? `今日已签到，获得${this.signIn.sevenHistory[0].bonusResult}积分` : `今日已签到，获得一张优惠券，快去查看吧`
+      };
+      this.$invoke('Notice', 'open', notice);
     }
 
     async onLoad () {
@@ -163,6 +174,7 @@
       Placeholder: Placeholder,
       Loadmore: Loadmore,
       BonusItem: BonusItem,
+      Notice: Notice,
       Loading: Loading
     };
     mixins = [base, pagination, router];

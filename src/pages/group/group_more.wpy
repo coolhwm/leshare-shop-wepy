@@ -9,6 +9,9 @@
         <GroupItem :item.sync="item"/>
       </block>
     </repeat>
+
+    <!--占位符-->
+    <Placeholder :show.sync="isPageEmpty" message="您还没有相关拼团商品" />
   </view>
 </template>
 
@@ -18,7 +21,8 @@
   import pagination from '../../mixins/pagination';
   import Loading from '../../components/common/loading';
   import GroupItem from '../../components/group/group_more_item';
-  import group from '../../api/group'
+  import group from '../../api/group';
+  import Placeholder from '../../components/common/placeholder';
 
   export default class ShopIndex extends wepy.page {
     data = {
@@ -35,7 +39,8 @@
     };
     components = {
       Loading: Loading,
-      GroupItem: GroupItem
+      GroupItem: GroupItem,
+      Placeholder: Placeholder
     };
     mixins = [base, pagination];
     config = {

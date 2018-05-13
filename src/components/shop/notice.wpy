@@ -36,6 +36,7 @@
       },
       close() {
         this.display = false;
+        this.$emit('close')
       }
     };
     components = {

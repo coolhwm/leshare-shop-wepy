@@ -51,7 +51,7 @@
       },
       async cash() {
         const param = {
-          costFee: this.costFee,
+          cashFee: this.costFee,
           agentId: this.agentId
         };
         await agent.agentCash(param);

@@ -3,6 +3,13 @@ import Page from '../utils/Page';
 
 export default class goods extends base {
   /**
+   * 规则
+   */
+  static rule () {
+    const url = `${this.baseUrl}/agent/rules`;
+    return this.get(url);
+  }
+  /**
    * 申请
    */
   static apply (param) {
@@ -29,7 +36,7 @@ export default class goods extends base {
   }
 
   /***
-   * 查看佣金/提现信息
+   * 查看佣金信息
    */
   static agentDetail (agentId) {
     const url = `${this.baseUrl}/agent/details/${agentId}`;
@@ -62,6 +69,15 @@ export default class goods extends base {
   static agentCash (param) {
     const url = `${this.baseUrl}/agent/cash`;
     return this.post(url, param);
+  }
+  /***
+   * 查询提现信息
+   */
+  static agentCashDetail (id) {
+    const url = `${this.baseUrl}/agent/cash?agent_id=${id}`;
+    return new Page(url, item => {
+      this._processCashDetail(item)
+    });
   }
 
   /** ********************* 数据处理方法 ***********************/
@@ -127,5 +143,21 @@ export default class goods extends base {
     } else {
       data.parentAgentName = '总店'
     }
+  }
+
+  /***
+   * 处理提现列表
+   */
+  static _processCashDetail(item) {
+    const data = { ...item };
+    item.costFee = data.cashFee.toFixed(2);
+    item.leftFee = data.leftCash.toFixed(2);
+    const CASH_STATUS = {
+      AUDITTING: '待审核',
+      SUCCESS: '已提现',
+      FAIL: '已驳回'
+    };
+    item.typeDesc = CASH_STATUS[data.status];
+    item.type = 'cash'
   }
 }
