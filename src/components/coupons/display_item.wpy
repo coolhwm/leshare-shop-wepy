@@ -31,7 +31,7 @@
       </view>
 
       <!--分隔符-->
-      <view>
+      <view wx:if="{{!isDetail}}">
         <view class="coupon-desc-gap"></view>
         <view class="row-between coupon-detail-box">
           <text class="xs" wx:if="{{coupon.usedTime}}">使用时间：{{coupon.usedTime}}</text>
@@ -53,7 +53,10 @@
 
   export default class CouponItem extends wepy.component {
     props = {
-      coupon: {}
+      coupon: {},
+      isDetail: {
+        default: false
+      }
     };
     data = {};
     methods = {

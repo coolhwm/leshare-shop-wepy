@@ -5,20 +5,28 @@
 
     <view class="column">
       <block wx:for="{{page.list}}" wx:key="index" wx:index="index" wx:for-item="item">
+
         <!--顶栏/基本信息-->
         <view class="order-item-container column">
           <view class="order-header-container colunm">
-            <view class="row">
-              <image src="{{item.agentInviteRel.inviteeCustomer.avatarUrl}}" class="avatar-box"/>
-              <text class="ml10 sm">{{item.agentInviteRel.inviteeCustomer.nickName}}</text>
+            <view class="row-between">
+              <view class="row">
+                <image src="{{item.customer.avatarUrl}}" class="avatar-box"/>
+                <text class="ml10 sm">{{item.customer.nickName}}</text>
+              </view>
+              <text class="sm primary" wx:if="{{item.statusText}}">{{item.statusText}}{{item.paymentType == 0 ? '(线下支付)' : ''}}{{item.tableNum ? '(' + item.tableNum + '桌)': ''}}</text>
+            </view>
+            <view class="order-info-container row-between">
+              <text>{{item.orderTime}}</text>
+              <text>{{item.uuid}}</text>
             </view>
           </view>
 
           <!--商品区域-->
           <view class="order-goods-list-container" @tap="detail({{item.orderId}})">
-            <repeat for="{{item.orderGoodsInfos}}" key="goodsId" index="index" item="item">
+            <repeat for="{{item.orderGoodsInfos}}" key="goodsId" index="index" item="infoItem">
               <view class="{{!item.orderId || index == 0 || expand[item.orderId] ? '' : 'order-goods-fold'}}">
-                <OrderGoods :goods="item"></OrderGoods>
+                <OrderGoods :goods="infoItem"></OrderGoods>
                 <view class="hr" />
               </view>
             </repeat>
@@ -36,6 +44,22 @@
             <text class="major xl mr20">￥{{item.finalPrice}}</text>
             <text>(含运费￥{{item.postFee}})</text>
           </view>
+
+          <!--佣金栏-->
+
+          <view class="row-between cash-box">
+            <view class="row">
+              <view class="row">
+                <image src="{{item.customer.avatarUrl}}" class="avatar-box"/>
+                <text class="ml10 sm">{{item.customer.nickName}}</text>
+              </view>
+            </view>
+            <view class="row">
+              <text>佣金:</text>
+              <text class="major xl mr20">￥{{item.finalPrice}}</text>
+              <button class="weui-btn btn-box" type="primary" @tap="orderDetail({{item}})">明细</button>
+            </view>
+          </view>
         </view>
       </block>
     </view>
@@ -46,7 +70,7 @@
   </view>
 
   <!--占位符-->
-  <Placeholder :show.sync="isPageEmpty" message="您还没有相关客户信息"/>
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关分销订单信息"/>
 </template>
 
 <script>
@@ -62,13 +86,37 @@
   export default class Singular extends wepy.page {
     data = {
       init: false,
-      page: {}
+      page: {},
+      expand: {},
+      id: null
     };
     async onLoad ({id}) {
       this.page = await agent.agentOrder(id);
+      this.id = id;
       await this.next();
     }
-    methods = {};
+    methods = {
+      /**
+       * 商品展开收缩
+       */
+      expand(orderId) {
+        orderId = orderId == null ? 0 : orderId;
+        this.expand[orderId] = !this.expand[orderId];
+      },
+      /**
+       * 订单详情
+       */
+      detail(orderId) {
+        if (this.action == 0) {
+          return;
+        }
+        this.$root.$navigate(`/pages/order/detail?orderId=${orderId}`);
+      },
+      orderDetail(order) {
+        this.$preload('detail', order.orderGoodsInfos);
+        this.$navigate(`/pages/agent/order_detail`)
+      }
+    };
     computed = {};
     components = {
       Placeholder: Placeholder,
@@ -78,7 +126,7 @@
     };
     mixins = [base, pagination];
     config = {
-      navigationBarTitleText: '我的订单',
+      navigationBarTitleText: '分销订单',
       enablePullDownRefresh: true
     };
   }
@@ -96,12 +144,12 @@
   /*顶栏*/
   .order-header-container {
     padding: 10rpx 25rpx 10rpx 20rpx;
-    .avatar-box{
-      width: 40rpx;
-      height: 40rpx;
-      border: $border;
-      border-radius: 20rpx;
-    }
+  }
+  .avatar-box{
+    width: 40rpx;
+    height: 40rpx;
+    border: $border;
+    border-radius: 20rpx;
   }
 
   /*底栏*/
@@ -134,5 +182,14 @@
     background-color: $color-bg-item;
     padding-top: 5rpx;
     padding-bottom: 5rpx;
+  }
+  .cash-box{
+    padding: 10rpx;
+    border-top: 1px dotted $color-border;
+    .btn-box{
+      font-size: 24rpx;
+      padding: 0rpx 20rpx;
+      margin: 10rpx 0;
+    }
   }
 </style>

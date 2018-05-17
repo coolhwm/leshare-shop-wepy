@@ -134,7 +134,9 @@ export default class goods extends base {
    * 处理创建时间
    */
   static _processInviteTime(data) {
-    data.time = data.inviteTime.slice(0, 10);
+    if (data.inviteTime) {
+      data.time = data.inviteTime.slice(0, 10);
+    }
   }
 
   /***

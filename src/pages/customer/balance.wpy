@@ -58,8 +58,8 @@
         Tips.success('敬请期待');
       },
       async addVip () {
-       await Tips.modal('请先注册会员');
-       wepy.navigateBack();
+        await Tips.modal('请先注册会员');
+        wepy.navigateBack();
       }
     };
     mixins = [base];

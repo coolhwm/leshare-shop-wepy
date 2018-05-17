@@ -1,0 +1,77 @@
+<template>
+  <view class="buy-bar-placeholder">
+  </view>
+  <view class="row bargain-bar-box">
+    <view class="column-center button-box" @tap="pick">
+      <text>立即领取</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import favorite from '../../api/favorite';
+  import router from '../../mixins/router';
+  import wepy from 'wepy';
+
+  export default class BargainBar extends wepy.component {
+    props = {
+      rule: {}
+    };
+    data = {
+      isFav: false,
+      state: 'begin',
+      id: ''
+    };
+    methods = {
+      pick () {
+        this.$emit('pick')
+      }
+    };
+    computed = {
+    };
+    watch = {
+      async rule(current, origin) {
+        if (origin != null && origin.id != null) return;
+        const result = await favorite.is(current.goods.id);
+        this.isFav = result.isFavorite === 1;
+        this.$apply();
+      }
+    };
+    mixins = [router];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .bargain-bar-box{
+    position: fixed;
+    bottom: 0;
+    height: 105rpx;
+    width: 100%;
+    border-top: $border;
+    background-color: $color-primary;
+    .button-box{
+      height: 100%;
+      width: 100%;
+      background-color: $color-primary;
+      border-left: $border;
+      text{
+        color: #fff;
+      }
+    }
+    .btn-disabled{
+      height: 100%;
+      width: 100%;
+      border-left: $border;
+      background-color:$color-weak;
+      text{
+        color: #fff;
+      }
+    }
+  }
+  .buy-bar-placeholder{
+    height: 105rpx;
+    width: 100%;
+  }
+</style>

@@ -33,11 +33,10 @@
         </view>
       </view>
     </view>
+    <Copyright buttom="true" />
   </view>
 
   <Cash @cash.user="cash"/>
-
-  <Copyright buttom="true" />
 </template>
 
 <script>
@@ -109,8 +108,7 @@
       agentId: 0
     };
     async onLoad () {
-      this.load();
-      this.loaded();
+      await this.load();
     };
     async load() {
       this.detail = await agent.agentInfo();
@@ -127,7 +125,10 @@
           }
         })
       });
-      this.$apply();
+      this.loaded();
+    }
+    async onPullDownRefresh () {
+      await this.load();
     }
     methods = {
       tips() {
@@ -154,7 +155,8 @@
     config = {
       navigationBarTitleText: '分销中心',
       navigationBarBackgroundColor: '#fff',
-      navigationBarTextStyle: 'black'
+      navigationBarTextStyle: 'black',
+      enablePullDownRefresh: true
     };
   }
 </script>

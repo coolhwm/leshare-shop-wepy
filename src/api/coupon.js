@@ -13,6 +13,14 @@ export default class coupon extends base {
     return new Page(url, this._processCouponItem.bind(this));
   }
 
+  /***
+   * 优惠券详情
+   */
+  static couponDetail(couponId) {
+    const url = `${this.baseUrl}/coupons/${couponId}`;
+    return this.get(url).then(data => this._processPickItem(data));
+  }
+
   /**
    * 获取可领取、已领取的优惠券
    */

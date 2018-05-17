@@ -1,0 +1,140 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view wx:if="{{init}}">
+
+    <view class="column">
+      <repeat for="{{orderDetail}}" key="index" index="index" item="item">
+
+        <!--顶栏/基本信息-->
+        <view class="order-item-container column">
+          <!--商品区域-->
+          <view class="order-goods-list-container">
+            <view>
+              <OrderGoods :goods.sync="item"></OrderGoods>
+              <view class="hr" />
+            </view>
+          </view>
+
+          <!--汇总信息-->
+          <view class="order-footer-container row-end">
+            <text>佣金:</text>
+            <text class="major xl mr20">￥{{item.goodsPrice}}</text>
+            <text>(0%)</text>
+          </view>
+
+        </view>
+      </repeat>
+    </view>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+
+  </view>
+
+  <!--占位符-->
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关明细信息"/>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from '../../mixins/base';
+  import Placeholder from '../../components/common/placeholder';
+  import Loadmore from '../../components/weui/loadmore';
+  import Loading from '../../components/common/loading';
+  import OrderGoods from '../../components/order/order_goods';
+
+  export default class Singular extends wepy.page {
+    data = {
+      init: false,
+      expand: {},
+      orderDetail: null
+    };
+    async onLoad (options, {preload}) {
+      this.orderDetail = preload.detail;
+      this.loaded();
+    }
+    methods = {
+      /**
+       * 商品展开收缩
+       */
+      expand(orderId) {
+        orderId = orderId == null ? 0 : orderId;
+        this.expand[orderId] = !this.expand[orderId];
+      }
+    };
+    computed = {};
+    components = {
+      Placeholder: Placeholder,
+      Loadmore: Loadmore,
+      Loading: Loading,
+      OrderGoods: OrderGoods
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '订单明细'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .order-item-container {
+    border-top: $border;
+    border-bottom: $border;
+    background-color: #FFF;
+    margin-bottom: 10rpx;
+  }
+
+  /*顶栏*/
+  .order-header-container {
+    padding: 10rpx 25rpx 10rpx 20rpx;
+  }
+  .avatar-box{
+    width: 40rpx;
+    height: 40rpx;
+    border: $border;
+    border-radius: 20rpx;
+  }
+
+  /*底栏*/
+  .order-footer-container {
+    padding-left: 25rpx;
+    padding-right: 20rpx;
+    height: 70rpx;
+  }
+
+  /*顶栏订单信息*/
+  .order-info-container{
+    text{
+      font-size: $text-xs;
+      color:$color-muted;
+    }
+  }
+
+  /* 操作栏 */
+  .order-action-bar {
+    border-top: $border;
+    height: 90rpx;
+    padding-right: 10rpx;
+  }
+
+  .order-goods-fold{
+    display: none;
+  }
+
+  .goods-fold-btn{
+    background-color: $color-bg-item;
+    padding-top: 5rpx;
+    padding-bottom: 5rpx;
+  }
+  .cash-box{
+    padding: 10rpx;
+    border-top: 1px dotted $color-border;
+    .btn-box{
+      font-size: 24rpx;
+      padding: 0rpx 20rpx;
+      margin: 10rpx 0;
+    }
+  }
+</style>

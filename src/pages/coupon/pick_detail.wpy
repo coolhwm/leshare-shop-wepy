@@ -1,7 +1,7 @@
 <template>
   <Tips />
   <view wx:if="{{init}}">
-    <CouponItem :coupon.sync="coupon" />
+    <CouponItem :coupon.sync="coupon" :isDetail.sync="isDetail"/>
 
     <!--子商户-->
     <view class="shop-box" wx:if="{{subShop != null}}">
@@ -29,9 +29,9 @@
       <text>{{coupon.desc}}</text>
     </view>
 
-    <!--<view class="btn-panel" wx:if="{{!success}}">-->
-      <!--<button class="weui-btn" type="primary"  @tap="check" wx:if="{{coupon.isSelfUse}}">自助核销</button>-->
-    <!--</view>-->
+    <block>
+      <bottomBox @pick.user="pick"/>
+    </block>
 
   </view>
 
@@ -45,9 +45,9 @@
   import input from '../../mixins/input';
   import coupon from '../../api/coupon';
   import CouponItem from '../../components/coupons/display_item';
-  // import Tips from '../../utils/Tips';
-  import FormTips from '../../components/weui/tips';
+  import Tips from '../../utils/Tips';
   import ShopInfoBar from '../../components/goods/shop_info_bar';
+  import bottomBox from '../../components/coupons/coupon_bottom_box'
 
   @connect({
     shop: store.get('shop')
@@ -59,21 +59,37 @@
       success: false,
       message: '',
       tips: '',
-      subShop: null
+      subShop: null,
+      isDetail: true
     };
     async onLoad ({couponId}) {
       // 初始化全局存储
       await store.init();
-      this.coupon = await coupon.detail(couponId);
+      this.coupon = await coupon.couponDetail(couponId);
+      this.coupon.status = 'NEVER_USED';
+      this.subShop = this.coupon.subShop;
       this.loaded();
     };
     methods = {
+      async pick() {
+        try {
+          Tips.loading();
+          await coupon.pick(this.coupon.id);
+          await Tips.success('领取成功');
+          await store.refresh('coupon');
+          this.$root.$apply();
+        } catch (err) {
+          Tips.loaded();
+          await Tips.confirm(err.message);
+          wepy.navigateBack();
+        }
+      }
     };
     events = {};
     components = {
       CouponItem: CouponItem,
       ShopInfoBar: ShopInfoBar,
-      Tips: FormTips
+      bottomBox: bottomBox
     };
     mixins = [base, input];
     config = {

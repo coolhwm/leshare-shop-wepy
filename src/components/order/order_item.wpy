@@ -162,7 +162,7 @@
      * 查看二维码
      */
     qrCode(order) {
-      const couponId = order.couponCustomerInfo.id
+      const couponId = order.couponCustomerInfo.id;
       this.$root.$preload('couponId', couponId);
       this.$root.$navigate(`/pages/coupon/detail`)
     }

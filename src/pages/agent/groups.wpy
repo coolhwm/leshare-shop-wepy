@@ -15,7 +15,7 @@
   </view>
 
   <!--占位符-->
-  <Placeholder :show.sync="isPageEmpty" message="您还没有相关团队信息"/>
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关下线信息"/>
 </template>
 
 <script>
@@ -47,7 +47,7 @@
     };
     mixins = [base, pagination];
     config = {
-      navigationBarTitleText: '我的团队',
+      navigationBarTitleText: '我的下线',
       enablePullDownRefresh: true
     };
   }

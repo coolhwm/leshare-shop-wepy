@@ -6,15 +6,20 @@
         <icon class="close icon-box" color="white" @tap="close"/>
       </view>
       <view class="column notice-content-box">
-        <view class="weui-cells weui-cells_after-title input-box">
-          <view class="weui-cell weui-cell_input">
-            <view class="weui-cell__hd">
-              <view class="weui-label">金额</view>
-            </view>
-            <view class="weui-cell__bd">
-              <input class="weui-input" placeholder="请输入您要体现的金额" @input="input" />
+        <view style="margin-bottom: 40rpx;">
+          <view class="weui-cells weui-cells_after-title input-box">
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">金额</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" type="number" placeholder="请输入您要提现的金额" @input="input" />
+              </view>
             </view>
           </view>
+          <block wx:if="{{validateText != null}}">
+            <text class="danger xs">{{validateText}}</text>
+          </block>
         </view>
         <button @tap="cash">提现</button>
       </view>
@@ -36,7 +41,8 @@
       content: '',
       display: false,
       agentId: 0,
-      costFee: 0
+      costFee: 0,
+      validateText: null
     };
     methods = {
       open({id}) {
@@ -48,15 +54,27 @@
       },
       input(e) {
         this.costFee = e.detail.value;
+        this.validateText = null
       },
       async cash() {
+        if (this.costFee <= 0) {
+          this.validateText = '请输入大于0元的金额';
+          return
+        }
         const param = {
           cashFee: this.costFee,
           agentId: this.agentId
         };
-        await agent.agentCash(param);
-        await Tips.success('提现成功');
-        this.display = false;
+        try {
+          Tips.loading();
+          await agent.agentCash(param);
+          await Tips.success('申请提现成功');
+        } catch (e) {
+          Tips.loaded();
+          await Tips.confirm(e.message);
+        } finally {
+          this.display = false;
+        }
         this.$emit('cash');
         this.$apply();
       }
@@ -102,7 +120,6 @@
     .notice-content-box{
       padding: 40rpx;
       .input-box{
-        margin-bottom: 40rpx;
         border-left: $border;
         border-right: $border;
         .weui-label{

@@ -150,7 +150,8 @@
         'pages/agent/cash',
         'pages/agent/clientele',
         'pages/agent/singular',
-        'pages/coupon/pick_detail'
+        'pages/coupon/pick_detail',
+        'pages/agent/order_detail'
       ],
       window: {
         backgroundTextStyle: 'dark',

@@ -48,14 +48,6 @@
             <input class="weui-input" value="{{info.phone}}" disabled/>
           </view>
         </view>
-        <view class="weui-cell weui-cell_input" wx:if="{{info.status === 'DISABLE'}}">
-          <view class="weui-cell__hd">
-            <view class="weui-label">失效理由</view>
-          </view>
-          <view class="weui-cell__bd">
-            <input class="weui-input" value="{{info.remark}}" disabled/>
-          </view>
-        </view>
       </view>
       <view class="row-center agent-status-box">
         <text class="white xl">{{info.statusText}}</text>
@@ -123,7 +115,7 @@
     };
     async onLoad () {
       this.rule = await agent.rule();
-      if (this.rule == null && this.rule.isUse == 0) {
+      if (this.rule == null || this.rule.isUse == 0) {
         const notice = {
           title: '提示',
           btnText: '确定',

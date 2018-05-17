@@ -411,7 +411,7 @@
         }
         // 刷新会员信息
         if (trade.bonusPrice > 0) {
-          await store.refresh('member')
+          store.delayReflesh('member')
         }
         // 刷新列表
         Event.emit(Event.ORDER_LIST_UPDATE);
