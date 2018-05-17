@@ -2,8 +2,8 @@
   <view class="buy-bar-placeholder">
   </view>
   <view class="row bargain-bar-box">
-    <view class="column-center button-box" @tap="pick">
-      <text>立即领取</text>
+    <view class="column-center button-box">
+      <button  open-type="getPhoneNumber" bindgetphonenumber="pick" plain>立即领取</button>
     </view>
   </view>
 </template>
@@ -12,7 +12,16 @@
   import favorite from '../../api/favorite';
   import router from '../../mixins/router';
   import wepy from 'wepy';
-
+  import Tips from '../../utils/Tips';
+  import auth from '../../api/auth'
+  import coupon from '../../api/coupon';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  @connect({
+    shop: store.get('shop'),
+    member: store.get('member'),
+    user: store.get('user')
+  })
   export default class BargainBar extends wepy.component {
     props = {
       rule: {}
@@ -22,9 +31,52 @@
       state: 'begin',
       id: ''
     };
+    async onLoad() {
+      await store.init();
+    }
+
     methods = {
-      pick () {
-        this.$emit('pick')
+      async pick({detail}) {
+        if (this.member == null) {
+          if (detail.errMsg == 'getPhoneNumber:fail user deny') {
+            await Tips.alert('请允许授权');
+            return;
+          }
+          try {
+            Tips.loading();
+            const result = await auth.decodePhone(detail);
+            if (result.memberId) {
+              await Tips.success('注册成功');
+              Event.emit(Event.MEMBER_CARD_UPDATE);
+            }
+            Tips.loaded();
+          } catch (e) {
+            console.info('注册失败', e);
+            Tips.loaded();
+          } finally {
+            try {
+              Tips.loading();
+              await coupon.pick(this.coupon.id);
+              await Tips.success('领取成功');
+              await store.refresh('coupon');
+              this.$root.$apply();
+            } catch (err) {
+              Tips.loaded();
+              await Tips.confirm(err.message);
+            }
+          }
+        } else {
+          try {
+            Tips.loading();
+            await coupon.pick(this.coupon.id);
+            await Tips.success('领取成功');
+            await store.refresh('coupon');
+            this.$root.$apply();
+          } catch (err) {
+            Tips.loaded();
+            await Tips.confirm(err.message);
+          }
+        }
       }
     };
     computed = {
@@ -56,7 +108,7 @@
       width: 100%;
       background-color: $color-primary;
       border-left: $border;
-      text{
+      button{
         color: #fff;
       }
     }
@@ -65,7 +117,7 @@
       width: 100%;
       border-left: $border;
       background-color:$color-weak;
-      text{
+      button{
         color: #fff;
       }
     }

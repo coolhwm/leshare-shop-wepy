@@ -30,7 +30,7 @@
     </view>
 
     <block>
-      <bottomBox @pick.user="pick"/>
+      <bottomBox :couponId.sync="couponId"/>
     </block>
 
   </view>
@@ -45,12 +45,13 @@
   import input from '../../mixins/input';
   import coupon from '../../api/coupon';
   import CouponItem from '../../components/coupons/display_item';
-  import Tips from '../../utils/Tips';
   import ShopInfoBar from '../../components/goods/shop_info_bar';
   import bottomBox from '../../components/coupons/coupon_bottom_box'
 
   @connect({
-    shop: store.get('shop')
+    shop: store.get('shop'),
+    member: store.get('member'),
+    user: store.get('user')
   })
   export default class CouponDetail extends wepy.page {
     data = {
@@ -66,25 +67,12 @@
       // 初始化全局存储
       await store.init();
       this.coupon = await coupon.couponDetail(couponId);
+      this.couponId = couponId;
       this.coupon.status = 'NEVER_USED';
       this.subShop = this.coupon.subShop;
       this.loaded();
     };
-    methods = {
-      async pick() {
-        try {
-          Tips.loading();
-          await coupon.pick(this.coupon.id);
-          await Tips.success('领取成功');
-          await store.refresh('coupon');
-          this.$root.$apply();
-        } catch (err) {
-          Tips.loaded();
-          await Tips.confirm(err.message);
-          wepy.navigateBack();
-        }
-      }
-    };
+    methods = {};
     events = {};
     components = {
       CouponItem: CouponItem,
