@@ -1,5 +1,5 @@
 <template>
-  <Tips />
+  <Loading :init.sync="init"/>
   <view wx:if="{{init}}">
     <CouponItem :coupon.sync="coupon" :isDetail.sync="isDetail"/>
 
@@ -29,10 +29,9 @@
       <text>{{coupon.desc}}</text>
     </view>
 
-    <block>
-      <bottomBox :couponId.sync="couponId"/>
-    </block>
+    <BottomBox :coupon.sync="coupon"/>
 
+    <ButtonWidget/>
   </view>
 
 </template>
@@ -41,12 +40,15 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
+  import auth from '../../api/auth';
   import base from '../../mixins/base';
   import input from '../../mixins/input';
   import coupon from '../../api/coupon';
   import CouponItem from '../../components/coupons/display_item';
   import ShopInfoBar from '../../components/goods/shop_info_bar';
-  import bottomBox from '../../components/coupons/coupon_bottom_box'
+  import BottomBox from '../../components/coupons/coupon_bottom_box';
+  import Loading from '../../components/common/loading';
+  import ButtonWidget from '../../components/template/button_widget';
 
   @connect({
     shop: store.get('shop'),
@@ -64,7 +66,7 @@
       isDetail: true
     };
     async onLoad ({couponId}) {
-      // 初始化全局存储
+      await auth.login();
       await store.init();
       this.coupon = await coupon.couponDetail(couponId);
       this.couponId = couponId;
@@ -77,11 +79,14 @@
     components = {
       CouponItem: CouponItem,
       ShopInfoBar: ShopInfoBar,
-      bottomBox: bottomBox
+      BottomBox: BottomBox,
+      Loading: Loading,
+      ButtonWidget: ButtonWidget
+
     };
     mixins = [base, input];
     config = {
-      navigationBarTitleText: '使用优惠券'
+      navigationBarTitleText: '领取优惠券'
     };
   }
 </script>

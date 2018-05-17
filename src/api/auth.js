@@ -160,6 +160,14 @@ export default class auth extends base {
   }
 
   /**
+   * 清除所有权限配置
+   */
+  static async clearConfig() {
+    await this.removeConfig('login_code');
+    await this.removeConfig('third_session');
+  }
+
+  /**
    * 读取权限值
    */
   static async setConfig(key, value) {

@@ -26,11 +26,6 @@ export default class http {
    */
   static isSuccess (res) {
     const wxCode = res.statusCode;
-    // 权限问题跳转
-    if (wxCode == 403) {
-      Tips.modal('微信登录状态失效，请重新访问');
-      wepy.switchTab({url: '/pages/home/template'});
-    }
     // 微信请求错误
     if (wxCode !== 200) {
       return false;
@@ -51,6 +46,16 @@ export default class http {
       error.serverCode = wxData.code;
       error.message = serverData.message;
       error.serverData = serverData;
+    }
+    // 权限问题跳转
+    if (error.statusCode == 403) {
+      if (error.serverCode == '80003') {
+        console.warn('微信thrid_session认证失败');
+      } else {
+        Tips.modal('微信登录状态失效，请重新访问').then(() => {
+          wepy.switchTab({url: '/pages/home/template'});
+        });
+      }
     }
     return error;
   }

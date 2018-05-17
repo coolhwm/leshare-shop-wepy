@@ -1,10 +1,15 @@
 <template>
   <view class="buy-bar-placeholder">
   </view>
-  <view class="row bargain-bar-box">
-    <view class="column-center button-box">
-      <button  open-type="getPhoneNumber" bindgetphonenumber="pick" plain>立即领取</button>
-    </view>
+  <view class="row bargain-bar-box" >
+
+    <button class="column-center button-box" plain open-type="getPhoneNumber" bindgetphonenumber="regist" wx:if="{{member == null}}">
+      <text>立即领取</text>
+    </button>
+
+    <button class="column-center button-box" @tap="pick" wx:else>
+      <text>立即领取</text>
+    </button>
   </view>
 </template>
 
@@ -22,61 +27,54 @@
     member: store.get('member'),
     user: store.get('user')
   })
-  export default class BargainBar extends wepy.component {
+  export default class BottomBox extends wepy.component {
     props = {
-      rule: {}
-    };
-    data = {
-      isFav: false,
-      state: 'begin',
-      id: ''
+      coupon: {}
     };
     async onLoad() {
-      await store.init();
+      // await store.init();
     }
-
-    methods = {
-      async pick({detail}) {
-        if (this.member == null) {
-          if (detail.errMsg == 'getPhoneNumber:fail user deny') {
-            await Tips.alert('请允许授权');
-            return;
-          }
-          try {
-            Tips.loading();
-            const result = await auth.decodePhone(detail);
-            if (result.memberId) {
-              await Tips.success('注册成功');
-              Event.emit(Event.MEMBER_CARD_UPDATE);
-            }
-            Tips.loaded();
-          } catch (e) {
-            console.info('注册失败', e);
-            Tips.loaded();
-          } finally {
-            try {
-              Tips.loading();
-              await coupon.pick(this.coupon.id);
-              await Tips.success('领取成功');
-              await store.refresh('coupon');
-              this.$root.$apply();
-            } catch (err) {
-              Tips.loaded();
-              await Tips.confirm(err.message);
-            }
-          }
+    async pick() {
+      try {
+        await coupon.pick(this.coupon.id);
+        await store.refresh('coupon');
+        this.$root.$apply();
+        Tips.loaded();
+        await Tips.modal('领取成功，赶快去使用吧');
+        this.$root.$redirect('/pages/coupon/list');
+      } catch (e) {
+        Tips.loaded();
+        if (e.serverCode == '50001') {
+          await Tips.modal('您已经领过该优惠券啦！')
+        } else if (e.serverCode == '50003') {
+          await Tips.modal('该优惠券已经被领完啦！')
         } else {
-          try {
-            Tips.loading();
-            await coupon.pick(this.coupon.id);
-            await Tips.success('领取成功');
-            await store.refresh('coupon');
-            this.$root.$apply();
-          } catch (err) {
-            Tips.loaded();
-            await Tips.confirm(err.message);
-          }
+          await Tips.modal('领取失败，请联系公众号客服');
         }
+      }
+    }
+    methods = {
+      async regist({detail}) {
+        if (detail.errMsg == 'getPhoneNumber:fail user deny') {
+          await Tips.alert('请允许授权');
+          return;
+        }
+        try {
+          Tips.loading();
+          const result = await auth.decodePhone(detail);
+          if (result.memberId) {
+            await store.refresh('member');
+          }
+        } catch (e) {
+          console.warn('注册失败', e);
+        } finally {
+          // 领取优惠券（始终执行）
+          await this.pick();
+        }
+      },
+      async pick() {
+        Tips.loading();
+        await this.pick();
       }
     };
     computed = {
@@ -108,7 +106,7 @@
       width: 100%;
       background-color: $color-primary;
       border-left: $border;
-      button{
+      text{
         color: #fff;
       }
     }
@@ -117,7 +115,7 @@
       width: 100%;
       border-left: $border;
       background-color:$color-weak;
-      button{
+      text{
         color: #fff;
       }
     }
