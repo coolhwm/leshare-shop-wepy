@@ -1,16 +1,16 @@
 <template>
   <view class="buy-bar-placeholder">
   </view>
-  <view class="row bargain-bar-box" >
+  <form class="row-center bargain-bar-box"  report-submit="true" @submit="reportFormId" >
 
-    <button class="column-center button-box" plain open-type="getPhoneNumber" bindgetphonenumber="regist" wx:if="{{member == null}}">
+    <button class="column-center button-box" plain form-type="submit" open-type="getPhoneNumber" bindgetphonenumber="regist" wx:if="{{member == null}}">
       <text>立即领取</text>
     </button>
 
-    <button class="column-center button-box" @tap="pick" wx:else>
+    <button class="column-center button-box" plain form-type="submit" @tap="pick" wx:else>
       <text>立即领取</text>
     </button>
-  </view>
+  </form>
 </template>
 
 <script>
@@ -55,11 +55,16 @@
     }
     methods = {
       async regist({detail}) {
+        console.info(detail);
         if (detail.errMsg == 'getPhoneNumber:fail user deny') {
           await Tips.alert('请允许授权');
           return;
         }
         try {
+          // 其他错误不尝试注册
+          if (detail.errMsg != 'getPhoneNumber:ok') {
+            return;
+          }
           Tips.loading();
           const result = await auth.decodePhone(detail);
           if (result.memberId) {
@@ -103,10 +108,10 @@
     background-color: $color-primary;
     .button-box{
       height: 100%;
-      width: 100%;
+      width: 750rpx;
       background-color: $color-primary;
-      border-left: $border;
       text{
+        font-size: $text-xxl;
         color: #fff;
       }
     }
