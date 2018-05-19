@@ -11,7 +11,23 @@
           <!--商品区域-->
           <view class="order-goods-list-container">
             <view>
-              <OrderGoods :goods.sync="item"></OrderGoods>
+              <view class="order-goods-container row-between">
+                <!--商品图片-->
+                <image class="order-goods-image" mode="aspectFill" src="{{item.imageUrl}}"/>
+
+                <!--商品说明-->
+                <view class="order-goods-title-container column">
+                  <text>{{item.goodsName}}</text>
+                  <text class="muted" wx:if="{{item.sku}}">{{item.sku}}</text>
+                  <!--<text class="muted" wx:if="{{item.skuProperty}}">{{item.skuProperty}}</text>-->
+                </view>
+
+                <!--商品购买信息-->
+                <view class="order-goods-buy-container column">
+                  <text>￥{{item.goodsDealPrice}}</text>
+                  <text class="muted">x{{item.count}}</text>
+                </view>
+              </view>
               <view class="hr" />
             </view>
           </view>
@@ -19,8 +35,8 @@
           <!--汇总信息-->
           <view class="order-footer-container row-end">
             <text>佣金:</text>
-            <text class="major xl mr20">￥{{item.goodsPrice}}</text>
-            <text>(0%)</text>
+            <text class="major xl mr20">￥{{item.fee}}</text>
+            <text>({{item.rate * 100}}%)</text>
           </view>
 
         </view>
@@ -43,26 +59,18 @@
   import Loadmore from '../../components/weui/loadmore';
   import Loading from '../../components/common/loading';
   import OrderGoods from '../../components/order/order_goods';
+  import agent from '../../api/agent'
 
   export default class Singular extends wepy.page {
     data = {
       init: false,
-      expand: {},
       orderDetail: null
     };
     async onLoad (options, {preload}) {
-      this.orderDetail = preload.detail;
+      this.orderDetail = await agent.orderDetail(preload.detail);
       this.loaded();
     }
-    methods = {
-      /**
-       * 商品展开收缩
-       */
-      expand(orderId) {
-        orderId = orderId == null ? 0 : orderId;
-        this.expand[orderId] = !this.expand[orderId];
-      }
-    };
+    methods = {};
     computed = {};
     components = {
       Placeholder: Placeholder,
@@ -86,17 +94,6 @@
     margin-bottom: 10rpx;
   }
 
-  /*顶栏*/
-  .order-header-container {
-    padding: 10rpx 25rpx 10rpx 20rpx;
-  }
-  .avatar-box{
-    width: 40rpx;
-    height: 40rpx;
-    border: $border;
-    border-radius: 20rpx;
-  }
-
   /*底栏*/
   .order-footer-container {
     padding-left: 25rpx;
@@ -104,37 +101,56 @@
     height: 70rpx;
   }
 
-  /*顶栏订单信息*/
-  .order-info-container{
-    text{
-      font-size: $text-xs;
-      color:$color-muted;
-    }
-  }
-
-  /* 操作栏 */
-  .order-action-bar {
-    border-top: $border;
-    height: 90rpx;
-    padding-right: 10rpx;
-  }
-
-  .order-goods-fold{
-    display: none;
-  }
-
-  .goods-fold-btn{
+  .order-goods-container{
     background-color: $color-bg-item;
-    padding-top: 5rpx;
-    padding-bottom: 5rpx;
+    padding: 10rpx 20rpx 15rpx 25rpx;
   }
-  .cash-box{
-    padding: 10rpx;
-    border-top: 1px dotted $color-border;
-    .btn-box{
-      font-size: 24rpx;
-      padding: 0rpx 20rpx;
-      margin: 10rpx 0;
+
+  /*商品图图片*/
+  .order-goods-image{
+    width: 150rpx;
+    height: 150rpx;
+  }
+
+  /*购买信息*/
+  .order-goods-buy-container{
+    text-align: right;
+  }
+
+  /*标题*/
+  .order-goods-title-container{
+    flex:1;
+    height: 100%;
+    padding-left: 28rpx;
+  }
+
+  /*折扣信息*/
+
+  .discount-box{
+    border: 1px solid $color-major;
+    height: 15px;
+    max-width: 80px;
+    text {
+      font-size: $text-xxs;
+    }
+    view{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 15px;
+      padding: 0 3px;
+    }
+    .discount-rate{
+      background-color: $color-major;
+      text{
+        color: #FFF;
+      }
+    }
+    .discount-text {
+      flex: 1;
+      text{
+        color: $color-major;
+      }
     }
   }
 </style>

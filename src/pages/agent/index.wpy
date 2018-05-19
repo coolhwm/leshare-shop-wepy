@@ -33,6 +33,7 @@
         </view>
       </view>
     </view>
+    <view style="height: 120rpx; width: 100%;"></view>
     <Copyright buttom="true" />
   </view>
 
@@ -101,6 +102,16 @@
             num: 0,
             unit: '个'
           }
+        ],
+        [
+          {
+            icon: 'config',
+            title: '商品规则',
+            color: '#F59150',
+            num: ''
+          },
+          {},
+          {}
         ]
       ],
       check: true,

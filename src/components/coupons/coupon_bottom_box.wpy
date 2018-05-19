@@ -1,7 +1,7 @@
 <template>
   <view class="buy-bar-placeholder">
   </view>
-  <view class="row bargain-bar-box" >
+  <view class="row coupon-bar-box" >
 
     <button class="column-center button-box" plain open-type="getPhoneNumber" bindgetphonenumber="regist" wx:if="{{member == null}}">
       <text>立即领取</text>
@@ -14,8 +14,6 @@
 </template>
 
 <script>
-  import favorite from '../../api/favorite';
-  import router from '../../mixins/router';
   import wepy from 'wepy';
   import Tips from '../../utils/Tips';
   import auth from '../../api/auth'
@@ -23,7 +21,6 @@
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   @connect({
-    shop: store.get('shop'),
     member: store.get('member'),
     user: store.get('user')
   })
@@ -31,9 +28,6 @@
     props = {
       coupon: {}
     };
-    async onLoad() {
-      // await store.init();
-    }
     async pick() {
       try {
         await coupon.pick(this.coupon.id);
@@ -79,22 +73,14 @@
     };
     computed = {
     };
-    watch = {
-      async rule(current, origin) {
-        if (origin != null && origin.id != null) return;
-        const result = await favorite.is(current.goods.id);
-        this.isFav = result.isFavorite === 1;
-        this.$apply();
-      }
-    };
-    mixins = [router];
+    watch = {};
   }
 </script>
 
 <style lang="scss">
   @import "../../styles/variable";
 
-  .bargain-bar-box{
+  .coupon-bar-box{
     position: fixed;
     bottom: 0;
     height: 105rpx;
@@ -106,15 +92,6 @@
       width: 100%;
       background-color: $color-primary;
       border-left: $border;
-      text{
-        color: #fff;
-      }
-    }
-    .btn-disabled{
-      height: 100%;
-      width: 100%;
-      border-left: $border;
-      background-color:$color-weak;
       text{
         color: #fff;
       }
