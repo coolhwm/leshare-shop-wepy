@@ -23,7 +23,7 @@
   import bargain from '../../api/bargain';
   import Placeholder from '../../components/common/placeholder';
 
-  export default class ShopIndex extends wepy.page {
+  export default class BargainMoreList extends wepy.page {
     data = {
       init: false,
       page: []

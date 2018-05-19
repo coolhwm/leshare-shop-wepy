@@ -38,9 +38,6 @@
       this.page = await agent.agentDetail(id);
       await this.next();
     };
-    params() {
-      return {type: 0};
-    }
     methods = {
       switchTab() {
         this.reload();

@@ -55,7 +55,6 @@
     }
     methods = {
       async regist({detail}) {
-        console.info(detail);
         if (detail.errMsg == 'getPhoneNumber:fail user deny') {
           await Tips.alert('请允许授权');
           return;
@@ -108,10 +107,10 @@
     background-color: $color-primary;
     .button-box{
       height: 100%;
-      width: 750rpx;
+      width: 100%;
       background-color: $color-primary;
+      border-left: $border;
       text{
-        font-size: $text-xxl;
         color: #fff;
       }
     }

@@ -151,7 +151,8 @@
         'pages/agent/clientele',
         'pages/agent/singular',
         'pages/coupon/pick_detail',
-        'pages/agent/order_detail'
+        'pages/agent/order_detail',
+        'pages/agent/config'
       ],
       window: {
         backgroundTextStyle: 'dark',

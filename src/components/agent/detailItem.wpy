@@ -14,7 +14,7 @@
         <text wx:if="{{detail.remark && detail.remark != 0}}" class="muted">({{detail.remark}})</text>
       </view>
       <view class="time-bonus-box">
-        <text wx:if="{{detail.type === 'cash'}}" class="muted">-{{detail.costFee}}</text>
+        <text wx:if="{{detail.type === 'cash'}}" class="muted">{{detail.costFee}}</text>
         <text wx:else class="danger">{{detail.costFee}}</text>
       </view>
     </view>

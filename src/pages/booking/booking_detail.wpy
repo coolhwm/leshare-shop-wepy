@@ -164,15 +164,6 @@
       padding: 0 20rpx;
     }
   }
-  .booking-btn-box{
-    background-color: $color-primary;
-    color:white;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    height: 100rpx;
-    width: 750rpx;
-  }
   .tips-box{
     padding: 10rpx;
   }

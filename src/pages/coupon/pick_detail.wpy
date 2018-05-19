@@ -51,7 +51,6 @@
   import ButtonWidget from '../../components/template/button_widget';
 
   @connect({
-    shop: store.get('shop'),
     member: store.get('member'),
     user: store.get('user')
   })
@@ -103,15 +102,6 @@
       color: $color-muted;
     }
   }
-  .qr-box{
-    margin-top: 30rpx;
-    margin-left: 20rpx;
-    margin-right: 20rpx;
-    padding-top: 40rpx;
-    padding-bottom: 40rpx;
-    background-color: white;
-    border: $border;
-  }
   .success-box{
     background-color: white;
     padding: 20rpx;
@@ -121,32 +111,6 @@
     text {
       color: $color-muted;
     }
-  }
-  .code-fail-box{
-    position: relative;
-    top: 50px;
-    text-align: center;
-  }
-  .code-box{
-    position: relative;
-    width: 200px;
-    height: 200px;
-    .code-image{
-      width: 100%;
-      height: 100%;
-    }
-    $avatar-size: 90px;
-    .shop-avatar{
-      top: 55px;
-      left: 55px;
-      width: $avatar-size;
-      height: $avatar-size;
-      border-radius: 50%;
-      position: absolute;
-    }
-  }
-  .middle{
-    margin-left: 200rpx;
   }
   .shop-box{
     margin: 20rpx;
@@ -158,10 +122,5 @@
     background-color: white;
     padding: 20rpx;
     border: $border;
-  }
-  .shop-info-bar{
-    .shop-address-box,.shop-name-box{
-      width: 380rpx;
-    }
   }
 </style>

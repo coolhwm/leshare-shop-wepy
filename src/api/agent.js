@@ -1,7 +1,8 @@
 import base from './base';
 import Page from '../utils/Page';
+import goods from './goods'
 
-export default class goods extends base {
+export default class agent extends base {
 
   /**
    * 申请
@@ -18,7 +19,7 @@ export default class goods extends base {
    */
   static rule () {
     const url = `${this.baseUrl}/agent/rules`;
-    return this.get(url);
+    return this.get(url).then(data => this._processRule(data));
   }
   /**
    * 申请
@@ -69,9 +70,11 @@ export default class goods extends base {
   /***
    * 查看订单列表
    */
-  static agentOrder (agentId) {
-    const url = `${this.baseUrl}/agent/orders/${agentId}`;
-    return new Page(url);
+  static agentOrder (id) {
+    const url = `${this.baseUrl}/agent/orders`;
+    return new Page(url, item => {
+      this._processOrderListItem(item, id)
+    });
   }
 
   /***
@@ -90,8 +93,37 @@ export default class goods extends base {
       this._processCashDetail(item)
     });
   }
+  /***
+   * 查询提现信息
+   */
+  static orderDetail (id) {
+    const url = `${this.baseUrl}/agent/commission_detail?order_id=${id}`;
+    return this.get(url).then(data => this._processOrderDetail(data));
+  }
+
+  /***
+   * 查询商品规则
+   */
+  static config () {
+    const url = `${this.baseUrl}/agent/config`;
+    return new Page(url, item => {
+      this._processConfig(item)
+    });
+  }
 
   /** ********************* 数据处理方法 ***********************/
+
+  /**
+   * 处理规则
+   */
+  static _processRule(data) {
+    data.agentRate = `${(data.agentRate * 100).toFixed(2)}%`;
+    data.parentRate = `${(data.parentRate * 100).toFixed(2)}%`;
+    return data;
+  }
+  /**
+   * 处理代理人信息
+   */
   static _processAgent(data) {
     if (data != null) {
       // 处理分销状态
@@ -103,12 +135,53 @@ export default class goods extends base {
     }
     return data;
   }
+
+  /**
+   * 处理佣金信息
+   */
   static _processDetail(data) {
     // 处理时间
     this._processCreateTime(data);
     // 处理价格
     this._processPrice(data);
     return data;
+  }
+
+  /***
+   * 处理分销订单列表
+   */
+  static _processOrderListItem(item, id) {
+    if (item.agentId == id) {
+      item.fee = item.commission.toFixed(2);
+    } else if (item.parentAgentId == id) {
+      item.fee = item.parentCommission.toFixed(2);
+    }
+    return item;
+  }
+
+  /***
+   * 处理分销订单明细
+   */
+  static _processOrderDetail(data) {
+    data.forEach(item => {
+      item.fee = item.fee.toFixed(2);
+    });
+    return data;
+  }
+
+  /***
+   * 处理商品规则
+   */
+  static _processConfig(item) {
+    if (item.goods) {
+      goods._processGoodsPreview(item.goods);
+    } else {
+      item.goods.imageUrl = ''
+    }
+    item.goods.sellPrice = item.goods.sellPrice.toFixed(2);
+    item.agentRate = `${(item.agentRate * 100).toFixed(2)}%`;
+    item.parentAgentRate = `${(item.parentAgentRate * 100).toFixed(2)}%`;
+    return item;
   }
 
   /***
