@@ -35,10 +35,12 @@
       </view>
       <text style="width: 200px; height: 200px;" class="muted lg column-center" wx:if="{{coupon.supportType ==1}}">暂不支持线下店铺消费</text>
     </view>
+
     <view class="tips-box column" wx:if="{{coupon.desc}}">
       <text>使用说明：</text>
       <text>{{coupon.desc}}</text>
     </view>
+
     <view class="btn-panel" wx:if="{{!success}}">
       <button class="weui-btn" type="primary"  @tap="check" wx:if="{{coupon.isSelfUse}}">自助核销</button>
     </view>
