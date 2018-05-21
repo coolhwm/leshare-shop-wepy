@@ -49,6 +49,8 @@
   import BottomBox from '../../components/coupons/coupon_bottom_box';
   import Loading from '../../components/common/loading';
   import ButtonWidget from '../../components/template/button_widget';
+  import WxUtils from '../../utils/WxUtils';
+  import Tips from '../../utils/Tips';
 
   @connect({
     member: store.get('member'),
@@ -64,15 +66,30 @@
       subShop: null,
       isDetail: true
     };
-    async onLoad ({couponId}) {
+    async onLoad (param) {
       await auth.login();
       await store.init();
+      const couponId = this.getCouponId(param);
+      if (couponId == null) {
+        Tips.modal('您来晚了一步，优惠券已经领完了');
+        wepy.navigateBack();
+        return;
+      }
       this.coupon = await coupon.couponDetail(couponId);
       this.couponId = couponId;
       this.coupon.status = 'NEVER_USED';
       this.subShop = this.coupon.subShop;
       this.loaded();
     };
+    getCouponId(param) {
+      if (param && param.couponId) {
+        return param.couponId;
+      } else if (param.scene) {
+        return WxUtils.parseQrScene(param.scene, 'couponId');
+      } else {
+        return null;
+      }
+    }
     methods = {};
     events = {};
     components = {

@@ -74,6 +74,7 @@
     };
     async onLoad ({ruleId}) {
       await auth.user();
+      this.ruleId = ruleId;
       // await auth.login();
       await store.init();
       await this.update(ruleId);
@@ -85,9 +86,8 @@
       await this.update();
       wepy.stopPullDownRefresh();
     }
-    async update (ruleId) {
-      this.rule = await bargain.rule(ruleId);
-      this.ruleId = ruleId;
+    async update () {
+      this.rule = await bargain.rule(this.ruleId);
       this.goodsDetail = this.rule.goods;
       this.subShop = this.goodsDetail.subShop != null ? this.goodsDetail.subShop : this.shop;
       this.goodsId = this.rule.goods.id;
