@@ -106,20 +106,11 @@
     border-top: $border;
     background-color: $color-primary;
     .button-box{
-      height: 100%;
-      width: 100%;
+      height: 100rpx;
+      width: 750rpx;
       background-color: $color-primary;
-      border-left: $border;
       text{
-        color: #fff;
-      }
-    }
-    .btn-disabled{
-      height: 100%;
-      width: 100%;
-      border-left: $border;
-      background-color:$color-weak;
-      text{
+        font-size: $text-xxl;
         color: #fff;
       }
     }

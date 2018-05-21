@@ -7,7 +7,7 @@
         <text class="xs muted inline shop-address-box" @tap="address">{{subShop.address}}</text>
       </view>
     </view>
-    <view class="">
+    <view class="action-box">
       <icon class="address mr20" @tap.stop="address"/>
       <icon class="phone phone-box" @tap.stop="phone"/>
     </view>
@@ -64,6 +64,10 @@
     .phone-box{
       border-left: $border;
       padding-left: 20rpx;
+    }
+    .action-box{
+      width: 150rpx;
+      min-width: 150rpx;
     }
   }
 </style>

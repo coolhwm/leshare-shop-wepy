@@ -215,13 +215,9 @@ export default class Cart {
    */
   removeGoods(id, sku) {
     this.carts = this.carts.filter(item => {
-      console.info(item.goodsId, id);
-      console.info(item.goodsSku, sku);
       const isLeft = (item.goodsId == id && item.goodsSku == sku) || (item.goodsId == id && item.goodsSku == null);
-      console.info(isLeft);
       return isLeft == false;
     });
-    console.info(this.carts);
     this.save();
   }
   /**

@@ -460,21 +460,20 @@
       } catch (e) {
         if (e.serverCode == 20005) {
           let msg = JSON.parse(e.message);
-          let nodeList = msg.map(value => {
-            return {
-              value: value,
-              num: value.indexOf(',')
-            }
-          });
-          const data = nodeList.map(item => {
-            return {
-              id: item.value.substring(0, item.num),
-              sku: item.value.substring(item.num + 1)
-            }
-          });
-          console.info(data);
-          data.forEach(item => {
-            this.cartManager.removeGoods(item.id, item.sku)
+            let nodeList = msg.map(value => {
+              return {
+                value: value,
+                num: value.indexOf(',')
+              }
+            });
+            const data = nodeList.map(item => {
+              return {
+                id: item.value.substring(0, item.num),
+                sku: item.value.substring(item.num + 1)
+              }
+            });
+            data.forEach(item => {
+              this.cartManager.removeGoods(item.id, item.sku)
           });
           return 'offShelves';
         }
