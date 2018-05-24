@@ -5,7 +5,7 @@
         <text class="muted">{{detail.createTime ? detail.createTime : detail.applyTime}}</text>
       </view>
       <view class="time-bonus-box">
-        <text>余额：{{detail.leftFee}}</text>
+        <text class="muted">余额：{{detail.leftFee}}元</text>
       </view>
     </view>
     <view class="row-between mt10">
@@ -14,8 +14,8 @@
         <text wx:if="{{detail.remark && detail.remark != 0}}" class="muted">({{detail.remark}})</text>
       </view>
       <view class="time-bonus-box">
-        <text wx:if="{{detail.type === 'cash'}}" class="muted">{{detail.costFee}}</text>
-        <text wx:else class="danger">{{detail.costFee}}</text>
+        <text wx:if="{{detail.type === 'cash'}}" style="color: green">{{detail.costFee}}元</text>
+        <text wx:else class="danger">+{{detail.costFee}}元</text>
       </view>
     </view>
   </view>

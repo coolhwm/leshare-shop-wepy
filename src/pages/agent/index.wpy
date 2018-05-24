@@ -5,24 +5,28 @@
         <view class="row">
           <image class="mr20" src="{{detail.customer.avatarUrl}}" style="width: 60px;height:60px;"/>
           <view class="column">
-            <text class="xl">{{detail.name}}</text>
-            <text class="xxs">上级代理：{{detail.parentAgentName}}</text>
+            <text class="xxl">{{detail.name}}</text>
+            <text class="sm">上级代理：{{detail.parentAgentName}}</text>
           </view>
         </view>
-        <icon class="qrcode xxlarge" color="white"/>
+        <view class="column" @tap="inviteCode">
+          <icon class="qrcode xxlarge" color="white"/>
+          <text class="xs">推广二维码</text>
+        </view>
+
       </view>
 
       <view class="column money-box">
         <view class="row-between">
-          <view class="column">
-            <text class="lg">可提现佣金</text>
-            <text class="mt20 lg">{{detail.balance}}元</text>
+          <view class="row">
+            <text class="xxl">可提现佣金：</text>
+            <text class="xxl">{{detail.balance}}元</text>
           </view>
-          <button @tap="open({{detail.id}})">提现</button>
+          <button @tap="open({{detail.id}})">提现申请</button>
         </view>
-        <view class="column">
-          <text class="mt20 lg">已提现佣金</text>
-          <text class="mt20 lg">{{detail.cash}}元</text>
+        <view class="row mt20">
+          <text class="xxl">已提现佣金：</text>
+          <text class="xxl">{{detail.cash}}元</text>
         </view>
       </view>
     </view>
@@ -37,8 +41,11 @@
         </view>
       </view>
     </view>
-    <view style="height: 120rpx; width: 100%;"></view>
-    <Copyright buttom="true" />
+    <view class="tips-box column">
+      <text>• 通过您的“推广二维码”进入商城的用户，系统将自动识别成为您的专属顾客；</text>
+      <text>• 专属顾客在小程序中购买符合提成规则的商品，您都可以获得对应比例的佣金；</text>
+      <text>• 您可以通过提现申请将佣金提现，提现需要管理员进行审核，请耐心等待；</text>
+    </view>
   </view>
 
   <Cash @cash.user="cash"/>
@@ -102,7 +109,7 @@
           },
           {
             icon: 'config',
-            title: '商品规则',
+            title: '提成规则',
             color: '#DABC69',
             num: ''
           }
@@ -136,6 +143,11 @@
       await this.load();
     }
     methods = {
+      inviteCode() {
+        wx.previewImage({
+          urls: [this.detail.codeUrl]
+        });
+      },
       tips() {
         tips.success('敬请期待');
       },
@@ -209,5 +221,13 @@
     .number-box{
       height: 20px;
     }
+  }
+  .tips-box{
+    padding: 25rpx;
+    text {
+      color: $color-muted;
+      font-size: $text-sm;
+    }
+
   }
 </style>

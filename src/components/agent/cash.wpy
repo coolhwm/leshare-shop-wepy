@@ -17,9 +17,12 @@
               </view>
             </view>
           </view>
-          <block wx:if="{{validateText != null}}">
-            <text class="danger xs">{{validateText}}</text>
-          </block>
+          <view class="column">
+            <block wx:if="{{validateText != null}}">
+              <text class="danger xs">{{validateText}}</text>
+            </block>
+            <text class="muted xs mt10">* 提现需要管理员审核批准，佣金会从账户扣除冻结，请耐心等待</text>
+          </view>
         </view>
         <button @tap="cash">提现</button>
       </view>

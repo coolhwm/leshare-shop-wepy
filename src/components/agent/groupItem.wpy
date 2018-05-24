@@ -9,7 +9,7 @@
     </view>
     <view class="column time-bonus-box">
       <text class="muted sm">{{detail.time}}</text>
-      <text>{{detail.statusText}}</text>
+      <text class="muted sm">{{detail.statusText}} / ￥{{detail.turnover}}元 / {{detail.singular}}单</text>
     </view>
   </view>
 </template>
@@ -45,7 +45,6 @@
       border-radius: 40rpx;
     }
     .name-box{
-      width: 450rpx;
     }
   }
   .time-bonus-box{

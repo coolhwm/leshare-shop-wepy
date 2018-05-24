@@ -21,7 +21,6 @@
               </view>
               <view>
                 <text class="sm major">￥{{item.goods.sellPrice}}</text>
-                <text class="muted xs ml10">[{{item.goods.goodsStocks.length}}规格]</text>
               </view>
             </view>
           </view>
@@ -93,8 +92,8 @@
       width: 360rpx;
     }
     .goods-image{
-      width: 60rpx;
-      height: 60rpx;
+      width: 80rpx;
+      height: 80rpx;
     }
   }
 </style>
