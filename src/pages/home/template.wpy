@@ -143,13 +143,13 @@
       plugins: null,
       triggers: [],
       param: null,
-      sence: null
+      scene: null
     };
-    async onLoad ({pageId, sence}) {
+    async onLoad ({pageId, scene}) {
       // 登录检查
-      await auth.login();
+      await auth.login(scene);
       await store.init();
-      this.sence = sence;
+      this.scene = scene;
       if (pageId) {
         console.info(`[template] load template page id=${pageId}`);
         this.pageId = pageId;
@@ -170,22 +170,22 @@
       // 执行触发器
       this.runTriggers();
       // 尝试获取授权
-      auth.user().then();
+      // auth.user().then();
       // 上报分销关系
-      this.reportAgentInvite();
+      // this.reportAgentInvite();
     };
 
     /**
      * 上报分销关系
      */
-    reportAgentInvite() {
-      const inviteId = WxUtils.parseQrScene(this.sence, 'invite');
-      if (inviteId == null) {
-        return;
-      }
-      console.info(`[agent]report invite id, parent_id=${inviteId}`);
-      agent.invite(inviteId).then();
-    }
+    // reportAgentInvite() {
+    //   const inviteId = WxUtils.parseQrScene(this.sence, 'invite');
+    //   if (inviteId == null) {
+    //     return;
+    //   }
+    //   console.info(`[agent]report invite id, parent_id=${inviteId}`);
+    //   agent.invite(inviteId).then();
+    // }
 
     /**
      * 渲染页面
@@ -244,9 +244,9 @@
      * 活动优惠券触发器
      */
     triggerVisitLog() {
-      const wxSence = wepy.$instance.globalData.scene;
-      console.info(`[trigger] visit log, custom_sence=${this.sence}, wx_sence=${wxSence}`);
-      shop.visit(this.sence, wxSence);
+      const wxScene = wepy.$instance.globalData.scene;
+      console.info(`[trigger] visit log, custom_scene=${this.scene}, wx_scene=${wxScene}`);
+      shop.visit(this.scene, wxScene);
       wepy.$instance.globalData.scene = '';
     }
     /**

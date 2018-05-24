@@ -10,18 +10,22 @@ export default class auth extends base {
   /**
    * 一键登录
    */
-  static async login() {
+  static async login(scene) {
+    const inviteId = WxUtils.parseQrScene(scene, 'invite');
+    if (inviteId != null) {
+      console.info(`[agent]invite_id=${inviteId}`);
+    }
     const loginCode = this.getConfig('login_code');
     if (loginCode != null && loginCode != '') {
       try {
         await this.checkLoginCode(loginCode);
       } catch (e) {
         console.warn('check login code fial', loginCode);
-        await this.doLogin();
+        await this.doLogin(inviteId);
       }
     } else {
       console.warn('login code not exists', loginCode);
-      await this.doLogin();
+      await this.doLogin(inviteId);
     }
   }
 
@@ -110,9 +114,9 @@ export default class auth extends base {
   /**
    * 执行登录操作
    */
-  static async doLogin() {
+  static async doLogin(inviteId) {
     const {code} = await wepy.login();
-    const {third_session: thirdSession, login_code} = await this.session(code);
+    const {third_session: thirdSession, login_code} = await this.session(code, inviteId);
     await this.setConfig('login_code', login_code);
     await this.setConfig('third_session', thirdSession);
     await this.login();
@@ -122,9 +126,12 @@ export default class auth extends base {
   /**
    * 获取会话
    */
-  static async session(jsCode) {
+  static async session(jsCode, inviteId) {
     const shopCode = wepy.$instance.globalData.appCode;
-    const url = `${this.baseUrl}/auth/session?code=${jsCode}&app_code=${shopCode}`;
+    let url = `${this.baseUrl}/auth/session?code=${jsCode}&app_code=${shopCode}`;
+    if (inviteId) {
+      url += `&invite_id=${inviteId}`;
+    }
     return await this.get(url);
   }
 
