@@ -118,6 +118,11 @@
     };
 
     async onLoad () {
+      if (this.card == null) {
+        await Tips.modal('该门店尚未开放会员注册!');
+        wepy.navigateBack();
+        return;
+      }
       await store.init();
       if (this.card.extraParam) {
         this.extraParam = JSON.parse(this.card.extraParam);

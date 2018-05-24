@@ -64,7 +64,7 @@
   .discount-box{
     border: 1px solid $color-major;
     height: 15px;
-    max-width: 80px;
+    max-width: 90px;
     text {
       font-size: $text-xxs;
     }

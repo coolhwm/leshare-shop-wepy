@@ -114,6 +114,7 @@
       rule: null
     };
     async onLoad () {
+      await store.init();
       this.rule = await agent.rule();
       if (this.rule == null || this.rule.isUse == 0) {
         const notice = {

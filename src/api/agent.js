@@ -50,8 +50,8 @@ export default class agent extends base {
   /***
    * 查看佣金信息
    */
-  static agentDetail (agentId) {
-    const url = `${this.baseUrl}/agent/details/${agentId}`;
+  static agentDetail () {
+    const url = `${this.baseUrl}/agent/details`;
     return new Page(url, item => {
       this._processDetail(item);
     });

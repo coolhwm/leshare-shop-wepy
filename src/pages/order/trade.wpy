@@ -428,7 +428,7 @@
     /**
      * 请求创建订单
      */
-    async requestCreateOrder(trade, address) {
+    async requestCreateOrder (trade, address) {
       try {
         // 创建订单
         if (this.type === 'join' || this.type === 'group') {
@@ -443,7 +443,7 @@
             }
           } catch (err) {
             await Tips.confirm(err.message);
-            this.$switch(`/pages/home/template`)
+            this.$switch(`/pages/home/template`);
           }
         } else if (this.type === 'bargain') {
           if (this.trade.orderGoodsInfos[0].goodsType === 'digit') {
@@ -460,20 +460,20 @@
       } catch (e) {
         if (e.serverCode == 20005) {
           let msg = JSON.parse(e.message);
-            let nodeList = msg.map(value => {
-              return {
-                value: value,
-                num: value.indexOf(',')
-              }
-            });
-            const data = nodeList.map(item => {
-              return {
-                id: item.value.substring(0, item.num),
-                sku: item.value.substring(item.num + 1)
-              }
-            });
-            data.forEach(item => {
-              this.cartManager.removeGoods(item.id, item.sku)
+          let nodeList = msg.map(value => {
+            return {
+              value: value,
+              num: value.indexOf(',')
+            };
+          });
+          const data = nodeList.map(item => {
+            return {
+              id: item.value.substring(0, item.num),
+              sku: item.value.substring(item.num + 1)
+            };
+          });
+          data.forEach(item => {
+            this.cartManager.removeGoods(item.id, item.sku);
           });
           return 'offShelves';
         }
@@ -690,10 +690,14 @@
         const card = this.card;
         const member = this.member;
         const {supplyBonus, bonusRule} = card;
+        // 没有开启积分功能或没有配置积分规则
+        if (supplyBonus != 1 || bonusRule == null) {
+          return false;
+        }
         // 每使用costBonusUnit积分，抵扣reduceMoney元，最多使用maxReduceBonus积分，订单需满limitMoney元
         const {costBonusUnit, reduceMoney, maxReduceBonus, limitMoney} = bonusRule;
-        // 没有开启积分功能
-        if (supplyBonus != 1 || bonusRule == null || costBonusUnit == 0 || reduceMoney == 0) {
+        // 积分扣减规则校验
+        if (costBonusUnit == 0 || reduceMoney == 0) {
           this.bonusPicker = null;
           this.clearSelectedBonus();
           return false;

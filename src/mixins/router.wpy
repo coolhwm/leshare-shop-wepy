@@ -395,6 +395,10 @@
             // 拼团列表
             this.$root.$navigate(`/pages/group/group_more`);
             break;
+          case 'AGENT':
+            // 分销中心
+            this.$root.$navigate(`/pages/agent/apply`);
+            break;
           default:
             console.info(`[router] unsupport action=${action}, targetId=${targetId}`)
         }

@@ -51,9 +51,9 @@
             <view class="row">
             </view>
             <view class="row">
-              <text>佣金:</text>
+              <text>代理佣金:</text>
               <text class="major xl mr20">￥{{item.fee}}</text>
-              <button class="weui-btn btn-box" type="primary" @tap="orderDetail({{item}})">明细</button>
+              <button class="weui-btn btn-box" type="primary" @tap="orderDetail({{item}})">查看明细</button>
             </view>
           </view>
         </view>

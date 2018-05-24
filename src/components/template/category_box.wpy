@@ -72,7 +72,7 @@
       pages: {}
     };
     async onLoad () {
-      await store.init();
+      await store.wait();
       await this.doLoad();
     }
     async doLoad () {

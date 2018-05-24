@@ -19,6 +19,8 @@ const NESTED_KEY = ['config', 'member', 'coupon'];
 const INIT_KEY = ['config', 'coupon'];
 // 加载状态
 let isLoading = false;
+// 初始化转台
+let isInit = false;
 // 等待队列
 let loadingQueue = [];
 
@@ -48,18 +50,36 @@ const save = (key, data) => {
 };
 
 /**
+ * 加入初始化等待队列
+ */
+const pushLoadingQueue = () => {
+  return new Promise(resolve => {
+    const callback = () => {
+      resolve();
+    };
+    loadingQueue.push(callback);
+  });
+};
+
+/**
+ * 用于组件等待父页面加载
+ */
+const wait = async () => {
+  // 判读是否正在加载，正在加载则等待
+  if (isLoading || !isInit) {
+    console.info('[store] store is not init,  wait for init');
+    return pushLoadingQueue();
+  }
+};
+
+/**
  * 初始化
  */
 const init = async () => {
   // 判读是否正在加载，正在加载则等待
   if (isLoading) {
     console.info('[store] store is loading, wait completed');
-    return new Promise(resolve => {
-      const callback = () => {
-        resolve();
-      };
-      loadingQueue.push(callback);
-    });
+    return pushLoadingQueue();
   } else {
     // 开始初始化
     console.info('[store] start init store');
@@ -73,6 +93,7 @@ const init = async () => {
       console.info('[store] store init fail, rest store status');
       meta = {};
     } finally {
+      isInit = true;
       isLoading = false;
       loadingQueue = [];
     }
@@ -198,4 +219,4 @@ const exists = key => {
   return interval < CACHE_TIMEOUT;
 };
 
-export default {get, save, use, refresh: reflesh, init, delayReflesh}
+export default {get, save, use, wait, refresh: reflesh, init, delayReflesh}

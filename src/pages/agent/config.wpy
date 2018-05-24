@@ -5,7 +5,7 @@
 
     <view class="column">
       <view wx:if="{{rule.isGlobalRate == 1}}" class="row-between rate-box">
-        <text>商品统一规则</text>
+        <text>默认规则</text>
         <view class="column">
           <text class="sm">代理佣金：{{rule.agentRate}}</text>
           <text class="sm">上级佣金：{{rule.parentRate}}</text>
