@@ -34,8 +34,8 @@
       init: false,
       page: {}
     };
-    async onLoad ({id}) {
-      this.page = await agent.agentDetail(id);
+    async onLoad () {
+      this.page = await agent.agentDetail();
       await this.next();
     };
     methods = {

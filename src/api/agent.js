@@ -1,6 +1,7 @@
 import base from './base';
 import Page from '../utils/Page';
 import goods from './goods'
+import order from './order'
 
 export default class agent extends base {
 
@@ -50,8 +51,8 @@ export default class agent extends base {
   /***
    * 查看佣金信息
    */
-  static agentDetail (agentId) {
-    const url = `${this.baseUrl}/agent/details/${agentId}`;
+  static agentDetail () {
+    const url = `${this.baseUrl}/agent/details`;
     return new Page(url, item => {
       this._processDetail(item);
     });
@@ -156,6 +157,7 @@ export default class agent extends base {
     } else if (item.parentAgentId == id) {
       item.fee = item.parentCommission.toFixed(2);
     }
+    order._processOrderStatusDesc(item);
     return item;
   }
 
