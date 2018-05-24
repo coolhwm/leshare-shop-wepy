@@ -88,6 +88,11 @@
     };
     async getUserSign () {
       this.signIn = await shop.signList(this.member.memberId);
+      if (this.signIn == null || this.signIn.signRule == null) {
+        await Tips.modal('尚未开启签到');
+        wepy.navigateBack();
+        return;
+      }
       if (this.signIn) {
         this.page = await shop.signHistory();
         this.next();

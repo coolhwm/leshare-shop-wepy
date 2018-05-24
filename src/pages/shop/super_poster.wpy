@@ -29,6 +29,11 @@
     async onLoad () {
       const result = await member.poster();
       this.url = result.img_url;
+      if (this.url == '') {
+        await Tips.modal('尚未开放邀请');
+        wepy.navigateBack();
+        return;
+      }
       this.$apply();
     };
     methods = {
