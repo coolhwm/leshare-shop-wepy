@@ -1,6 +1,7 @@
 import base from './base';
 import Page from '../utils/Page';
 import goods from './goods'
+import order from './order'
 
 export default class agent extends base {
 
@@ -156,6 +157,7 @@ export default class agent extends base {
     } else if (item.parentAgentId == id) {
       item.fee = item.parentCommission.toFixed(2);
     }
+    order._processOrderStatusDesc(item);
     return item;
   }
 

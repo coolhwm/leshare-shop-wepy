@@ -1,13 +1,17 @@
 <template>
   <view wx:if="{{init}}">
     <view class="column information-box" >
-      <view class="row top-box">
-        <image class="mr20" src="{{detail.customer.avatarUrl}}" style="width: 60px;height:60px;"/>
-        <view class="column">
-          <text>{{detail.name}}</text>
-          <text class="xs">上级代理：{{detail.parentAgentName}}</text>
+      <view class="row-between top-box">
+        <view class="row">
+          <image class="mr20" src="{{detail.customer.avatarUrl}}" style="width: 60px;height:60px;"/>
+          <view class="column">
+            <text class="xl">{{detail.name}}</text>
+            <text class="xxs">上级代理：{{detail.parentAgentName}}</text>
+          </view>
         </view>
+        <icon class="qrcode xxlarge" color="white"/>
       </view>
+
       <view class="column money-box">
         <view class="row-between">
           <view class="column">
@@ -90,28 +94,18 @@
             unit: '个'
           },
           {
-            icon: 'qrcode',
-            title: '推广二维码',
-            color: '#8DD38A',
-            num: ''
-          },
-          {
             icon: 'clientele',
             title: '我的客户',
-            color: '#DABC69',
+            color: '#8DD38A',
             num: 0,
             unit: '个'
-          }
-        ],
-        [
+          },
           {
             icon: 'config',
             title: '商品规则',
-            color: '#F59150',
+            color: '#DABC69',
             num: ''
-          },
-          {},
-          {}
+          }
         ]
       ],
       check: true,
