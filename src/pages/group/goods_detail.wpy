@@ -73,7 +73,7 @@ g<template>
       subShop: {}
     };
     async onLoad ({ruleId}) {
-      await auth.login();
+      await auth.user();
       await store.init();
       await this.update(ruleId);
     };

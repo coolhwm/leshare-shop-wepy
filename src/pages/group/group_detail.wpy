@@ -51,7 +51,9 @@
       userGroup: null
     };
     async onLoad ({groupId}) {
-      await auth.login();
+      // 用户信息
+      const result = await auth.user({block: true, redirect: true});
+      if (!result) return;
       await store.init();
       this.detail = await group.groupDetail(groupId);
       this.rule = this.detail.rule;

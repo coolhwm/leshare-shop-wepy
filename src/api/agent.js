@@ -106,7 +106,7 @@ export default class agent extends base {
    * 查询商品规则
    */
   static config () {
-    const url = `${this.baseUrl}/agent/config`;
+    const url = `${this.baseUrl}/agent/rules/details`;
     return new Page(url, item => {
       this._processConfig(item)
     });

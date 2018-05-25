@@ -52,7 +52,8 @@
   import Notice from '../../components/shop/notice';
 
   @connect({
-    card: store.get('card')
+    card: store.get('card'),
+    member: store.get('member')
   })
   export default class TopUp extends wepy.page {
     data = {
@@ -63,7 +64,19 @@
     };
     async onLoad () {
       await store.init();
+      if (this.member == null) {
+        console.info('[top_up]member info is empty');
+        await Tips.modal('请先注册会员');
+        this.$switch('/pages/customer/index_template');
+        return;
+      }
       this.rules = await topUp.getTopUp();
+      if (this.card == null || this.rules == null || this.rules.length < 1) {
+        console.info('[top_up]rule info is empty');
+        await Tips.modal('尚未开放充值');
+        wepy.navigateBack();
+        return;
+      }
       this.loaded();
     };
     async upDateMember () {
