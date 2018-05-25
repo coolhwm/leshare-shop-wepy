@@ -154,8 +154,10 @@ export default class agent extends base {
   static _processOrderListItem(item, id) {
     if (item.agentId == id) {
       item.fee = item.commission.toFixed(2);
+      item.customerText = `我的客户`;
     } else if (item.parentAgentId == id) {
       item.fee = item.parentCommission.toFixed(2);
+      item.customerText = `${item.agentName}的客户`;
     }
     order._processOrderStatusDesc(item);
     return item;
