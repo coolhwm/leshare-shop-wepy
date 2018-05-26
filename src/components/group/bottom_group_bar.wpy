@@ -21,7 +21,7 @@
       <text>活动已过期</text>
     </view>
     <view wx:elif="{{rule.limitCount <= rule.joinCount}}" class="column-center btn-disabled">
-      <text>已售罄</text>
+      <text>限团{{rule.limitCount}}件</text>
     </view>
     <view wx:elif="{{rule.stock <= rule.totalCount}}" class="column-center btn-disabled">
       <text>已售罄</text>
