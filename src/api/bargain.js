@@ -64,7 +64,7 @@ export default class group extends base {
    * 返回砍价列表
    */
   static list (status) {
-    const url = `${this.baseUrl}/goods_bargain/list?status=${status}`;
+    const url = `${this.baseUrl}/goods_bargain/bargain_list?status=${status}`;
     return new Page(url, item => {
       this._processBargainListItem(item);
     });
@@ -96,14 +96,14 @@ export default class group extends base {
   }
 
   static _processBargainListItem (data) {
-    // 处理预览图
-    api._processGoodsPreview(data.rule);
-    // 筛选规格
-    data.rule.skuDetail = data.rule.skuDetails.find(item => item.sku === data.sku);
-    // 处理价格
-    this._processPrice(data);
-    // 处理状态
-    this._processStatus(data);
+    // // 处理预览图
+    // api._processGoodsPreview(data.rule);
+    // // 筛选规格
+    // data.rule.skuDetail = data.rule.skuDetails.find(item => item.sku === data.sku);
+    // // 处理价格
+    // this._processPrice(data);
+    // // 处理状态
+    // this._processStatus(data);
     // 砍价订单动作
     this._processAction(data);
     return data;
