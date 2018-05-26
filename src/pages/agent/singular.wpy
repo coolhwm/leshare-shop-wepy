@@ -48,8 +48,7 @@
           <!--佣金栏-->
 
           <view class="row-between cash-box">
-            <view class="row">
-            </view>
+            <text>{{item.customerText}}</text>
             <view class="row">
               <text>代理佣金:</text>
               <text class="major xl mr20">￥{{item.fee}}</text>

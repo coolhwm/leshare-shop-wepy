@@ -1,5 +1,5 @@
 <template>
-  <view class="column  detail-box">
+  <view class="column  detail-box" @tap="orderDetail({{detail}})">
     <view class="row-between top-box">
       <view class="customer-box row">
         <text class="muted">{{detail.createTime ? detail.createTime : detail.applyTime}}</text>
@@ -29,7 +29,13 @@
       detail: {}
     };
     data = {};
-    methods = {};
+    methods = {
+      orderDetail(detail) {
+        if (detail.type === 'commission') {
+          this.$root.$navigate(`/pages/order/detail?orderId=${detail.resultId}`);
+        }
+      }
+    };
     components = {};
   }
 </script>
