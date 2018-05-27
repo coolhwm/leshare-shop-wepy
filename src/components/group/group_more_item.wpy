@@ -1,5 +1,5 @@
 <template>
-  <view class="row group_more_item">
+  <view class="row group-goods-box">
     <image class="img-box mr20" src="{{item.goods.imageUrl}}"/>
     <view class="column content-box">
       <text class="lg inline">{{item.goods.name}}</text>
@@ -45,7 +45,7 @@
 <style lang="scss">
   @import "../../styles/variable";
   $img-width:180rpx;
-  .group_more_item{
+  .group-goods-box{
     background-color: white;
     margin: 10rpx 10rpx 0;
     padding: 20rpx;

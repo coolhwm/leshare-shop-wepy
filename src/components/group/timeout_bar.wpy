@@ -94,9 +94,5 @@
         line-height: $text-xxs;
       }
     }
-    .end-box{
-      font-size: 40rpx;
-      margin-top: 10rpx;
-    }
   }
 </style>

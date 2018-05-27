@@ -123,34 +123,4 @@
     height: 100%;
     padding-left: 28rpx;
   }
-
-  /*折扣信息*/
-
-  .discount-box{
-    border: 1px solid $color-major;
-    height: 15px;
-    max-width: 80px;
-    text {
-      font-size: $text-xxs;
-    }
-    view{
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 15px;
-      padding: 0 3px;
-    }
-    .discount-rate{
-      background-color: $color-major;
-      text{
-        color: #FFF;
-      }
-    }
-    .discount-text {
-      flex: 1;
-      text{
-        color: $color-major;
-      }
-    }
-  }
 </style>

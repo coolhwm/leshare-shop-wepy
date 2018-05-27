@@ -96,38 +96,6 @@
     padding: 10rpx 25rpx 10rpx 20rpx;
   }
 
-  /*底栏*/
-  .order-footer-container {
-    padding-left: 25rpx;
-    padding-right: 20rpx;
-    height: 70rpx;
-  }
-
-  /*顶栏订单信息*/
-  .order-info-container{
-    text{
-      font-size: $text-xs;
-      color:$color-muted;
-    }
-  }
-
-  /* 操作栏 */
-  .order-action-bar {
-    border-top: $border;
-    height: 90rpx;
-    padding-right: 10rpx;
-  }
-
-  .order-goods-fold{
-    display: none;
-  }
-
-  .goods-fold-btn{
-    background-color: $color-bg-item;
-    padding-top: 5rpx;
-    padding-bottom: 5rpx;
-  }
-
   .bargain-goods-box{
     padding: 10rpx 20rpx;
     background-color: $color-bg-item;
@@ -135,12 +103,5 @@
 
   .booking-bottom-box{
     flex-direction: row-reverse;
-    .booking-btn-box{
-      color: white;
-      background-color: $color-primary;
-      padding: 6rpx 20rpx;
-      margin: 14rpx;
-      border-radius: 5rpx;
-    }
   }
 </style>

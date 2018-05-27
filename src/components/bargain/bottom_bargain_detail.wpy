@@ -100,9 +100,6 @@
       width: 50%;
       background-color: white;
       border-left: $border;
-      .money-box{
-        font-weight: bold;
-      }
     }
     .btn-buy{
       border:none;

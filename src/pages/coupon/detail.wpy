@@ -221,9 +221,6 @@
       position: absolute;
     }
   }
-  .middle{
-    margin-left: 200rpx;
-  }
   .shop-box{
     margin: 20rpx;
     border-left: $border;
@@ -234,10 +231,5 @@
     background-color: white;
     padding: 20rpx;
     border: $border;
-  }
-  .shop-info-bar{
-    .shop-address-box,.shop-name-box{
-      width: 380rpx;
-    }
   }
 </style>

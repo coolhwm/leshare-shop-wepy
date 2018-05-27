@@ -137,9 +137,4 @@
     float: right;
   }
 
-  .coupon-panel-close-icon{
-    height: 45rpx;
-    width: 45rpx;
-  }
-
 </style>

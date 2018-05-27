@@ -153,36 +153,4 @@ g<template>
     height:480rpx;
   }
 
-  .goods-msg-box{
-    background: white;
-    padding: 20rpx;
-    .price-box{
-      font-size: 80rpx;
-      line-height: 80rpx;
-    }
-    .sellPrice-box{
-      text-decoration: line-through;
-      line-height: $text-sm;
-    }
-    .price-rule-box{
-      text{
-        background: #FEE7EF;
-        color: #FB4578;
-        padding: 0 4rpx;
-      }
-    }
-    .goods-name-box{
-      font-size: 30rpx;
-      line-height: 30rpx;
-    }
-  }
-  .goods-des-box{
-    background: white;
-    padding: 20rpx;
-    border-top:$border;
-    margin-bottom: 10rpx;
-    .row icon{
-      color: $color-primary;
-    }
-  }
 </style>
