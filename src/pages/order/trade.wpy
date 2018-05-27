@@ -430,14 +430,15 @@
      */
     async requestCreateOrder (trade, address) {
       try {
-        // 创建订单
         if (this.type === 'join' || this.type === 'group') {
-          // 拼团订单
+          // 拼团订单处理
           try {
             if (this.trade.orderGoodsInfos[0].goodsType === 'digit') {
+              // 拼团+虚拟商品订单
               const result = await group.digitGroup(trade);
               return result.order;
             } else {
+              // 普通拼团订单
               const result = await group.goodsGroup(trade, address);
               return result.order;
             }
@@ -446,12 +447,16 @@
             this.$switch(`/pages/home/template`);
           }
         } else if (this.type === 'bargain') {
+          // 砍价订单
           if (this.trade.orderGoodsInfos[0].goodsType === 'digit') {
+            // 砍价+虚拟商品订单
             return await bargain.digitOrder(trade);
           } else {
+            // 普通砍价订单
             return await bargain.order(trade, address);
           }
         } else if (this.type === 'digit') {
+          // 虚拟商品名单
           return await digit.order(trade);
         } else {
           // 普通订单
@@ -459,8 +464,9 @@
         }
       } catch (e) {
         if (e.serverCode == 20005) {
-          let msg = JSON.parse(e.message);
-          let nodeList = msg.map(value => {
+          // 处理缺货的的情况
+          const msg = JSON.parse(e.message);
+          const nodeList = msg.map(value => {
             return {
               value: value,
               num: value.indexOf(',')
@@ -477,7 +483,7 @@
           });
           return 'offShelves';
         }
-        console.error(e);
+        // 处理商品价格不一致的情况
         return null;
       }
     }

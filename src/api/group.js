@@ -60,7 +60,7 @@ export default class group extends base {
    * 返回参团列表
    */
   static list (status) {
-    const url = `${this.baseUrl}/goods_group/list?status=${status}`;
+    const url = `${this.baseUrl}/goods_group/group_list?status=${status}`;
     return new Page(url, item => {
       this._processGroupListItem(item);
     });
