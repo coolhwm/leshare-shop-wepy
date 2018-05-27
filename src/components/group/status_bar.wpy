@@ -74,6 +74,14 @@
         this.group(goods, goodsGroupSkuDetails, id, 'join', this.detail.id)
       }
     };
+    startCountDown() {
+      try {
+        this.countdowm(this.detail.groupTime.replace(/-/g, '/'), 'groupTime');
+      } catch (e) {
+        console.error('[countdown] start coundown error', e);
+      }
+
+    }
     watch = {
       detail (detail) {
         // 初始化定时器
