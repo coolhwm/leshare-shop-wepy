@@ -25,7 +25,7 @@
      */
     countdowm (timestamp, status) {
       this.clear();
-      console.info(`[interval] start timer, id =${this.timer}`);
+      console.info(`[interval] start timer, old id =${this.timer}`);
       this.timer = setInterval(() => {
         const time = status === 'groupTime' ? new Date(timestamp) - new Date() + 1000 * 60 * 60 * 24 : new Date(timestamp) - new Date();
         if (time > 0) {

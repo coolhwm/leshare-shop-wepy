@@ -26,7 +26,7 @@
     <block>
       <SilderPanel />
     </block>
-
+    <ButtonWidget/>
   </view>
 </template>
 
@@ -41,6 +41,7 @@
   import group from '../../api/group'
   import Loading from '../../components/common/loading';
   import SilderPanel from '../../components/goods/slider_buy_panel';
+  import ButtonWidget from '../../components/template/button_widget';
 
   export default class GroupDetail extends wepy.page {
     data = {
@@ -63,6 +64,14 @@
     };
     onUnload() {
       this.$invoke('StatusBar', 'clear');
+    }
+    onHide() {
+      this.$invoke('StatusBar', 'clear');
+    }
+    onShow() {
+      if (this.init) {
+        this.$invoke('StatusBar', 'startCountDown');
+      }
     }
     isUserJoined() {
       const user = wepy.getStorageSync('user');
@@ -95,7 +104,8 @@
       GroupInfoBar: GroupInfoBar,
       StatusBar: StatusBar,
       SilderPanel: SilderPanel,
-      Loading: Loading
+      Loading: Loading,
+      ButtonWidget: ButtonWidget
     };
     mixins = [base];
     config = {
