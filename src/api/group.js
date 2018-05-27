@@ -1,7 +1,7 @@
 import base from './base';
 import wepy from 'wepy';
 import Page from '../utils/Page';
-import { TYPE, ACTION, orderUtils as utils } from './order_const';
+import { orderUtils as utils } from './order_const';
 
 export default class group extends base {
   /***
@@ -61,9 +61,7 @@ export default class group extends base {
    */
   static list (status) {
     const url = `${this.baseUrl}/goods_group/group_list?status=${status}`;
-    return new Page(url, item => {
-      this._processGroupListItem(item);
-    });
+    return new Page(url);
   }
 
   /***
@@ -308,93 +306,11 @@ export default class group extends base {
     }
   }
 
-  /**
-   * 处理订单列表数据
-   */
-  static _processGroupListItem (detail) {
-    const order = detail.detail.order;
-    order.shopName = this.shopName;
-    // 处理订单状态
-    this._processOrderStatusDesc(order);
-    // 处理订单价格
-    this._processOrderPrice(order);
-    // 处理订单动作
-    this._processOrderAction(order, true);
-    // 处理商品信息
-    const goods = order.orderGoodsInfos;
-    this._processOrderGoods(goods);
-    // 处理离线支付
-    this._processOfflinePayment(order);
-
-    return detail;
-  }
-
-  /**
-   * 处理状态描述文本
-   */
-  static _processOrderStatusDesc (order) {
-    const {status, orderType} = order;
-    order.statusText = utils.statusName(orderType, status);
-    order.statusDesc = utils.statusDesc(order, status);
-    // 订单关闭增加关闭原因
-    if (order.status === 7 && order.orderCloseNote) {
-      const reason = order.orderCloseNote;
-      order.statusDesc = `订单已关闭，关闭原因：${reason.note}`;
-    }
-  }
-
-  /**
-   * 处理订单状态
-   */
-  static _processOrderPrice (order) {
-    order.postFee = this._fixedPrice(order.postFee);
-    order.dealPrice = this._fixedPrice(order.dealPrice);
-    order.finalPrice = this._fixedPrice(order.finalPrice);
-    order.reduceFee = this._fixedPrice(order.reduceFee);
-  }
-
   static _fixedPrice (price) {
     if (price == null || isNaN(Number(price))) {
       return null;
     }
     return price.toFixed(2);
-  }
-
-  /**
-   * 处理订单动作
-   */
-  static _processOrderAction (order, inner = false) {
-    const basic = [];
-    // 有退款的情况
-    if (order.curRefund) {
-      basic.push(ACTION.REFUND_DETAIL);
-    }
-    const {orderType, paymentType, status} = order;
-    const actions = utils.statusActions(orderType, paymentType, status);
-    if (actions) {
-      const display = inner ? actions.filter(v => v.inner != true) : actions;
-      order.actions = basic.concat(display);
-    } else {
-      order.actions = basic;
-    }
-  }
-
-  /**
-   * 处理订单商品信息
-   */
-  static _processOrderGoods (goods) {
-    if (goods == null || goods.length < 1) return;
-    goods.forEach(item => {
-      item.imageUrl += '/small';
-    });
-    if (goods == null || goods.length < 1) {
-      return;
-    }
-    goods.forEach(item => {
-      // 处理SKU描述
-      const sku = item.goodsSku;
-      item.skuText = this._processOrderSku(sku);
-    });
   }
 
   /**
@@ -407,18 +323,6 @@ export default class group extends base {
       skuText = goodsSku.replace(/:/g, ',');
     }
     return skuText;
-  }
-
-  static _processOfflinePayment (order) {
-    const orderType = order.orderType;
-    if (orderType != TYPE.OFFLINE) return;
-    order.orderGoodsInfos = [{
-      imageUrl: 'http://img.leshare.shop/shop/other/wechat_pay.png',
-      goodsName: `微信支付 ${order.finalPrice}元`,
-      goodsPrice: order.finalPrice,
-      count: 1
-    }];
-    return order;
   }
 
   /***
