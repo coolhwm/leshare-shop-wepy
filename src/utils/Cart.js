@@ -133,7 +133,9 @@ export default class Cart {
       discount: goods.discount,
       discountRate: goods.discountRate,
       discountText: goods.discountText,
-      goodsType: goods.type
+      goodsType: goods.type,
+      limitCoupon: goods.limitCoupon,
+      limitBonus: goods.limitBonus
     };
   }
   /**

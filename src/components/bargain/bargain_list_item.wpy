@@ -13,18 +13,21 @@
     <!--商品区域-->
     <view class="row-between bargain-goods-box" @tap="orderDetail({{detail}})">
       <view class="row">
-        <image src="{{detail.rule.goods.imageUrl}}" style="width: 150rpx;height: 150rpx;"/>
+        <image src="{{detail.goodsImageUrl}}" style="width: 150rpx;height: 150rpx;"/>
         <view class="column ml20 info-box">
-          <text class="sm">{{detail.rule.goods.name}}</text>
-          <text class="muted mt20 sm">原价:￥{{detail.rule.skuDetail.price ? detail.rule.skuDetail.price : detail.rule.goodsPrice}}</text>
+          <text class="sm">{{detail.goodsName}}</text>
+          <text class="muted mt20 sm">原价:￥{{detail.ruleGoodsPrice}}</text>
         </view>
       </view>
-      <text class="primary lg">现价:￥{{detail.balance}}</text>
+      <view class="column" style="align-items: flex-end;">
+        <text class="primary lg">现价:￥{{detail.currentPrice}}</text>
+        <text class="muted xs mt20">已有{{detail.currentHelpCount}}人帮砍</text>
+      </view>
     </view>
 
 
     <!--汇总信息-->
-    <view wx:if="{{detail.status === 'ORDERED' && detail.order.status == 2}}" class="order.order-footer-container row-end">
+    <view wx:if="{{detail.status === 'ORDERED' && detail.orderStatus == 2}}" class="order.order-footer-container row-end">
       <text>合计:</text>
       <text class="major xl mr20">￥{{detail.order.finalPrice}}</text>
       <text>(含运费￥{{detail.order.postFee}})</text>
@@ -58,11 +61,11 @@
     onLoad () {
     }
     help (detail) {
-      const bargainId = detail.id;
+      const bargainId = detail.bargainId;
       this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${bargainId}`)
     }
     buy (detail) {
-      const bargainId = detail.id;
+      const bargainId = detail.bargainId;
       this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${bargainId}`)
     }
     again (detail) {
@@ -87,14 +90,14 @@
       Event.emit(Event.BARGAIN_LIST_UPDATE);
     }
     order(detail) {
-      this.$root.$navigate(`/pages/order/detail?orderId=${detail.order.orderId}`)
+      this.$root.$navigate(`/pages/order/detail?orderId=${detail.orderId}`)
     }
     methods = {
       orderDetail(detail) {
         if (detail.status === 'ORDERED') {
-          this.$root.$navigate(`/pages/order/detail?orderId=${detail.order.orderId}`)
+          this.$root.$navigate(`/pages/order/detail?orderId=${detail.orderId}`)
         } else {
-          this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${detail.id}`)
+          this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${detail.bargainId}`)
         }
       },
       action(funcName, detail) {
