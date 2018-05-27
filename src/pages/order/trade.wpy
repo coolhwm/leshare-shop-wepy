@@ -66,7 +66,7 @@
       </view>
 
       <!--优惠券-->
-      <view class="weui-cell weui-cell_access" @tap="coupon" wx:if="{{type !== 'group' && type !== 'join' && type !== 'bargain'}}">
+      <view class="weui-cell weui-cell_access" @tap="coupon" wx:if="{{type !== 'group' && type !== 'join' && type !== 'bargain' && !isLimitCoupon}}">
         <view class="weui-cell__bd">优惠券
           <view class="label small primary pain" wx:if="{{coupons.length > 0}}">{{couponLabel}}</view>
         </view>
@@ -74,7 +74,7 @@
       </view>
 
       <!--店铺开始积分且会员已注册的情况下才显示-->
-      <view class="weui-cell weui-cell_access" wx:if="{{isBonus && type !=='bargain' && type !== 'group' && type !== 'join'}}">
+      <view class="weui-cell weui-cell_access" wx:if="{{isBonus && type !=='bargain' && type !== 'group' && type !== 'join' && !isLimitBonus}}">
         <view class="weui-cell__bd">会员积分
           <view class="label small primary pain">共{{member.bonus}}分</view>
         </view>
@@ -103,11 +103,11 @@
         <text>餐盒费</text>
         <text class="major">+￥{{trade.foodBoxFee}}</text>
       </view>
-      <view class="price-box row-between" wx:if="{{trade.couponPrice > 0}}">
+      <view class="price-box row-between" wx:if="{{trade.couponPrice > 0 && !isLimitCoupon}}">
         <text>优惠券</text>
         <text class="major">-￥{{trade.couponPrice}}</text>
       </view>
-      <view class="price-box row-between" wx:if="{{trade.bonusPrice > 0}}">
+      <view class="price-box row-between" wx:if="{{trade.bonusPrice > 0 && !isLimitBonus}}">
         <text>积分抵扣</text>
         <text class="major">-￥{{trade.bonusPrice}}</text>
       </view>
@@ -202,7 +202,9 @@
       bonusPicker: null,
       selectedBonus: null,
       balanceText: '',
-      type: '' // buy/group/join/bargain
+      type: '', // buy/group/join/bargain
+      isLimitCoupon: false,
+      isLimitBonus: false
     };
     cartManager = Cart.create();
     async onLoad (params, {preload}) {
@@ -213,6 +215,8 @@
       this.trade = preload.params.trade;
       this.type = preload.params.type;
       this.goodsList = this.trade.orderGoodsInfos;
+      this.isLimitCoupon = this.goodsList.some(item => item.limitCoupon === false);
+      this.isLimitBonus = this.goodsList.some(item => item.limitBonus === false);
       if (orderUtils.isDeliveryOrder(this.trade.orderType)) {
         // 默认地址
         this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
@@ -505,7 +509,7 @@
      * 选择默认卡券
      */
     setDefaultCoupon() {
-      if (this.coupons && this.coupons.length > 0) {
+      if (this.coupons && this.coupons.length > 0 && !this.isLimitCoupon) {
         let selected = this.coupons[0];
         this.coupons.forEach(item => {
           selected = item.price > selected.price ? item : selected;
@@ -598,9 +602,13 @@
         trade.finalPrice += trade.foodBoxFee ? parseFloat(trade.foodBoxFee) : 0;
       }
       // 优惠券
-      trade.finalPrice -= trade.couponPrice ? parseFloat(trade.couponPrice) : 0;
+      if (!this.isLimitCoupon) {
+        trade.finalPrice -= trade.couponPrice ? parseFloat(trade.couponPrice) : 0;
+      }
       // 积分
-      trade.finalPrice -= trade.bonusPrice ? parseFloat(trade.bonusPrice) : 0;
+      if (!this.isLimitBonus) {
+        trade.finalPrice -= trade.bonusPrice ? parseFloat(trade.bonusPrice) : 0;
+      }
       // 满减
       trade.reduceFee = this.reduceFee;
       trade.finalPrice -= this.reduceFee;
