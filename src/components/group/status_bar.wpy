@@ -80,7 +80,6 @@
       } catch (e) {
         console.error('[countdown] start coundown error', e);
       }
-
     }
     watch = {
       detail (detail) {

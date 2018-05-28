@@ -105,7 +105,7 @@
   import { connect } from 'wepy-redux';
   import auth from '../../api/auth';
   import shop from '../../api/shop';
-  import agent from '../../api/agent';
+  // import agent from '../../api/agent';
   import config from '../../api/config';
   import wepy from 'wepy';
   import base from '../../mixins/base';
@@ -127,7 +127,7 @@
   import BargainBox from '../../components/template/bargain_box';
   import Separator from '../../components/template/separator';
   import AddressBox from '../../components/template/address_box';
-  import WxUtils from '../../utils/WxUtils';
+  // import WxUtils from '../../utils/WxUtils';
   import _ from 'underscore';
 
   @connect({
