@@ -52,7 +52,7 @@
     };
     methods = {
       open({content}) {
-        const arr = _.sortBy(content, function(item) { return -item.reducePrice; })
+        const arr = _.sortBy(content, function(item) { return -item.reducePrice; });
         this.display = true;
         this.content = arr
       },

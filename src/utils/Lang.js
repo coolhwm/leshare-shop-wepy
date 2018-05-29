@@ -59,4 +59,12 @@ export default class Lang {
     }
     return fmt;
   }
+
+  // 格式化价格
+  static _fixedPrice (price) {
+    if (price == null || isNaN(Number(price))) {
+      return null;
+    }
+    return price.toFixed(2);
+  }
 }

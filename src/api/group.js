@@ -1,7 +1,8 @@
 import base from './base';
 import wepy from 'wepy';
 import Page from '../utils/Page';
-import { orderUtils as utils } from './order_const';
+import goods from './goods'
+import order from './order'
 
 export default class group extends base {
   /***
@@ -34,7 +35,7 @@ export default class group extends base {
    */
   static goodsGroup (trade, address) {
     const url = `${this.baseUrl}/goods_group`;
-    this._processOrderAddress(trade, address);
+    order._processOrderAddress(trade, address);
     const param = {
       ruleId: trade.ruleId,
       order: trade,
@@ -78,7 +79,7 @@ export default class group extends base {
   static groupGoodsList () {
     const url = `${this.baseUrl}/goods_group/rules`;
     return new Page(url, item => {
-      this._processGoodsPreview(item);
+      goods._processGoodsPreview(item);
     });
   }
 
@@ -89,16 +90,16 @@ export default class group extends base {
    */
   static _processGoodsDetail (detail) {
     // 解析预览图
-    this._processGoodsPreview(detail);
+    goods._processGoodsPreview(detail.goods);
 
     // 解析SKU规格
-    this._processSkuLable(detail);
+    goods._processSkuLable(detail);
 
     // 处理价格范围区间
-    this._processGoodsPriceRange(detail);
+    goods._processGoodsPriceRange(detail);
 
     // 处理价格标签
-    this._processGoodsPriceLabel(detail);
+    goods._processGoodsPriceLabel(detail.goods);
 
     // 处理活动时间状态
     this._processTimeStatus(detail);
@@ -113,16 +114,16 @@ export default class group extends base {
     if (detail === null) return [];
     detail.forEach(item => {
       // 解析预览图
-      this._processGoodsPreview(item.rule);
+      goods._processGoodsPreview(item.rule.goods);
 
       // 解析SKU规格
-      this._processSkuLable(item.rule);
+      goods._processSkuLable(item.rule);
 
       // 处理价格范围区间
-      this._processGoodsPriceRange(item.rule);
+      goods._processGoodsPriceRange(item.rule);
 
       // 处理价格标签
-      this._processGoodsPriceLabel(item.rule);
+      goods._processGoodsPriceLabel(item.rule.goods);
 
       // 处理开团时间
       this._processGroupTime(item);
@@ -140,16 +141,16 @@ export default class group extends base {
    */
   static _processGroupProcessingListDetail (detail) {
     // 解析预览图
-    this._processGoodsPreview(detail.rule);
+    goods._processGoodsPreview(detail.rule.goods);
 
     // 解析SKU规格
-    this._processSkuLable(detail.rule);
+    goods._processSkuLable(detail.rule);
 
     // 处理价格范围区间
-    this._processGoodsPriceRange(detail.rule);
+    goods._processGoodsPriceRange(detail.rule);
 
     // 处理价格标签
-    this._processGoodsPriceLabel(detail.rule);
+    goods._processGoodsPriceLabel(detail.rule.goods);
 
     // 判断是否已开团
     this._processGroupParticipated(detail);
@@ -169,94 +170,19 @@ export default class group extends base {
   static _processGroupDetail (data) {
     const rule = data.rule;
     // 解析预览图
-    this._processGoodsPreview(rule);
+    goods._processGoodsPreview(rule.goods);
 
     // 解析SKU规格
-    this._processSkuLable(rule);
+    goods._processSkuLable(rule);
 
     // 处理价格范围区间
-    this._processGoodsPriceRange(rule);
+    goods._processGoodsPriceRange(rule);
 
     // 处理价格标签
-    this._processGoodsPriceLabel(rule);
+    goods._processGoodsPriceLabel(rule.goods);
     // 处理list.length和参团人数一致
     this._processGroupListLength(data, rule);
     return data;
-  }
-
-  /**
-   * 处理预览图
-   */
-  static _processGoodsPreview (item) {
-    const images = item.goods.images;
-    // 图片处理
-    if (images == null || images.length < 1) {
-      item.goods.imageUrl = '/images/goods/broken.png';
-    } else if (images[0].url == null) {
-      item.goods.imageUrl = '/images/goods/broken.png';
-    } else {
-      item.goods.imageUrl = images[0].url + '/medium';
-    }
-  }
-
-  /**
-   * 处理SKU标签
-   */
-  static _processSkuLable (detail) {
-    const skuInfo = detail.goods.goodsSkuInfo;
-    if (!skuInfo) {
-      return;
-    }
-
-    const skuLabels = [];
-    for (let i = 1; i <= 5; i++) {
-      const skuKey = skuInfo[`prop${i}`];
-      const skuValueStr = skuInfo[`value${i}`];
-      if (skuKey && skuValueStr) {
-        const skuValues = skuValueStr.split(',');
-        const sku = {
-          key: skuKey,
-          value: skuValues
-        };
-        skuLabels.push(sku);
-      } else {
-        break;
-      }
-    }
-    detail.goods.labels = skuLabels;
-  }
-
-  /**
-   * 处理价格商品区间
-   */
-  static _processGoodsPriceRange (detail) {
-    if (!detail.goods.goodsSkuInfo || !detail.goods.goodsSkuInfo.goodsSkuDetails) {
-      return;
-    }
-    const skuDetails = detail.goods.goodsSkuInfo.goodsSkuDetails;
-    let maxPrice = 0;
-    let minPrice = Number.MAX_VALUE;
-
-    for (let i in skuDetails) {
-      const detail = skuDetails[i].goodsSkuDetailBase;
-      maxPrice = Math.max(detail.price, maxPrice);
-      minPrice = Math.min(detail.price, minPrice);
-    }
-    detail.goods.maxPrice = maxPrice;
-    detail.goods.minPrice = minPrice;
-  }
-
-  /**
-   * 处理价格展现标签 / 需要先调用区间处理
-   */
-  static _processGoodsPriceLabel (detail) {
-    let priceLable = detail.goods.sellPrice;
-
-    if (detail.goods.maxPrice && detail.goods.minPrice) {
-      // priceLable = `${detail.minPrice}~${detail.maxPrice}`;
-      priceLable = detail.goods.minPrice;
-    }
-    detail.goods.priceLable = isNaN(detail.goods.priceLable) ? priceLable : priceLable.toFixed.toFixed(2);
   }
 
   /***
@@ -293,36 +219,6 @@ export default class group extends base {
     detail.list.forEach(item => {
       detail.isPar = item.customerId === user.id;
     });
-  }
-
-  /**
-   * 处理订单地址
-   */
-  static _processOrderAddress (order, address) {
-    if (utils.isDeliveryOrder(order.orderType)) {
-      order.receiveName = `${address.name} ${address.sexText}`;
-      order.receivePhone = address.phone;
-      order.address = address.fullAddress;
-    }
-  }
-
-  static _fixedPrice (price) {
-    if (price == null || isNaN(Number(price))) {
-      return null;
-    }
-    return price.toFixed(2);
-  }
-
-  /**
-   * 处理SKU的默认值
-   */
-
-  static _processOrderSku (goodsSku) {
-    let skuText = '';
-    if (goodsSku && goodsSku != '') {
-      skuText = goodsSku.replace(/:/g, ',');
-    }
-    return skuText;
   }
 
   /***

@@ -28,47 +28,32 @@
     </view>
     
     <!--操作栏-->
-    <view wx:if="{{group.status === 'PROCESSING'}}" class="group-bottom-box row">
-      <view class="group-btn-box" @tap="group({{group.status}}, {{group.groupId}})">邀请参团</view>
+    <view class="group-bottom-box row">
+      <view wx:if="{{group.status === 'PROCESSING'}}" class="group-btn-box" @tap="group({{group.status}}, {{group.groupId}})">邀请参团</view>
+      <view wx:else class="group-btn-box" @tap="agent({{group.ruleId}})">再拼一团</view>
     </view>
   </view>
 </template>
 <script>
   import wepy from 'wepy';
-  import OrderGoods from '../order/order_goods';
   export default class GroupItem extends wepy.component {
     props = {
-      group: {},
-      action: {
-        default: true
-      },
-      selectedId: {}
+      group: {}
     };
-    data = {
-      expand: {},
-      shopName: {}
-    };
-    onLoad () {
-      this.shopName = wepy.$instance.globalData.shopName;
-    }
+    data = {};
+    onLoad () {}
     methods = {
-      /**
-       * 商品展开收缩
-       */
-      expand(orderId) {
-        orderId = orderId == null ? 0 : orderId;
-        this.expand[orderId] = !this.expand[orderId];
-      },
       /**
        * 跳转拼团详情
        */
       group (status, groupId) {
         this.$root.$navigate(`/pages/group/group_detail?groupId=${groupId}`);
+      },
+      agent(id) {
+        this.$root.$navigate(`/pages/group/goods_detail?ruleId=${id}`);
       }
     };
-    components = {
-      OrderGoods: OrderGoods
-    };
+    components = {};
   }
 </script>
 

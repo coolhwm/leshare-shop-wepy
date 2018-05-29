@@ -3,6 +3,7 @@ import api from './group';
 import wepy from 'wepy';
 import order from './order'
 import Page from '../utils/Page';
+import goods from './goods'
 
 export default class group extends base {
   /***
@@ -76,14 +77,14 @@ export default class group extends base {
   static bargainGoodsList () {
     const url = `${this.baseUrl}/goods_bargain/rules/list`;
     return new Page(url, item => {
-      api._processGoodsPreview(item);
+      goods._processGoodsPreview(item);
     });
   }
   // 处理方法
 
   static _processBargainGoods (data) {
     // 处理预览图
-    api._processGoodsPreview(data.rule);
+    goods._processGoodsPreview(data.rule);
     // 筛选规格
     this._processDetail(data);
     // 筛选开砍者
