@@ -43,13 +43,9 @@
       detail: {},
       action: {
         default: true
-      },
-      selectedId: {}
+      }
     };
-    data = {
-      expand: {},
-      shopName: {}
-    };
+    data = {};
     onLoad () {
     }
     help (detail) {

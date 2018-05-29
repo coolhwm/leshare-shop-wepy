@@ -1,8 +1,9 @@
 import base from './base';
 import wepy from 'wepy';
 import Page from '../utils/Page';
-import goods from './goods'
-import order from './order'
+import goods from './goods';
+import order from './order';
+import Lang from '../utils/Lang';
 
 export default class group extends base {
   /***
@@ -62,7 +63,9 @@ export default class group extends base {
    */
   static list (status) {
     const url = `${this.baseUrl}/goods_group/group_list?status=${status}`;
-    return new Page(url);
+    return new Page(url, item => {
+      this._processListItem(item)
+    });
   }
 
   /***
@@ -100,11 +103,22 @@ export default class group extends base {
 
     // 处理价格标签
     goods._processGoodsPriceLabel(detail.goods);
+    detail.sellPrice = Lang._fixedPrice(detail.sellPrice);
+    detail.goods.sellPrice = detail.sellPrice;
 
     // 处理活动时间状态
     this._processTimeStatus(detail);
 
     return detail;
+  }
+
+  /**
+   * 处理拼团列表
+   */
+  static _processListItem(item) {
+    item.ruleSellPrice = Lang._fixedPrice(item.ruleSellPrice);
+    item.rulePrice = Lang._fixedPrice(item.rulePrice);
+    return item;
   }
 
   /***
@@ -180,6 +194,8 @@ export default class group extends base {
 
     // 处理价格标签
     goods._processGoodsPriceLabel(rule.goods);
+    rule.sellPrice = Lang._fixedPrice(rule.sellPrice);
+    rule.goods.sellPrice = rule.sellPrice;
     // 处理list.length和参团人数一致
     this._processGroupListLength(data, rule);
     return data;

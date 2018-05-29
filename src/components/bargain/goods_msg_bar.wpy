@@ -43,6 +43,7 @@
   import wepy from 'wepy';
   import router from '../../mixins/router';
   import countdown from '../../mixins/countdown';
+  import Lang from '../../utils/Lang';
 
   export default class GoodsMsgBar extends wepy.component {
     props = {
@@ -60,7 +61,7 @@
     };
     watch = {
       rule (rule) {
-        this.saveNum = (rule.goodsPrice * 1 - rule.floorPrice * 1).toFixed(2);
+        this.saveNum = Lang._fixedPrice((rule.goodsPrice * 1 - rule.floorPrice * 1));
       }
     };
     mixins = [router, countdown];

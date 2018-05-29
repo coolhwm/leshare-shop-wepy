@@ -5,8 +5,7 @@
       <view class="row mb20">
         <text class="xl">￥</text><text class="price-box">{{rule.price}}</text>
         <view class="column ml20">
-          <text class="muted sellPrice-box sm" wx:if="{{rule.goods.maxPrice}}">￥{{rule.goods.maxPrice}}</text>
-          <text class="muted sellPrice-box sm" wx:else>￥{{rule.goods.sellPrice}}</text>
+          <text class="muted sellPrice-box sm">￥{{rule.sellPrice}}</text>
           <view class="price-rule-box">
             <text class="xxs">{{rule.limitCustomer}}人拼团</text>
             <text class="ml10 xxs">{{saveText}}{{saveNum}}</text>
@@ -45,6 +44,7 @@
   import wepy from 'wepy';
   import router from '../../mixins/router';
   import countdown from '../../mixins/countdown';
+  import Lang from '../../utils/Lang';
 
   export default class GoodsMsgBar extends wepy.component {
     props = {
@@ -62,11 +62,7 @@
     };
     watch = {
       rule (rule) {
-        if (rule.price && rule.goods.maxPrice) {
-          this.saveNum = (rule.goods.maxPrice * 1 - rule.price * 1).toFixed(2);
-        } else {
-          this.saveNum = (rule.goods.sellPrice * 1 - rule.price * 1).toFixed(2);
-        }
+        this.saveNum = Lang._fixedPrice((rule.goods.sellPrice * 1 - rule.price * 1));
       }
     };
     mixins = [router, countdown];
