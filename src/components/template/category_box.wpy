@@ -42,6 +42,7 @@
   import SideTab from '../../components/common/side_tab';
   import Loadmore from '../../components/weui/loadmore';
   import router from '../../mixins/router';
+  import Event from '../../utils/Event';
 
   @connect({
     member: store.get('member'),
@@ -73,6 +74,11 @@
     };
     async onLoad () {
       await store.wait();
+      await this.doLoad();
+      Event.listen(Event.GOODS_CATEGORY_RELOAD, this.doReload.bind(this), this);
+    }
+    async doReload () {
+      this.pages = {};
       await this.doLoad();
     }
     async doLoad () {

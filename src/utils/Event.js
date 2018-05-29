@@ -15,6 +15,8 @@ export default class Event {
   static ORDER_TAB_UPDATE = 'ORDER_TAB_UPDATE';
   // 商品详情更新事件
   static GOODS_DETAILS_UPDATE = 'GOODS_DETAILS_UPDATE';
+  // 重置商品列表
+  static GOODS_CATEGORY_RELOAD = 'GOODS_CATEGORY_RELOAD';
   // 商品列表更新事件
   static GOODS_LIST_UPDATE = 'GOODS_LIST_UPDATE';
   // 卡券列表更新事件

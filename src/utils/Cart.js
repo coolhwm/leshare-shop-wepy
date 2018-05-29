@@ -134,8 +134,8 @@ export default class Cart {
       discountRate: goods.discountRate,
       discountText: goods.discountText,
       goodsType: goods.type,
-      limitCoupon: goods.limitCoupon,
-      limitBonus: goods.limitBonus
+      limitCoupon: goods.limitCoupon == null ? false : goods.limitCoupon,
+      limitBonus: goods.limitBonus == null ? false : goods.limitBonus
     };
   }
   /**

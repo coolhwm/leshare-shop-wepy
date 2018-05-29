@@ -215,8 +215,8 @@
       this.trade = preload.params.trade;
       this.type = preload.params.type;
       this.goodsList = this.trade.orderGoodsInfos;
-      this.isLimitCoupon = this.goodsList.some(item => item.limitCoupon === false);
-      this.isLimitBonus = this.goodsList.some(item => item.limitBonus === false);
+      this.isLimitCoupon = this.goodsList.some(item => item.limitCoupon);
+      this.isLimitBonus = this.goodsList.some(item => item.limitBonus);
       if (orderUtils.isDeliveryOrder(this.trade.orderType)) {
         // 默认地址
         this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
@@ -381,7 +381,16 @@
           await Tips.alert('下单失败');
           return;
         } else if (trade === 'offShelves') {
-          await Tips.alert('商品已下架');
+          // 缺货的清单
+          await Tips.modal('部分商品已下架，请重新选购');
+          Event.emit(Event.GOODS_CATEGORY_RELOAD);
+          wepy.navigateBack();
+          return;
+        } else if (trade === 'priceChange') {
+          // 缺货的清单
+          await Tips.modal('部分商品价格发生变化，请重新选购');
+          Event.emit(Event.GOODS_CATEGORY_RELOAD);
+          store.delayReflesh('member');
           wepy.navigateBack();
           return;
         }
@@ -488,6 +497,10 @@
           return 'offShelves';
         }
         // 处理商品价格不一致的情况
+        if (e.serverCode == 20007) {
+          this.cartManager.clear();
+          return 'priceChange';
+        }
         return null;
       }
     }
