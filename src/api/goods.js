@@ -1,5 +1,6 @@
 import base from './base';
 import Page from '../utils/Page';
+import Lang from '../utils/Lang';
 
 /**
  * 商品服务类
@@ -116,12 +117,12 @@ export default class goods extends base {
         }
         // 设置原价和当前价格
         detail.originalPrice = price;
-        detail.price = (price * rate).toFixed(2);
+        detail.price = Lang._fixedPrice(price * rate);
       });
     } else {
       // 单规格数据处理
       goods.originalPrice = goods.sellPrice;
-      goods.sellPrice = (goods.sellPrice * rate).toFixed(2);
+      goods.sellPrice = Lang._fixedPrice(goods.sellPrice * rate);
     }
     // 折扣文本展现
     goods.discountRate = discount.rate / 10 + '折';
