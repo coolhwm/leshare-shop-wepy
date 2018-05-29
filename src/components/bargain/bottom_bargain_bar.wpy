@@ -11,7 +11,7 @@
       <text class="xs">收藏</text>
     </view>
     <view class="column-center btn-buy" @tap="handleDigit({{rule.goods}})" wx:if="{{rule.goods.type == 'digit'}}">
-      <text class="xxl money-box">￥{{rule.goods.minPrice ? rule.goods.maxPrice : rule.goods.sellPrice}}</text>
+      <text class="xxl money-box">￥{{rule.goods.priceLable}}</text>
       <text>单独购买</text>
     </view>
     <view class="column-center btn-buy" @tap="handleBuy({{rule.goods}})" wx:else>

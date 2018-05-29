@@ -81,9 +81,7 @@ export default class group extends base {
    */
   static groupGoodsList () {
     const url = `${this.baseUrl}/goods_group/rules`;
-    return new Page(url, item => {
-      goods._processGoodsPreview(item);
-    });
+    return new Page(url);
   }
 
   // *** 数据处理方法
@@ -96,10 +94,10 @@ export default class group extends base {
     goods._processGoodsPreview(detail.goods);
 
     // 解析SKU规格
-    goods._processSkuLable(detail);
+    goods._processSkuLable(detail.goods);
 
     // 处理价格范围区间
-    goods._processGoodsPriceRange(detail);
+    goods._processGoodsPriceRange(detail.goods);
 
     // 处理价格标签
     goods._processGoodsPriceLabel(detail.goods);
@@ -131,10 +129,10 @@ export default class group extends base {
       goods._processGoodsPreview(item.rule.goods);
 
       // 解析SKU规格
-      goods._processSkuLable(item.rule);
+      goods._processSkuLable(item.rule.goods);
 
       // 处理价格范围区间
-      goods._processGoodsPriceRange(item.rule);
+      goods._processGoodsPriceRange(item.rule.goods);
 
       // 处理价格标签
       goods._processGoodsPriceLabel(item.rule.goods);
@@ -158,10 +156,10 @@ export default class group extends base {
     goods._processGoodsPreview(detail.rule.goods);
 
     // 解析SKU规格
-    goods._processSkuLable(detail.rule);
+    goods._processSkuLable(detail.rule.goods);
 
     // 处理价格范围区间
-    goods._processGoodsPriceRange(detail.rule);
+    goods._processGoodsPriceRange(detail.rule.goods);
 
     // 处理价格标签
     goods._processGoodsPriceLabel(detail.rule.goods);
@@ -187,10 +185,10 @@ export default class group extends base {
     goods._processGoodsPreview(rule.goods);
 
     // 解析SKU规格
-    goods._processSkuLable(rule);
+    goods._processSkuLable(rule.goods);
 
     // 处理价格范围区间
-    goods._processGoodsPriceRange(rule);
+    goods._processGoodsPriceRange(rule.goods);
 
     // 处理价格标签
     goods._processGoodsPriceLabel(rule.goods);

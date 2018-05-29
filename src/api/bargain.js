@@ -77,14 +77,14 @@ export default class group extends base {
   static bargainGoodsList () {
     const url = `${this.baseUrl}/goods_bargain/rules/list`;
     return new Page(url, item => {
-      goods._processGoodsPreview(item);
+      goods._processGoodsPreview(item.goods);
     });
   }
   // 处理方法
 
   static _processBargainGoods (data) {
     // 处理预览图
-    goods._processGoodsPreview(data.rule);
+    goods._processGoodsPreview(data.rule.goods);
     // 筛选规格
     this._processDetail(data);
     // 筛选开砍者
@@ -156,26 +156,18 @@ export default class group extends base {
     const BARGAIN_ACTION_NAME = {
       PROCESSING: '找人帮砍',
       BARGAINED: '立即购买',
-      TIMEOUT: '再砍一单'
-    };
-    const BARGAIN_ORDER_ACTION_NAME = {
-      1: '立即支付',
-      6: '查看订单',
-      7: '查看订单'
+      TIMEOUT: '再砍一单',
+      ORDERED: '查看订单'
     };
     const BARGAIN_ACTION_FUNCNAME = {
       PROCESSING: 'help',
       BARGAINED: 'buy',
-      TIMEOUT: 'again'
-    };
-    const BARGAIN_ORDER_ACTION_FUNCNAME = {
-      1: 'pay',
-      6: 'order',
-      7: 'order'
+      TIMEOUT: 'again',
+      ORDERED: 'order'
     };
     const action = {};
-    action.name = data.status === 'ORDERED' ? BARGAIN_ORDER_ACTION_NAME[data.orderStatus] : BARGAIN_ACTION_NAME[data.status];
-    action.funcName = data.status === 'ORDERED' ? BARGAIN_ORDER_ACTION_FUNCNAME[data.orderStatus] : BARGAIN_ACTION_FUNCNAME[data.status];
+    action.name = BARGAIN_ACTION_NAME[data.status];
+    action.funcName = BARGAIN_ACTION_FUNCNAME[data.status];
     data.action = action
   }
   // 处理帮砍价格提示

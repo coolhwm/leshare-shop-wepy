@@ -52,30 +52,9 @@
       const bargainId = detail.bargainId;
       this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${bargainId}`)
     }
-    buy (detail) {
-      const bargainId = detail.bargainId;
-      this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${bargainId}`)
-    }
     again (detail) {
       const ruleId = detail.ruleId;
       this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${ruleId}`)
-    }
-    /**
-     * 订单支付
-     */
-    async pay(detail) {
-      const orderId = detail.order.orderId;
-      try {
-        Tips.loading();
-        const payment = await order.prepayOrder(orderId);
-        Tips.loaded();
-        await order.wxpayOrder(payment);
-        await Tips.success('支付成功');
-      } catch (e) {
-        console.warn(e);
-        await Tips.success('支付取消');
-      }
-      Event.emit(Event.BARGAIN_LIST_UPDATE);
     }
     order(detail) {
       this.$root.$navigate(`/pages/order/detail?orderId=${detail.orderId}`)
