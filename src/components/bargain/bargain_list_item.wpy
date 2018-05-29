@@ -25,14 +25,6 @@
       </view>
     </view>
 
-
-    <!--汇总信息-->
-    <view wx:if="{{detail.status === 'ORDERED' && detail.orderStatus == 2}}" class="order.order-footer-container row-end">
-      <text>合计:</text>
-      <text class="major xl mr20">￥{{detail.order.finalPrice}}</text>
-      <text>(含运费￥{{detail.order.postFee}})</text>
-    </view>
-
     <!--操作栏-->
     <view class="group-bottom-box row">
       <view class="group-btn-box" @tap="action({{detail.action.funcName}}, {{detail}})">{{detail.action.name}}</view>

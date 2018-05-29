@@ -22,7 +22,8 @@
       </view>
       <view class="column" style="align-items: flex-end;">
         <text class="primary lg">现价：￥{{group.rulePrice}}</text>
-        <text class="muted xs mt20" wx:if="{{group.leftCount > 0}}">还差{{group.leftCount}}人成团</text>
+        <text class="muted xs mt20" wx:if="{{group.leftCount > 0}}">还差{{group.leftCount}}人成团 [{{group.ruleLimitCustomer}}人团]</text>
+        <text class="muted xs mt20" wx:else>[{{group.ruleLimitCustomer}}人团]</text>
       </view>
     </view>
     

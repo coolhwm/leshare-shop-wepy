@@ -137,11 +137,6 @@
       font-size: 33px;
       line-height: 30px;
     }
-    .btn-box{
-      border: 1px solid white;
-      border-radius: 30rpx;
-      padding: 8rpx 20rpx;
-    }
     .number-box{
       align-items: flex-end;
       padding: 10rpx;
