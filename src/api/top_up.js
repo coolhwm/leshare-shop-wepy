@@ -1,5 +1,6 @@
 import base from './base';
 import Page from '../utils/Page';
+import Lang from '../utils/Lang';
 
 export default class booking extends base {
   /***
@@ -28,8 +29,6 @@ export default class booking extends base {
 
   /** ********************* 数据处理方法 ***********************/
   static _processRecord(data) {
-    if (data.costMoney) {
-      data.costMoney = data.costMoney.toFixed(2);
-    }
+    data.costMoney = Lang._fixedPrice(data.costMoney);
   }
 }

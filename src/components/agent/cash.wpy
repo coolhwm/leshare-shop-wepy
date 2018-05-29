@@ -41,7 +41,6 @@
 
   export default class Notice extends wepy.component {
     data = {
-      content: '',
       display: false,
       agentId: 0,
       costFee: 0,
@@ -132,9 +131,6 @@
       button{
         background-color: $color-primary;
         color: white;
-      }
-      .content-box{
-        text-align: center;
       }
     }
   }

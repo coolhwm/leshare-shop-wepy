@@ -1,7 +1,8 @@
 import base from './base';
 import Page from '../utils/Page';
-import goods from './goods'
-import order from './order'
+import goods from './goods';
+import order from './order';
+import Lang from '../utils/Lang';
 
 export default class agent extends base {
 
@@ -118,8 +119,8 @@ export default class agent extends base {
    * 处理规则
    */
   static _processRule(data) {
-    data.agentRate = `${(data.agentRate * 100).toFixed(2)}%`;
-    data.parentRate = `${(data.parentRate * 100).toFixed(2)}%`;
+    data.agentRate = `${Lang._fixedPrice((data.agentRate * 100))}%`;
+    data.parentRate = `${Lang._fixedPrice((data.parentRate * 100))}%`;
     return data;
   }
   /**
@@ -153,10 +154,10 @@ export default class agent extends base {
    */
   static _processOrderListItem(item, id) {
     if (item.agentId == id) {
-      item.fee = item.commission.toFixed(2);
+      item.fee = Lang._fixedPrice(item.commission);
       item.customerText = `我的客户`;
     } else if (item.parentAgentId == id) {
-      item.fee = item.parentCommission.toFixed(2);
+      item.fee = Lang._fixedPrice(item.parentCommission);
       item.customerText = `${item.agentName}的客户`;
     }
     order._processOrderStatusDesc(item);
@@ -168,7 +169,7 @@ export default class agent extends base {
    */
   static _processOrderDetail(data) {
     data.forEach(item => {
-      item.fee = item.fee.toFixed(2);
+      item.fee = Lang._fixedPrice(item.fee);
     });
     return data;
   }
@@ -182,9 +183,9 @@ export default class agent extends base {
     } else {
       item.goods.imageUrl = ''
     }
-    item.goods.sellPrice = item.goods.sellPrice.toFixed(2);
-    item.agentRate = `${(item.agentRate * 100).toFixed(2)}%`;
-    item.parentAgentRate = `${(item.parentAgentRate * 100).toFixed(2)}%`;
+    item.goods.sellPrice = Lang._fixedPrice(item.goods.sellPrice);
+    item.agentRate = `${Lang._fixedPrice(item.agentRate * 100)}%`;
+    item.parentAgentRate = `${Lang._fixedPrice(item.parentAgentRate * 100)}%`;
     return item;
   }
 
@@ -220,8 +221,8 @@ export default class agent extends base {
    * 处理佣金
    */
   static _processPrice(data) {
-    data.costFee = data.costFee.toFixed(2);
-    data.leftFee = data.leftFee.toFixed(2);
+    data.costFee = Lang._fixedPrice(data.costFee);
+    data.leftFee = Lang._fixedPrice(data.leftFee);
   }
 
   /***
@@ -240,8 +241,8 @@ export default class agent extends base {
    */
   static _processCashDetail(item) {
     const data = { ...item };
-    item.costFee = data.cashFee.toFixed(2);
-    item.leftFee = data.leftCash.toFixed(2);
+    item.costFee = Lang._fixedPrice(data.cashFee);
+    item.leftFee = Lang._fixedPrice(data.leftCash);
     const CASH_STATUS = {
       AUDITTING: '待审核',
       SUCCESS: '已提现',

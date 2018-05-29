@@ -1,5 +1,5 @@
 import base from './base';
-import api from './group';
+import api from './goods';
 import Page from '../utils/Page';
 
 export default class booking extends base {
