@@ -24,7 +24,7 @@
       <text class="mt10 xs">{{tips}}</text>
     </view>
 
-    <view class="qr-box column-center" wx:if="{{!success}}">
+    <view class="qr-box column-center" wx:if="{{!success && coupon.supportType != 1}}">
       <text class="muted mb20 lg" wx:if="{{coupon.supportType !=1}}">线下店铺消费时出示</text>
       <view class="code-box">
         <block wx:if="{{coupon.imgUrl}}">
