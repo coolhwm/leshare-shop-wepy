@@ -81,7 +81,9 @@ export default class group extends base {
    */
   static groupGoodsList () {
     const url = `${this.baseUrl}/goods_group/rules`;
-    return new Page(url);
+    return new Page(url, item => {
+      goods._processGoodsPreview(item.goods)
+    });
   }
 
   // *** 数据处理方法

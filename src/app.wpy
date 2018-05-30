@@ -123,7 +123,6 @@
         'pages/coupon/use',
         'pages/shop/about_us',
         'pages/customer/comment_list',
-        'pages/group/index',
         'pages/group/goods_detail',
         'pages/group/list',
         'pages/group/group_detail',
