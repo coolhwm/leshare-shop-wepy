@@ -14,7 +14,7 @@
     <!--商品区域-->
     <view class="row-between group-goods-box" @tap="group({{group.status}}, {{group.groupId}})">
       <view class="row">
-        <image src="{{group.goodsImageUrl}}" style="width: 150rpx;height: 150rpx;"/>
+        <image src="{{group.goodsImageUrl}}/small" style="width: 150rpx;height: 150rpx;"/>
         <view class="column ml20 info-box">
           <text class="sm">{{group.goodsName}}</text>
           <text class="muted mt20 sm">原价：￥{{group.ruleSellPrice}}</text>

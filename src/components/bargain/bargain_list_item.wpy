@@ -13,7 +13,7 @@
     <!--商品区域-->
     <view class="row-between bargain-goods-box" @tap="orderDetail({{detail}})">
       <view class="row">
-        <image src="{{detail.goodsImageUrl}}" style="width: 150rpx;height: 150rpx;"/>
+        <image src="{{detail.goodsImageUrl}}/small" style="width: 150rpx;height: 150rpx;"/>
         <view class="column ml20 info-box">
           <text class="sm">{{detail.goodsName}}</text>
           <text class="muted mt20 sm">原价:￥{{detail.ruleGoodsPrice}}</text>
@@ -34,9 +34,7 @@
 <script>
   import wepy from 'wepy';
   import router from '../../mixins/router';
-  import order from '../../api/order';
   import Tips from '../../utils/Tips';
-  import Event from '../../utils/Event';
 
   export default class BargainItem extends wepy.component {
     props = {
