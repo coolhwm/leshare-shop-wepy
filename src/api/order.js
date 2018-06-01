@@ -343,6 +343,8 @@ export default class order extends base {
     this._processTypeFlag(detail);
     // 处理离线支付
     this._processOfflinePayment(detail);
+    // 商品是否为虚拟商品与虚拟类型
+    this._processIsDigit(detail);
     return detail;
   }
 
@@ -471,5 +473,13 @@ export default class order extends base {
       skuText = goodsSku.replace(/:/g, ',');
     }
     return skuText;
+  }
+
+  /**
+   * 商品时候为虚拟商品
+   */
+  static _processIsDigit(detail) {
+    detail.isDigit = detail.orderType == '90' || detail.orderGoodsInfos[0].goods.type == 'digit'
+    detail.digitType = detail.orderGoodsInfos[0].digitGoodsExchange.digitType
   }
 }
