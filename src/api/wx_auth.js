@@ -30,8 +30,8 @@ async function doInitWxApp (initStore) {
     // 登录状态失效，重新建立session
     console.info('[wx_login] login_code invalid, relogin wx');
     const {code} = await wepy.login();
-    const rawUser = isUserComplete() ? null : await getWxUserInfo();
-    const config = await createWxSession(code, rawUser);
+    const config = await createWxSession(code);
+    // 保存全局配置
     store.saveFieldData('config', config);
     // 异步获取优惠券
     store.use('coupon').then();
@@ -75,7 +75,7 @@ async function getWxUserInfo () {
 /**
  * 创建服务器会话
  */
-async function createWxSession (jsCode, rawUser) {
+async function createWxSession (jsCode) {
   const appCode = getAppCode();
   const url = `${baseUrl}/auth/wx_session`;
   // 基础参数
@@ -84,11 +84,6 @@ async function createWxSession (jsCode, rawUser) {
     code: jsCode,
     withConfig: true
   };
-  // 用户解析参数
-  if (rawUser != null) {
-    param.encryptedData = rawUser.encryptedData;
-    param.iv = rawUser.iv
-  }
   const {thirdSession, loginCode, fullShopInfo} = await http.post(url, param);
   // 保存权限信息
   setLoginCode(loginCode);

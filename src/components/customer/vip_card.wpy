@@ -19,7 +19,11 @@
     <view class="row-between" style="width: 100%">
       <view class="row">
         <!--头像-->
-        <image class="avatar" src="{{avatarUrl}}"/>
+        <!--<image class="avatar" src="{{avatarUrl}}"/>-->
+        <view class="avatar">
+          <open-data  type="userAvatarUrl"></open-data>
+        </view>
+
 
         <!--用户信息-->
         <view class="info-box column">
@@ -176,6 +180,8 @@
     line-height: 22px;
   }
   .avatar{
+    overflow: hidden;
+    display: block;
     width: 120rpx;
     height: 120rpx;
     border-radius: 50%;
