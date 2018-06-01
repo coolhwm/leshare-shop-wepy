@@ -250,7 +250,7 @@
       ZanQuantity: ZanQuantity,
       DiscountBadge: DiscountBadge
     };
-    mixins = [router]
+    mixins = [router];
     events = {
       clear() {
         console.info('[SilderPanel] clear');
