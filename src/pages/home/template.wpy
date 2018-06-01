@@ -103,9 +103,8 @@
 <script>
   import store from '../../store/utils';
   import { connect } from 'wepy-redux';
-  import auth from '../../api/auth';
+  import { initWxAppSync } from '../../api/wx_auth';
   import shop from '../../api/shop';
-  // import agent from '../../api/agent';
   import config from '../../api/config';
   import wepy from 'wepy';
   import base from '../../mixins/base';
@@ -127,7 +126,6 @@
   import BargainBox from '../../components/template/bargain_box';
   import Separator from '../../components/template/separator';
   import AddressBox from '../../components/template/address_box';
-  // import WxUtils from '../../utils/WxUtils';
   import _ from 'underscore';
 
   @connect({
@@ -147,8 +145,9 @@
     };
     async onLoad ({pageId, scene}) {
       // 登录检查
-      await auth.login(scene);
-      await store.init();
+      await initWxAppSync(true);
+      // await auth.login(scene);
+      // await store.init();
       this.scene = scene;
       if (pageId) {
         console.info(`[template] load template page id=${pageId}`);

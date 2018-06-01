@@ -2,11 +2,12 @@
 <style lang="scss" src="./styles/icons.scss"></style>
 <style lang="scss" src="./styles/base.scss"></style>
 <script>
+
   import wepy from 'wepy';
   import WxUtils from './utils/WxUtils';
   import 'wepy-async-function';
   import { setStore } from 'wepy-redux'
-  import configStore from './store'
+  import configStore from './store';
   const store = configStore();
   setStore(store);
   export default class extends wepy.app {

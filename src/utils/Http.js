@@ -1,5 +1,6 @@
 import wepy from 'wepy';
 import Tips from '../utils/Tips'
+import { relaunchWxApp } from '../api/wx_auth';
 
 // HTTP工具类
 export default class http {
@@ -53,7 +54,10 @@ export default class http {
         console.warn('微信thrid_session认证失败');
       } else {
         Tips.modal('微信登录状态失效，请重新访问').then(() => {
-          wepy.switchTab({url: '/pages/home/template'});
+          relaunchWxApp();
+          wepy.reLaunch({
+            url: '/pages/home/template'
+          })
         });
       }
     }

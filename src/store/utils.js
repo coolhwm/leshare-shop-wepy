@@ -10,7 +10,7 @@ const store = getStore();
 // 元数据
 let meta = {};
 // 是否调试
-const IS_DEBUG = false;
+const IS_DEBUG = true;
 // 超时时间
 const CACHE_TIMEOUT = 5 * 60 * 1000;
 // 嵌套字段，需要拆解缓存
@@ -125,17 +125,21 @@ const load = async (fields) => {
   const data = await Promise.all(fetchPromises);
   // 保存结果
   fields.forEach((field, index) => {
-    const filedData = data[index];
-    if (isNested(field)) {
-      const keys = Object.keys(filedData);
-      console.info(`[store] load [${field}] nest fields = ${keys}`);
-      keys.forEach(key => save(key, filedData[key]));
-    } else {
-      save(field, filedData);
-    }
+    const fieldData = data[index];
+    saveFieldData(field, fieldData);
   });
   // 保存元数据
   save('meta', meta);
+};
+
+const saveFieldData = (field, data) => {
+  if (isNested(field)) {
+    const keys = Object.keys(data);
+    console.info(`[store] load [${field}] nest fields = ${keys}`);
+    keys.forEach(key => save(key, data[key]));
+  } else {
+    save(field, data);
+  }
 };
 
 /**
@@ -219,4 +223,4 @@ const exists = key => {
   return interval < CACHE_TIMEOUT;
 };
 
-export default {get, save, use, wait, refresh: reflesh, init, delayReflesh}
+export default {get, save, use, wait, refresh: reflesh, init, delayReflesh, saveFieldData}

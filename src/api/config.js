@@ -25,30 +25,30 @@ export default class config extends base {
    */
   static init () {
     const url = `${this.baseUrl}/shops/full`;
-    return this.get(url).then(data => {
-      return {
-        homePageId: data.homePageId,
-        customPageId: data.customPageId,
-        page: data.homePageConfig,
-        card: data.memberCard,
-        member: data.member,
-        campaign: data.campaignCoupon,
-        categories: goods._createGoodsCategories(data.goodsInnerCategories),
-        notices: shop._processNotices(data.notices),
-        reduce: shop._processReduce(data.reduceRules),
-        shop: shop._processInfo(data.shop),
-        // version: shop._precoessVersion(data.shopChargeLimit),
-        status: shop._processStatus(data.shopStatusInfo)
-      };
-    }).then(config => {
-      // 处理需要二次加工的数据
-      const {card, member: info, page} = config;
-      // 会员折扣
-      config.discount = this.discount = member.processDiscount(card, info);
-      // 页面组件
-      config.page = this._processPage(page);
-      return config;
-    });
+    return this.get(url).then(data => this.process(data));
+  }
+  static process(data) {
+    const config = {
+      homePageId: data.homePageId,
+      customPageId: data.customPageId,
+      page: data.homePageConfig,
+      card: data.memberCard,
+      member: data.member,
+      campaign: data.campaignCoupon,
+      categories: goods._createGoodsCategories(data.goodsInnerCategories),
+      notices: shop._processNotices(data.notices),
+      reduce: shop._processReduce(data.reduceRules),
+      shop: shop._processInfo(data.shop),
+      // version: shop._precoessVersion(data.shopChargeLimit),
+      status: shop._processStatus(data.shopStatusInfo)
+    };
+    // 处理需要二次加工的数据
+    const {card, member: info, page} = config;
+    // 会员折扣
+    config.discount = this.discount = member.processDiscount(card, info);
+    // 页面组件
+    config.page = this._processPage(page);
+    return config;
   }
 
   // *** 数据处理方法

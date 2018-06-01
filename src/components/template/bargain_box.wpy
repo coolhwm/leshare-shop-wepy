@@ -15,7 +15,7 @@
         <repeat for="{{param.data}}" key="index" index="index" item="item">
           <view class="column bargain-tight-box" @tap="detail({{item.ruleId}})">
             <view class="content-top-box column">
-              <image class="bargain-image" lazy-load src="{{item.goodsImage}}" mode="aspectFill"></image>
+              <image class="bargain-image" lazy-load src="{{item.goodsImage}}/small" mode="aspectFill"></image>
               <text class="bargain-goods-name mb10 xs">{{item.goodsName}}</text>
               <view class="row">
                 <text class="muted xxs">最低</text>
