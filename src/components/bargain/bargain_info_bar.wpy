@@ -126,10 +126,6 @@
     margin-bottom: 10rpx;
   }
 
-  .info-top-box {
-    // margin-bottom: 20rpx;
-  }
-
   .top-avatar-box{
     width: 80rpx;
     min-width: 80rpx;
