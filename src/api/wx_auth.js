@@ -1,10 +1,11 @@
 import http from '../utils/Http'
-import store from '../store/utils';
-import wepy from 'wepy';
-import config from './config';
 
+import wepy from 'wepy';
+import store from '../store/utils';
+import config from './config';
 const baseUrl = wepy.$instance.globalData.baseUrl;
-let isInit = false;
+
+const auth = wepy.$instance.globalData.auth;
 
 /**
  * 异步启动程序
@@ -24,7 +25,10 @@ export async function initWxAppSync () {
 
 async function doInitWxApp (initStore) {
   // 已初始化，直接返回
-  if (isInit) return;
+  if (auth.isInit === true) {
+    console.info('[wx_login] app already init');
+    return;
+  }
   // 未初始化，开始进行程序初始化
   if (isLoginCodeEmpty()) {
     // 登录状态失效，重新建立session
@@ -36,20 +40,11 @@ async function doInitWxApp (initStore) {
     // 异步获取优惠券
     store.use('coupon').then();
   } else {
-    console.info('[wx_login] login_code is ok, load store');
+    console.info('[wx_login] login_code is ok, load store, code=', getLoginCode());
     await initStore();
   }
   // 初始化状态
-  isInit = true;
-}
-
-/**
- * 重新启动，清空信息
- */
-export function relaunchWxApp() {
-  console.info('[wx_login] relaunch, clear login_code and third_session');
-  setLoginCode('');
-  setThirdSession('');
+  auth.isInit = true;
 }
 
 /**
@@ -139,10 +134,10 @@ function setUser(user) {
 }
 
 function set(key, value) {
-  wepy.$instance.globalData.auth[key] = value;
+  auth[key] = value;
   wepy.setStorageSync(key, value);
 }
 
 function get(key) {
-  return wepy.$instance.globalData.auth[key];
+  return auth[key];
 }
