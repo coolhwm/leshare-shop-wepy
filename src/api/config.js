@@ -2,6 +2,7 @@ import base from './base';
 import goods from './goods';
 import shop from './shop';
 import member from './member';
+import wepy from 'wepy';
 
 export default class config extends base {
   static fieldsToCopy = {
@@ -34,6 +35,7 @@ export default class config extends base {
       page: data.homePageConfig,
       card: data.memberCard,
       member: data.member,
+      user: data.customer,
       campaign: data.campaignCoupon,
       categories: goods._createGoodsCategories(data.goodsInnerCategories),
       notices: shop._processNotices(data.notices),
@@ -42,7 +44,9 @@ export default class config extends base {
       status: shop._processStatus(data.shopStatusInfo)
     };
     // 处理需要二次加工的数据
-    const {card, member: info, page} = config;
+    const {card, member: info, page, user} = config;
+    // 用户信息
+    // wepy.$instance.globalData.auth['user'] = user;
     // 会员折扣
     config.discount = this.discount = member.processDiscount(card, info);
     // 页面组件

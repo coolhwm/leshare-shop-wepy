@@ -84,6 +84,7 @@
 
 <script>
   import wepy from 'wepy';
+  import { checkUserInfo } from '../../api/wx_auth';
   import order from '../../api/order';
   import bargain from '../../api/bargain'
   import { connect } from 'wepy-redux';
@@ -156,6 +157,7 @@
       },
       // 确认选择
       async confirm(type) {
+        await checkUserInfo();
         if (!this.sku.next) {
           return;
         }

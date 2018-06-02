@@ -34,6 +34,14 @@ const get = key => {
 };
 
 /**
+ * 直接取值
+ */
+
+const getState = key => {
+  return store.getState().cache[key];
+};
+
+/**
  * 保存数据
  */
 const save = (key, data) => {
@@ -223,4 +231,4 @@ const exists = key => {
   return interval < CACHE_TIMEOUT;
 };
 
-export default {get, save, use, wait, refresh: reflesh, init, delayReflesh, saveFieldData}
+export default {getState, get, save, use, wait, refresh: reflesh, init, delayReflesh, saveFieldData}
