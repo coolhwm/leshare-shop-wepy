@@ -3,13 +3,13 @@
   </view>
   <view class="row bargain-bar-box">
     <button wx:if="{{detail.isFloor || detail.status == 'TIMEOUT'}}" class="column-center btn-buy" plain open-type="share" disabled>
-      <text class="muted">找人帮砍</text>
+      <text class="muted xxl">找人帮砍</text>
     </button>
     <button wx:else class="column-center btn-buy" plain open-type="share">
-      <text class="primary">找人帮砍</text>
+      <text class="primary xxl">找人帮砍</text>
     </button>
     <view class="column-center btn-bargain" @tap="buy({{detail.rule.goods}}, {{detail.ruleId}}, {{detail.id}})">
-      <text>立即购买</text>
+      <text class="xxl">立即购买</text>
     </view>
   </view>
 </template>

@@ -71,7 +71,7 @@
     }
     loadUserInfo() {
       try {
-        const value = wepy.getStorageSync('user');
+        const value = wepy.$instance.globalData.auth['user'];
         if (value) {
           return value;
         }

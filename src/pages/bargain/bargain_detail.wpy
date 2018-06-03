@@ -12,7 +12,7 @@
     <BargainRuleBar/>
 
     <!--更多虚拟商品-->
-    <block wx:if="{{page.list}}">
+    <block wx:if="{{page.list && page.list.length > 0}}">
       <view class="detail-title row-center mt10">
         <text class="primary lg">── 更多推荐 ──</text>
       </view>
@@ -73,6 +73,7 @@
     };
     async update () {
       this.detail = await bargain.bargain(this.bargainId);
+      this.loaded();
       this.page = await bargain.bargainGoodsList();
       this.rule = this.detail.rule;
       this.next();

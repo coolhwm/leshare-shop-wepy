@@ -87,7 +87,7 @@
       async help (ruleId, bargainId) {
         await checkUserInfoWithError();
         const result = await bargain.GoodsBargain(ruleId, bargainId);
-        const {id: userId} = wepy.getStorageSync('user');
+        const {id: userId} =wepy.$instance.globalData.auth['user'];
         const price = result.details.find(item => item.customer.id === userId).reducePrice;
         this.$emit('help', price, bargainId);
       },
