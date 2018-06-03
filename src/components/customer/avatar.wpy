@@ -20,7 +20,6 @@
     methods = {};
     events = {};
     async onLoad() {
-      await store.init();
     }
   }
 </script>

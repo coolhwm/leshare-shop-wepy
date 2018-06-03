@@ -12,7 +12,7 @@
     <BargainRuleBar/>
 
     <!--更多虚拟商品-->
-    <block wx:if="{{page.list}}">
+    <block wx:if="{{page.list && page.list.length > 0}}">
       <view class="detail-title row-center mt10">
         <text class="primary lg">── 更多推荐 ──</text>
       </view>
@@ -35,6 +35,7 @@
 </template>
 <script>
   import wepy from 'wepy';
+  import { initWxApp } from '../../api/wx_auth';
   import base from '../../mixins/base'
   import bargain from '../../api/bargain'
   import BargainGoodsDetail from '../../components/bargain/bargain_goods_detail';
@@ -42,7 +43,6 @@
   import BargainInfoBar from '../../components/bargain/bargain_info_bar';
   import BargainRuleBar from '../../components/bargain/bargain_rule_bar';
   import DetailBottom from '../../components/bargain/bottom_bargain_detail';
-  import auth from '../../api/auth';
   import Notice from '../../components/shop/notice';
   import Event from '../../utils/Event';
   import ButtonWidget from '../../components/template/button_widget';
@@ -59,9 +59,7 @@
     };
     async onLoad ({bargainId, isBegin}) {
       this.bargainId = bargainId;
-      // 用户信息
-      const result = await auth.user({block: true, redirect: true});
-      if (!result) return;
+      await initWxApp();
       await this.update(bargainId);
       if (isBegin) {
         const notice = {
@@ -75,6 +73,7 @@
     };
     async update () {
       this.detail = await bargain.bargain(this.bargainId);
+      this.loaded();
       this.page = await bargain.bargainGoodsList();
       this.rule = this.detail.rule;
       this.next();

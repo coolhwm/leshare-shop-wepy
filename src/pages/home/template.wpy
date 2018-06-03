@@ -103,9 +103,8 @@
 <script>
   import store from '../../store/utils';
   import { connect } from 'wepy-redux';
-  import auth from '../../api/auth';
+  import { initWxAppSync, relaunchWxApp } from '../../api/wx_auth';
   import shop from '../../api/shop';
-  // import agent from '../../api/agent';
   import config from '../../api/config';
   import wepy from 'wepy';
   import base from '../../mixins/base';
@@ -127,7 +126,6 @@
   import BargainBox from '../../components/template/bargain_box';
   import Separator from '../../components/template/separator';
   import AddressBox from '../../components/template/address_box';
-  // import WxUtils from '../../utils/WxUtils';
   import _ from 'underscore';
 
   @connect({
@@ -145,10 +143,12 @@
       param: null,
       scene: null
     };
-    async onLoad ({pageId, scene}) {
+    async onLoad ({pageId, scene, reLaunch}) {
+      if (reLaunch == 1) {
+        relaunchWxApp();
+      }
       // 登录检查
-      await auth.login(scene);
-      await store.init();
+      await initWxAppSync();
       this.scene = scene;
       if (pageId) {
         console.info(`[template] load template page id=${pageId}`);
@@ -169,23 +169,7 @@
       this.renderNavigationBar();
       // 执行触发器
       this.runTriggers();
-      // 尝试获取授权
-      // auth.user().then();
-      // 上报分销关系
-      // this.reportAgentInvite();
     };
-
-    /**
-     * 上报分销关系
-     */
-    // reportAgentInvite() {
-    //   const inviteId = WxUtils.parseQrScene(this.sence, 'invite');
-    //   if (inviteId == null) {
-    //     return;
-    //   }
-    //   console.info(`[agent]report invite id, parent_id=${inviteId}`);
-    //   agent.invite(inviteId).then();
-    // }
 
     /**
      * 渲染页面

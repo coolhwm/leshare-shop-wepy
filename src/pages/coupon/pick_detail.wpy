@@ -40,7 +40,7 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
-  import auth from '../../api/auth';
+  import { initWxAppSync, checkUserInfo } from '../../api/wx_auth';
   import base from '../../mixins/base';
   import input from '../../mixins/input';
   import coupon from '../../api/coupon';
@@ -67,8 +67,8 @@
       isDetail: true
     };
     async onLoad (param) {
-      await auth.login();
-      await store.init();
+      await initWxAppSync();
+      await checkUserInfo();
       const couponId = this.getCouponId(param);
       if (couponId == null) {
         Tips.modal('您来晚了一步，优惠券已经领完了');

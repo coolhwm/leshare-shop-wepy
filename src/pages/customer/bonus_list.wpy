@@ -26,6 +26,7 @@
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
+  import { initWxAppSync, checkUserMember } from '../../api/wx_auth';
   import store from '../../store/utils';
   import member from '../../api/member';
   import BonusItem from '../../components/customer/bonus_item';
@@ -34,7 +35,6 @@
   import Placeholder from '../../components/common/placeholder';
   import Loadmore from '../../components/weui/loadmore';
   import Loading from '../../components/common/loading';
-  import Tips from '../../utils/Tips';
 
   @connect({
     member: store.get('member')
@@ -48,12 +48,8 @@
       }
     };
     async onLoad() {
-      await store.init();
-      if (this.member == null) {
-        await Tips.modal('请先注册会员');
-        this.$switch('/pages/customer/index_template');
-        return;
-      }
+      await initWxAppSync();
+      await checkUserMember();
       this.page = await member.bonus();
       await this.next();
     };

@@ -64,13 +64,12 @@
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
-  import auth from '../../api/auth';
+  import { initWxAppSync, checkUserMember } from '../../api/wx_auth';
   import store from '../../store/utils';
   import base from '../../mixins/base';
   import VipCard from '../../components/customer/vip_card';
   import Loading from '../../components/common/loading';
   import ButtonWidget from '../../components/template/button_widget';
-  import Tips from '../../utils/Tips';
 
   @connect({
     member: store.get('member'),
@@ -85,15 +84,8 @@
     };
 
     async onLoad () {
-      const result = await auth.user({block: true, redirect: true});
-      if (!result) return;
-      await store.init();
-      // 没注册的会员引导注册
-      if (this.member == null) {
-        await Tips.modal('请先注册会员');
-        this.$switch('/pages/customer/index_template');
-        return;
-      }
+      await initWxAppSync();
+      await checkUserMember();
       this.loaded();
     }
     async onPullDownRefresh() {

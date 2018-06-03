@@ -159,7 +159,7 @@
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import base from '../../mixins/base';
-  import auth from '../../api/auth';
+  import { checkUserInfo } from '../../api/wx_auth';
   import address from '../../api/address';
   import coupon from '../../api/coupon';
   import order from '../../api/order';
@@ -208,9 +208,7 @@
     };
     cartManager = Cart.create();
     async onLoad (params, {preload}) {
-      const isOpen = await this.checkShopStatus();
-      const result = await auth.user({block: true, redirect: true});
-      if (!result || !isOpen) { return; }
+      await checkUserInfo();
       // 订单数据
       this.trade = preload.params.trade;
       this.type = preload.params.type;
@@ -242,7 +240,6 @@
     };
     async upDateMember () {
       await store.refresh('member');
-      this.loaded();
     };
     methods = {
       input({detail}) {
@@ -396,7 +393,6 @@
         }
         let isPay = false;
         if (trade.onlinePayType === 'balance') {
-          await this.upDateMember();
           await Tips.success('支付成功');
           isPay = true;
         } else {
@@ -423,8 +419,8 @@
           store.delayReflesh('coupon');
         }
         // 刷新会员信息
-        if (trade.bonusPrice > 0) {
-          store.delayReflesh('member')
+        if (trade.bonusPrice > 0 || trade.paymentType == PAYMENT.OFFLINE) {
+          store.delayReflesh('member');
         }
         // 刷新列表
         Event.emit(Event.ORDER_LIST_UPDATE);

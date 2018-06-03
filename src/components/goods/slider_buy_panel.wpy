@@ -84,6 +84,7 @@
 
 <script>
   import wepy from 'wepy';
+  import { checkUserInfoWithError } from '../../api/wx_auth';
   import order from '../../api/order';
   import bargain from '../../api/bargain'
   import { connect } from 'wepy-redux';
@@ -156,6 +157,7 @@
       },
       // 确认选择
       async confirm(type) {
+        await checkUserInfoWithError();
         if (!this.sku.next) {
           return;
         }
@@ -193,6 +195,8 @@
             // 直接购买
             this.$root.$preload('params', {trade, type});
           }
+          this.display = false;
+          this.$apply();
           this.$root.$navigate(`../order/trade`);
         }
         this.clear();

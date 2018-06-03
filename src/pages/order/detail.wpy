@@ -137,8 +137,8 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
+  import { initWxAppSync, checkUserInfo } from '../../api/wx_auth';
   import base from '../../mixins/base';
-  import auth from '../../api/auth';
   import order from '../../api/order';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
@@ -164,8 +164,8 @@
       subShop: {}
     };
     async onLoad ({orderId}) {
-      const result = await auth.user({block: true, redirect: true});
-      if (!result) return;
+      await initWxAppSync();
+      await checkUserInfo();
       // 订单信息
       this.order = await order.getInfo(orderId);
       // 收货地址

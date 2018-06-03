@@ -98,6 +98,7 @@
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import { connect } from 'wepy-redux';
+  import { initWxAppSync } from '../../api/wx_auth';
   import store from '../../store/utils';
   import input from '../../mixins/input';
   import FormTips from '../../components/weui/tips';
@@ -118,12 +119,12 @@
     };
 
     async onLoad () {
+      await initWxAppSync();
       if (this.card == null) {
         await Tips.modal('该门店尚未开放会员注册!');
         wepy.navigateBack();
         return;
       }
-      await store.init();
       if (this.card.extraParam) {
         this.extraParam = JSON.parse(this.card.extraParam);
       }
