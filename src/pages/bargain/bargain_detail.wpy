@@ -11,6 +11,16 @@
     <!--砍价玩法栏-->
     <BargainRuleBar/>
 
+    <!--更多虚拟商品-->
+    <block wx:if="{{page.list}}">
+      <view class="detail-title row-center mt10">
+        <text class="primary lg">── 更多推荐 ──</text>
+      </view>
+      <repeat for="{{page.list}}" key="index" index="index" item="item">
+        <BargainItem :detail.sync="item"/>
+      </repeat>
+    </block>
+
     <!--底栏-->
     <block wx:if="{{detail.isHead && detail.status !== 'TIMEOUT'}}">
       <DetailBottom :detail.sync="detail"/>
@@ -36,13 +46,16 @@
   import Notice from '../../components/shop/notice';
   import Event from '../../utils/Event';
   import ButtonWidget from '../../components/template/button_widget';
+  import pagination from '../../mixins/pagination';
+  import BargainItem from '../../components/bargain/bargain_more_item'
   export default class BargainDetail extends wepy.page {
     data = {
       bargainId: null,
       init: false,
       detail: null,
       rule: null,
-      createTime: null
+      createTime: null,
+      page: []
     };
     async onLoad ({bargainId, isBegin}) {
       this.bargainId = bargainId;
@@ -60,8 +73,9 @@
     };
     async update () {
       this.detail = await bargain.bargain(this.bargainId);
+      this.page = await bargain.bargainGoodsList();
       this.rule = this.detail.rule;
-      this.loaded();
+      this.next();
     }
     onShow() {
       if (this.init) {
@@ -111,9 +125,10 @@
       BargainRuleBar: BargainRuleBar,
       DetailBottom: DetailBottom,
       Notice: Notice,
-      ButtonWidget: ButtonWidget
+      ButtonWidget: ButtonWidget,
+      BargainItem: BargainItem
     };
-    mixins = [base];
+    mixins = [base, pagination];
     config = {
       enablePullDownRefresh: true,
       navigationBarTitleText: '砍价详情'
@@ -123,4 +138,9 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .detail-title{
+    height: 90rpx;
+    border-bottom: $border;
+    background-color: #FFF;
+  }
 </style>

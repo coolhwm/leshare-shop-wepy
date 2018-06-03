@@ -103,7 +103,7 @@
 <script>
   import store from '../../store/utils';
   import { connect } from 'wepy-redux';
-  import { initWxAppSync } from '../../api/wx_auth';
+  import { initWxAppSync, relaunchWxApp } from '../../api/wx_auth';
   import shop from '../../api/shop';
   import config from '../../api/config';
   import wepy from 'wepy';
@@ -143,9 +143,12 @@
       param: null,
       scene: null
     };
-    async onLoad ({pageId, scene}) {
+    async onLoad ({pageId, scene, reLaunch}) {
+      if (reLaunch == 1) {
+        relaunchWxApp();
+      }
       // 登录检查
-      await initWxAppSync(true);
+      await initWxAppSync();
       this.scene = scene;
       if (pageId) {
         console.info(`[template] load template page id=${pageId}`);

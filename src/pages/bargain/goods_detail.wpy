@@ -37,6 +37,16 @@
       <SilderPanel />
     </block>
 
+    <!--更多虚拟商品-->
+    <block wx:if="{{page.list}}">
+      <view class="detail-title row-center mt10">
+        <text class="primary lg">── 更多推荐 ──</text>
+      </view>
+      <repeat for="{{page.list}}" key="index" index="index" item="item">
+        <BargainItem :detail.sync="item"/>
+      </repeat>
+    </block>
+
     <!--底栏-->
     <BargainBar :rule.sync="rule" />
   </view>
@@ -57,6 +67,8 @@
   import DetailList from '../../components/goods/detail_list';
   import GoodsMsgBar from '../../components/bargain/goods_msg_bar';
   import ShopInfoBar from '../../components/goods/shop_info_bar';
+  import pagination from '../../mixins/pagination';
+  import BargainItem from '../../components/bargain/bargain_more_item'
 
   @connect({
     shop: store.get('shop')
@@ -70,7 +82,8 @@
       ruleId: '',
       rule: {},
       goodsDetail: {},
-      subShop: {}
+      subShop: {},
+      page: []
     };
     async onLoad ({ruleId}) {
       await initWxApp();
@@ -84,12 +97,14 @@
       await this.update();
       wepy.stopPullDownRefresh();
     }
-    async update () {
+    async update (ruleId) {
+      this.ruleId = ruleId;
       this.rule = await bargain.rule(this.ruleId);
+      this.page = await bargain.bargainGoodsList();
       this.goodsDetail = this.rule.goods;
       this.subShop = this.goodsDetail.subShop != null ? this.goodsDetail.subShop : this.shop;
       this.goodsId = this.rule.goods.id;
-      this.loaded();
+      await this.next();
     }
     /**
      * 页面分享
@@ -129,9 +144,10 @@
       Loading: Loading,
       DetailList: DetailList,
       GoodsMsgBar: GoodsMsgBar,
-      ShopInfoBar: ShopInfoBar
+      ShopInfoBar: ShopInfoBar,
+      BargainItem: BargainItem
     };
-    mixins = [base];
+    mixins = [base, pagination];
     config = {
       enablePullDownRefresh: true,
       navigationBarTitleText: '商品详情'
@@ -144,5 +160,10 @@
   .goods-swiper{
     width: 750rpx;
     height:480rpx;
+  }
+  .detail-title{
+    height: 90rpx;
+    border-bottom: $border;
+    background-color: #FFF;
   }
 </style>

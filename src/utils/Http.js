@@ -52,23 +52,14 @@ export default class http {
       if (error.serverCode == '80003') {
         console.warn('微信thrid_session认证失败');
       } else {
-        this.relaunchWxApp();
         Tips.modal('微信登录状态失效，请重新访问').then(() => {
           wepy.reLaunch({
-            url: '/pages/home/template'
+            url: '/pages/home/template?reLaunch=1'
           })
         });
       }
     }
     return error;
-  }
-  static relaunchWxApp() {
-    console.info('[wx_login] clear login_code and third_session');
-    wepy.$instance.globalData.auth['login_code'] = null;
-    wepy.$instance.globalData.auth['third_session'] = null;
-    wepy.$instance.globalData.auth['isInit'] = false;
-    wepy.removeStorageSync('login_code');
-    wepy.removeStorageSync('third_session');
   }
   static get (url, data, loading = true) {
     return this.request('GET', url, data, loading);
