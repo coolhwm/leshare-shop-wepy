@@ -110,7 +110,6 @@
         'pages/order/detail',
         'pages/order/refund_edit',
         'pages/order/refund_detail',
-        'pages/coupon/active',
         'pages/coupon/list',
         'pages/coupon/detail',
         'pages/coupon/pick',

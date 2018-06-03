@@ -42,7 +42,6 @@
 <script>
   import wepy from 'wepy';
   import { checkUserMember, initWxAppSync } from '../../api/wx_auth';
-  import auth from '../../api/auth';
   import base from '../../mixins/base';
   import shop from '../../api/shop';
   import router from '../../mixins/router';

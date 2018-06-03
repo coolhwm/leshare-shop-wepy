@@ -82,6 +82,24 @@ export async function checkUserMember() {
 }
 
 /**
+ * 保存并注册用户
+ */
+export async function saveWxUserPhone (data) {
+  if (data.encryptedData == null) {
+    return false;
+  }
+  const url = `${baseUrl}/auth/register_phone`;
+  const param = {
+    encryptedData: data.encryptedData,
+    iv: data.iv,
+    thirdSession: getThirdSession(),
+    app_code: getAppCode()
+  };
+  const result = await http.get(url, param);
+  return result.memberId != null;
+}
+
+/**
  * 保存微信用户信息
  */
 export async function saveWxUserInfo(rawUser) {

@@ -43,7 +43,6 @@
   import CustomerAvatar from '../../components/customer/avatar';
   import store from '../../store/utils';
   import { connect } from 'wepy-redux';
-  import auth from '../../api/auth';
   import { initWxAppSync, checkUserMember } from '../../api/wx_auth';
 
   @connect({

@@ -32,8 +32,9 @@
 
 <script>
   import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import { initWxAppSync, checkUserInfo } from '../../api/wx_auth';
   import store from '../../store/utils';
-  import auth from '../../api/auth';
   import GroupGoodsDetail from '../../components/group/group_goods_detail'
   import GroupInfoBar from '../../components/group/group_info_bar';
   import StatusBar from '../../components/group/status_bar';
@@ -43,6 +44,9 @@
   import SilderPanel from '../../components/goods/slider_buy_panel';
   import ButtonWidget from '../../components/template/button_widget';
 
+  @connect({
+    user: store.get('user')
+  })
   export default class GroupDetail extends wepy.page {
     data = {
       init: false,
@@ -52,10 +56,8 @@
       userGroup: null
     };
     async onLoad ({groupId}) {
-      // 用户信息
-      const result = await auth.user({block: true, redirect: true});
-      if (!result) return;
-      await store.init();
+      await initWxAppSync();
+      await checkUserInfo();
       this.detail = await group.groupDetail(groupId);
       this.rule = this.detail.rule;
       this.isJoined = this.isUserJoined();
@@ -74,7 +76,7 @@
       }
     }
     isUserJoined() {
-      const user = wepy.getStorageSync('user');
+      const user = this.user;
       if (user == null || user.id == null) return false;
       if (this.detail == null || this.detail.list == null) return false;
       this.userGroup = this.detail.list.find(item => item.customerId === user.id);
@@ -109,7 +111,8 @@
     };
     mixins = [base];
     config = {
-      navigationBarTitleText: '拼团详情'
+      navigationBarTitleText: '拼团详情',
+      enablePullDownRefresh: true
     };
   }
 </script>
