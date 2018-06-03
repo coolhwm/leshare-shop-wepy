@@ -50,6 +50,10 @@
       const bargainId = detail.bargainId;
       this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${bargainId}`)
     }
+    buy (detail) {
+      const bargainId = detail.bargainId;
+      this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${bargainId}`)
+    }
     again (detail) {
       const ruleId = detail.ruleId;
       this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${ruleId}`)
