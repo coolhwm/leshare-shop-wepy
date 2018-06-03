@@ -41,6 +41,7 @@
 
 <script>
   import wepy from 'wepy';
+  import { initWxAppSync, checkUserMember } from '../../api/wx_auth';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import base from '../../mixins/base';
@@ -63,15 +64,10 @@
       money: null
     };
     async onLoad () {
-      await store.init();
-      if (this.member == null) {
-        console.info('[top_up]member info is empty');
-        await Tips.modal('请先注册会员');
-        this.$switch('/pages/customer/index_template');
-        return;
-      }
+      await initWxAppSync();
+      await checkUserMember();
       this.rules = await topUp.getTopUp();
-      if (this.card == null || this.rules == null || this.rules.length < 1) {
+      if (this.card == null || this.card.supplyBalance != 1) {
         console.info('[top_up]rule info is empty');
         await Tips.modal('尚未开放充值');
         wepy.navigateBack();

@@ -64,7 +64,6 @@
 </template>
 
 <script>
-  // import auth from '../../api/auth';
   import store from '../../store/utils';
   import { initWxAppSync, checkUserInfo } from '../../api/wx_auth';
   import { connect } from 'wepy-redux';
@@ -100,6 +99,7 @@
     };
     async onLoad () {
       await initWxAppSync();
+      await checkUserInfo();
       if (this.customPageId == 0) {
         console.warn('[customer] customer page_id=3, render fail');
         return;
@@ -114,7 +114,7 @@
       Event.listen(Event.MEMBER_CARD_UPDATE, this.loadMember.bind(this), this);
       this.loaded();
       // 异步加载数据，检查授权权限
-      this.loadOrderCount().then(() => checkUserInfo());
+      this.loadOrderCount().then();
     };
     /***
      * 订单栏刷新

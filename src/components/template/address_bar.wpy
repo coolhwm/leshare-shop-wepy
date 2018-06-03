@@ -26,8 +26,6 @@
     data = {
     };
     async onLoad () {
-      await store.init();
-      this.loaded();
     };
     methods = {
       phone () {

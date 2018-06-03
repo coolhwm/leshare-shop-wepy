@@ -67,7 +67,7 @@
 <script>
   import wepy from 'wepy';
   import order from '../../api/order';
-  import auth from '../../api/auth';
+  import { checkUserInfoWithError } from '../../api/wx_auth';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import SilderPanel from '../../components/common/slider_panel';
@@ -140,8 +140,7 @@
           // this.$emit('buy', param);
 
           // 权限校验
-          const result = await auth.user({block: true, redirect: false});
-          if (!result) return;
+          await checkUserInfoWithError();
           // 订单类型
           if (this.mode == 2) {
             // 堂食点餐

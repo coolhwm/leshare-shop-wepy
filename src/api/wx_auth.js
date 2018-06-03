@@ -39,9 +39,16 @@ export async function checkThridSession() {
 }
 
 /**
+ * 检查用户信息并抛出异常
+ */
+export async function checkUserInfoWithError () {
+  await checkUserInfo(true);
+}
+
+/**
  * 检查是否授权用户信息
  */
-export async function checkUserInfo() {
+export async function checkUserInfo(throwException = false) {
   // 信息完整通过校验
   if (isUserComplete()) {
     console.info('[wx_login] check user info success');
@@ -50,16 +57,28 @@ export async function checkUserInfo() {
   // 尝试获取用户信息
   const rawUser = await getWxUserInfo();
   if (rawUser == null) {
-    redirectToLoginPage('获取用户信息失败，未授权')
+    return redirectToLoginPage('获取用户信息失败', throwException)
   }
   console.info('[wx_login] getUserInfo succeess, begin decode');
   // 服务端解析用户信息（还需要考虑thridSession失效问题）
   const success = await saveWxUserInfo(rawUser);
-  if (success) {
-    return true;
-  } else {
-    redirectToLoginPage('解析用户信息失败')
+  return success ? true : redirectToLoginPage('服务端解析失败', throwException);
+}
+
+/**
+ * 检查用户是否已经注册会员
+ */
+export async function checkUserMember() {
+  const member = store.getState('member');
+  if (member == null) {
+    console.info('[wx_login] member info is empty');
+    await Tips.modal('请点击注册会员，享受更多会员特权');
+    wepy.switchTab({url: '/pages/customer/index_template'});
+    // 抛出异常
+    throw new Error('尚未注册会员');
   }
+  // 还需要检查用户信息是否完整
+  await checkUserInfo();
 }
 
 /**
@@ -109,7 +128,7 @@ async function doInitWxApp (initStore) {
     console.info('[wx_login] login_code invalid, relogin wx');
     const config = await createServerSession();
     // 保存全局配置
-    store.saveFieldData('config', config);
+    await store.initWithData(config);
     // 异步获取优惠券
     store.use('coupon').then();
   } else {
@@ -141,10 +160,12 @@ async function getWxUserInfo () {
 /**
  * 重定向到登录页面
  */
-function redirectToLoginPage(errMsg, error) {
+function redirectToLoginPage(errMsg, throwException) {
   wepy.navigateTo({url: '/pages/home/login'});
-  console.info(error);
-  throw new Error(`[wx_login] check user_info fail, errMsg=${errMsg}`);
+  if (throwException) {
+    throw new Error(`[wx_login] check user_info fail, ${errMsg}`);
+  }
+  return false;
 }
 
 /**

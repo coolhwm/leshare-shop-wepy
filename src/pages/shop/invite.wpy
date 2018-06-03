@@ -51,7 +51,7 @@
 <script>
   import wepy from 'wepy'
   import { connect } from 'wepy-redux';
-  import { initWxAppSync, checkUserInfo } from '../../api/wx_auth';
+  import { initWxAppSync, checkUserMember } from '../../api/wx_auth';
   import store from '../../store/utils';
   import base from '../../mixins/base';
   import pagination from '../../mixins/pagination.wpy';
@@ -61,7 +61,6 @@
   import invite from '../../api/invite'
   import ActionBar from '../../components/common/action_bar';
   import ButtonWidget from '../../components/template/button_widget';
-  import Tips from '../../utils/Tips';
 
   @connect({
     card: store.get('card'),
@@ -75,20 +74,14 @@
     };
     async onLoad () {
       await initWxAppSync();
-      checkUserInfo().then();
-      if (this.member == null) {
-        console.info('[invite]member info is empty');
-        await Tips.modal('请先注册会员');
-        this.$switch('/pages/customer/index_template');
-        return;
-      }
+      await checkUserMember();
       this.page = await invite.page();
       this.number = await invite.count();
       await this.next();
     }
     methods = {
       async invite() {
-        await checkUserInfo();
+        await checkUserMember();
         this.$navigate('/pages/shop/super_poster');
       }
     };

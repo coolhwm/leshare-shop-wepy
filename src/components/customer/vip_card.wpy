@@ -7,8 +7,8 @@
 
     </view>
     <view class="column-center">
-      <button  class="registe-btn" wx:if="{{card.extraParam != null && card.extraParam != '' && card.extraParam != '[]'}}" @tap="complexRegist">会员注册</button>
-      <button  open-type="getPhoneNumber" class="registe-btn" bindgetphonenumber="regist" wx:else>会员注册</button>
+      <button  class="registe-btn" wx:if="{{card.extraParam != null && card.extraParam != '' && card.extraParam != '[]'}}" @tap="complexRegist">注册会员</button>
+      <button  open-type="getPhoneNumber" class="registe-btn" bindgetphonenumber="regist" wx:else>注册会员</button>
       <text class="xxs mt10">立即注册会员可享受积分与折扣特权</text>
     </view>
   </view>

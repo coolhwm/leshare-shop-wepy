@@ -72,6 +72,7 @@
 
 <script>
   import wepy from 'wepy';
+  import { checkUserInfoWithError } from '../../api/wx_auth';
   import countdown from '../../mixins/countdown';
   import bargain from '../../api/bargain';
   import customerList from '../../components/bargain/customer_list'
@@ -84,6 +85,7 @@
     };
     methods = {
       async help (ruleId, bargainId) {
+        await checkUserInfoWithError();
         const result = await bargain.GoodsBargain(ruleId, bargainId);
         const {id: userId} = wepy.getStorageSync('user');
         const price = result.details.find(item => item.customer.id === userId).reducePrice;
@@ -91,7 +93,6 @@
       },
       async want () {
         this.$root.$navigate(`/pages/bargain/bargain_more`);
-        // this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${ruleId}`)
       },
       open(customers) {
         this.$invoke('customerList', 'open', {content: customers})

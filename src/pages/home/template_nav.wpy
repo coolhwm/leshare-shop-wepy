@@ -25,7 +25,7 @@
 <script>
   import store from '../../store/utils';
   import { connect } from 'wepy-redux';
-  import auth from '../../api/auth';
+  import { initWxAppSync } from '../../api/wx_auth';
   import config from '../../api/config';
   import wepy from 'wepy';
   import base from '../../mixins/base';
@@ -52,8 +52,7 @@
     };
     async onLoad ({pageId, sence}) {
       // 登录检查
-      await auth.login();
-      await store.init();
+      await initWxAppSync(true);
       this.sence = sence;
       if (pageId) {
         console.info(`[template] load template page id=${pageId}`);

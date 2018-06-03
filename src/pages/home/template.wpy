@@ -146,8 +146,6 @@
     async onLoad ({pageId, scene}) {
       // 登录检查
       await initWxAppSync(true);
-      // await auth.login(scene);
-      // await store.init();
       this.scene = scene;
       if (pageId) {
         console.info(`[template] load template page id=${pageId}`);
@@ -168,23 +166,7 @@
       this.renderNavigationBar();
       // 执行触发器
       this.runTriggers();
-      // 尝试获取授权
-      // auth.user().then();
-      // 上报分销关系
-      // this.reportAgentInvite();
     };
-
-    /**
-     * 上报分销关系
-     */
-    // reportAgentInvite() {
-    //   const inviteId = WxUtils.parseQrScene(this.sence, 'invite');
-    //   if (inviteId == null) {
-    //     return;
-    //   }
-    //   console.info(`[agent]report invite id, parent_id=${inviteId}`);
-    //   agent.invite(inviteId).then();
-    // }
 
     /**
      * 渲染页面

@@ -30,6 +30,7 @@
 
 <script>
   import wepy from 'wepy';
+  import { checkUserInfoWithError } from '../../api/wx_auth';
   import Tips from '../../utils/Tips';
   import coupon from '../../api/coupon';
   import store from '../../store/utils';
@@ -40,6 +41,7 @@
     data = {};
     methods = {
       async pick(item) {
+        await checkUserInfoWithError();
         try {
           Tips.loading();
           await coupon.pick(item.id);

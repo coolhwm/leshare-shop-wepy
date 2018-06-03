@@ -10,7 +10,7 @@ const store = getStore();
 // 元数据
 let meta = {};
 // 是否调试
-const IS_DEBUG = true;
+const IS_DEBUG = false;
 // 超时时间
 const CACHE_TIMEOUT = 5 * 60 * 1000;
 // 嵌套字段，需要拆解缓存
@@ -84,7 +84,22 @@ const wait = async () => {
  * 初始化
  */
 const init = async () => {
-  // 判读是否正在加载，正在加载则等待
+  await doInit(async () => {
+    await use(...INIT_KEY);
+  })
+};
+
+/**
+ * 使用数据初始化
+ */
+const initWithData = async (data) => {
+  await doInit(async () => {
+    saveFieldData('config', data);
+  })
+};
+
+const doInit = async (initHandler) => {
+  // 判断是否正在加载，正在加载则等待
   if (isLoading) {
     console.info('[store] store is loading, wait completed');
     return pushLoadingQueue();
@@ -93,7 +108,7 @@ const init = async () => {
     console.info('[store] start init store');
     isLoading = true;
     try {
-      await use(...INIT_KEY);
+      await initHandler();
       // 清空等待队列
       console.info('[store] store init completed');
       loadingQueue.forEach(callback => callback());
@@ -105,6 +120,16 @@ const init = async () => {
       isLoading = false;
       loadingQueue = [];
     }
+  }
+};
+
+const saveFieldData = (field, data) => {
+  if (isNested(field)) {
+    const keys = Object.keys(data);
+    console.info(`[store] load [${field}] nest fields = ${keys}`);
+    keys.forEach(key => save(key, data[key]));
+  } else {
+    save(field, data);
   }
 };
 
@@ -140,15 +165,6 @@ const load = async (fields) => {
   save('meta', meta);
 };
 
-const saveFieldData = (field, data) => {
-  if (isNested(field)) {
-    const keys = Object.keys(data);
-    console.info(`[store] load [${field}] nest fields = ${keys}`);
-    keys.forEach(key => save(key, data[key]));
-  } else {
-    save(field, data);
-  }
-};
 
 /**
  * 刷新数据
@@ -231,4 +247,4 @@ const exists = key => {
   return interval < CACHE_TIMEOUT;
 };
 
-export default {getState, get, save, use, wait, refresh: reflesh, init, delayReflesh, saveFieldData}
+export default {getState, get, save, use, wait, refresh: reflesh, init, initWithData, delayReflesh}

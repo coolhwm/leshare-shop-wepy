@@ -32,7 +32,6 @@
       coupon: {}
     };
     async onLoad() {
-      // await store.init();
     }
     async pick() {
       try {

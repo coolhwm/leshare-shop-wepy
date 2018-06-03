@@ -197,8 +197,6 @@
       subShop: {}
     };
     async onLoad ({goodsId, type}) {
-      // await auth.login();
-      // await store.init();
       await initWxApp();
       this.goodsId = goodsId;
       const [detail, count] = await Promise.all([

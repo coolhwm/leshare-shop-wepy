@@ -41,6 +41,7 @@
 
 <script>
   import wepy from 'wepy';
+  import { checkUserMember, initWxAppSync } from '../../api/wx_auth';
   import auth from '../../api/auth';
   import base from '../../mixins/base';
   import shop from '../../api/shop';
@@ -114,15 +115,8 @@
     }
 
     async onLoad () {
-      const result = await auth.user({block: true, redirect: true});
-      if (!result) return;
-      await store.init();
-      if (this.member == null) {
-        console.info('[invite]member info is empty');
-        await Tips.modal('请先注册会员');
-        this.$switch('/pages/customer/index_template');
-        return;
-      }
+      await initWxAppSync();
+      await checkUserMember();
       await this.getUserSign();
       this.loaded();
     }

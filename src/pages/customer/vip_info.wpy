@@ -29,7 +29,7 @@
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
-  import auth from '../../api/auth';
+  import { initWxAppSync, checkUserMember } from '../../api/wx_auth';
   import store from '../../store/utils';
   import base from '../../mixins/base';
   import member from '../../api/member';
@@ -53,16 +53,8 @@
     };
 
     async onLoad () {
-      const result = await auth.user({block: true, redirect: true});
-      if (!result) return;
-      await store.init();
-      // 要求会员授权
-      // 没注册的会员引导注册
-      if (this.member == null) {
-        await Tips.alert('请先注册会员');
-        this.$redirect('/pages/customer/registe_member');
-        return;
-      }
+      await initWxAppSync();
+      await checkUserMember();
       // 增加定时器扫描
       interval = setInterval(async () => {
         await this.checkScan();
