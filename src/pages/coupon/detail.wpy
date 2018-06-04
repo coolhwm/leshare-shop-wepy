@@ -24,7 +24,7 @@
       <text class="mt10 xs">{{tips}}</text>
     </view>
 
-    <view class="qr-box column-center" wx:if="{{!success}}">
+    <view class="qr-box column-center" wx:if="{{!success && coupon.supportType != 1}}">
       <text class="muted mb20 lg" wx:if="{{coupon.supportType !=1}}">线下店铺消费时出示</text>
       <view class="code-box">
         <block wx:if="{{coupon.imgUrl}}">
@@ -52,6 +52,7 @@
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
+  import { initWxApp } from '../../api/wx_auth';
   import store from '../../store/utils';
   import base from '../../mixins/base';
   import input from '../../mixins/input';
@@ -77,7 +78,7 @@
     };
     async onLoad (options, {preload}) {
       // 初始化全局存储
-      await store.init();
+      await initWxApp();
       this.coupon = preload.coupon;
 
       const id = preload.coupon ? preload.coupon.id : preload.couponId;

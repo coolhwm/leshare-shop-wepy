@@ -51,6 +51,8 @@ export default class Event {
   static GOODS_PANEL_MINUS = 'GOODS_PANEL_MINUS';
   // 点餐类型
   static FOOD_TYPE_UPDATE = 'FOOD_TYPE_UPDATE';
+  // 重启程序
+  static RELAUNCH_APP = 'RELAUNCH_APP';
   static listen(eventName, callback, observer) {
     // 先移除监听
     this.remove(eventName, observer);

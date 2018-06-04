@@ -130,6 +130,7 @@
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
+  import { checkUserInfoWithError } from '../../api/wx_auth';
   import store from '../../store/utils';
   import base from '../../mixins/base';
   import Loading from '../../components/common/loading';
@@ -193,6 +194,7 @@
       },
       // TODO 可能需要优化submit
       async submit ({detail}) {
+        await checkUserInfoWithError();
         this.order.name = detail.value.name;
         this.order.phone = detail.value.phone.replace(/\s/g, '');
         let param = {};

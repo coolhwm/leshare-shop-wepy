@@ -7,8 +7,8 @@
 
     </view>
     <view class="column-center">
-      <button  class="registe-btn" wx:if="{{card.extraParam != null && card.extraParam != '' && card.extraParam != '[]'}}" @tap="complexRegist">会员注册</button>
-      <button  open-type="getPhoneNumber" class="registe-btn" bindgetphonenumber="regist" wx:else>会员注册</button>
+      <button  class="registe-btn" wx:if="{{card.extraParam != null && card.extraParam != '' && card.extraParam != '[]'}}" @tap="complexRegist">注册会员</button>
+      <button  open-type="getPhoneNumber" class="registe-btn" bindgetphonenumber="regist" wx:else>注册会员</button>
       <text class="xxs mt10">立即注册会员可享受积分与折扣特权</text>
     </view>
   </view>
@@ -47,7 +47,7 @@
 
 <script>
   import wepy from 'wepy';
-  import auth from '../../api/auth'
+  import { saveWxUserPhone } from '../../api/wx_auth';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import base from '../../mixins/base'
@@ -74,8 +74,8 @@
         }
         try {
           Tips.loading();
-          const result = await auth.decodePhone(detail);
-          if (result.memberId) {
+          const result = await saveWxUserPhone(detail);
+          if (result) {
             await Tips.success('注册成功');
             Event.emit(Event.MEMBER_CARD_UPDATE);
           } else {
@@ -176,6 +176,8 @@
     line-height: 22px;
   }
   .avatar{
+    overflow: hidden;
+    display: block;
     width: 120rpx;
     height: 120rpx;
     border-radius: 50%;

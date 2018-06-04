@@ -64,8 +64,8 @@
 </template>
 
 <script>
-  import auth from '../../api/auth';
   import store from '../../store/utils';
+  import { initWxAppSync, checkUserInfo } from '../../api/wx_auth';
   import { connect } from 'wepy-redux';
   import config from '../../api/config';
   import wepy from 'wepy';
@@ -98,9 +98,8 @@
       count: null
     };
     async onLoad () {
-      const result = await auth.user({block: true, redirect: true});
-      if (!result) return;
-      await store.init();
+      await initWxAppSync();
+      await checkUserInfo();
       if (this.customPageId == 0) {
         console.warn('[customer] customer page_id=3, render fail');
         return;
@@ -114,7 +113,8 @@
       Event.listen(Event.ORDER_LIST_UPDATE, this.loadOrderCount.bind(this), this);
       Event.listen(Event.MEMBER_CARD_UPDATE, this.loadMember.bind(this), this);
       this.loaded();
-      this.loadOrderCount();
+      // 异步加载数据，检查授权权限
+      this.loadOrderCount().then();
     };
     /***
      * 订单栏刷新

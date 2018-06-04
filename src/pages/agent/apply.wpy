@@ -94,6 +94,7 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
+  import { initWxApp } from '../../api/wx_auth';
   import base from '../../mixins/base';
   import input from '../../mixins/input';
   import Copyright from '../../components/common/copyright';
@@ -114,7 +115,7 @@
       rule: null
     };
     async onLoad () {
-      await store.init();
+      await initWxApp();
       this.rule = await agent.rule();
       if (this.rule == null || this.rule.isUse == 0) {
         const notice = {

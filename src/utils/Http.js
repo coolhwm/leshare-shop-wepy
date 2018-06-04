@@ -53,13 +53,14 @@ export default class http {
         console.warn('微信thrid_session认证失败');
       } else {
         Tips.modal('微信登录状态失效，请重新访问').then(() => {
-          wepy.switchTab({url: '/pages/home/template'});
+          wepy.reLaunch({
+            url: '/pages/home/template?reLaunch=1'
+          })
         });
       }
     }
     return error;
   }
-
   static get (url, data, loading = true) {
     return this.request('GET', url, data, loading);
   }

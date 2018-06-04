@@ -231,7 +231,7 @@ export default class group extends base {
    * 判断是否已开团
    */
   static _processGroupParticipated (detail) {
-    const user = wepy.getStorageSync('user');
+    const user = wepy.$instance.globalData.auth['user'];
     detail.list.forEach(item => {
       detail.isPar = item.customerId === user.id;
     });

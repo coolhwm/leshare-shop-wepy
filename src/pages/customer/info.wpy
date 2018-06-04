@@ -43,7 +43,7 @@
   import CustomerAvatar from '../../components/customer/avatar';
   import store from '../../store/utils';
   import { connect } from 'wepy-redux';
-  import auth from '../../api/auth';
+  import { initWxAppSync, checkUserMember } from '../../api/wx_auth';
 
   @connect({
     member: store.get('member'),
@@ -56,8 +56,8 @@
     };
     async onLoad () {
       // 初始化全局存储
-      await auth.user();
-      await store.init();
+      await initWxAppSync();
+      await checkUserMember();
       this.extraParam = JSON.parse(this.card.extraParam);
       const param = JSON.parse(this.member.extraParam);
       this.extraParam.forEach(item => {

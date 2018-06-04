@@ -111,7 +111,7 @@ export default class group extends base {
 
   // 处理砍价用户
   static _processBargainUser (data) {
-    const {id: userId} = wepy.getStorageSync('user');
+    const { id: userId } = wepy.$instance.globalData.auth['user'];
     const details = data.details;
     // 处理发起者
     data.header = details[0];

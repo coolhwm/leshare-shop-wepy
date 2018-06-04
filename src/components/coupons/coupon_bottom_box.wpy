@@ -18,7 +18,7 @@
   import router from '../../mixins/router';
   import wepy from 'wepy';
   import Tips from '../../utils/Tips';
-  import auth from '../../api/auth'
+  import { saveWxUserPhone } from '../../api/wx_auth';
   import coupon from '../../api/coupon';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
@@ -32,7 +32,6 @@
       coupon: {}
     };
     async onLoad() {
-      // await store.init();
     }
     async pick() {
       try {
@@ -65,8 +64,8 @@
             return;
           }
           Tips.loading();
-          const result = await auth.decodePhone(detail);
-          if (result.memberId) {
+          const result = await saveWxUserPhone(detail);
+          if (result) {
             await store.refresh('member');
           }
         } catch (e) {

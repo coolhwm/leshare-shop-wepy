@@ -31,7 +31,7 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
-  import auth from '../../api/auth';
+  import { initWxAppSync, checkUserInfo} from '../../api/wx_auth';
   import CategoryBox from '../../components/template/category_box';
   import base from '../../mixins/base';
   import router from '../../mixins/router';
@@ -69,10 +69,8 @@
         this.mode = 2;
         this.showTableNumNotice(tableNum);
       }
-      // 用户信息
-      await auth.user();
-      // 初始化Store
-      await store.init();
+      await initWxAppSync();
+      await checkUserInfo();
       Event.listen(Event.FOOD_TYPE_UPDATE, this.switchMode.bind(this), this);
       this.loaded();
     };
