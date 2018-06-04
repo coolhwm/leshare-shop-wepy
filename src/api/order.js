@@ -480,6 +480,8 @@ export default class order extends base {
    */
   static _processIsDigit(detail) {
     detail.isDigit = detail.orderType == '90' || detail.orderGoodsInfos[0].goods.type == 'digit'
-    detail.digitType = detail.orderGoodsInfos[0].digitGoodsExchange.digitType
+    if (detail.orderGoodsInfos[0].digitGoodsExchange) {
+      detail.digitType = detail.orderGoodsInfos[0].digitGoodsExchange.digitType
+    }
   }
 }
