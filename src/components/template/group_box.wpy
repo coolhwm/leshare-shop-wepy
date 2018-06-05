@@ -15,7 +15,7 @@
         <repeat for="{{param.data}}" key="index" index="index" item="item">
           <view class="column group-tight-box" @tap="detail({{item.ruleId}})">
             <view class="content-top-box column">
-              <image class="group-image" lazy-load src="{{item.goodsImage}}" mode="aspectFill"></image>
+              <image class="group-image" lazy-load src="{{item.goodsImage}}/small" mode="aspectFill"></image>
               <text class="group-goods-name mb10 xs">{{item.goodsName}}</text>
               <view class="group-goods-price">￥{{item.goodsPrice}}</view>
             </view>

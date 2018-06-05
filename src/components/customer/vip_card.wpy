@@ -3,7 +3,7 @@
   <view class="vip-box column-between" style="background-image: url('{{card.backgroundPicUrl}}');background-repeat:no-repeat; background-size:100% 100%;" wx:if="{{member == null}}">
     <view class="column-center">
       <image class="avatar"  src="{{avatarUrl}}"/>
-      <text>{{nickName}}</text>
+      <view class="user-name">{{nickName}}</view>
 
     </view>
     <view class="column-center">
@@ -47,7 +47,7 @@
 
 <script>
   import wepy from 'wepy';
-  import { saveWxUserPhone } from '../../api/wx_auth';
+  import { saveWxUserPhone, checkUserInfoWithError } from '../../api/wx_auth';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import base from '../../mixins/base'
@@ -68,6 +68,7 @@
     };
     methods = {
       async regist ({detail}) {
+        await checkUserInfoWithError();
         if (detail.errMsg == 'getPhoneNumber:fail user deny') {
           await Tips.alert('请允许授权');
           return;
@@ -198,10 +199,10 @@
     }
     .info-box {
       margin-left: 30rpx;
-
-      .user-name{
-        font-size: 36rpx;
-      }
+    }
+    .user-name{
+      color: white;
+      font-size: 32rpx;
     }
     .cost-box{
       margin-top: 10rpx;

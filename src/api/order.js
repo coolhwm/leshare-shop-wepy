@@ -479,7 +479,14 @@ export default class order extends base {
    * 商品时候为虚拟商品
    */
   static _processIsDigit(detail) {
-    detail.isDigit = detail.orderType == '90' || detail.orderGoodsInfos[0].goods.type == 'digit'
-    detail.digitType = detail.orderGoodsInfos[0].digitGoodsExchange.digitType
+    const goodsList = detail.orderGoodsInfos;
+    if (goodsList == null || goodsList.length < 1) {
+      detail.isDigit = false;
+      return;
+    }
+    detail.isDigit = detail.orderType == '90' || goodsList[0].goods.type == 'digit';
+    if (detail.isDigit) {
+      detail.digitType = goodsList[0].digitGoodsExchange.digitType;
+    }
   }
 }

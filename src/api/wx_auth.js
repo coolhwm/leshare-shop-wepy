@@ -4,9 +4,12 @@ import wepy from 'wepy';
 import store from '../store/utils';
 import config from './config';
 import Tips from '../utils/Tips';
+import WxUtils from '../utils/WxUtils';
+
 const baseUrl = wepy.$instance.globalData.baseUrl;
 const auth = wepy.$instance.globalData.auth;
 let isInit = false;
+let inviteId = null;
 
 /**
  * 异步启动程序
@@ -22,6 +25,17 @@ export async function initWxApp () {
  */
 export async function initWxAppSync () {
   return doInitWxApp(() => store.init());
+}
+
+/**
+ * 设置邀请人信息
+ */
+export function setInviteId (scene) {
+  const id = WxUtils.parseQrScene(scene, 'invite');
+  if (id != null) {
+    inviteId = id;
+    console.info(`[wx_login] scene invite_id=${inviteId}`);
+  }
 }
 
 /**
@@ -120,7 +134,7 @@ export async function saveWxUserInfo(rawUser) {
     Tips.loading();
     const result = await decodeUserInfo(rawUser);
     if (result.user != null) {
-      console.info('[wx_login] decodeUserInfo succeess');
+      console.info('[wx_login] decodeUserInfo succeess', result.user);
       setUser(result.user);
       return true;
     } else {
@@ -208,6 +222,11 @@ async function createServerSession () {
     code: code,
     withConfig: true
   };
+  // 邀请参数
+  if (inviteId) {
+    param.inviteId = inviteId;
+    console.info(`[wx_login] report invite_id=${inviteId}`);
+  }
   const {thirdSession, loginCode, fullShopInfo} = await http.post(url, param);
   // 保存权限信息
   setLoginCode(loginCode);

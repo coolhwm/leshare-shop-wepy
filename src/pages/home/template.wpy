@@ -103,7 +103,7 @@
 <script>
   import store from '../../store/utils';
   import { connect } from 'wepy-redux';
-  import { initWxAppSync, relaunchWxApp } from '../../api/wx_auth';
+  import { initWxAppSync, relaunchWxApp, setInviteId } from '../../api/wx_auth';
   import shop from '../../api/shop';
   import config from '../../api/config';
   import wepy from 'wepy';
@@ -144,6 +144,7 @@
       scene: null
     };
     async onLoad ({pageId, scene, reLaunch}) {
+      setInviteId(scene);
       if (reLaunch == 1) {
         relaunchWxApp();
       }
