@@ -26,6 +26,17 @@
     <block>
       <SilderPanel />
     </block>
+
+    <!--更多拼团商品-->
+    <block wx:if="{{list}}">
+      <view class="detail-title row-center mt10">
+        <text class="primary lg">── 更多推荐 ──</text>
+      </view>
+      <repeat for="{{list}}" key="index" index="index" item="item">
+        <GroupItem :item.sync="item"/>
+      </repeat>
+    </block>
+
     <ButtonWidget/>
   </view>
 </template>
@@ -43,6 +54,7 @@
   import Loading from '../../components/common/loading';
   import SilderPanel from '../../components/goods/slider_buy_panel';
   import ButtonWidget from '../../components/template/button_widget';
+  import GroupItem from '../../components/group/group_more_item';
 
   @connect({
     user: store.get('user')
@@ -53,12 +65,15 @@
       detail: {},
       rule: {},
       isJoined: false,
-      userGroup: null
+      userGroup: null,
+      list: null
     };
     async onLoad ({groupId}) {
       await initWxAppSync();
       await checkUserInfo();
-      this.detail = await group.groupDetail(groupId);
+      const [detail, list] = await Promise.all([group.groupDetail(groupId), group.recommendList()]);
+      this.detail = detail;
+      this.list = list;
       this.rule = this.detail.rule;
       this.isJoined = this.isUserJoined();
       this.detail.isJoined = this.isJoined;
@@ -107,7 +122,8 @@
       StatusBar: StatusBar,
       SilderPanel: SilderPanel,
       Loading: Loading,
-      ButtonWidget: ButtonWidget
+      ButtonWidget: ButtonWidget,
+      GroupItem: GroupItem
     };
     mixins = [base];
     config = {
@@ -123,5 +139,10 @@
     background-color: white;
     margin-bottom: 10rpx;
     padding: 20rpx;
+  }
+  .detail-title{
+    height: 90rpx;
+    border-bottom: $border;
+    background-color: #FFF;
   }
 </style>

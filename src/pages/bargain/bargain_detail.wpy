@@ -12,11 +12,11 @@
     <BargainRuleBar/>
 
     <!--更多虚拟商品-->
-    <block wx:if="{{page.list && page.list.length > 0}}">
+    <block wx:if="{{list && list.length > 0}}">
       <view class="detail-title row-center mt10">
         <text class="primary lg">── 更多推荐 ──</text>
       </view>
-      <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <repeat for="{{list}}" key="index" index="index" item="item">
         <BargainItem :detail.sync="item"/>
       </repeat>
     </block>
@@ -35,7 +35,7 @@
 </template>
 <script>
   import wepy from 'wepy';
-  import { initWxApp } from '../../api/wx_auth';
+  import { initWxAppSync } from '../../api/wx_auth';
   import base from '../../mixins/base'
   import bargain from '../../api/bargain'
   import BargainGoodsDetail from '../../components/bargain/bargain_goods_detail';
@@ -46,7 +46,6 @@
   import Notice from '../../components/shop/notice';
   import Event from '../../utils/Event';
   import ButtonWidget from '../../components/template/button_widget';
-  import pagination from '../../mixins/pagination';
   import BargainItem from '../../components/bargain/bargain_more_item'
   export default class BargainDetail extends wepy.page {
     data = {
@@ -55,11 +54,11 @@
       detail: null,
       rule: null,
       createTime: null,
-      page: []
+      list: []
     };
     async onLoad ({bargainId, isBegin}) {
       this.bargainId = bargainId;
-      await initWxApp();
+      await initWxAppSync();
       await this.update(bargainId);
       if (isBegin) {
         const notice = {
@@ -72,11 +71,11 @@
       Event.listen(Event.BARGAIN_DETAIL_UPDATE, this.update.bind(this), this);
     };
     async update () {
-      this.detail = await bargain.bargain(this.bargainId);
-      this.loaded();
-      this.page = await bargain.bargainGoodsList();
+      const [detail, list] = await Promise.all([bargain.bargain(this.bargainId), bargain.recommendList()]);
+      this.detail = detail;
+      this.list = list;
       this.rule = this.detail.rule;
-      this.next();
+      this.loaded();
     }
     onShow() {
       if (this.init) {
@@ -129,7 +128,7 @@
       ButtonWidget: ButtonWidget,
       BargainItem: BargainItem
     };
-    mixins = [base, pagination];
+    mixins = [base];
     config = {
       enablePullDownRefresh: true,
       navigationBarTitleText: '砍价详情'

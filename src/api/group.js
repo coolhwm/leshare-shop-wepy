@@ -86,6 +86,19 @@ export default class group extends base {
     });
   }
 
+  /**
+   * 推荐商品列表
+   */
+  static recommendList() {
+    const url = `${this.baseUrl}/goods_group/rules`;
+    return this.get(url).then(data => {
+      data.forEach(item => {
+        goods._processGoodsPreview(item.goods);
+      });
+      return data;
+    });
+  }
+
   // *** 数据处理方法
 
   /**

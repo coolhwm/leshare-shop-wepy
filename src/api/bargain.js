@@ -83,8 +83,20 @@ export default class group extends base {
       goods._processGoodsPreview(item.goods);
     });
   }
-  // 处理方法
 
+  /**
+   * 推荐列表
+   */
+  static recommendList() {
+    const url = `${this.baseUrl}/goods_bargain/rules/list`;
+    return this.get(url).then(data => {
+      data.forEach(item => {
+        goods._processGoodsPreview(item.goods);
+      });
+      return data;
+    })
+  }
+  // 处理方法
   static _processBargainGoods (data) {
     // 处理预览图
     goods._processGoodsPreview(data.rule.goods);

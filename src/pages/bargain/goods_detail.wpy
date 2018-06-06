@@ -38,11 +38,11 @@
     </block>
 
     <!--更多虚拟商品-->
-    <block wx:if="{{page.list}}">
+    <block wx:if="{{list}}">
       <view class="detail-title row-center mt10">
         <text class="primary lg">── 更多推荐 ──</text>
       </view>
-      <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <repeat for="{{list}}" key="index" index="index" item="item">
         <BargainItem :detail.sync="item"/>
       </repeat>
     </block>
@@ -67,7 +67,6 @@
   import DetailList from '../../components/goods/detail_list';
   import GoodsMsgBar from '../../components/bargain/goods_msg_bar';
   import ShopInfoBar from '../../components/goods/shop_info_bar';
-  import pagination from '../../mixins/pagination';
   import BargainItem from '../../components/bargain/bargain_more_item'
 
   @connect({
@@ -83,7 +82,7 @@
       rule: {},
       goodsDetail: {},
       subShop: {},
-      page: []
+      list: []
     };
     async onLoad ({ruleId}) {
       await initWxApp();
@@ -99,12 +98,13 @@
     }
     async update (ruleId) {
       this.ruleId = ruleId;
-      this.rule = await bargain.rule(this.ruleId);
-      this.page = await bargain.bargainGoodsList();
+      const [rule, list] = await Promise.all([bargain.rule(this.ruleId), bargain.recommendList()]);
+      this.rule = rule;
+      this.list = list;
       this.goodsDetail = this.rule.goods;
       this.subShop = this.goodsDetail.subShop != null ? this.goodsDetail.subShop : this.shop;
       this.goodsId = this.rule.goods.id;
-      await this.next();
+      this.loaded();
     }
     /**
      * 页面分享
@@ -147,7 +147,7 @@
       ShopInfoBar: ShopInfoBar,
       BargainItem: BargainItem
     };
-    mixins = [base, pagination];
+    mixins = [base];
     config = {
       enablePullDownRefresh: true,
       navigationBarTitleText: '商品详情'

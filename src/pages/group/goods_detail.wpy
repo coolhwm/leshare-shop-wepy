@@ -36,6 +36,16 @@
       <SilderPanel />
     </block>
 
+    <!--更多拼团商品-->
+    <block wx:if="{{list}}">
+      <view class="detail-title row-center mt10">
+        <text class="primary lg">── 更多推荐 ──</text>
+      </view>
+      <repeat for="{{list}}" key="index" index="index" item="item">
+        <GroupItem :item.sync="item"/>
+      </repeat>
+    </block>
+
     <!--底栏-->
     <GroupBar :rule.sync="rules" />
   </view>
@@ -43,7 +53,7 @@
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
-  import { initWxApp } from '../../api/wx_auth';
+  import { initWxAppSync } from '../../api/wx_auth';
   import store from '../../store/utils';
   import base from '../../mixins/base';
   import Loading from '../../components/common/loading';
@@ -56,6 +66,7 @@
   import DetailList from '../../components/goods/detail_list';
   import GoodsMsgBar from '../../components/group/goods_msg_bar';
   import ShopInfoBar from '../../components/goods/shop_info_bar';
+  import GroupItem from '../../components/group/group_more_item';
 
   @connect({
     shop: store.get('shop')
@@ -69,10 +80,11 @@
       groupTime: '',
       ruleId: '',
       rules: {},
-      processing: {}
+      processing: {},
+      list: []
     };
     async onLoad ({ruleId}) {
-      await initWxApp();
+      await initWxAppSync();
       await this.update(ruleId);
     };
     onUnload() {
@@ -83,7 +95,8 @@
       wepy.stopPullDownRefresh();
     }
     async update (ruleId) {
-      const [rules, processing] = await Promise.all([group.rules(ruleId), group.processing(ruleId)]);
+      const [rules, processing, list] = await Promise.all([group.rules(ruleId), group.processing(ruleId), group.recommendList()]);
+      this.list = list;
       this.rules = rules;
       this.processing = processing;
       this.time = {
@@ -139,7 +152,8 @@
       Loading: Loading,
       DetailList: DetailList,
       GoodsMsgBar: GoodsMsgBar,
-      ShopInfoBar: ShopInfoBar
+      ShopInfoBar: ShopInfoBar,
+      GroupItem: GroupItem
     };
     mixins = [base];
     config = {
@@ -155,5 +169,9 @@
     width: 750rpx;
     height:480rpx;
   }
-
+  .detail-title{
+    height: 90rpx;
+    border-bottom: $border;
+    background-color: #FFF;
+  }
 </style>
