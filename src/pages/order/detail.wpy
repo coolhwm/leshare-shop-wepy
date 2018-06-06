@@ -51,14 +51,15 @@
         <icon class="more ml10" color="gray"/>
       </view>
     </view>
-    <view class="column digit-account-box mt10" wx:elif="{{order.isDigit && order.digitResult.result && order.digitType === 'account'}}">
-      <view class="row account-box">
-        <text class="mr20">账号: {{order.digitResult.result.account}}</text>
-        <text class="ml20 muted xs" @tap="copy({{order.digitResult.result.account}})">复制</text>
+    <!---账号类-->
+    <view class="weui-cells weui-cells-form mt10 mb10" wx:if="{{order.isDigit && order.digitResult.result && order.digitType === 'account'}}">
+      <view class="weui-cell" @tap="copy({{order.digitResult.result.account}})">
+        <view class="weui-cell__bd">兑换账号 <text class="xs muted">(点击复制)</text> </view>
+        <view class="weui-cell__ft"><text>{{order.digitResult.result.account}}</text></view>
       </view>
-      <view class="row account-box">
-        <text class="mr20">密码：{{order.digitResult.result.password}}</text>
-        <text class="ml20 muted xs" @tap="copy({{order.digitResult.result.password}})">复制</text>
+      <view class="weui-cell"  @tap="copy({{order.digitResult.result.password}})">
+        <view class="weui-cell__bd">兑换密码 <text class="xs muted">(点击复制)</text></view>
+        <view class="weui-cell__ft"><text>{{order.digitResult.result.password}}</text></view>
       </view>
     </view>
 
@@ -291,22 +292,18 @@
      * 查看二维码
      */
     qrCode(order) {
+      if (order.couponCustomerInfo == null) {
+        Tips.modal('兑换码请查看订单详情，点击复制');
+        return;
+      }
       const couponId = order.couponCustomerInfo.id;
       this.$root.$preload('couponId', couponId);
       this.$root.$navigate(`/pages/coupon/detail`)
     }
     methods = {
-      copy(content) {
-        wx.setClipboardData({
-          data: content,
-          success: function(res) {
-            wx.getClipboardData({
-              success: function(res) {
-                console.log(res.data)
-              }
-            })
-          }
-        })
+      async copy(content) {
+        await wepy.setClipboardData({data: content});
+        Tips.success('复制成功');
       },
       action(funcName, order) {
         console.info('[action]' + funcName);

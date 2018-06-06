@@ -153,7 +153,7 @@ const ACTION = {
   },
   QRCODE: {
     primary: false,
-    name: '查看二维码',
+    name: '查看兑换码',
     func: 'qrCode'
   }
 };
