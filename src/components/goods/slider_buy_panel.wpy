@@ -157,6 +157,7 @@
       },
       // 确认选择
       async confirm(type) {
+        console.info('[slider_panel] type=', type, this.goods);
         await checkUserInfoWithError();
         if (!this.sku.next) {
           return;

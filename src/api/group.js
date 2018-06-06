@@ -117,8 +117,9 @@ export default class group extends base {
     // 处理价格标签
     goods._processGoodsPriceLabel(detail.goods);
     detail.sellPrice = Lang._fixedPrice(detail.sellPrice);
+    // 页面显示的原价
+    detail.goods.originSellPrice = detail.goods.sellPrice;
     detail.goods.sellPrice = detail.sellPrice;
-
     // 处理活动时间状态
     this._processTimeStatus(detail);
 

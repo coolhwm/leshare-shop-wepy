@@ -10,7 +10,7 @@
       <icon class="like{{!isFav ? '' : '-fill'}} normal" style="color: {{!isFav ? 'gray' : 'red'}}" />
       <text class="xs">收藏</text>
     </view>
-    <view class="column-center btn-buy" @tap="handleBuy({{rule.goods}})">
+    <view class="column-center btn-buy" @tap="buyWithGoods({{rule.goods}})">
       <text class="xxl money-box">￥{{rule.goods.priceLable}}</text>
       <text>单独购买</text>
     </view>
@@ -52,6 +52,9 @@
       state: ''
     };
     methods = {
+      buyWithGoods(goods) {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${goods.id}`);
+      },
       async fav() {
         if (this.isFav) {
           await Tips.confirm('确认取消收藏?');
