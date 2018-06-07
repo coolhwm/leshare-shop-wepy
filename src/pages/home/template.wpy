@@ -62,9 +62,16 @@
         <Separator :param.sync="item" />
       </block>
 
+      <!--地址栏-->
       <block wx:if="{{item.type == 'ADDRESS_BOX'}}">
         <AddressBox :param.sync="item" />
       </block>
+
+      <!--视频窗口-->
+      <block wx:if="{{item.type == 'VIDEO_BOX'}}">
+        <VideoBox :param.sync="item" />
+      </block>
+
 
       <!--间隔-->
       <view class="h-gap" wx:if="{{item.border !== 'none'}}"></view>
@@ -113,7 +120,7 @@
   import SwiperBar from '../../components/template/swiper_bar';
   import ShopBar from '../../components/shop/header';
   import ImageBox from '../../components/template/image_box';
-  import GoodsBox from '../../components/template/goods_box';
+  import GoodsBox from '../../components/template/goods/goods_box';
   import CouponBox from '../../components/template/coupon_box';
   import GoodsPanel from '../../components/goods/slider_buy_panel';
   import SkuSelector from '../../components/goods/popup_buy_panel';
@@ -126,6 +133,7 @@
   import BargainBox from '../../components/template/bargain_box';
   import Separator from '../../components/template/separator';
   import AddressBox from '../../components/template/address_box';
+  import VideoBox from '../../components/template/video_box';
   import _ from 'underscore';
 
   @connect({
@@ -268,7 +276,8 @@
       GroupBox: GroupBox,
       Separator: Separator,
       BargainBox: BargainBox,
-      AddressBox: AddressBox
+      AddressBox: AddressBox,
+      VideoBox: VideoBox
     };
     computed = {
     };

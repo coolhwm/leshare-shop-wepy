@@ -144,7 +144,7 @@
     }
     methods = {
       inviteCode() {
-        wx.previewImage({
+        wepy.previewImage({
           urls: [this.detail.codeUrl]
         });
       },

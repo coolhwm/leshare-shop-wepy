@@ -31,7 +31,7 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
-  import { initWxAppSync, checkUserInfo} from '../../api/wx_auth';
+  import { initWxAppSync, checkUserInfo } from '../../api/wx_auth';
   import CategoryBox from '../../components/template/category_box';
   import base from '../../mixins/base';
   import router from '../../mixins/router';
