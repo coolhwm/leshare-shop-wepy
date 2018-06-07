@@ -120,7 +120,7 @@
   import SwiperBar from '../../components/template/swiper_bar';
   import ShopBar from '../../components/shop/header';
   import ImageBox from '../../components/template/image_box';
-  import GoodsBox from '../../components/template/goods/goods_box';
+  import GoodsBox from '../../components/template/goods_box';
   import CouponBox from '../../components/template/coupon_box';
   import GoodsPanel from '../../components/goods/slider_buy_panel';
   import SkuSelector from '../../components/goods/popup_buy_panel';

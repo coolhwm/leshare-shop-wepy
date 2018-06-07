@@ -76,12 +76,12 @@
 </template>
 <script>
   import wepy from 'wepy';
-  import RowItem from './goods_row';
-  import TightItem from './goods_tight';
-  import GridItem from './goods_grid';
-  import MiniItem from './goods_mini';
-  import BigItem from './goods_big';
-  import TitleBar from '../title_bar';
+  import RowItem from './goods/goods_row';
+  import TightItem from './goods/goods_tight';
+  import GridItem from './goods/goods_grid';
+  import MiniItem from './goods/goods_mini';
+  import BigItem from './goods/goods_big';
+  import TitleBar from './title_bar';
   export default class GoodsBox extends wepy.component {
     props = {
       param: {}
@@ -118,7 +118,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../../styles/variable";
+  @import "../../styles/variable";
   .goods-box {
     background-color: white;
     .box-footer{
