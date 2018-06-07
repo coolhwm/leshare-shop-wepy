@@ -1,6 +1,6 @@
 <template>
   <view>
-    <video src="{{param.url}}" objectFit="fill" style="height: {{param.height}}; width: 750rpx;"></video>
+    <video src="{{param.url}}"  style="height: {{param.height}}; width: 750rpx;" poster="{{param.poster}}"></video>
   </view>
 </template>
 
