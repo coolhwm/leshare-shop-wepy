@@ -391,9 +391,17 @@
             // 砍价列表
             this.$root.$navigate(`/pages/bargain/bargain_more`);
             break;
+          case 'BARGAIN_GOODS':
+            // 某个砍价商品
+            this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${targetId}`);
+            break;
           case 'GROUP_LIST':
             // 拼团列表
             this.$root.$navigate(`/pages/group/group_more`);
+            break;
+          case 'GROUP_GOODS':
+            // 某个拼团商品
+            this.$root.$navigate(`/pages/group/goods_detail?ruleId=${targetId}`);
             break;
           case 'AGENT':
             // 分销中心

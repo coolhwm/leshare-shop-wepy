@@ -266,6 +266,6 @@ export default class group extends base {
    */
   static _processTimeStatus(detail) {
     detail.isTimeOut = new Date(detail.endTime).getTime() < new Date().getTime();
-    detail.isBegin = new Date(detail.beginTime).getTime() > new Date().getTime();
+    detail.isBegin = detail.startTime ? new Date(detail.startTime).getTime() > new Date().getTime() : new Date(detail.beginTime).getTime() > new Date().getTime();
   }
 }

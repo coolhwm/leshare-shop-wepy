@@ -4,8 +4,11 @@
       <view class="title mr20 ">{{title}}</view>
       <view class="describe-box">{{describe}}</view>
     </view>
-    <view class="column-center time-box" wx:if="{{rule.isBegin}}">
+    <view class="column-center time-box" wx:if="{{rule.status === 'OFF'}}">
       <text class="white">活动未开启</text>
+    </view>
+    <view class="column-center time-box" wx:elif="{{rule.isBegin}}">
+      <text class="white">活动未开始</text>
     </view>
     <view class="column-center time-box" wx:elif="{{rule.isTimeOut}}">
       <text class="white">活动已结束</text>
