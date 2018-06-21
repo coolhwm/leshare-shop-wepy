@@ -82,7 +82,6 @@
       this.coupon = preload.coupon;
 
       const id = preload.coupon ? preload.coupon.id : preload.couponId;
-      console.info(preload);
       if (preload.coupon) {
         this.coupon = preload.coupon;
       } else {

@@ -12,7 +12,7 @@ export default class order extends base {
    * 返回分页对象
    */
   static page () {
-    const url = `${this.baseUrl}/orders`;
+    const url = `${this.baseUrl}/orders/list`;
     return new Page(url, this._processOrderListItem.bind(this));
   }
 

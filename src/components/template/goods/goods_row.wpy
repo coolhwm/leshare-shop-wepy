@@ -1,7 +1,7 @@
 <template>
   <view class="row goods-row-box {{goods.goodsBorder == 'none'? '' : 'goods-row-border'}}" @tap="routeToGoods({{goods.id}})">
     <view>
-      <image class="goods-image"  lazy-load src="{{goods.imageUrl}}" ></image>
+      <image class="goods-image"  lazy-load src="{{goods.imageUrl}}/small" ></image>
     </view>
 
     <view class="main-box column">
@@ -26,42 +26,17 @@
         </view>
         <!--标签-->
         <block wx:for="{{goods.tags}}" wx:key="index" wx:for-item="tag">
-          <text wx:if="{{tag.isShow}}" class="xxs primary tag-box ml10">{{tag.tag}}</text>
+          <text class="xxs primary tag-box ml10">{{tag}}</text>
         </block>
       </view>
 
       <!--价格-->
-      <view class="row-between" wx:if="{{(goods.isPrice || goods.isPrice == null) || (goods.isCart || goods.isCart == null)}}">
-        <view class="price-box" wx:if="{{goods.isPrice || goods.isPrice == null}}">
+      <view class="row-between" wx:if="{{(goods.isPrice || goods.isPrice == null)}}">
+        <view class="price-box">
           <view class="goods-unit">￥</view>
-          <text class="goods-price">{{goods.priceLable}}</text>
-          <text class="original-price" wx:if="{{goods.discount || goods.originalPrice != goods.sellPrice}}">￥{{goods.originalPrice}}</text>
+          <text class="goods-price">{{goods.price}}</text>
+          <text class="original-price" wx:if="{{goods.originalPrice}}">￥{{goods.originalPrice}}</text>
         </view>
-
-        <!--预约按钮-->
-        <view wx:if="{{goods.type == 'service'}}">
-          <block>
-            <text class="service-box sm" wx:if="{{goods.totalStock > 0}}" @tap.stop="service({{goods.id}})">预约</text>
-            <text class="sm muted" wx:else>已售罄</text>
-          </block>
-        </view>
-
-        <!--虚拟商品按钮-->
-        <view wx:elif="{{goods.type == 'digit' && goods.isCart}}">
-          <block>
-            <icon class="plus normal" wx:if="{{goods.totalStock > 0}}" @tap.stop="digit({{goods.id}})" />
-            <text class="sm muted" wx:else>已售罄</text>
-          </block>
-        </view>
-
-        <!--加入购物车按钮-->
-        <view wx:else>
-          <block wx:if="{{goods.isCart}}">
-            <icon class="plus normal" wx:if="{{goods.totalStock > 0}}" @tap.stop="handlePlusCart({{goods}})" />
-            <text class="sm muted" wx:else>已售罄</text>
-          </block>
-        </view>
-
       </view>
     </view>
   </view>

@@ -17,7 +17,7 @@ export default class config extends base {
    * 获取布局视图
    */
   static layout(pageId) {
-    const url = `${this.baseUrl}/layout/pages/${pageId}`;
+    const url = `${this.baseUrl}/layout/pages/${pageId}?is_new=1`;
     return this.get(url).then(data => this._processPage(data.message));
   }
 
@@ -107,6 +107,9 @@ export default class config extends base {
    * 处理页面的组件
    */
   static processComponents (components) {
+    if (components == null) {
+      return [];
+    }
     return components
       .map(component => {
         // 先处理参数合并
@@ -121,10 +124,10 @@ export default class config extends base {
         }
         // 需要处理商品信息
         if (component.type == 'GOODS_BOX') {
-          component.data.forEach(item => {
-            goods._processGoodsDiscount(item, this.discount);
-            goods._processGoodsData(item);
-          });
+          // component.data.forEach(item => {
+          //   goods._processGoodsDiscount(item, this.discount);
+          //   goods._processGoodsData(item);
+          // });
         }
         // 特殊处理图片窗格
         if (component.type == 'IMAGE_BOX') {

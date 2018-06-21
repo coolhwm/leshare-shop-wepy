@@ -20,10 +20,10 @@ export default class goods extends base {
    * 新的分页方法
    */
   static list (discount) {
-    let url = `${this.baseUrl}/goods/list`;
+    let url = `${this.baseUrl}/goods/list?is_new=1`;
     return new Page(url, item => {
-      this._processGoodsDiscount(item, discount);
-      this._processGoodsData(item);
+      // this._processGoodsDiscount(item, discount);
+      // this._processGoodsData(item);
     });
   }
 

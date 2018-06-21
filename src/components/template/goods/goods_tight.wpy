@@ -5,7 +5,7 @@
       <text>{{goods.discountRate}}</text>
     </view>
     <!--图片-->
-    <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="routeToGoods({{goods.id}})"></image>
+    <image class="goods-image" lazy-load src="{{goods.imageUrl}}/small" @tap="routeToGoods({{goods.id}})"></image>
     <view class="content-box column" wx:if="{{goods.isName || goods.isPrice}}">
       <!--文字-->
       <text class="inline" wx:if="{{goods.isGoodsName}}" @tap="routeToGoods({{goods.id}})">{{goods.name}}</text>
@@ -14,34 +14,10 @@
       <text class="xs muted" wx:if="{{goods.isSales}}">已售{{goods.salesVolume}}件</text>
 
       <!--购物车与价格标签-->
-      <view class="row-between" wx:if="{{goods.isPrice || goods.isCart}}">
+      <view class="row-between" wx:if="{{goods.isPrice}}">
         <view class="row">
-          <text class=" lg major" >￥{{goods.priceLable}}</text>
+          <text class=" lg major" >￥{{goods.price}}</text>
         </view>
-        <!--预约按钮-->
-        <view wx:if="{{goods.type == 'service'}}">
-          <block>
-            <text class="service-box sm" wx:if="{{goods.totalStock > 0}}" @tap.stop="service({{goods.id}})">预约</text>
-            <text class="sm muted" wx:else>已售罄</text>
-          </block>
-        </view>
-
-        <!--虚拟商品按钮-->
-        <view wx:elif="{{goods.type == 'digit'}}">
-          <block>
-            <icon class="plus normal" wx:if="{{goods.totalStock > 0}}" @tap.stop="digit({{goods.id}})" />
-            <text class="sm muted" wx:else>已售罄</text>
-          </block>
-        </view>
-
-        <!--加入购物车按钮-->
-        <view wx:else>
-          <block wx:if="{{goods.isCart || goods.isCart == null}}">
-            <icon class="plus normal" wx:if="{{goods.totalStock > 0}}" @tap.stop="handlePlusCart({{goods}})" />
-            <text class="sm muted" wx:else>已售罄</text>
-          </block>
-        </view>
-
       </view>
     </view>
   </view>
