@@ -17,6 +17,7 @@ export default class config extends base {
    * 获取布局视图
    */
   static layout(pageId) {
+    if (pageId == null) return;
     const url = `${this.baseUrl}/layout/pages/${pageId}?is_new=1`;
     return this.get(url).then(data => this._processPage(data.message));
   }

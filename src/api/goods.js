@@ -28,6 +28,17 @@ export default class goods extends base {
   }
 
   /**
+   * 新的分页方法
+   */
+  static listFood (discount) {
+    let url = `${this.baseUrl}/goods/list`;
+    return new Page(url, item => {
+      this._processGoodsDiscount(item, discount);
+      this._processGoodsData(item);
+    });
+  }
+
+  /**
    * 获取商品库存
    */
   static stock (goodsId, sku = '') {

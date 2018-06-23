@@ -40,7 +40,9 @@ export default class WxUtils {
    */
   static backOrRedirect(url) {
     url = this.mapUrl(url);
+    console.info(url);
     if (this.isTab(url)) {
+      console.info('switch');
       wx.switchTab({
         url: url
       })

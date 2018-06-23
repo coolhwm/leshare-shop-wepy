@@ -430,7 +430,7 @@
           Event.emit(Event.BARGAIN_LIST_UPDATE);
           WxUtils.backOrRedirect('/pages/bargain/list');
         } else {
-          WxUtils.backOrRedirect('/pages/customer/index_template');
+          this.$switch('/pages/customer/index_template');
         }
       }
     };
