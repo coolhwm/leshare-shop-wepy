@@ -425,10 +425,9 @@
         // 刷新列表
         Event.emit(Event.ORDER_LIST_UPDATE);
         if (isPay && (this.type === 'join' || this.type === 'group')) {
-          WxUtils.backOrRedirect('/pages/group/list');
+          this.$redirect('/pages/group/list');
         } else if (isPay && (this.type === 'bargain')) {
-          Event.emit(Event.BARGAIN_LIST_UPDATE);
-          WxUtils.backOrRedirect('/pages/bargain/list');
+          this.$redirect('/pages/bargain/list');
         } else {
           this.$switch('/pages/customer/index_template');
         }
