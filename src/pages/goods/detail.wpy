@@ -168,6 +168,7 @@
   import DetailList from '../../components/goods/detail_list';
   import ShopInfoBar from '../../components/goods/shop_info_bar';
   import SharePanal from '../../components/common/share_panal';
+  import Tips from '../../utils/Tips';
 
   @connect({
     pickCoupons: store.get('pickCoupons'),
@@ -204,6 +205,12 @@
         comment.count(goodsId)
       ]);
       this.detail = detail;
+      if (this.detail == null || this.detail.status == 1) {
+        await Tips.modal('该商品已下架，去逛逛别的商品吧');
+        Event.emit(Event.GOODS_CATEGORY_RELOAD);
+        wepy.navigateBack();
+        return;
+      }
       this.count = count;
       if (type != null) this.detail.type = type;
       this.page = comment.page();
