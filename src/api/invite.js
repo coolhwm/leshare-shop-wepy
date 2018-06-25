@@ -10,10 +10,10 @@ export default class invite extends base {
     return new Page(url, this._processInvite.bind(this));
   }
   /**
-   * 查询邀请总人数
+   * 查询邀请人数
    */
   static count () {
-    const url = `${this.baseUrl}/members/invite/count`;
+    const url = `${this.baseUrl}/members/invite/count/detail`;
     return this.post(url);
   }
   static _processInvite(data) {

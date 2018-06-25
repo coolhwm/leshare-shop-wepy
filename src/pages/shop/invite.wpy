@@ -4,13 +4,39 @@
   <view wx:if="{{init}}">
     <!--头部汇总-->
     <view class="column content-box" @tap="invite">
-      <view class="column-center bonus-box">
-        <text class="white mb10">已成功邀请</text>
-        <view class="row number-box mb10">
-          <text class="white bonus-text">{{number}}</text>
-          <text class="white sm mt10">人</text>
+      <view class="row-around bonus-box">
+        <view class="column-center">
+          <text class="white xs">本月邀请</text>
+          <view class="row number-box mb10">
+            <text class="white bonus-month-text">{{number.MONTH}}</text>
+            <text class="white xs mt10">人</text>
+          </view>
+        </view>
+        <view class="hr"></view>
+        <view class="column-center">
+          <text class="white mb10">已成功邀请</text>
+          <view class="row number-box mb10">
+            <text class="white bonus-text">{{number.TOTAL}}</text>
+            <text class="white sm mt10">人</text>
+          </view>
+        </view>
+        <view class="hr"></view>
+        <view class="column-center">
+          <text class="white xs">本周邀请</text>
+          <view class="row number-box mb10">
+            <text class="white bonus-week-text">{{number.WEEK}}</text>
+            <text class="white xs mt10">人</text>
+          </view>
         </view>
       </view>
+
+      <!--<view class="column-center bonus-box">-->
+        <!--<text class="white mb10">已成功邀请</text>-->
+        <!--<view class="row number-box mb10">-->
+          <!--<text class="white bonus-text">{{number}}</text>-->
+          <!--<text class="white sm mt10">人</text>-->
+        <!--</view>-->
+      <!--</view>-->
 
       <!--邀请规则区域-->
       <view class="column rule-box">
@@ -158,5 +184,14 @@
     border-radius: 30rpx;
     margin: 10rpx 10rpx 0;
     padding: 20rpx;
+  }
+  .bonus-month-text, .bonus-week-text{
+    font-size: 24px;
+    line-height: 20px;
+  }
+  .hr{
+    height: 144rpx;
+    width: 1px;
+    background-color: #FFF;
   }
 </style>
