@@ -44,7 +44,7 @@
           {id: '3', title: '已过期', status: 'TIMEOUT'},
           {id: '4', title: '已下单', status: 'ORDERED'}
         ],
-        selectedId: '1'
+        selectedId: '0'
       }
     };
     data = {...this.def};

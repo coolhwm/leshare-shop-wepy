@@ -84,7 +84,7 @@
     async doLoad () {
       this.categoryTab = {...this.categories};
       // 加载商品列表
-      this.page = goods.list(this.discount);
+      this.page = goods.listFood(this.discount);
       await this.next();
       // 同步购物车数量
       this.setCartNum();
@@ -156,7 +156,7 @@
           this.page = this.pages[selectedId];
           this.$apply();
         } else {
-          this.page = goods.list(this.discount);
+          this.page = goods.listFood(this.discount);
           this.reload();
         }
       },

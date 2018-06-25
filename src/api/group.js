@@ -119,7 +119,7 @@ export default class group extends base {
     detail.sellPrice = Lang._fixedPrice(detail.sellPrice);
     // 页面显示的原价
     detail.goods.originSellPrice = detail.goods.sellPrice;
-    detail.goods.sellPrice = detail.sellPrice;
+    detail.goods.sellPrice = Lang._fixedPrice(detail.goods.sellPrice);
     // 处理活动时间状态
     this._processTimeStatus(detail);
 

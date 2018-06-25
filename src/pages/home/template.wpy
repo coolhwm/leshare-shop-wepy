@@ -166,7 +166,7 @@
         console.info(`[template] load home page`);
         this.pageId = this.homePageId;
       }
-      if (_.isNull(this.pageId)) {
+      if (_.isNull(this.pageId) || this.pageId == null) {
         console.warn(`[template] page_id is ${this.pageId}, render fail`);
         return;
       }
@@ -184,6 +184,10 @@
      * 渲染页面
      */
     renderTemplatePage(page) {
+      if (page == null) {
+        console.info(`[template] page is null, render fail`);
+        return;
+      }
       this.components = page.components;
       this.plugins = page.plugins;
       this.triggers = page.triggers;

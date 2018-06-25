@@ -151,7 +151,6 @@ export default class Cart {
       cart.totalPrice = (cart.goodsNum * cart.goodsPrice).toFixed(2);
     } else {
       const cart = this.createCart(goods, selText, num);
-      console.info(cart);
       // 新增对象
       this.carts.push(cart);
     }

@@ -99,7 +99,7 @@
      */
     onShareAppMessage () {
       const {name, imageUrl} = this.rule.goods;
-      const shareName = `${name}，快帮您的好友砍一刀吧！`;
+      const shareName = `${name}，最低仅需${this.rule.floorPrice}元，快帮您的好友砍一刀吧！`;
       return {
         title: shareName,
         imageUrl: imageUrl,

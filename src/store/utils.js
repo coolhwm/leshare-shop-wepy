@@ -10,7 +10,7 @@ const store = getStore();
 // 元数据
 let meta = {};
 // 是否调试
-const IS_DEBUG = true;
+const IS_DEBUG = false;
 // 超时时间
 const CACHE_TIMEOUT = 5 * 60 * 1000;
 // 嵌套字段，需要拆解缓存

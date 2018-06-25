@@ -15,7 +15,7 @@
       <text>单独购买</text>
     </view>
     <view class="column-center btn-buy" @tap="handleBuy({{rule.goods}})" wx:else>
-      <text class="xxl money-box">￥{{rule.goods.minPrice ? rule.goods.maxPrice : rule.goods.sellPrice}}</text>
+      <text class="xxl money-box">￥{{rule.goods.sellPrice}}</text>
       <text>单独购买</text>
     </view>
     <view wx:if="{{rule.isBegin}}" class="column-center btn-disabled">
