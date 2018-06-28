@@ -31,7 +31,12 @@
 
 
     <!--汇总信息-->
-    <view class="order-footer-container row-end">
+    <view class="order-footer-container row-end" wx:if="{{order.onlinePayType === 'bonus'}}">
+      <text class="mr20">共{{order.orderGoodsInfos.length}}件商品</text>
+      <text>合计:</text>
+      <text class="major xl mr20">{{order.orderGoodsInfos[0].goodsPrice}}积分</text>
+    </view>
+    <view class="order-footer-container row-end" wx:else>
       <text class="mr20">共{{order.orderGoodsInfos.length}}件商品</text>
       <text>合计:</text>
       <text class="major xl mr20">￥{{order.finalPrice}}</text>

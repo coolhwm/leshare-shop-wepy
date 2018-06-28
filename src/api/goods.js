@@ -37,6 +37,16 @@ export default class goods extends base {
       this._processGoodsData(item);
     });
   }
+  /**
+   * 积分商品分页方法
+   */
+  static listBonus (discount, bussType) {
+    let url = `${this.baseUrl}/goods/list?buss_type=${bussType}`;
+    return new Page(url, item => {
+      this._processGoodsDiscount(item, discount);
+      this._processGoodsData(item);
+    });
+  }
 
   /**
    * 获取商品库存
@@ -73,7 +83,8 @@ export default class goods extends base {
       list.push(...data.map(item => {
         return {
           id: item.id,
-          title: item.name
+          title: item.name,
+          bussType: item.bussType
         };
       }));
     }

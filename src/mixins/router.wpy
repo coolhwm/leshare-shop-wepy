@@ -19,6 +19,14 @@
       const action = 'buy';
       Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
     }
+    /***
+     * 积分购买
+     */
+    bonusBuy(goods) {
+      const source = this.$root.$wxpage.route;
+      const action = 'buy';
+      Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
+    }
     /**
      * 虚拟商品
      */
@@ -203,6 +211,12 @@
        */
       handleBargain(rule, ruleId, state, id) {
         this.bargain(rule, ruleId, state, id);
+      },
+      /**
+       * 处理积分购买事件
+       */
+      handleBonus(goods) {
+        this.bonusBuy(goods);
       },
       /**
        * 处理跳转到购物车页面

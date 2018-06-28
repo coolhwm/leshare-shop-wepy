@@ -151,7 +151,9 @@
         'pages/agent/index',
         'pages/agent/order_detail',
         'pages/agent/recharge',
-        'pages/agent/singular'
+        'pages/agent/singular',
+        'pages/order/bonusTrade',
+        'pages/goods/bonus_goods_list'
       ],
       window: {
         backgroundTextStyle: 'dark',

@@ -12,7 +12,7 @@
     </block>
 
     <!--主内容区域-->
-    <CategoryBox top="145px" bottom="55px"/>
+    <CategoryBox top="145px" bottom="55px" bussType="food"/>
 
     <!-- 购物车 -->
     <block>

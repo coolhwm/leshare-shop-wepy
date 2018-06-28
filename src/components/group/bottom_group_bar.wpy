@@ -14,7 +14,10 @@
       <text class="xxl money-box">￥{{rule.goods.priceLable}}</text>
       <text>单独购买</text>
     </view>
-    <view wx:if="{{rule.isBegin}}" class="column-center btn-disabled">
+    <view wx:if="{{rule.status === 'OFF'}}" class="column-center btn-disabled">
+      <text>活动已关闭</text>
+    </view>
+    <view wx:elif="{{rule.isBegin}}" class="column-center btn-disabled">
       <text>活动未开启</text>
     </view>
     <view wx:elif="{{rule.isTimeOut}}" class="column-center btn-disabled">
