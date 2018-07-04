@@ -204,7 +204,8 @@
       balanceText: '',
       type: '', // buy/group/join/bargain
       isLimitCoupon: false,
-      isLimitBonus: false
+      isLimitBonus: false,
+      isSubmit: false
     };
     cartManager = Cart.create();
     async onLoad (params, {preload}) {
@@ -346,6 +347,11 @@
        * 确定下单
        */
       async confirm({detail}) {
+        if (this.isSubmit) {
+          await Tips.confirm('订单已生成，是否跳转到订单列表？');
+          this.$switch('/pages/customer/index_template');
+          return;
+        }
         // 检查是否可以购买
         if (!this.confirmStatus) {
           Tips.alert(this.confirmText);
@@ -367,6 +373,7 @@
             await Tips.confirm('是否确认使用余额支付下单？');
           }
         }
+        this.isSubmit = true;
         Tips.loading('正在下单');
         // 检查店铺状态
         const isOpen = await this.checkShopStatus();

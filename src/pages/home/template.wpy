@@ -151,6 +151,18 @@
       param: null,
       scene: null
     };
+    onShow () {
+      this.disableDigest();
+    }
+    onHide () {
+      this.disableDigest();
+    }
+    disableDigest () {
+      this.$$phase = true;
+      setTimeout(() => {
+        this.$$phase = false;
+      })
+    }
     async onLoad ({pageId, scene, reLaunch}) {
       setInviteId(scene);
       if (reLaunch == 1) {

@@ -9,7 +9,6 @@
           <text class="white xs">本月邀请</text>
           <view class="row number-box mb10">
             <text class="white bonus-month-text">{{number.MONTH}}</text>
-            <text class="white xs mt10">人</text>
           </view>
         </view>
         <view class="hr"></view>
@@ -17,7 +16,6 @@
           <text class="white mb10">已成功邀请</text>
           <view class="row number-box mb10">
             <text class="white bonus-text">{{number.TOTAL}}</text>
-            <text class="white sm mt10">人</text>
           </view>
         </view>
         <view class="hr"></view>
@@ -25,7 +23,6 @@
           <text class="white xs">本周邀请</text>
           <view class="row number-box mb10">
             <text class="white bonus-week-text">{{number.WEEK}}</text>
-            <text class="white xs mt10">人</text>
           </view>
         </view>
       </view>
@@ -186,7 +183,7 @@
     padding: 20rpx;
   }
   .bonus-month-text, .bonus-week-text{
-    font-size: 24px;
+    font-size: 20px;
     line-height: 20px;
   }
   .hr{
