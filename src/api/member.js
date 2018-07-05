@@ -56,6 +56,13 @@ export default class member extends base {
     return this.get(url);
   }
   /**
+   * 获取会员信息
+   */
+  static bonusPankList() {
+    const url = `${this.baseUrl}/members/bonus_top?count_type=WEEK&from=0&limit=20`;
+    return this.get(url);
+  }
+  /**
    * 处理折扣率
    */
   static processDiscount(card, member) {

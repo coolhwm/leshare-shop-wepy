@@ -417,6 +417,10 @@
             // 某个拼团商品
             this.$root.$navigate(`/pages/group/goods_detail?ruleId=${targetId}`);
             break;
+          case 'BONUS_LIST':
+            // 积分商品列表
+            this.$root.$navigate(`/pages/goods/bonus_goods_list`);
+            break;
           case 'AGENT':
             // 分销中心
             this.$root.$navigate(`/pages/agent/apply`);
