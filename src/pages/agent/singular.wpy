@@ -81,14 +81,23 @@
   export default class Singular extends wepy.page {
     data = {
       init: false,
-      page: {},
+      page: {
+        list: []
+      },
       expand: {},
-      id: null
+      id: null,
+      list: null
     };
-    async onLoad ({id}) {
-      this.page = await agent.agentOrder(id);
-      this.id = id;
-      await this.next();
+    async onLoad ({id, orderId}) {
+      if (orderId) {
+        const data = await agent.agentOrderId(id, orderId);
+        this.page.list.push(data)
+        this.loaded();
+      } else {
+        this.page = await agent.agentOrder(id);
+        this.id = id;
+        await this.next();
+      }
     }
     methods = {
       /**
