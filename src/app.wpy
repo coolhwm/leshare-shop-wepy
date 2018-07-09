@@ -41,6 +41,15 @@
           return p.data;
         }
       });
+      this.intercept('downloadFile', {
+        config (p) {
+          p.header = this.createAuthHeader();
+          return p;
+        },
+        success (p) {
+          return p;
+        }
+      });
     }
     /**
      * 构造权限头部

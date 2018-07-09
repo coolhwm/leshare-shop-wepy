@@ -1,6 +1,6 @@
 <template>
   <view class="shop-info-bar row-between">
-    <view class="row">
+    <view class="row" @tap="code">
       <image class="avatar-box" src="{{subShop.avatar}}"/>
       <view class="column ml20">
         <text class="lg inline shop-name-box">{{subShop.name}}</text>
@@ -16,12 +16,23 @@
 
 <script>
   import wepy from 'wepy';
+  import Tips from '../../utils/Tips';
 
   export default class ShopInfoBar extends wepy.component {
     props = {
       subShop: {}
     };
     methods = {
+      async code() {
+        const code = this.subShop.maCodeUrl;
+        if (code == null) {
+          return;
+        }
+        await Tips.modal('长按二维码跳转商家小程序');
+        wepy.previewImage({
+          urls: [this.subShop.maCodeUrl]
+        })
+      },
       /**
        * 打电话
        */

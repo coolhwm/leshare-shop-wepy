@@ -1,7 +1,7 @@
 <template>
   <Loading :init.sync="init"/>
   <view class="container">
-    <image bindload="onImageLoad" class="poster-image" mode="widthFix" src="{{url}}/w750" wx:if="{{url}}"></image>
+    <image bindload="onImageLoad" class="poster-image" mode="widthFix" src="{{url}}" wx:if="{{url}}"></image>
   </view>
   <!--操作栏-->
   <ActionBar @tap.user="save" okText="保存到相册" cancelText="返回"/>
@@ -27,8 +27,7 @@
       url: null
     };
     async onLoad () {
-      const result = await member.poster();
-      this.url = result.img_url;
+      this.url = await member.poster();
       if (this.url == '') {
         await Tips.modal('尚未开放邀请');
         wepy.navigateBack();
@@ -47,10 +46,7 @@
         }
         await Tips.modal('邀请图需要保存到相册后再发送给微信好友，长按识别关注公众号即可获得积分！');
         try {
-          Tips.loading();
-          const file = await wepy.downloadFile({url: this.url});
-          Tips.loaded();
-          await wepy.saveImageToPhotosAlbum({filePath: file.tempFilePath});
+          await wepy.saveImageToPhotosAlbum({filePath: this.url});
           Tips.success('保存成功');
         } catch (e) {
           console.error(e);

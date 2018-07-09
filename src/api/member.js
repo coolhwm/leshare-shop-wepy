@@ -1,5 +1,6 @@
 import base from './base';
 import Page from '../utils/Page';
+import wepy from 'wepy';
 
 export default class member extends base {
   /**
@@ -25,7 +26,14 @@ export default class member extends base {
    */
   static async poster() {
     const url = `${this.baseUrl}/members/invite/poster`;
-    return this.get(url);
+    const data = await wepy.downloadFile({
+      url: url
+    });
+    if (data.statusCode == 200) {
+      return data.tempFilePath;
+    } else {
+      return null;
+    }
   }
   /**
    * 手机验证码
