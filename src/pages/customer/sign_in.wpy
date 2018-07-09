@@ -75,7 +75,7 @@
       init: false,
       tab: {
         list: [
-          {id: 0, title: '积分排行'},
+          {id: 0, title: '本周积分排行'},
           {id: 1, title: '积分规则'},
           {id: 2, title: '签到记录'}
         ],
