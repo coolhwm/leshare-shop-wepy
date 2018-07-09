@@ -14,7 +14,8 @@
         <text wx:if="{{detail.remark && detail.remark != 0}}" class="muted">({{detail.remark}})</text>
       </view>
       <view class="time-bonus-box">
-        <text wx:if="{{detail.type === 'cash'}}" style="color: green">{{detail.costFee}}元</text>
+        <text wx:if="{{detail.costFee < 0}}" style="color: green">{{detail.costFee}}元</text>
+        <text wx:elif="{{detail.type === 'cash' && detail.costFee > 0}}" class="danger">{{detail.costFee}}元(驳回)</text>
         <text wx:else class="danger">+{{detail.costFee}}元</text>
       </view>
     </view>
@@ -32,7 +33,7 @@
     methods = {
       orderDetail(detail) {
         if (detail.type === 'commission') {
-          this.$root.$navigate(`/pages/order/detail?orderId=${detail.resultId}`);
+          this.$root.$navigate(`/pages/agent/singular?id=${detail.agentId}&orderId=${detail.resultId}`);
         }
       }
     };

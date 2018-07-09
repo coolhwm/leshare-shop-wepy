@@ -24,10 +24,16 @@
     <!--tab模块-->
     <tab :tab.sync="tab" fixed="0"/>
     <scroll-view scroll-y="true" class="swiper-item-box">
+      <!-- 积分排行 -->
+      <repeat for="{{bonusPank}}" key="index" index="index" item="item" wx:if="{{tab.selectedId==0}}">
+        <bonusPankItem :item.sync="item" :index.sync="index"/>
+      </repeat>
+      <!--占位符-->
+      <text wx:if="{{tab.selectedId==0 && bonusPank.length < 1}}" class="muted xxl row-center mt20">暂无本周积分排名</text>
       <!-- 积分规则 -->
-      <pointsRule wx:if="{{tab.selectedId==0}}" :signIn.sync="signIn"/>
+      <pointsRule wx:if="{{tab.selectedId==1}}" :signIn.sync="signIn"/>
       <!-- 积分记录 -->
-      <repeat for="{{page.list}}" key="index" index="index" item="item" wx:if="{{tab.selectedId==1}}">
+      <repeat for="{{page.list}}" key="index" index="index" item="item" wx:if="{{tab.selectedId==2}}">
         <BonusItem :bonusInfo.sync="item"/>
       </repeat>
       <!-- 加载提示 -->
@@ -49,6 +55,7 @@
   import Tips from '../../utils/Tips';
   import BonusItem from '../../components/customer/bonus_item';
   import PointsRule from '../../components/customer/points_rule';
+  import bonusPankItem from '../../components/customer/bonus_pank_item';
   import WepySignTime from '../../components/customer/sign_time';
   import pagination from '../../mixins/pagination.wpy';
   import Loadmore from '../../components/weui/loadmore';
@@ -58,6 +65,7 @@
   import Lang from '../../utils/Lang'
   import Loading from '../../components/common/loading';
   import Notice from '../../components/shop/notice';
+  import member from '../../api/member';
 
   @connect({
     member: store.get('member')
@@ -67,8 +75,9 @@
       init: false,
       tab: {
         list: [
-          {id: 0, title: '积分规则'},
-          {id: 1, title: '签到记录'}
+          {id: 0, title: '积分排行'},
+          {id: 1, title: '积分规则'},
+          {id: 2, title: '签到记录'}
         ],
         selectedId: 0
       },
@@ -77,7 +86,8 @@
       },
       signed: false,
       signIn: null,
-      type: ''
+      type: '',
+      bonusPank: null
     };
     params () {
       return {
@@ -94,7 +104,9 @@
         return;
       }
       if (this.signIn) {
-        this.page = await shop.signHistory();
+        const [page, list] = await Promise.all([shop.signHistory(), member.bonusPankList()]);
+        this.page = page;
+        this.bonusPank = list;
         this.next();
       }
     }
@@ -173,7 +185,8 @@
       Loadmore: Loadmore,
       BonusItem: BonusItem,
       Notice: Notice,
-      Loading: Loading
+      Loading: Loading,
+      bonusPankItem: bonusPankItem
     };
     mixins = [base, pagination, router];
   }

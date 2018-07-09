@@ -67,6 +67,13 @@ export default class order extends base {
     this._processOrderAddress(trade, address);
     return this.post(url, trade);
   }
+  /**
+   * 创建积分订单
+   */
+  static createBonusOrder (trade) {
+    const url = `${this.baseUrl}/orders`;
+    return this.post(url, trade);
+  }
 
   /**
    * 申请退款
@@ -139,7 +146,8 @@ export default class order extends base {
         discountText: goods.discountText,
         goodsType: goods.goodsType,
         limitCoupon: goods.limitCoupon,
-        limitBonus: goods.limitBonus
+        limitBonus: goods.limitBonus,
+        paymentType: goods.paymentType
       };
       orderGoodsInfos.push(info);
       price += goods.goodsPrice * goods.goodsNum;

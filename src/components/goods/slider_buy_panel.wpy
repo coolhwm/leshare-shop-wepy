@@ -11,7 +11,13 @@
       <!--文字 -->
       <view class="buy-panel-title-price">
         <text class="buy-panel-title">{{goods.name}}</text>
-        <view class="panel-price-box row">
+        <view class="panel-price-box row" wx:if="{{goods.paymentType === 'bonus'}}">
+          <text class="buy-panel-price" wx:if="{{goods.ruleGoodsPrice}}">{{goods.ruleGoodsPrice}}积分</text>
+          <text class="buy-panel-price" wx:else>{{sku.isReady ? sku.detail.price : goods.priceLable}}积分</text>
+          <text class="cancel ml10" wx:if="{{goods.originalPrice && goods.originalPrice > 0}}">{{goods.originalPrice}}积分</text>
+          <DiscountBadge :goods.sync="goods" />
+        </view>
+        <view class="panel-price-box row" wx:else>
           <text class="buy-panel-price" wx:if="{{goods.ruleGoodsPrice}}">￥{{goods.ruleGoodsPrice}}</text>
           <text class="buy-panel-price" wx:else>￥{{sku.isReady ? sku.detail.price : goods.priceLable}}</text>
           <text class="cancel ml10" wx:if="{{goods.originalPrice && goods.originalPrice > 0}}">￥{{goods.originalPrice}}</text>
@@ -198,7 +204,11 @@
           }
           this.display = false;
           this.$apply();
-          this.$root.$navigate(`../order/trade`);
+          if (this.goods.paymentType === 'common') {
+            this.$root.$navigate(`../order/trade`);
+          } else {
+            this.$root.$navigate(`../order/bonusTrade`);
+          }
         }
         this.clear();
       }
@@ -228,7 +238,7 @@
         if (this.goods == null) return;
         if (this.sku == null) {
           return null;
-        } else if (this.action === 'begin' || this.goods.type === 'digit') {
+        } else if (this.action === 'begin' || this.goods.type === 'digit' || this.goods.paymentType === 'bonus') {
           return {
             num: this.sku.num,
             min: 1,

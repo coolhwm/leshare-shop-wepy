@@ -13,7 +13,7 @@
                 <view class="weui-label">金额</view>
               </view>
               <view class="weui-cell__bd">
-                <input class="weui-input" type="number" placeholder="请输入您要提现的金额" @input="input" />
+                <input class="weui-input" type="digit" placeholder="请输入您要提现的金额" @input="input" />
               </view>
             </view>
           </view>

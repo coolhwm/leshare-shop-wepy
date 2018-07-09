@@ -78,6 +78,13 @@ export default class agent extends base {
       this._processOrderListItem(item, id)
     });
   }
+  /***
+   * 查看订单列表
+   */
+  static agentOrderId (id, orderId) {
+    const url = `${this.baseUrl}/agent/orders/${orderId}`;
+    return this.get(url).then(data => this._processOrderListItem(data, id));
+  }
 
   /***
    * 提现
