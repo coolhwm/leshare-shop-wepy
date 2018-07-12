@@ -194,10 +194,15 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .sgin_in{
+    width: 750rpx;
+    overflow: hidden;
+  }
   .qd_content {
     position: relative;
     z-index: 6;
     height: 460rpx;
+    width: 100%;
   }
   .head_bc {
     height: 460rpx;
