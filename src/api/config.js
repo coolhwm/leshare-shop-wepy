@@ -135,6 +135,13 @@ export default class config extends base {
           if (component.padding == null) {
             component.padding = '10rpx;';
           }
+          if (component.data.length > 0) {
+            component.data.forEach(item => {
+              if (item.action === 'SHARE') {
+                item.openType = 'share'
+              }
+            })
+          }
         }
         return this.copyParamToData(component);
       });

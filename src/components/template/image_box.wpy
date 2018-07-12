@@ -34,6 +34,12 @@
     props = {
       param: {}
     };
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      return {};
+    }
     mixins = [router]
   }
 </script>
