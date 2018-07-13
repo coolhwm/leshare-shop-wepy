@@ -1,0 +1,147 @@
+<template>
+  <view class="buy-bar-placeholder">
+  </view>
+  <view class="row assist-bar-box">
+    <view class="column-center btn-home" @tap="home">
+      <icon class="home normal" color="gray"/>
+      <text class="xs">首页</text>
+    </view>
+    <view class="column-center btn-fav" @tap="fav">
+      <icon class="like{{!isFav ? '' : '-fill'}} normal" style="color: {{!isFav ? 'gray' : 'red'}}" />
+      <text class="xs">收藏</text>
+    </view>
+    <view wx:if="{{rule.status === 'OFF'}}" class="column-center btn-disabled">
+      <text>活动已关闭</text>
+    </view>
+    <view wx:elif="{{rule.isBegin}}" class="column-center btn-disabled">
+      <text>活动未开启</text>
+    </view>
+    <view wx:elif="{{rule.isTimeOut}}" class="column-center btn-disabled">
+      <text>活动已过期</text>
+    </view>
+    <view wx:elif="{{rule.limitTimes <= rule.joinTimes}}" class="column-center btn-disabled">
+      <text>限购{{rule.limitTimes}}件</text>
+    </view>
+    <view wx:elif="{{rule.limitCount <= rule.assistedCount}}" class="column-center btn-disabled">
+      <text>已售罄</text>
+    </view>
+    <view wx:else class="column-center btn-assist" @tap="assist">
+      <text>发起助力</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import favorite from '../../api/favorite';
+  import router from '../../mixins/router';
+  import wepy from 'wepy';
+  import Tips from '../../utils/Tips';
+  import assist from '../../api/assist'
+
+  export default class AssistBar extends wepy.component {
+    props = {
+      rule: {}
+    };
+    data = {
+      isFav: false,
+      state: 'begin',
+      id: ''
+    };
+    methods = {
+      async fav() {
+        if (this.isFav) {
+          await Tips.confirm('确认取消收藏?');
+          await favorite.remove(this.rule.goods.id);
+        } else {
+          await favorite.add(this.rule.goods.id);
+          await Tips.success('收藏成功');
+        }
+        this.isFav = !this.isFav;
+        this.$apply();
+      },
+      home () {
+        this.$root.$switch(`/pages/home/template`)
+      },
+      async assist() {
+        try {
+          await Tips.loading();
+          const data = {
+            ruleId: this.rule.id
+          }
+          const result = await assist.assistActivity(data);
+          await Tips.success('开启助力');
+          Tips.loaded();
+          this.$root.$redirect(`../assist/assist_detail?assistId=${result.id}`);
+        } catch (err) {
+          await Tips.modal(err.message);
+          Tips.loaded();
+          wepy.navigateBack();
+        }
+      }
+    };
+    computed = {
+    };
+    watch = {
+      async rule(current, origin) {
+        if (origin != null && origin.id != null) return;
+        const result = await favorite.is(current.goods.id);
+        this.isFav = result.isFavorite === 1;
+        this.$apply();
+      }
+    };
+    mixins = [router];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  $btn-width: 260rpx;
+  $btn-sm-width: (750rpx - $btn-width * 2) / 2;
+  .assist-bar-box{
+    position: fixed;
+    bottom: 0;
+    height: 105rpx;
+    width: 100%;
+    border-top: $border;
+    background-color: white;
+    .btn-fav{
+      border-left: $border;
+    }
+    .btn-fav, .btn-home{
+      width: $btn-sm-width;
+      height: inherit;
+    }
+    .btn-buy, .btn-assist{
+      height: 100%;
+      width: $btn-width * 2;
+      background-color: white;
+      border-left: $border;
+      text{
+        color: $color-primary;
+      }
+      .money-box{
+        font-weight: bold;
+      }
+    }
+    .btn-assist{
+      background-color:$color-primary;
+      text{
+        color: #fff;
+      }
+    }
+    .btn-disabled{
+      height: 100%;
+      width: $btn-width;
+      border-left: $border;
+      background-color:$color-weak;
+      text{
+        color: #fff;
+      }
+    }
+  }
+  .buy-bar-placeholder{
+    height: 105rpx;
+    width: 100%;
+  }
+</style>

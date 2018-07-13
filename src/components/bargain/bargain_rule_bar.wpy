@@ -1,27 +1,27 @@
 <template>
   <view class="column group-info-box">
-    <text class="top-box">砍价玩法</text>
+    <text class="top-box">{{title}}</text>
     <view class="row-around content-box">
       <view class="column-center info-rule-box">
         <icon class="selected large" color="gray"/>
-        <text class="xs muted">选择商品</text>
-        <text class="xs muted">发起砍价</text>
+        <text class="xs muted">{{firstTop}}</text>
+        <text class="xs muted">{{firstBottom}}</text>
       </view>
       <view>
         <icon class="more" color="gray"/>
       </view>
       <view class="column-center info-rule-box">
         <icon class="groups large" color="gray"/>
-        <text class="xs muted">邀请好友</text>
-        <text class="xs muted">帮忙砍价</text>
+        <text class="xs muted">{{secondTop}}</text>
+        <text class="xs muted">{{secondBottom}}</text>
       </view>
       <view>
         <icon class="more" color="gray"/>
       </view>
       <view class="column-center info-rule-box">
         <icon class="coin large" color="gray"/>
-        <text class="xs muted">立即出手</text>
-        <text class="xs muted">下单购买</text>
+        <text class="xs muted">{{thirdTop}}</text>
+        <text class="xs muted">{{thirdBottom}}</text>
       </view>
     </view>
   </view>
@@ -32,6 +32,27 @@
 
   export default class GroupInfoBar extends wepy.component {
     props = {
+      title: {
+        default: '砍价玩法'
+      },
+      firstTop: {
+        default: '选择商品'
+      },
+      firstBottom: {
+        default: '发起砍价'
+      },
+      secondTop: {
+        default: '邀请好友'
+      },
+      secondBottom: {
+        default: '帮忙砍价'
+      },
+      thirdTop: {
+        default: '立即出手'
+      },
+      thirdBottom: {
+        default: '下单购买'
+      }
     };
     methods = {
     };
