@@ -58,6 +58,10 @@ export default class assist extends base {
     const self = data.details.find(item => item.customerId === userId);
     // 是否已经砍价
     data.isHelp = self != null;
+    // 处理助力者
+    for (let i = 0; i < data.leftJoin - 1; i++) {
+      data.details.push({})
+    }
     return data
   }
 
