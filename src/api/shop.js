@@ -105,6 +105,22 @@ export default class shop extends base {
     return new Page(url, this._processSignData.bind(this));
   }
 
+  /***
+   * 子商户列表
+   */
+  static subShopList() {
+    const url = `${this.baseUrl}/shops/sub_shop_list`;
+    return new Page(url);
+  }
+
+  /***
+   * 子商户标签
+   */
+  static subShopTag(type) {
+    const url = `${this.baseUrl}/shops/shop_tag?type=${type}`;
+    return this.get(url);
+  }
+
   // *** 数据处理方法
   /**
    * 处理基本信息
