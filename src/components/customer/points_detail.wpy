@@ -8,7 +8,7 @@
         <view class="detai-time">{{item.signTime}}</view>
       </view>
       <view class="detail-right">
-        <span class="detail-money">+{{item.signPoint}}</span>
+        <text class="detail-money">+{{item.signPoint}}</text>
       </view>
     </view>
   </view>

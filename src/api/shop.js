@@ -116,8 +116,8 @@ export default class shop extends base {
   /***
    * 子商户标签
    */
-  static subShopTag(type) {
-    const url = `${this.baseUrl}/shops/shop_tag?type=${type}`;
+  static subShopTag() {
+    const url = `${this.baseUrl}/shops/shop_tag`;
     return this.get(url);
   }
 
