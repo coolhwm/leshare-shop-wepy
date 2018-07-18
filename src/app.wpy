@@ -156,7 +156,8 @@
         'pages/goods/bonus_goods_list',
         'pages/assist/goods_detail',
         'pages/assist/assist_detail',
-        'pages/assist/list'
+        'pages/assist/list',
+        'pages/shop/sub_shop_list'
       ],
       window: {
         backgroundTextStyle: 'dark',

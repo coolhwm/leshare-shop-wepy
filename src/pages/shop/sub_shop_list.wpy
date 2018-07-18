@@ -1,0 +1,160 @@
+<template>
+  <Loading :init.sync="init"/>
+  <view class="container" wx:if="{{init}}">
+
+    <tab :tab.sync="tab" fixed="0" @change.user="change"/>
+    <scroll-view scroll-y="true" class="tabs-box">
+      <!-- 分类 -->
+      <view wx:if="{{tab.selectedId}}">
+        <block wx:for="{{tagList}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
+          <span @tap="select({{tag}})" class="tabs-item-box">{{tag}}</span>
+        </block>
+      </view>
+    </scroll-view>
+
+    <!--列表展现-->
+    <view wx:for="{{page.list}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="shop-box column">
+      <view class="row" style="align-items: flex-start;">
+        <image src="{{item.avatar}}" class="avatar-image-box mr10"/>
+        <view class="column">
+          <text>{{item.name}}</text>
+          <text class="muted xs">{{item.address}}</text>
+          <view wx:for="{{item.goodsList}}" wx:for-index="goodsIndex" wx:for-item="goodsItem" wx:key="goodsIndex" class="column mt10">
+            <view class="row">
+              <image src="{{goodsItem.imageUrl}}" class="goods-image-box mr10"/>
+              <view class="column">
+                <text>{{goodsItem.name}}</text>
+                <text class="muted xxs">销量{{goodsItem.salesVolume}}</text>
+                <view class="row">
+                  <text class="major xs">￥</text>
+                  <text class="major lg">{{goodsItem.originalPrice}}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+  </view>
+
+  <!--占位符-->
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关商户信息"/>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import shop from '../../api/shop';
+  import base from '../../mixins/base';
+  import pagination from '../../mixins/pagination';
+  import Placeholder from '../../components/common/placeholder';
+  import Loading from '../../components/common/loading';
+  import Loadmore from '../../components/weui/loadmore';
+  import Tab from '../../components/zanui/tab';
+
+  export default class SubShopList extends wepy.page {
+    data = {
+      init: true,
+      page: {
+        list: [
+        ]
+      },
+      tab: {
+        list: [
+          {id: 'AREA', title: '区域 ▼', name: ''},
+          {id: 'BUSSINESS_AREA', title: '商圈 ▼', name: ''},
+          {id: 'STYLE', title: '风格 ▼', name: ''}
+        ],
+        selectedId: null
+      },
+      tagList: null,
+      tags: [],
+      tag: null
+    }
+    async onLoad () {
+      await this.updateList()
+    };
+    params() {
+      if (this.tag) {
+        return {
+          is_goods: true,
+          tag: this.tag
+        }
+      }
+    }
+    async updateList() {
+      this.page = await shop.subShopList();
+      await this.next();
+    }
+    methods = {
+      async select(name) {
+        const selectTag = this.tab.list.find(item => item.id === this.tab.selectedId)
+        selectTag.title = name + '▼'
+        selectTag.name = name
+        if (this.tags.length < 1) {
+          this.tags.push(selectTag)
+        } else {
+          if (this.tags.every(item => item.id !== selectTag.id)) {
+            this.tags.push(selectTag)
+          } else {
+            this.tags.find(item => item.id === selectTag.id).name = name
+          }
+        }
+        this.tag = this.tags.map(item => item.name).join(',')
+        await this.updateList()
+        this.tab.selectedId = null
+      },
+      async change(data) {
+        this.tagList = await shop.subShopTag(data.selectedId)
+        this.loaded()
+      }
+    };
+    events = {};
+    components = {
+      Placeholder: Placeholder,
+      Loading: Loading,
+      Loadmore: Loadmore,
+      tab: Tab
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '商户',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .container{
+    background-color: white;
+  }
+  .shop-box{
+    padding: 20rpx 20rpx 20rpx 0;
+    margin-left: 20rpx;
+  }
+  .shop-box + .shop-box{
+    border-top: $border;
+  }
+  .avatar-image-box{
+    width: 80rpx;
+    height: 80rpx;
+    border: $border;
+  }
+  .goods-image-box{
+    width: 120rpx;
+    height: 120rpx;
+    border: $border;
+  }
+  .tabs-box{
+    padding: 10rpx 20rpx;
+  }
+  .tabs-item-box{
+    padding: 14rpx 30rpx;
+    border-radius: 10rpx;
+    background-color: #F7F7F7;
+    margin: 10rpx;
+  }
+</style>
