@@ -132,7 +132,7 @@
     }
     .btn-disabled{
       height: 100%;
-      width: $btn-width;
+      width: $btn-width * 2;
       border-left: $border;
       background-color:$color-weak;
       text{

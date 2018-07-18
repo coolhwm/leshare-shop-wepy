@@ -40,10 +40,11 @@
       <view class="row">
         <text class="muted">──────</text><text class="muted ml10 mr10">{{assist.joinCount}}人助力</text><text class="muted">──────</text>
       </view>
-      <view class="row-center details-box mt10">
+      <view class="row details-box mt10">
         <block wx:for="{{assist.details}}" wx:for-item="detail" wx:key="index">
           <image src="{{detail.customerAvatar}}" wx:if="{{detail.customerAvatar}}"></image>
-          <icon wx:else class="space" color="gray" style="font-size: 72rpx;line-height: 72rpx;"/>
+          <icon wx:elif="{{detail.customerId}}" class="customer space-customer-box" color="gray"/>
+          <icon wx:else class="space space-box" color="gray"/>
         </block>
       </view>
     </view>
@@ -193,13 +194,23 @@
   }
 
   .details-box{
-    width: 500rpx;
+    width: 504rpx;
     flex-wrap: wrap;
     image{
       width: 60rpx;
       height: 60rpx;
       border: $border;
       margin: 10rpx;
+    }
+    .space-customer-box{
+      font-size: 54rpx;
+      line-height: 54rpx;
+      margin: 0 10rpx;
+    }
+    .space-box{
+      font-size: 72rpx;
+      line-height: 72rpx;
+      margin: 0 2rpx;
     }
   }
 </style>

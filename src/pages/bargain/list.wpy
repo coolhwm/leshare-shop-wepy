@@ -4,7 +4,6 @@
     <!--TAB 页-->
     <ZanTab :tab.sync="tab" @change.user="switchTab" />
 
-    <!--列表展现-->
     <repeat for="{{page.list}}" key="index" index="index" item="item">
       <BargainItem :detail.sync="item"/>
     </repeat>
