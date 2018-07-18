@@ -1,10 +1,10 @@
 <template>
   <view class="row-between item-box">
     <view class="row-center">
-      <icon wx:if="{{index === 0}}" class="first mr10" style="color: #F7E061"/>
-      <icon wx:elif="{{index === 1}}" class="srecod mr10" style="color: #D8E3EB"/>
-      <icon wx:elif="{{index === 2}}" class="third mr10" style="color: #EFCB91"/>
-      <text wx:else class="mr10 row-center column-center" style="width: 24px;">{{index + 1}}</text>
+      <icon wx:if="{{item.rank === 1}}" class="first mr10" style="color: #F7E061"/>
+      <icon wx:elif="{{item.rank === 2}}" class="srecod mr10" style="color: #D8E3EB"/>
+      <icon wx:elif="{{item.rank === 3}}" class="third mr10" style="color: #EFCB91"/>
+      <text wx:else class="mr10 row-center column-center" style="width: 24px;">{{item.rank}}</text>
       <image class="avator" src="{{item.avator}}"></image>
       <text class="ml10">{{item.name}}</text>
     </view>

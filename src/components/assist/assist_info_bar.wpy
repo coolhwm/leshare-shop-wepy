@@ -1,0 +1,205 @@
+<template>
+  <view class="column assist-info-box">
+    <view class="row info-top-box">
+      <image class="top-avatar-box" src="{{assist.avatar}}" />
+      <view>
+        <text class="mr20 xl">{{assist.nickName}}</text>
+        <text class="primary">成功参与活动，快快让好友助自己一臂之力</text>
+      </view>
+    </view>
+    <view class="column-center" wx:if="{{assist.status == 'TIMEOUT'}}">
+      <text>您的助力活动已过期</text>
+    </view>
+    <view class="column-center" wx:if="{{assist.status == 'SUCCESS'}}">
+      <text>助力活动已成功</text>
+    </view>
+    <view class="column-center" wx:elif="{{assist.status != 'ORDERED'}}">
+      <view class="status-time-box row">
+        <text class="mr10">剩余</text>
+        <view class="time-num-box">{{content.hour}}</view>
+        <text>:</text>
+        <view class="time-num-box">{{content.min}}</view>
+        <text>:</text>
+        <view class="time-num-box">{{content.sec}}</view>
+        <text class="ml10">结束</text>
+      </view>
+      <button wx:if="{{assist.isHead}}" class="btn-box" open-type="share">分享助力</button>
+    </view>
+    <view class="column-center" wx:elif="{{assist.status == 'TIMEOUT'}}">
+      <text>已结束</text>
+    </view>
+    <view class="column-center" wx:if="{{!assist.isHead}}">
+      <view wx:if="{{assist.isHelp}}" class="btn-box" @tap="want">我也要</view>
+      <view wx:elif="{{assist.assist}}" class="muted">
+        <span>{{assist.assistRuleTip}}</span>
+        <view class="btn-box" @tap="want">我也要</view>
+      </view>
+      <view wx:else class="btn-box" @tap="help({{assist.ruleId}}, {{assist.id}})">为TA助力</view>
+    </view>
+    <view class="column-center mt20">
+      <view class="row">
+        <text class="muted">──────</text><text class="muted ml10 mr10">{{assist.joinCount}}人助力</text><text class="muted">──────</text>
+      </view>
+      <view class="row-center details-box mt10">
+        <block wx:for="{{assist.details}}" wx:for-item="detail" wx:key="index">
+          <image src="{{detail.customerAvatar}}" wx:if="{{detail.customerAvatar}}"></image>
+          <icon wx:else class="space" color="gray" style="font-size: 72rpx;line-height: 72rpx;"/>
+        </block>
+      </view>
+    </view>
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { checkUserInfoWithError } from '../../api/wx_auth';
+  import countdown from '../../mixins/countdown';
+  import assist from '../../api/assist';
+  import customerList from '../../components/bargain/customer_list'
+
+  export default class assistInfoBar extends wepy.component {
+    props = {
+      assist: {}
+    };
+    data = {
+    };
+    methods = {
+      async help (ruleId, assistId) {
+        await checkUserInfoWithError();
+        const data = {
+          id: assistId,
+          ruleId: ruleId
+        }
+        await assist.assistActivity(data);
+        this.$emit('help', assistId);
+      },
+      async want () {
+        this.$root.$navigate(`/pages/assist/goods_detail?ruleId=${assist.ruleId}`);
+      },
+      open(customers) {
+        this.$invoke('customerList', 'open', {content: customers})
+      }
+    };
+    computed = {
+      showCustomer () {
+        if (this.assist == null) return;
+        return this.assist.details.slice(-8)
+      }
+    };
+    components = {
+      customerList: customerList
+    };
+    watch = {
+      assist (assist) {
+        if (assist != null) {
+          this.countdowm(assist.createTime, 'groupTime');
+        }
+      }
+    };
+    mixins = [countdown];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .assist-info-box {
+    background-color: white;
+    padding: 20rpx;
+    margin-bottom: 10rpx;
+  }
+
+  .top-avatar-box{
+    width: 80rpx;
+    min-width: 80rpx;
+    height: 80rpx;
+    border-radius: 40rpx;
+    margin-right: 20rpx;
+  }
+
+  /*中部进度条*/
+  .back-box {
+    position: relative;
+    display: flex;
+    margin: 0 10rpx;
+  }
+
+  .back {
+    width: 100%;
+    height: 30rpx;
+    background-color: #e6e6e6;
+    border-radius: 15rpx;
+  }
+
+  .process-box {
+    position: absolute;
+    left:0;
+    bottom:0;
+  }
+
+  .process {
+    width: 100%;
+    height: 30rpx;
+    background-color: $color-primary;
+    border-radius: 15rpx;
+  }
+
+  .msg-box {
+    position: relative;
+    min-width: 44px;
+  }
+
+  .price-box {
+    top: 8px;
+    left: 8px;
+  }
+
+  .info-btn-box{
+    border-bottom: $border;
+    padding: 20rpx;
+  }
+
+  .btn-box{
+    background-color: $color-primary;
+    color:white;
+    padding: 10rpx 0;
+    width: 500rpx;
+    border-radius: 5rpx;
+    margin: 20rpx 0;
+    text-align: center;
+    font-size: 34rpx;
+    line-height: 55rpx;
+  }
+  .btn-end-box{
+    background-color: $color-muted;
+    color:white;
+    padding: 10rpx 0;
+    width: 500rpx;
+    border-radius: 5rpx;
+    margin: 20rpx 0;
+    text-align: center;
+    font-size: 34rpx;
+  }
+
+  .help-text{
+    max-width: 600rpx;
+  }
+
+  .title-text{
+    color: $color-muted;
+    margin-left: 25rpx;
+    font-size: $text-xl;
+  }
+
+  .details-box{
+    width: 500rpx;
+    flex-wrap: wrap;
+    image{
+      width: 60rpx;
+      height: 60rpx;
+      border: $border;
+      margin: 10rpx;
+    }
+  }
+</style>

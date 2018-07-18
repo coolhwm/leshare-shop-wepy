@@ -1,0 +1,116 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view class="container column" wx:if="{{init}}">
+    <!--商品详情栏-->
+    <GoodsDetail :detail.sync="detail"/>
+
+    <!--砍价信息-->
+    <AssistInfoBar :assist.sync="detail" @help.user="help"/>
+
+    <!--砍价玩法栏-->
+    <BargainRuleBar title="助力玩法" firstBottom="发起助力" secondBottom="帮忙助力" thirdTop="人数达标" thirdBottom="获取商品"/>
+
+    <ButtonWidget/>
+
+    <!--提示框-->
+    <Notice/>
+
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import { initWxAppSync } from '../../api/wx_auth';
+  import base from '../../mixins/base'
+  import assist from '../../api/assist'
+  import AssistGoodsDetail from '../../components/assist/assist_goods_detail';
+  import Loading from '../../components/common/loading';
+  import AssistInfoBar from '../../components/assist/assist_info_bar';
+  import BargainRuleBar from '../../components/bargain/bargain_rule_bar';
+  import Notice from '../../components/shop/notice';
+  import ButtonWidget from '../../components/template/button_widget';
+  import BargainItem from '../../components/bargain/bargain_more_item'
+  export default class BargainDetail extends wepy.page {
+    data = {
+      assistId: null,
+      init: false,
+      detail: null,
+      rule: null,
+      createTime: null,
+      list: []
+    };
+    async onLoad ({assistId}) {
+      this.assistId = assistId;
+      await initWxAppSync();
+      await this.update(assistId);
+    };
+    async update (assistId) {
+      this.detail = await assist.assistInfo(assistId);
+      this.loaded();
+    }
+    onShow() {
+      if (this.init) {
+        this.$invoke('AssistInfoBar', 'start', {
+          timestamp: this.detail.createTime, status: 'groupTime'
+        });
+      }
+    };
+    onHide() {
+      this.$invoke('AssistInfoBar', 'clear');
+    };
+    onUnload() {
+      this.$invoke('AssistInfoBar', 'clear');
+    };
+    async onPullDownRefresh () {
+      await this.update();
+      wepy.stopPullDownRefresh();
+    }
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {ruleName, imageUrl} = this.detail;
+      const shareName = `邀请好友为你助力，免费领${ruleName}`;
+      return {
+        title: shareName,
+        imageUrl: imageUrl,
+        path: `/pages/assist/assist_detail?assistId=${this.detail.id}`
+      };
+    }
+    methods = {
+      help (assistId) {
+        const notice = {
+          title: '太棒了',
+          btnText: '确定',
+          content: `您已为好友助力成功!`
+        };
+        this.$invoke('Notice', 'open', notice);
+        this.update(assistId)
+      }
+    };
+    computed = {};
+    components = {
+      GoodsDetail: AssistGoodsDetail,
+      Loading: Loading,
+      AssistInfoBar: AssistInfoBar,
+      BargainRuleBar: BargainRuleBar,
+      Notice: Notice,
+      ButtonWidget: ButtonWidget,
+      BargainItem: BargainItem
+    };
+    mixins = [base];
+    config = {
+      enablePullDownRefresh: true,
+      navigationBarTitleText: '助力详情'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .detail-title{
+    height: 90rpx;
+    border-bottom: $border;
+    background-color: #FFF;
+  }
+</style>

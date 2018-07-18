@@ -12,7 +12,7 @@
               <image class="img-box" src="{{item.customer.avatarUrl}}"/>
               <text class="ml10">{{item.customer.nickName}}</text>
             </view>
-            <text>￥{{item.reducePrice}}</text>
+            <text wx:if="{{type === 'bargain'}}">￥{{item.reducePrice}}</text>
           </view>
         </block>
       </scroll-view>
@@ -23,7 +23,7 @@
               <image class="img-box" src="{{item.customer.avatarUrl}}"/>
               <text class="ml10">{{item.customer.nickName}}</text>
             </view>
-            <text>￥{{item.reducePrice}}</text>
+            <text wx:if="{{type === 'bargain'}}">￥{{item.reducePrice}}</text>
           </view>
         </block>
       </view>
@@ -44,10 +44,17 @@
   import _ from 'underscore'
 
   export default class Notice extends wepy.component {
+    props = {
+      title: {
+        default: '帮砍小伙伴'
+      },
+      type: {
+        default: 'bargain'
+      }
+    }
     data = {
       content: '',
       display: false,
-      title: '帮砍小伙伴',
       btnText: '我知道了'
     };
     methods = {
