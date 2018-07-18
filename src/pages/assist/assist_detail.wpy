@@ -70,7 +70,7 @@
      */
     onShareAppMessage () {
       const {ruleName, imageUrl} = this.detail;
-      const shareName = `邀请好友为你助力，免费领${ruleName}`;
+      const shareName = `快快为好友助力，免费领${ruleName}`;
       return {
         title: shareName,
         imageUrl: imageUrl,

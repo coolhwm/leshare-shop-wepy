@@ -1,16 +1,31 @@
 <template>
   <Loading :init.sync="init"/>
+  <CoverPanel :display.sync="display" zIndex="99" @tap.user="close"/>
   <view class="container" wx:if="{{init}}">
 
-    <tab :tab.sync="tab" fixed="0" @change.user="change"/>
-    <scroll-view scroll-y="true" class="tabs-box">
-      <!-- 分类 -->
-      <view wx:if="{{tab.selectedId}}">
-        <block wx:for="{{tagList}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
-          <span @tap="select({{tag}})" class="tabs-item-box">{{tag}}</span>
+    <view class="sub-shop-top-box">
+      <!--tab栏-->
+      <view class="row">
+        <block wx:for="{{tabs.list}}" wx:for-item="tab" wx:for-index="index" wx:key="index">
+          <view @tap="selectTab({{tab}})" class="tab-box row-center">
+            <text class="{{tab.id === tabs.selectedId ? 'primary' : ''}}">{{tab.title}}</text>
+            <icon class="{{tab.id === tabs.selectedId ? 'tab-up' : 'tab-down tab-icon-box'}} xsmall"/>
+          </view>
         </block>
       </view>
-    </scroll-view>
+      
+      <!--tab划出内容栏-->
+      <view class="tabs-box" wx:if="{{display}}">
+        <view wx:if="{{tabs.selectedId}}" class="row">
+          <text class="{{selectTabTitle === '全部分类' ? 'select-tab-box' : ''}} tabs-item-box" wx:if="{{tabs.selectedId === 'TYPE'}}"  @tap="clearSelect('全部分类')">全部分类</text>
+          <text class="{{selectTabTitle === '全城' ? 'select-tab-box' : ''}} tabs-item-box" wx:if="{{tabs.selectedId === 'AREA'}}"  @tap="clearSelect('全城')">全城</text>
+          <text class="{{selectTabTitle === '智能排序' ? 'select-tab-box' : ''}} tabs-item-box" wx:if="{{tabs.selectedId === 'SORT'}}"  @tap="clearSelect('智能排序')">智能排序</text>
+          <block wx:for="{{selectTabList}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
+            <text @tap="select({{tag}})" class="tabs-item-box {{selectTabTitle === tag ? 'select-tab-box' : ''}}">{{tag}}</text>
+          </block>
+        </view>
+      </view>
+    </view>
 
     <!--列表展现-->
     <view wx:for="{{page.list}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="shop-box column">
@@ -38,6 +53,9 @@
 
     <!-- 加载提示 -->
     <Loadmore :page.sync="page"/>
+
+    <!--提示框-->
+    <Notice @close.user="close" @tap.user="getLocation"/>
   </view>
 
   <!--占位符-->
@@ -53,6 +71,9 @@
   import Loading from '../../components/common/loading';
   import Loadmore from '../../components/weui/loadmore';
   import Tab from '../../components/zanui/tab';
+  import _ from 'underscore';
+  import CoverPanel from '../../components/common/cover_panel';
+  import Notice from '../../components/shop/notice';
 
   export default class SubShopList extends wepy.page {
     data = {
@@ -61,54 +82,114 @@
         list: [
         ]
       },
-      tab: {
+      tabs: {
         list: [
-          {id: 'AREA', title: '区域 ▼', name: ''},
-          {id: 'BUSSINESS_AREA', title: '商圈 ▼', name: ''},
-          {id: 'STYLE', title: '风格 ▼', name: ''}
+          {id: 'TYPE', title: '全部分类'},
+          {id: 'AREA', title: '全城'},
+          {id: 'SORT', title: '智能排序'}
         ],
         selectedId: null
       },
-      tagList: null,
+      tagList: {
+        SORT: ['离我最近', '销量最高']
+      },
+      selectTabList: [],
+      tag: null,
       tags: [],
-      tag: null
+      location: null,
+      display: false,
+      area: null
     }
     async onLoad () {
-      await this.updateList()
+      try {
+        this.location = await wepy.getLocation();
+      } finally {
+        const tags = await shop.subShopTag();
+        this.tagList = _.extend(this.tagList, tags);
+        await this.updateList()
+      }
     };
     params() {
-      if (this.tag) {
-        return {
-          is_goods: true,
-          tag: this.tag
-        }
+      let param = {}
+      if (this.tag && this.area) {
+        param.tag = this.tag
+        param.area = this.area
+      } else if (!this.tag && this.area) {
+        param.area = this.area
+      } else if (this.tag && !this.area) {
+        param.tag = this.tag
       }
+      if (this.location) {
+        param.longitude = this.location.longitude
+        param.latitude = this.location.latitude
+      }
+      return param
     }
+    // 商铺列表刷新
     async updateList() {
       this.page = await shop.subShopList();
       await this.next();
     }
     methods = {
-      async select(name) {
-        const selectTag = this.tab.list.find(item => item.id === this.tab.selectedId)
-        selectTag.title = name + '▼'
-        selectTag.name = name
-        if (this.tags.length < 1) {
-          this.tags.push(selectTag)
+      // 选取tab
+      selectTab(tab) {
+        this.tabs.selectedId = tab.id
+        this.selectTabList = this.tagList[tab.id]
+        this.display = true
+      },
+      // 清空选择的参数
+      async clearSelect(tag) {
+        const oldTag = this.tabs.list.find(item => item.id === this.tabs.selectedId).title
+        this.tags = _.without(this.tags, oldTag)
+        if (this.tags.length > 0) {
+          this.tag = this.tags.join(',')
         } else {
-          if (this.tags.every(item => item.id !== selectTag.id)) {
-            this.tags.push(selectTag)
+          this.tag = null
+        }
+        this.tabs.list.find(item => item.id === this.tabs.selectedId).title = tag
+        this.display = false
+        this.tabs.selectedId = null
+        await this.updateList()
+      },
+      // 选择标签
+      async select(tag) {
+        if (tag === '离我最近' && !this.location) {
+          const notice = {
+            title: '提示',
+            btnText: '确定',
+            content: `您尚未定位，无法找到距离最近的商铺，您确定开启定位？`,
+            isDouble: true
+          };
+          this.$invoke('Notice', 'open', notice);
+        } else {
+          this.tabs.list.find(item => item.id === this.tabs.selectedId).title = tag
+          if (this.tabs.selectedId === 'AREA') {
+            this.area = tag
           } else {
-            this.tags.find(item => item.id === selectTag.id).name = name
+            this.tags.push(tag)
+            this.tags = _.uniq(this.tags)
+            this.tag = this.tags.join(',')
           }
         }
-        this.tag = this.tags.map(item => item.name).join(',')
+        this.display = false
+        this.tabs.selectedId = null
         await this.updateList()
-        this.tab.selectedId = null
       },
-      async change(data) {
-        this.tagList = await shop.subShopTag(data.selectedId)
-        this.loaded()
+      close() {
+        this.display = false
+        this.tabs.selectedId = null
+      },
+      // 重新授权获取坐标
+      async getLocation() {
+        this.location = await wepy.getLocation()
+        // await this.updateList();
+      }
+    };
+    computed = {
+      // 选中标签
+      selectTabTitle() {
+        if (!this.tabs.selectedId) return
+        return this.tabs.list.find(item => item.id === this.tabs.selectedId).title
       }
     };
     events = {};
@@ -116,7 +197,9 @@
       Placeholder: Placeholder,
       Loading: Loading,
       Loadmore: Loadmore,
-      tab: Tab
+      tab: Tab,
+      CoverPanel: CoverPanel,
+      Notice: Notice
     };
     mixins = [base, pagination];
     config = {
@@ -128,6 +211,15 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .sub-shop-top-box{
+    position: relative;
+    z-index: 1000;
+    background-color: white;
+    border-bottom: $border;
+  }
+  .tab-icon-box{
+    color: $color-normal;
+  }
   .container{
     background-color: white;
   }
@@ -149,12 +241,24 @@
     border: $border;
   }
   .tabs-box{
-    padding: 10rpx 20rpx;
+    position: absolute;
+    background-color: white;
+    width: 100%;
+    padding: 20rpx;
+  }
+  .tab-box{
+    width: 33%;
+    height: 80rpx;
   }
   .tabs-item-box{
     padding: 14rpx 30rpx;
     border-radius: 10rpx;
     background-color: #F7F7F7;
-    margin: 10rpx;
+    margin: 16rpx;
+    font-size: $text-xs;
+  }
+  .select-tab-box{
+    background-color: lighten($color-primary, 10%);
+    color: white;
   }
 </style>
