@@ -138,8 +138,14 @@ export default class coupon extends base {
     coupon.couponId = root.couponId;
     coupon.acceptTime = root.acceptTime;
     coupon.usedTime = root.usedTime;
-    coupon.beginTime = this._convertTimestapeToDay(coupon.beginTime);
-    coupon.dueTime = this._convertTimestapeToDay(coupon.dueTime);
+    if (coupon.expiredType === 'FIX_TERM') {
+      coupon.isUse = (new Date(data.beginTime) - new Date()) <= 0;
+      coupon.beginTime = this._convertTimestapeToDay(data.beginTime);
+      coupon.dueTime = this._convertTimestapeToDay(data.dueTime);
+    } else {
+      coupon.beginTime = this._convertTimestapeToDay(coupon.beginTime);
+      coupon.dueTime = this._convertTimestapeToDay(coupon.dueTime);
+    }
     this._processCouponDisplayFlag(coupon);
     return coupon;
   }

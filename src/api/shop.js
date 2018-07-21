@@ -121,6 +121,27 @@ export default class shop extends base {
     return this.get(url);
   }
 
+  /***
+   * 弹出框规则
+   */
+  static popupsRules() {
+    const url = `${this.baseUrl}/popups/rules`;
+    return this.get(url).then(data => {
+      if (data) {
+        data.targetId = data.target
+        return data
+      }
+    });
+  }
+
+  /***
+   * 更新弹出框
+   */
+  static popupsResults(resultId) {
+    const url = `${this.baseUrl}/popups/results?result_id=${resultId}`;
+    return this.post(url);
+  }
+
   // *** 数据处理方法
   /**
    * 处理基本信息

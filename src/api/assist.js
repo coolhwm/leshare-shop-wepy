@@ -1,6 +1,7 @@
 import base from './base';
 import wepy from 'wepy'
 import Page from '../utils/Page'
+import Lang from '../utils/Lang'
 // import Page from '../utils/Page';
 
 export default class assist extends base {
@@ -52,6 +53,7 @@ export default class assist extends base {
   static _processAssistInfo(data) {
     data.joinCount = data.leastAssist - data.leftJoin
     data.joinRate = data.joinCount / data.leastAssist
+    data.originalPrice = Lang._fixedPrice(data.originalPrice);
     const { id: userId } = wepy.$instance.globalData.auth['user'];
     // 是否未发起者
     data.isHead = userId === data.customerId;
@@ -59,7 +61,7 @@ export default class assist extends base {
     // 是否已经砍价
     data.isHelp = self != null;
     // 处理助力者
-    for (let i = 0; i < data.leftJoin - 1; i++) {
+    for (let i = 0; i < data.leftJoin; i++) {
       data.details.push({})
     }
     return data

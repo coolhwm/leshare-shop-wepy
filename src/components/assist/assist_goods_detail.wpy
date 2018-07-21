@@ -7,9 +7,10 @@
       <text class="detail-goods-name lg">{{detail.ruleName}}</text>
       <view class="column">
         <view class="row mt10">
-          <text class="detail-price-box">需助力人数:{{detail.leftJoin}}</text>
+          <text class="detail-price-box">￥0.00</text>
           <text class="muted sellPrice-box sm">￥{{detail.originalPrice}}</text>
         </view>
+        <text class="detail-price-box">需助力人数:{{detail.leastAssist}}</text>
       </view>
     </view>
   </view>
@@ -58,7 +59,7 @@
     padding-left: 20rpx;
     .detail-price-box{
       font-size: $text-lg;
-      color: #e64340;
+      color: $color-primary;
     }
     .sellPrice-box{
       margin-left: 10rpx;
