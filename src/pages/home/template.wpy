@@ -1,7 +1,7 @@
 <template>
   <Loading :init.sync="init"/>
   <view class="template-box" wx:if="{{init}}">
-    <repeat for="{{components}}" key="index" index="index" item="item">
+    <repeat for="{{components}}" index="index" item="item">
       <!--搜索栏-->
       <block wx:if="{{item.type == 'SEARCH_BAR'}}">
         <SearchBar :param.sync="item"/>
@@ -78,7 +78,7 @@
     </repeat>
 
     <!--插件-->
-    <repeat for="{{plugins}}" key="index" index="index" item="item">
+    <repeat for="{{plugins}}" index="index" item="item">
       <!--滑出购物面板-->
       <block wx:if="{{item.type == 'SKU_SLIDE_PANEL'}}" >
         <SilderPanel />
