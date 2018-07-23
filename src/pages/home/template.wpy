@@ -104,6 +104,9 @@
         <ButtonWidget :param="item" />
       </block>
     </repeat>
+
+    <!--弹出广告-->
+    <PopupImage />
   </view>
 </template>
 
@@ -134,6 +137,7 @@
   import Separator from '../../components/template/separator';
   import AddressBox from '../../components/template/address_box';
   import VideoBox from '../../components/template/video_box';
+  import PopupImage from '../../components/shop/popups';
   import _ from 'underscore';
 
   @connect({
@@ -293,7 +297,8 @@
       Separator: Separator,
       BargainBox: BargainBox,
       AddressBox: AddressBox,
-      VideoBox: VideoBox
+      VideoBox: VideoBox,
+      PopupImage: PopupImage
     };
     computed = {
     };

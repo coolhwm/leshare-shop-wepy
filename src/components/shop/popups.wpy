@@ -17,6 +17,7 @@
 
 <script>
   import wepy from 'wepy';
+  import store from '../../store/utils';
   import CoverPanel from '../common/cover_panel';
   import shop from '../../api/shop'
   import base from '../../mixins/base'
@@ -28,7 +29,8 @@
       rule: null
     };
     async onLoad() {
-      this.rule = await shop.popupsRules()
+      await store.wait();
+      this.rule = await shop.popupsRules();
       if (this.rule) {
         this.display = true
       }
