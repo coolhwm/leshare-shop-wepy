@@ -11,6 +11,9 @@
     <!--砍价玩法栏-->
     <BargainRuleBar title="助力玩法" firstBottom="发起助力" secondBottom="帮忙助力" thirdTop="人数达标" thirdBottom="获取商品"/>
 
+    <!--商品详情-->
+    <DetailList :detail.sync="goodsDetail" />
+
     <ButtonWidget/>
 
     <!--提示框-->
@@ -29,23 +32,24 @@
   import BargainRuleBar from '../../components/bargain/bargain_rule_bar';
   import Notice from '../../components/shop/notice';
   import ButtonWidget from '../../components/template/button_widget';
-  import BargainItem from '../../components/bargain/bargain_more_item'
+  import BargainItem from '../../components/bargain/bargain_more_item';
+  import DetailList from '../../components/goods/detail_list';
+
   export default class BargainDetail extends wepy.page {
     data = {
       assistId: null,
       init: false,
       detail: null,
-      rule: null,
-      createTime: null,
-      list: []
+      goodsDetail: null
     };
     async onLoad ({assistId}) {
       this.assistId = assistId;
       await initWxAppSync();
-      await this.update(assistId);
+      await this.update();
     };
-    async update (assistId) {
-      this.detail = await assist.assistInfo(assistId);
+    async update () {
+      this.detail = await assist.assistInfo(this.assistId);
+      this.goodsDetail = this.detail.goods
       this.loaded();
     }
     onShow() {
@@ -69,8 +73,8 @@
      * 页面分享
      */
     onShareAppMessage () {
-      const {ruleName, imageUrl} = this.detail;
-      const shareName = `邀请好友为你助力，免费领${ruleName}`;
+      const {ruleName, imageUrl, nickName} = this.detail;
+      const shareName = `${nickName}喊你助力，免费得${ruleName}`;
       return {
         title: shareName,
         imageUrl: imageUrl,
@@ -96,6 +100,7 @@
       BargainRuleBar: BargainRuleBar,
       Notice: Notice,
       ButtonWidget: ButtonWidget,
+      DetailList: DetailList,
       BargainItem: BargainItem
     };
     mixins = [base];

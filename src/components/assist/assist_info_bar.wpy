@@ -4,7 +4,7 @@
       <image class="top-avatar-box" src="{{assist.avatar}}" />
       <view>
         <text class="mr20 xl">{{assist.nickName}}</text>
-        <text class="primary">成功参与活动，快快让好友助自己一臂之力</text>
+        <text class="primary">助力免费得{{assist.ruleName}}</text>
       </view>
     </view>
     <view class="column-center" wx:if="{{assist.status == 'TIMEOUT'}}">
@@ -16,6 +16,8 @@
     <view class="column-center" wx:elif="{{assist.status != 'ORDERED'}}">
       <view class="status-time-box row">
         <text class="mr10">剩余</text>
+        <view class="time-num-box">{{content.day}}</view>
+        <text>天</text>
         <view class="time-num-box">{{content.hour}}</view>
         <text>:</text>
         <view class="time-num-box">{{content.min}}</view>
@@ -42,9 +44,9 @@
       </view>
       <view class="row details-box mt10">
         <block wx:for="{{assist.details}}" wx:for-item="detail" wx:key="index">
-          <image src="{{detail.customerAvatar}}" wx:if="{{detail.customerAvatar}}"></image>
-          <icon wx:elif="{{detail.customerId}}" class="customer space-customer-box" color="gray"/>
-          <icon wx:else class="space space-box" color="gray"/>
+          <image class="details-avatar-box" src="{{detail.customerAvatar}}" wx:if="{{detail.customerAvatar}}"></image>
+          <icon wx:elif="{{detail.customerId}}" class="customer space-box" color="gray"/>
+          <icon wx:else class="space-circle space-box" color="gray"/>
         </block>
       </view>
     </view>
@@ -75,26 +77,21 @@
         await assist.assistActivity(data);
         this.$emit('help', assistId);
       },
-      async want () {
+      async want (assist) {
         this.$root.$navigate(`/pages/assist/goods_detail?ruleId=${assist.ruleId}`);
       },
       open(customers) {
         this.$invoke('customerList', 'open', {content: customers})
       }
     };
-    computed = {
-      showCustomer () {
-        if (this.assist == null) return;
-        return this.assist.details.slice(-8)
-      }
-    };
+    computed = {};
     components = {
       customerList: customerList
     };
     watch = {
       assist (assist) {
         if (assist != null) {
-          this.countdowm(assist.createTime, 'groupTime');
+          this.countdowm(assist.dueTime.replace(/-/g, '/'), 'endTime');
         }
       }
     };
@@ -194,23 +191,19 @@
   }
 
   .details-box{
-    width: 504rpx;
+    width: 520rpx;
     flex-wrap: wrap;
     image{
-      width: 60rpx;
-      height: 60rpx;
+      width: 80rpx;
+      height: 80rpx;
       border: $border;
+      border-radius: 40rpx;
       margin: 10rpx;
     }
-    .space-customer-box{
-      font-size: 54rpx;
-      line-height: 54rpx;
-      margin: 0 10rpx;
-    }
     .space-box{
-      font-size: 72rpx;
-      line-height: 72rpx;
-      margin: 0 2rpx;
+      font-size: 76rpx;
+      line-height: 76rpx;
+      margin: 10rpx;
     }
   }
 </style>

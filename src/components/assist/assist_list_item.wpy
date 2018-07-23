@@ -20,7 +20,8 @@
         </view>
       </view>
       <view class="column" style="align-items: flex-end;">
-        <text class="primary lg">还需助力：{{detail.leftJoin}}次</text>
+        <text class="primary lg" wx:if="{{detail.leftJoin > 0}}">还需助力：{{detail.leftJoin}}次</text>
+        <text class="primary lg" wx:else>已获得商品</text>
       </view>
     </view>
 
@@ -48,8 +49,8 @@
     help (detail) {
       this.$root.$navigate(`/pages/assist/assist_detail?assistId=${detail.activityId}`)
     }
-    want(detail) {
-      this.$root.$navigate(`/pages/assist/goods_detail?ruleId=${detail.ruleId}`)
+    detail(detail) {
+      this.$root.$navigate(`/pages/assist/assist_detail?assistId=${detail.activityId}`)
     }
     methods = {
       assistDetail(activityId) {

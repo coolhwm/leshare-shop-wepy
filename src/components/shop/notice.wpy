@@ -7,7 +7,11 @@
       </view>
       <view class="column notice-content-box">
         <text class="lg content-box">{{content}}</text>
-        <button @tap="close">{{btnText}}</button>
+        <view class="row-around" wx:if="{{isDouble}}">
+          <button @tap="close" class="btn-box btn-cancel">取消</button>
+          <button @tap="tap" class="btn-box" open-type="openSetting">{{btnText}}</button>
+        </view>
+        <button @tap="close" wx:else>{{btnText}}</button>
       </view>
     </view>
   </view>
@@ -25,18 +29,26 @@
       content: '',
       display: false,
       title: '公告',
-      btnText: '我知道了'
+      btnText: '我知道了',
+      isDouble: false
     };
     methods = {
-      open({title, btnText, content}) {
+      open({title, btnText, content, isDouble}) {
         this.display = true;
         this.title = title;
         this.btnText = btnText;
-        this.content = content
+        this.content = content;
+        if (isDouble) {
+          this.isDouble = isDouble;
+        }
       },
       close() {
         this.display = false;
         this.$emit('close')
+      },
+      tap() {
+        this.display = false;
+        this.$emit('tap')
       }
     };
     components = {
@@ -74,15 +86,21 @@
     }
     .notice-content-box{
       padding: 40rpx;
-      text{
-        margin-bottom: 40rpx;
-      }
       button{
         background-color: $color-primary;
         color: white;
       }
       .content-box{
         text-align: center;
+        margin-bottom: 40rpx;
+      }
+      .btn-box{
+        width: 40%;
+        line-height: 2;
+      }
+      .btn-cancel{
+        color: white;
+        background-color: $color-muted;
       }
     }
   }

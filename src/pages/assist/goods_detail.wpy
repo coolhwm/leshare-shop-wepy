@@ -4,7 +4,7 @@
   <!--轮播展示图-->
   <view class="container column" wx:if="{{init}}">
     <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" @tap="previewDetailSwiper">
-      <block wx:for="{{rule.goods.images}}" wx:key="index">
+      <block wx:for="{{rule.goods.images}}" wx:for-index="index" wx:key="index">
         <swiper-item>
           <image src="{{item.url}}/preview" mode="aspectFill" style="width: 750rpx; height:480rpx;"></image>
         </swiper-item>

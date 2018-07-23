@@ -9,7 +9,7 @@
           <view class="award-jf" wx:if="{{item.award}}">{{item.award}}</view>
         </view>
       </view>
-      <span class="filling_line" style="transform: scaleX({{aways*0.165}})"></span>
+      <text class="filling_line" style="transform: scaleX({{aways*0.165}})"></text>
     </view>
   </view>
 </template>

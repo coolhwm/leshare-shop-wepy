@@ -24,16 +24,21 @@
       <text class="mt10 xs">{{tips}}</text>
     </view>
 
-    <view class="qr-box column-center" wx:if="{{!success && coupon.supportType != 1}}">
-      <text class="muted mb20 lg" wx:if="{{coupon.supportType !=1}}">线下店铺消费时出示</text>
-      <view class="code-box">
-        <block wx:if="{{coupon.imgUrl}}">
-          <image  class="code-image" src="{{coupon.imgUrl}}"></image>
-          <image wx:if="{{shop.avatar}}" class="shop-avatar" src="{{shop.avatar}}"/>
-        </block>
-        <text wx:else class="code-fail-box muted">获取二维码失败，请联系客服或使用自助核销</text>
+    <view class="qr-box column-center" wx:if="{{coupon.expiredType === 'FIX_TERM' && !coupon.isUse}}">
+      <text class="muted mb20 lg">该优惠卷还未生效</text>
+    </view>
+    <view wx:else>
+      <view class="qr-box column-center" wx:if="{{!success && coupon.supportType != 1}}">
+        <text class="muted mb20 lg" wx:if="{{coupon.supportType !=1}}">线下店铺消费时出示</text>
+        <view class="code-box">
+          <block wx:if="{{coupon.imgUrl}}">
+            <image  class="code-image" src="{{coupon.imgUrl}}"></image>
+            <image wx:if="{{shop.avatar}}" class="shop-avatar" src="{{shop.avatar}}"/>
+          </block>
+          <text wx:else class="code-fail-box muted">获取二维码失败，请联系客服或使用自助核销</text>
+        </view>
+        <text style="width: 200px; height: 200px;" class="muted lg column-center" wx:if="{{coupon.supportType ==1}}">暂不支持线下店铺消费</text>
       </view>
-      <text style="width: 200px; height: 200px;" class="muted lg column-center" wx:if="{{coupon.supportType ==1}}">暂不支持线下店铺消费</text>
     </view>
 
     <view class="tips-box column" wx:if="{{coupon.desc}}">

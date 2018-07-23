@@ -1,11 +1,10 @@
 import base from './base';
-import wepy from 'wepy'
-import Page from '../utils/Page'
-import goods from './goods'
-// import Page from '../utils/Page';
+import wepy from 'wepy';
+import Page from '../utils/Page';
+import goods from './goods';
+import Lang from '../utils/Lang';
 
 export default class assist extends base {
-
   /**
    * 获取助力规则
    */
@@ -46,6 +45,7 @@ export default class assist extends base {
     goods._processGoodsPreview(data.goods);
     data.endTime = data.dueTime;
     data.isTimeOut = new Date(data.endTime).getTime() < new Date().getTime();
+    data.isBegin = new Date(data.startTime).getTime() > new Date().getTime();
     return data
   }
 
@@ -55,6 +55,7 @@ export default class assist extends base {
   static _processAssistInfo(data) {
     data.joinCount = data.leastAssist - data.leftJoin
     data.joinRate = data.joinCount / data.leastAssist
+    data.originalPrice = Lang._fixedPrice(data.originalPrice);
     const { id: userId } = wepy.$instance.globalData.auth['user'];
     // 是否未发起者
     data.isHead = userId === data.customerId;
@@ -62,7 +63,7 @@ export default class assist extends base {
     // 是否已经砍价
     data.isHelp = self != null;
     // 处理助力者
-    for (let i = 0; i < data.leftJoin - 1; i++) {
+    for (let i = 0; i < data.leftJoin; i++) {
       data.details.push({})
     }
     return data
@@ -79,13 +80,13 @@ export default class assist extends base {
   static _processAction (data) {
     const BARGAIN_ACTION_NAME = {
       PROCESSING: '找人助力',
-      TIMEOUT: '想要更多',
-      SUCCESS: '想要更多'
+      TIMEOUT: '查看详情',
+      SUCCESS: '查看详情'
     };
     const BARGAIN_ACTION_FUNCNAME = {
       PROCESSING: 'help',
-      TIMEOUT: 'want',
-      ORDERED: 'want'
+      TIMEOUT: 'detail',
+      ORDERED: 'detail'
     };
     const action = {};
     action.name = BARGAIN_ACTION_NAME[data.status];
