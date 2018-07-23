@@ -110,7 +110,7 @@
     watch = {
       bargain (bargain) {
         if (bargain != null) {
-          this.countdowm(bargain.createTime, 'groupTime');
+          this.countdowm(bargain.createTime.replace(/-/g, '/'), 'groupTime');
         }
       }
     };

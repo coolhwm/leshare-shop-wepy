@@ -27,6 +27,11 @@
       </view>
     </view>
 
+    <view wx:if="{{location}}" class="address-box row">
+      <text class="sm">当前位置：{{address}}</text>
+      <text class="btn-box xs ml10" @tap="relocation">[重新定位]</text>
+    </view>
+
     <!--列表展现-->
     <view wx:for="{{page.list}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="shop-box column">
       <view class="row" style="align-items: flex-start;">
@@ -74,6 +79,7 @@
   import _ from 'underscore';
   import CoverPanel from '../../components/common/cover_panel';
   import Notice from '../../components/shop/notice';
+  import map from '../../api/map';
 
   export default class SubShopList extends wepy.page {
     data = {
@@ -98,7 +104,9 @@
       tags: [],
       location: null,
       display: false,
-      area: null
+      area: null,
+      isLocation: false,
+      address: null
     }
     async onLoad () {
       try {
@@ -106,7 +114,14 @@
       } finally {
         const tags = await shop.subShopTag();
         this.tagList = _.extend(this.tagList, tags);
-        await this.updateList()
+        await this.updateList();
+      }
+    };
+    async onShow() {
+      if (this.isLocation) {
+        this.location = await wepy.getLocation();
+        this.isLocation = false;
+        await this.updateList();
       }
     };
     params() {
@@ -128,7 +143,17 @@
     // 商铺列表刷新
     async updateList() {
       this.page = await shop.subShopList();
+      if (this.location) {
+        this.position();
+      }
       await this.next();
+    }
+    // 重新定位
+    async position() {
+      const { latitude, longitude } = this.location
+      const addressInfo = await map.reverse(latitude, longitude)
+      this.address = addressInfo.current.display
+      this.$apply();
     }
     methods = {
       // 选取tab
@@ -154,13 +179,17 @@
       // 选择标签
       async select(tag) {
         if (tag === '离我最近' && !this.location) {
-          const notice = {
-            title: '提示',
-            btnText: '确定',
-            content: `您尚未定位，无法找到距离最近的商铺，您确定开启定位？`,
-            isDouble: true
-          };
-          this.$invoke('Notice', 'open', notice);
+          try {
+            this.location = await wepy.getLocation()
+          } catch (e) {
+            const notice = {
+              title: '提示',
+              btnText: '确定',
+              content: `您尚未定位，无法找到距离最近的商铺，您确定开启定位？`,
+              isDouble: true
+            };
+            this.$invoke('Notice', 'open', notice);
+          }
         } else {
           this.tabs.list.find(item => item.id === this.tabs.selectedId).title = tag
           if (this.tabs.selectedId === 'AREA') {
@@ -181,8 +210,12 @@
       },
       // 重新授权获取坐标
       async getLocation() {
-        this.location = await wepy.getLocation()
+        this.isLocation = true
+        // this.location = await wepy.getLocation()
         // await this.updateList();
+      },
+      relocation() {
+        this.position();
       }
     };
     computed = {
@@ -220,12 +253,20 @@
   .tab-icon-box{
     color: $color-normal;
   }
-  .container{
+  .address-box{
+    padding: 10rpx 20rpx;
+    border-bottom: $border;
     background-color: white;
+    .btn-box{
+      padding: 0 6rpx;
+      color: lighten($color-danger, 10%);
+    }
+  }
+  .container{
   }
   .shop-box{
-    padding: 20rpx 20rpx 20rpx 0;
-    margin-left: 20rpx;
+    padding: 20rpx;
+     background-color: white;
   }
   .shop-box + .shop-box{
     border-top: $border;

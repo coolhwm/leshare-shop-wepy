@@ -9,7 +9,7 @@
         <text class="lg content-box">{{content}}</text>
         <view class="row-around" wx:if="{{isDouble}}">
           <button @tap="close" class="btn-box btn-cancel">取消</button>
-          <button @tap="tap" class="btn-box">{{btnText}}</button>
+          <button @tap="tap" class="btn-box" open-type="openSetting">{{btnText}}</button>
         </view>
         <button @tap="close" wx:else>{{btnText}}</button>
       </view>
