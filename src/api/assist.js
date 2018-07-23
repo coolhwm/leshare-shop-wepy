@@ -1,11 +1,10 @@
 import base from './base';
-import wepy from 'wepy'
-import Page from '../utils/Page'
-import Lang from '../utils/Lang'
-// import Page from '../utils/Page';
+import wepy from 'wepy';
+import Page from '../utils/Page';
+import goods from './goods';
+import Lang from '../utils/Lang';
 
 export default class assist extends base {
-
   /**
    * 获取助力规则
    */
@@ -42,8 +41,11 @@ export default class assist extends base {
    * 处理主力规则
    */
   static _processAssistRule(data) {
+    // 解析预览图
+    goods._processGoodsPreview(data.goods);
     data.endTime = data.dueTime;
     data.isTimeOut = new Date(data.endTime).getTime() < new Date().getTime();
+    data.isBegin = new Date(data.startTime).getTime() > new Date().getTime();
     return data
   }
 
@@ -78,13 +80,13 @@ export default class assist extends base {
   static _processAction (data) {
     const BARGAIN_ACTION_NAME = {
       PROCESSING: '找人助力',
-      TIMEOUT: '想要更多',
-      SUCCESS: '想要更多'
+      TIMEOUT: '查看详情',
+      SUCCESS: '查看详情'
     };
     const BARGAIN_ACTION_FUNCNAME = {
       PROCESSING: 'help',
-      TIMEOUT: 'want',
-      ORDERED: 'want'
+      TIMEOUT: 'detail',
+      ORDERED: 'detail'
     };
     const action = {};
     action.name = BARGAIN_ACTION_NAME[data.status];

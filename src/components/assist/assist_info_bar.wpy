@@ -16,6 +16,8 @@
     <view class="column-center" wx:elif="{{assist.status != 'ORDERED'}}">
       <view class="status-time-box row">
         <text class="mr10">剩余</text>
+        <view class="time-num-box">{{content.day}}</view>
+        <text>天</text>
         <view class="time-num-box">{{content.hour}}</view>
         <text>:</text>
         <view class="time-num-box">{{content.min}}</view>
@@ -29,10 +31,10 @@
       <text>已结束</text>
     </view>
     <view class="column-center" wx:if="{{!assist.isHead}}">
-      <view wx:if="{{assist.isHelp}}" class="btn-box" @tap="want({{assist}})">我也要</view>
-      <view wx:elif="{{assist.assist}}" class="muted">
-        <text>{{assist.assistRuleTip}}</text>
-        <view class="btn-box" @tap="want({{assist}})">我也要</view>
+      <view wx:if="{{assist.isHelp}}" class="btn-box" @tap="want">我也要</view>
+      <view wx:elif="{{assist.assist}}" class="muted column-center">
+        <span>{{assist.assistRuleTip}}</span>
+        <view class="btn-box" @tap="want">我也要</view>
       </view>
       <view wx:else class="btn-box" @tap="help({{assist.ruleId}}, {{assist.id}})">为TA助力</view>
     </view>
@@ -89,7 +91,7 @@
     watch = {
       assist (assist) {
         if (assist != null) {
-          this.countdowm(assist.createTime.replace(/-/g, '/'), 'groupTime');
+          this.countdowm(assist.dueTime.replace(/-/g, '/'), 'endTime');
         }
       }
     };

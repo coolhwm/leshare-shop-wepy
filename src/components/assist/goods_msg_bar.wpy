@@ -9,7 +9,7 @@
         <view class="column ml20">
           <text class="muted sellPrice-box sm">￥{{rule.goods.originalPrice}}</text>
           <view class="price-rule-box">
-            <text class="xxs">好友每日只可助力1次</text>
+            <text class="xxs">{{rule.ruleTip}}</text>
           </view>
         </view>
       </view>

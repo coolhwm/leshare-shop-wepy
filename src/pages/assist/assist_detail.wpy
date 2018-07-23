@@ -45,10 +45,10 @@
     async onLoad ({assistId}) {
       this.assistId = assistId;
       await initWxAppSync();
-      await this.update(assistId);
+      await this.update();
     };
-    async update (assistId) {
-      this.detail = await assist.assistInfo(assistId);
+    async update () {
+      this.detail = await assist.assistInfo(this.assistId);
       this.goodsDetail = this.detail.goods
       this.loaded();
     }

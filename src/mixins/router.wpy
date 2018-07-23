@@ -361,6 +361,10 @@
           // 某个助力商品
           this.$root.$navigate(`/pages/assist/goods_detail?ruleId=${targetId}`);
           break;
+        case 'USER_ASSIST':
+          // 我的助力
+          this.$root.$navigate(`/pages/assist/list`);
+          break;
         case 'AGENT':
           // 分销中心
           this.$root.$navigate(`/pages/agent/apply`);
