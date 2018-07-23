@@ -1,6 +1,7 @@
 import base from './base';
 import wepy from 'wepy'
 import Page from '../utils/Page'
+import goods from './goods'
 // import Page from '../utils/Page';
 
 export default class assist extends base {
@@ -41,6 +42,8 @@ export default class assist extends base {
    * 处理主力规则
    */
   static _processAssistRule(data) {
+    // 解析预览图
+    goods._processGoodsPreview(data.goods);
     data.endTime = data.dueTime;
     data.isTimeOut = new Date(data.endTime).getTime() < new Date().getTime();
     return data

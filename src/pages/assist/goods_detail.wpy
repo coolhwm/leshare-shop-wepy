@@ -18,7 +18,7 @@
     <GoodsMsgBar :rule.sync="rule"/>
 
     <!--子商户区域-->
-    <view class="mb10">
+    <view class="mb10 mt10">
       <ShopInfoBar :subShop.sync="subShop"/>
     </view>
 
@@ -96,7 +96,7 @@
       return {
         title: shareName,
         imageUrl: imageUrl,
-        path: `/pages/bargain/goods_detail?ruleId=${this.ruleId}`
+        path: `/pages/assist/goods_detail?ruleId=${this.ruleId}`
       };
     }
     methods = {

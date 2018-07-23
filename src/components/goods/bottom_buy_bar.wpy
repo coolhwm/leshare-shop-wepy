@@ -146,6 +146,7 @@
       background-color: darken($color-primary, 3%);
       width: 750rpx - $btn-sm-width * 2;
       height: 100%;
+      font-size: $text-xl;
     }
   }
   .buy-bar-placeholder{

@@ -171,6 +171,9 @@ export default class coupon extends base {
    * 处理时间格式
    */
   static _convertTimestapeToDay (timestape) {
+    if (timestape == null) {
+      return;
+    }
     let temp = timestape;
     if (timestape.indexOf(' ') != -1) {
       temp = timestape.substring(0, timestape.indexOf(' '));

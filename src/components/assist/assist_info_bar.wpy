@@ -30,7 +30,7 @@
     </view>
     <view class="column-center" wx:if="{{!assist.isHead}}">
       <view wx:if="{{assist.isHelp}}" class="btn-box" @tap="want">我也要</view>
-      <view wx:elif="{{assist.assist}}" class="muted">
+      <view wx:elif="{{assist.assist}}" class="muted column-center">
         <span>{{assist.assistRuleTip}}</span>
         <view class="btn-box" @tap="want">我也要</view>
       </view>

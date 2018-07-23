@@ -19,10 +19,10 @@
     <view wx:elif="{{rule.isTimeOut}}" class="column-center btn-disabled">
       <text>活动已过期</text>
     </view>
-    <view wx:elif="{{rule.limitTimes <= rule.joinTimes}}" class="column-center btn-disabled">
-      <text>限购{{rule.limitTimes}}件</text>
+    <view wx:elif="{{rule.perLimitCount <= rule.joinCount}}" class="column-center btn-disabled">
+      <text>活动已达上限</text>
     </view>
-    <view wx:elif="{{rule.limitCount <= rule.assistedCount}}" class="column-center btn-disabled">
+    <view wx:elif="{{rule.limitCount <= rule.joinCount}}" class="column-center btn-disabled">
       <text>已售罄</text>
     </view>
     <view wx:else class="column-center btn-assist" @tap="assist">
@@ -70,12 +70,12 @@
           }
           const result = await assist.assistActivity(data);
           await Tips.success('开启助力');
-          Tips.loaded();
           this.$root.$redirect(`../assist/assist_detail?assistId=${result.id}`);
         } catch (err) {
           await Tips.modal(err.message);
-          Tips.loaded();
           wepy.navigateBack();
+        } finally {
+          Tips.loaded();
         }
       }
     };
@@ -119,6 +119,7 @@
       border-left: $border;
       text{
         color: $color-primary;
+        font-size: $text-xl;
       }
       .money-box{
         font-weight: bold;
@@ -128,6 +129,7 @@
       background-color:$color-primary;
       text{
         color: #fff;
+        font-size: $text-xl;
       }
     }
     .btn-disabled{
@@ -137,6 +139,7 @@
       background-color:$color-weak;
       text{
         color: #fff;
+        font-size: $text-xl;
       }
     }
   }
