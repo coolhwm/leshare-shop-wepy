@@ -104,6 +104,8 @@
         <ButtonWidget :param="item" />
       </block>
     </repeat>
+
+    <Popups />
   </view>
 </template>
 
@@ -135,6 +137,7 @@
   import AddressBox from '../../components/template/address_box';
   import VideoBox from '../../components/template/video_box';
   import _ from 'underscore';
+  import Popups from '../../components/shop/popups'
 
   @connect({
     homePageId: store.get('homePageId'),
@@ -293,7 +296,8 @@
       Separator: Separator,
       BargainBox: BargainBox,
       AddressBox: AddressBox,
-      VideoBox: VideoBox
+      VideoBox: VideoBox,
+      Popups: Popups
     };
     computed = {
     };
