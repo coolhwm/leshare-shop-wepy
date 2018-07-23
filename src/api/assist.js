@@ -53,7 +53,7 @@ export default class assist extends base {
    * 处理助力详情
    */
   static _processAssistInfo(data) {
-    data.joinCount = data.leastAssist - data.leftJoin
+    data.joinCount = data.details.length
     data.joinRate = data.joinCount / data.leastAssist
     data.originalPrice = Lang._fixedPrice(data.originalPrice);
     const { id: userId } = wepy.$instance.globalData.auth['user'];

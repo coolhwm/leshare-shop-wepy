@@ -28,10 +28,10 @@
       <text>首页</text>
     </view>
     <view class="column-center btn-service" @tap="handleDigit({{goods}})" wx:if="{{goods.type === 'digit'}}">
-      <text class="white">立即购买</text>
+      <text class="white xl">立即购买</text>
     </view>
     <view class="column-center btn-service" @tap="handleBonus({{goods}})" wx:if="{{goods.paymentType === 'bonus' &&goods.type !== 'digit' }}">
-      <text class="white">立即购买</text>
+      <text class="white xl">立即购买</text>
     </view>
   </view>
   <view class="row buy-bar-box" wx:else>
@@ -146,7 +146,6 @@
       background-color: darken($color-primary, 3%);
       width: 750rpx - $btn-sm-width * 2;
       height: 100%;
-      font-size: $text-xl;
     }
   }
   .buy-bar-placeholder{

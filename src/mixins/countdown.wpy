@@ -30,7 +30,12 @@
         const time = status === 'groupTime' ? new Date(timestamp) - new Date() + 1000 * 60 * 60 * 24 : new Date(timestamp) - new Date();
         if (time > 0) {
           let day = status === 'groupTime' ? '' : Math.floor(time / 86400000);
-          let hour = status === 'groupTime' ? Math.floor(time / 3600000) : Math.floor((time / 3600000) % 24);
+          let hour = null;
+          if (status === 'groupTime' || status === 'assistTime') {
+            hour = Math.floor(time / 3600000)
+          } else {
+            hour = Math.floor((time / 3600000) % 24)
+          }
           let min = Math.floor((time / 60000) % 60);
           let sec = Math.floor((time / 1000) % 60);
           day = day < 0 ? '0' : day;

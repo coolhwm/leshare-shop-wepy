@@ -10,7 +10,7 @@
       <icon class="like{{!isFav ? '' : '-fill'}} normal" style="color: {{!isFav ? 'gray' : 'red'}}" />
       <text class="xs">收藏</text>
     </view>
-    <view wx:if="{{rule.status === 'OFF'}}" class="column-center btn-disabled">
+    <view wx:if="{{!rule.use}}" class="column-center btn-disabled">
       <text>活动已关闭</text>
     </view>
     <view wx:elif="{{rule.isBegin}}" class="column-center btn-disabled">
@@ -19,13 +19,13 @@
     <view wx:elif="{{rule.isTimeOut}}" class="column-center btn-disabled">
       <text>活动已过期</text>
     </view>
-    <view wx:elif="{{rule.perLimitCount <= rule.joinCount}}" class="column-center btn-disabled">
-      <text>活动已达上限</text>
+    <view wx:elif="{{rule.assist}}" class="column-center btn-disabled">
+      <text>限助力{{rule.perLimitCount}}次</text>
     </view>
     <view wx:elif="{{rule.limitCount <= rule.joinCount}}" class="column-center btn-disabled">
       <text>已售罄</text>
     </view>
-    <view wx:else class="column-center btn-assist" @tap="assist">
+    <view wx:else class="column-center btn-assist" @tap="begin">
       <text>发起助力</text>
     </view>
   </view>
@@ -62,7 +62,7 @@
       home () {
         this.$root.$switch(`/pages/home/template`)
       },
-      async assist() {
+      async begin() {
         try {
           await Tips.loading();
           const data = {
@@ -70,12 +70,12 @@
           }
           const result = await assist.assistActivity(data);
           await Tips.success('开启助力');
+          Tips.loaded();
           this.$root.$redirect(`../assist/assist_detail?assistId=${result.id}`);
         } catch (err) {
+          await Tips.loaded();
           await Tips.modal(err.message);
           wepy.navigateBack();
-        } finally {
-          Tips.loaded();
         }
       }
     };
