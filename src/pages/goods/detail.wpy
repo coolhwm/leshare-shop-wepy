@@ -142,9 +142,6 @@
 
     <!--分享方式-->
     <SharePanal/>
-
-    <!--弹出框-->
-    <Popoups />
   </view>
 
 </template>
@@ -176,7 +173,6 @@
   import ShopInfoBar from '../../components/goods/shop_info_bar';
   import SharePanal from '../../components/common/share_panal';
   import Tips from '../../utils/Tips';
-  import Popoups from '../../components/shop/popups';
 
   @connect({
     pickCoupons: store.get('pickCoupons'),
@@ -356,8 +352,7 @@
       CartWidget: CartWidget,
       DetailList: DetailList,
       ShopInfoBar: ShopInfoBar,
-      SharePanal: SharePanal,
-      Popoups: Popoups
+      SharePanal: SharePanal
     };
     mixins = [base, pagination, router];
     config = {
