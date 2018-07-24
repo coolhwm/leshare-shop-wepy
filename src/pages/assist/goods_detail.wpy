@@ -70,7 +70,7 @@
     async onLoad ({ruleId}) {
       await initWxApp();
       this.ruleId = ruleId;
-      await this.update(ruleId);
+      await this.update(this.ruleId);
     };
     onUnload() {
       this.$invoke('TimeOutBar', 'clear');

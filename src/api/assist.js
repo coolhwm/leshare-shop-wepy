@@ -56,6 +56,7 @@ export default class assist extends base {
     data.joinCount = data.details.length
     data.joinRate = data.joinCount / data.leastAssist
     data.originalPrice = Lang._fixedPrice(data.originalPrice);
+    data.isTimeOut = new Date(data.dueTime).getTime() < new Date().getTime()
     const { id: userId } = wepy.$instance.globalData.auth['user'];
     // 是否未发起者
     data.isHead = userId === data.customerId;

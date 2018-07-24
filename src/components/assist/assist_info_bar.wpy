@@ -10,7 +10,7 @@
     <view class="column-center" wx:if="{{assist.status == 'TIMEOUT'}}">
       <text>本活动已过期</text>
     </view>
-    <view class="column-center" wx:if="{{assist.status == 'SUCCESS'}}">
+    <view class="column-center" wx:elif="{{assist.status == 'SUCCESS'}}">
       <text>助力活动已成功</text>
     </view>
     <view class="column-center" wx:elif="{{assist.status !== 'TIMEOUT'}}">
@@ -25,7 +25,7 @@
       </view>
       <button wx:if="{{assist.isHead}}" class="btn-box" open-type="share">分享助力</button>
     </view>
-    <view class="column-center" wx:if="{{!assist.isHead && assist.status !== 'TIMEOUT'}}">
+    <view class="column-center" wx:if="{{!assist.isHead && (assist.status !== 'TIMEOUT' && !assist.isTimeOut)}}">
       <view wx:if="{{assist.isHelp}}" class="btn-box" @tap="want({{assist}})">我也要</view>
       <view wx:elif="{{assist.assist}}" class="muted column-center">
         <span>{{assist.assistRuleTip}}</span>
@@ -54,6 +54,7 @@
   import { checkUserInfoWithError } from '../../api/wx_auth';
   import countdown from '../../mixins/countdown';
   import assist from '../../api/assist';
+  import Tips from '../../utils/Tips';
 
   export default class assistInfoBar extends wepy.component {
     props = {
@@ -68,8 +69,15 @@
           id: assistId,
           ruleId: ruleId
         }
-        await assist.assistActivity(data);
-        this.$emit('help', assistId);
+        try {
+          await Tips.loading();
+          await assist.assistActivity(data);
+          Tips.loaded();
+          this.$emit('help', assistId);
+        } catch (err) {
+          await Tips.loaded();
+          await Tips.modal(err.message);
+        }
       },
       async want (assist) {
         this.$root.$navigate(`/pages/assist/goods_detail?ruleId=${assist.ruleId}`);
