@@ -1,11 +1,11 @@
 @import "variable";
 @font-face {
   font-family: 'iconfont';  /* project id 553949 */
-  src: url('//at.alicdn.com/t/font_553949_jhlm338cxmk.eot');
-  src: url('//at.alicdn.com/t/font_553949_jhlm338cxmk.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_553949_jhlm338cxmk.woff') format('woff'),
-  url('//at.alicdn.com/t/font_553949_jhlm338cxmk.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_553949_jhlm338cxmk.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_553949_rdwxuj411pp.eot');
+  src: url('//at.alicdn.com/t/font_553949_rdwxuj411pp.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_553949_rdwxuj411pp.woff') format('woff'),
+  url('//at.alicdn.com/t/font_553949_rdwxuj411pp.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_553949_rdwxuj411pp.svg#iconfont') format('svg');
 }
 @mixin icon-size($size){
   line-height: $size;
@@ -147,8 +147,10 @@ icon.config:before { content: "\e654"; }
 icon.first:before { content: "\e62d"; }
 icon.srecod:before { content: "\e62e"; }
 icon.third:before { content: "\e631"; }
-icon.space:before { content: "\e734"; }
 icon.tab-up:before { content: "\e6a0"; }
 icon.tab-down:before { content: "\e6a2"; }
 icon.space-circle:before { content: "\e632"; }
 icon.assist:before { content: "\e637"; }
+icon.mini-program:before { content: "\e63a"; }
+icon.signboard:before { content: "\e604"; }
+icon.address-circle:before { content: "\e63d"; }

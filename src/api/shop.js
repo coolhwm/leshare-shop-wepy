@@ -1,4 +1,3 @@
-
 import base from './base';
 import wepy from 'wepy';
 import Page from '../utils/Page';
@@ -112,7 +111,49 @@ export default class shop extends base {
     const url = `${this.baseUrl}/shops/sub_shop_list`;
     return new Page(url);
   }
+  /***
+   * 推荐子商户列表
+   */
+  static RecommendationShopList() {
+    const url = `${this.baseUrl}/shops/sub_shop_list?from=0&limit=5`;
+    return this.get(url);
+  }
+  /***
+   * 子商户图文详情
+   */
+  static subShopDetail(subShopId) {
+    const url = `${this.baseUrl}/shops/details?sub_shop_id=${subShopId}`;
+    return this.get(url);
+  }
 
+  /***
+   * 子商户信息详情
+   */
+  static subShopInfo(subShopId) {
+    const url = `${this.baseUrl}/shops/sub_shop/${subShopId}`;
+    return this.get(url);
+  }
+
+  /***
+   * 子商户商品详情
+   */
+  static goodsList(subShopId) {
+    const url = `${this.baseUrl}/goods/list?sub_shop_id=${subShopId}&is_new=1`;
+    return this.get(url)
+  }
+  /***
+   * 子商户商品详情
+   */
+  static subShopGoodsList(subShopId) {
+    const url = `${this.baseUrl}/goods/sub_shop/list?sub_shop_id=${subShopId}&is_new=1&from=0&limit=10&by=sales_volume`;
+    return this.get(url).then(data => {
+      data.forEach(item => {
+        item.isPrice = true
+        item.isGoodsName = true
+      })
+      return data
+    })
+  }
   /***
    * 子商户标签
    */

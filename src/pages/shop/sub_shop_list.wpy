@@ -37,17 +37,49 @@
       <view class="row" style="align-items: flex-start;">
         <image src="{{item.avatar}}" class="avatar-image-box mr10"/>
         <view class="column">
-          <text>{{item.name}}</text>
-          <text class="muted xs">{{item.address}}</text>
+          <view class="column" @tap="shopDetail({{item}})">
+            <view>
+              <text class="list-name-box">{{item.name}}</text>
+              <block wx:for="{{item.tags.ACTIVITY}}" wx:for-item="item" wx:for-index="index" wx:key="index">
+                <text class="list-tag-box white xxs ml10">{{item}}</text>
+              </block>
+            </view>
+            <view class="column">
+              <view class="row-between" style="width: 580rpx">
+                <view class="row">
+                  <block wx:for="{{item.tags.TYPE}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
+                    <text class="mr10 xs">{{tag}}</text>
+                  </block>
+                  <text wx:if="{{item.tags.TYPE}}" class="xs mr10">|</text>
+                  <block wx:for="{{item.tags.BUSSINESS_AREA}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
+                    <text class="mr10 xs">{{tag}}</text>
+                  </block>
+                </view>
+                <view class="row">
+                  <text class="muted xs mr10">销量</text>
+                  <text class="muted xs mr10" wx:if="{{item.distance > 0}}">|</text>
+                  <text class="muted xs" wx:if="{{item.distance > 0}}">{{item.distance}}m</text>
+                </view>
+              </view>
+              <text class="muted xs list-address-box">{{item.address}}</text>
+              <!--<view>-->
+                <!--<block wx:for="{{item.tags.NORMAL}}" wx:for-item="item" wx:for-index="index" wx:key="index">-->
+                  <!--<text class="list-muted-tag-box muted xxs mr10">{{item}}</text>-->
+                <!--</block>-->
+              <!--</view>-->
+            </view>
+          </view>
+
           <view wx:for="{{item.goodsList}}" wx:for-index="goodsIndex" wx:for-item="goodsItem" wx:key="goodsIndex" class="column mt10">
-            <view class="row">
-              <image src="{{goodsItem.imageUrl}}" class="goods-image-box mr10"/>
+            <view class="row" @tap="goodsDetail({{goodsItem}})">
+              <image src="{{goodsItem.imageUrl}}/small" class="goods-image-box mr10"/>
               <view class="column">
                 <text>{{goodsItem.name}}</text>
                 <text class="muted xxs">销量{{goodsItem.salesVolume}}</text>
                 <view class="row">
                   <text class="major xs">￥</text>
-                  <text class="major lg">{{goodsItem.originalPrice}}</text>
+                  <text class="major lg">{{goodsItem.price}}</text>
+                  <text class="xs cancel ml10">￥{{goodsItem.originalPrice}}</text>
                 </view>
               </view>
             </view>
@@ -216,6 +248,12 @@
       },
       relocation() {
         this.position();
+      },
+      shopDetail(subShop) {
+        this.$navigate(`/pages/shop/sub_shop_detail?subShopId=${subShop.shopId}`)
+      },
+      goodsDetail(goods) {
+        this.$navigate(`/pages/goods/detail?goodsId=${goods.id}`)
       }
     };
     computed = {
@@ -253,6 +291,21 @@
   .tab-icon-box{
     color: $color-normal;
   }
+  .list-name-box{
+    font-weight: bold;
+  }
+  .list-tag-box{
+    border-radius: 4rpx;
+    padding: 0 5rpx;
+    line-height: $text-xxs;
+    background-color: $color-primary;
+  }
+  .list-muted-tag-box{
+    border:1px solid $color-muted;
+    border-radius: 4rpx;
+    padding: 0 5rpx;
+    line-height: $text-xxs;
+  }
   .address-box{
     padding: 10rpx 20rpx;
     border-bottom: $border;
@@ -262,7 +315,11 @@
       color: lighten($color-danger, 10%);
     }
   }
-  .container{
+  .list-address-box{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    width: 400rpx;
   }
   .shop-box{
     padding: 20rpx;
@@ -272,8 +329,8 @@
     border-top: $border;
   }
   .avatar-image-box{
-    width: 80rpx;
-    height: 80rpx;
+    width: 120rpx;
+    height: 120rpx;
     border: $border;
   }
   .goods-image-box{

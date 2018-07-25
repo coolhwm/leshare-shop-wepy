@@ -19,7 +19,7 @@
     </view>
 
     <!--占位符-->
-    <Placeholder :show.sync="isPageEmpty" message="您还没有相关积分商品" />
+    <Placeholder :show.sync="isPageEmpty" message="您还没有相关积分商品" top="400rpx"/>
   </view>
 
 </template>
