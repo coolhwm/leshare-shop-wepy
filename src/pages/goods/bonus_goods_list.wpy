@@ -31,7 +31,7 @@
   import Loading from '../../components/common/loading';
   import goods from '../../api/goods';
   import { connect } from 'wepy-redux';
-  import { initWxAppSync } from '../../api/wx_auth';
+  import { initWxAppSync, checkUserMember } from '../../api/wx_auth';
   import store from '../../store/utils';
   import Placeholder from '../../components/common/placeholder';
   import BonusGoodsItem from '../../components/goods/bonus-goods-item'
@@ -50,6 +50,7 @@
     async onLoad () {
       // 登录检查
       await initWxAppSync();
+      await checkUserMember();
       this.page = await goods.listBonus(this.discount, this.bussType);
       await this.next();
     };

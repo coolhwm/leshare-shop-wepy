@@ -49,7 +49,7 @@
         <view class="price row-between mt10">
           <view class="row" wx:if="{{detail.paymentType === 'bonus'}}">
             <text class="major xxl">{{detail.priceLable}}积分</text>
-            <text class="cancel ml10" wx:if="{{detail.originalPrice}}">{{detail.originalPrice}}积分</text>
+            <text class="cancel ml10" wx:if="{{detail.originalPrice}}">{{detail.originalPrice}}元</text>
           </view>
           <view class="row" wx:else>
             <text class="major xxl">￥{{detail.priceLable}}</text>

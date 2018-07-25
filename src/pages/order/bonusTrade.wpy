@@ -3,7 +3,7 @@
   <Loading :init.sync="init"/>
   <view class="container" wx:if="{{init}}">
     <!--订单项目-->
-    <OrderItem :order.sync="trade" action="0"></OrderItem>
+    <OrderItem :order.sync="trade" action="0" />
 
     <!--订单详情-->
     <view class="weui-cells weui-cells-show">
@@ -43,7 +43,7 @@
         <text class="major mr20">{{trade.bonus}}积分</text>
       </view>
       <form class="trade-confirm-button row-center" report-submit @submit="confirm">
-        <button plain form-type="submit">立即下单</button>
+        <button plain form-type="submit">立即兑换</button>
       </form>
     </view>
     <view class="tarde-action-bar-placeholder">
@@ -175,14 +175,8 @@
         }
         // 清空购物车
         this.cartManager.clear()
-        // 卡券领取更新
-        if (trade.couponUsedId || this.trade.orderGoodsInfos[0].goodsType === 'digit') {
-          store.delayReflesh('coupon')
-        }
         // 刷新会员信息
-        if (trade.bonusPrice > 0 || trade.paymentType == PAYMENT.OFFLINE) {
-          store.delayReflesh('member')
-        }
+        store.delayReflesh('member')
         // 刷新列表
         Event.emit(Event.ORDER_LIST_UPDATE)
         if (isPay && (this.type === 'join' || this.type === 'group')) {

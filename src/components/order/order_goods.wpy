@@ -5,7 +5,7 @@
 
     <!--商品说明-->
     <view class="order-goods-title-container column">
-      <text style="width: 420rpx;">{{goods.goodsName}}</text>
+      <text style="width: 380rpx;">{{goods.goodsName}}</text>
       <text class="muted" wx:if="{{goods.goodsSku}}">{{goods.goodsSku}}</text>
       <text class="muted" wx:if="{{goods.skuProperty}}">{{goods.skuProperty}}</text>
       <!--折扣信息-->
@@ -18,7 +18,7 @@
     <!--商品购买信息-->
     <view class="order-goods-buy-container column" wx:if="{{goods.paymentType === 'bonus'}}">
       <text>{{goods.goodsPrice}}积分</text>
-      <text class="cancel" wx:if="{{goods.goodsSellPrice}}">{{goods.goodsSellPrice}}积分</text>
+      <text class="cancel" wx:if="{{goods.goodsSellPrice}}">{{goods.goodsSellPrice}}元</text>
       <text class="muted">x{{goods.count}}</text>
     </view>
     <view class="order-goods-buy-container column" wx:else>

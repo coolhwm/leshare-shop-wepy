@@ -19,7 +19,7 @@
     <view class="order-goods-list-container" @tap="detail({{order.orderId}})">
       <repeat for="{{order.orderGoodsInfos}}" key="goodsId" index="index" item="item">
         <view class="{{!order.orderId || index == 0 || expand[order.orderId] ? '' : 'order-goods-fold'}}">
-          <OrderGoods :goods="item"></OrderGoods>
+          <OrderGoods :goods="item"/>
           <view class="hr" />
         </view>
       </repeat>

@@ -14,7 +14,7 @@
         <view class="panel-price-box row" wx:if="{{goods.paymentType === 'bonus'}}">
           <text class="buy-panel-price" wx:if="{{goods.ruleGoodsPrice}}">{{goods.ruleGoodsPrice}}积分</text>
           <text class="buy-panel-price" wx:else>{{sku.isReady ? sku.detail.price : goods.priceLable}}积分</text>
-          <text class="cancel ml10" wx:if="{{goods.originalPrice && goods.originalPrice > 0}}">{{goods.originalPrice}}积分</text>
+          <text class="cancel ml10" wx:if="{{goods.originalPrice && goods.originalPrice > 0}}">{{goods.originalPrice}}元</text>
           <DiscountBadge :goods.sync="goods" />
         </view>
         <view class="panel-price-box row" wx:else>
@@ -104,7 +104,8 @@
   import router from '../../mixins/router'
 
   @connect({
-    status: store.get('status')
+    status: store.get('status'),
+    member: store.get('member')
   })
   export default class GoodsPanel extends wepy.component {
     data = {
@@ -207,7 +208,12 @@
           if (this.goods.paymentType === 'common') {
             this.$root.$navigate(`../order/trade`);
           } else {
-            this.$root.$navigate(`../order/bonusTrade`);
+            if (this.member.bonus >= this.goods.priceLable) {
+              this.$root.$navigate(`../order/bonusTrade`);
+            } else {
+              await Tips.modal('积分不足');
+              wepy.navigateBack();
+            }
           }
         }
         this.clear();
@@ -224,6 +230,8 @@
           return '已售罄';
         } else if (this.action === 'cart') {
           return '加入购物车'
+        } else if (this.goods.paymentType === 'bonus') {
+          return '立即兑换';
         } else if (this.action === 'buy' || this.action === 'bargain' || this.action === 'digit') {
           return '立即购买';
         } else if (this.action === 'group') {
