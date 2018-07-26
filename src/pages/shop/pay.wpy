@@ -270,7 +270,7 @@
     };
     mixins = [base, input];
     config = {
-      navigationBarTitleText: '支付'
+      navigationBarTitleText: '在线支付'
     };
   }
 </script>
