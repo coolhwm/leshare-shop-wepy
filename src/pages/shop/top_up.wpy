@@ -9,13 +9,13 @@
           <block wx:for="{{rules}}" wx:key="index" wx:index="index" wx:for-item="item">
             <view wx:if="{{item.isSelected}}" class="sel-item-box column-center" @tap="selected({{index}})">
               <text>{{item.baseFee}}元</text>
-              <text class="muted xs" wx:if="{{item.giftCoupon != null}}">送{{item.coupons.length}}张劵</text>
+              <text class="muted xs" wx:if="{{item.giftCoupon != null && item.coupons != null && item.coupons.length > 0}}">送{{item.coupons.length}}张劵</text>
               <text class="muted xs" wx:elif="{{item.giftFee > 0  }}">送{{item.giftFee}}元</text>
               <icon class="top-up-selected icon-box"/>
             </view>
             <view class="column-center item-box" wx:else @tap="selected({{index}})">
               <text>{{item.baseFee}}元</text>
-              <text class="muted xs" wx:if="{{item.giftCoupon != null}}">送{{item.coupons.length}}张劵</text>
+              <text class="muted xs" wx:if="{{item.giftCoupon != null && item.coupons != null && item.coupons.length > 0}}">送{{item.coupons.length}}张劵</text>
               <text class="muted xs" wx:elif="{{item.giftFee > 0  }}">送{{item.giftFee}}元</text>
             </view>
           </block>

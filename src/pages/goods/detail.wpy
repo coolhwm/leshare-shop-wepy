@@ -38,7 +38,8 @@
         </view>
 
         <view class="row mt10">
-          <text class="sm muted mr10" wx:if="{{isSales}}">已售{{detail.salesVolume}}件</text>
+          <text class="sm muted mr10" wx:if="{{isSales && detail.paymentType === 'bonus'}}">已兑{{detail.salesVolume}}件</text>
+          <text class="sm muted mr10" wx:elif="{{isSales}}">已售{{detail.salesVolume}}件</text>
           <block wx:for="{{detail.tags}}" wx:key="index" wx:index="index" wx:for-item="item">
             <text wx:if="{{item.show}}" class="xxs primary tag-box ml10">{{item.tag}}</text>
           </block>

@@ -74,6 +74,23 @@ export default class goods extends base {
       return this._processGoodsDetail(data)
     });
   }
+  /**
+   * 按商铺ID查询商品目录
+   */
+  static subShopCategory (subShopId) {
+    const url = `${this.baseUrl}/goods/inner_category?sub_shop_id=${subShopId}`;
+    return this.get(url).then(data => this._createGoodsCategories(data));
+  }
+  /***
+   * 子商户店铺商品列表
+   */
+  static subShopGoodsList(discount) {
+    const url = `${this.baseUrl}/goods/sub_shop/list`;
+    return new Page(url, item => {
+      this._processGoodsDiscount(item, discount);
+      this._processGoodsData(item);
+    });
+  }
 
   /** ********************* 数据处理方法 ***********************/
 

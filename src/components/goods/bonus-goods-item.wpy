@@ -13,7 +13,7 @@
       <!--销量展示-->
       <view class="row">
         <view class="row" wx:if="{{detail.isSales || detail.isSales == null}}">
-          <text class="xs muted">已售{{detail.salesVolume}}件</text>
+          <text class="xs muted">已兑{{detail.salesVolume}}件</text>
         </view>
         <!--标签-->
         <block wx:for="{{detail.tags}}" wx:key="index" wx:for-item="tag">
