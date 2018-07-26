@@ -25,7 +25,7 @@
         </view>
         <!--支付方式-->
         <!--TODO 0为店铺不支持余额支付-->
-        <view class="coupon-box row" wx:if="{{card.supplyBalance == 0 || member == null}}">
+        <view class="coupon-box row" wx:if="{{card.supplyBalance == 0 || member == null || member.balance == 0}}">
           <view class="weui-cell__bd">支付方式</view>
           <view class="weui-cell__ft">{{payType.onlinePayText}}</view>
         </view>
@@ -38,6 +38,18 @@
           <view class="coupon-box row" wx:if="{{card.supplyBalance == 1}}">
             <view class="weui-cell__bd">余额</view>
             <view class="weui-cell__ft">{{balanceText}}</view>
+          </view>
+        </block>
+        <block wx:if="{{payType.onlinePayType != 'balance' && card.supplyBalance == 1 && member != null && member.balance == 0}}">
+          <view class="coupon-box row" wx:if="{{card.supplyBalance == 1}}">
+            <view class="weui-cell__bd">余额</view>
+            <view class="weui-cell__ft" @tap="topUp">
+              <text class="muted xs">0元(</text>
+              <text class="muted xs">满{{topUpRule[0].baseFee}}元</text>
+              <text class="muted xs" wx:if="{{topUpRule[0].giftCoupon != null && topUpRule[0].coupons != null && topUpRule[0].coupons.length > 0}}">送{{topUpRule[0].coupons.length}}张劵</text>
+              <text class="muted xs" wx:elif="{{topUpRule[0].giftFee > 0  }}">送{{topUpRule[0].giftFee}}元</text>
+              <text class="muted xs">) ></text>
+            </view>
           </view>
         </block>
         <view class="button-box">
@@ -74,6 +86,7 @@
   import Tips from '../../utils/Tips';
   import Loading from '../../components/common/loading';
   import FormTips from '../../components/weui/tips';
+  import topUp from '../../api/top_up';
 
   @connect({
     shop: store.get('shop'),
@@ -93,13 +106,17 @@
         onlinePayType: 'wxpay',
         onlinePayText: '微信支付'
       },
-      balanceText: ''
+      balanceText: '',
+      topUpRule: null
     };
     async onLoad () {
       await initWxAppSync();
-      if (this.card.supplyBalance == 1 && this.member != null) {
+      if (this.card.supplyBalance == 1 && this.member != null && this.member.balance > 0) {
         this.payType.onlinePayType = 'balance';
         this.payType.onlinePayText = '余额支付';
+      }
+      if (this.card.supplyBalance == 1 && this.member != null && this.member.balance == 0) {
+        this.topUpRule = await topUp.getTopUp();
       }
       this.loaded();
       Event.listen(Event.TRADE_COUPON_UPDATE, this.updateCoupon.bind(this), this);
@@ -114,7 +131,10 @@
       },
       async offline () {
         if (!this.validate()) return;
-        if (this.dealPrice == 0) return;
+        if (this.dealPrice == 0) {
+          await Tips.alert('请输入正确付款金额!');
+          return;
+        };
         const param = {
           orderType: 40,
           paymentType: 1,
@@ -191,6 +211,9 @@
             payType.onlinePayType = 'balance';
             this.$apply();
           });
+      },
+      topUp() {
+        this.$navigate(`/pages/shop/top_up`)
       }
     };
     /**

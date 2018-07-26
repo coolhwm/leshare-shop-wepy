@@ -51,8 +51,8 @@
 
     <view class="column shop-mini-program-box mt10" wx:if="{{subShopInfo.maCodeUrl}}">
       <view class="row sub-top-box">
-        <icon class="mini-program small" style="color: #F8C6CF"/>
-        <text class="lg ml10">商家小程序</text>
+        <icon class="mini-program xsmall" style="color: #43B045"/>
+        <text class="ml10">商家小程序</text>
       </view>
       <view class="row-between mini-program-content-box" @tap="checkMaCode">
         <view class="column">
@@ -66,8 +66,8 @@
 
     <view class="column sale-box mt10" wx:if="{{goodsList.length > 0}}">
       <view class="row">
-        <icon class="sale small" style="color: #FF6200"/>
-        <text class="lg ml10">优惠信息</text>
+        <icon class="sale xsmall" style="color: #FF6200"/>
+        <text class="ml10">优惠信息</text>
       </view>
       <repeat for="{{goodsList}}" key="index" index="index" item="item">
         <GoodsRow :goods.sync="item"/>
@@ -77,11 +77,11 @@
     <vierw class="column signboard-box mt10" wx:if="{{subShopGoodsList.length > 0}}">
       <view class="row-between sub-top-box">
         <view class="row">
-          <icon class="signboard small"/>
-          <text class="lg ml10">商家招牌</text>
+          <icon class="signboard xsmall"/>
+          <text class="ml10">商家招牌</text>
         </view>
-        <view class="row">
-          <text>查看更多</text>
+        <view class="row" @tap="shopMore">
+          <text class="muted sm">查看更多</text>
           <icon class="more" color="gray"/>
         </view>
       </view>
@@ -97,11 +97,11 @@
     <vierw class="column signboard-box mt10">
       <view class="row-between sub-top-box">
         <view class="row">
-          <icon class="signboard small"/>
-          <text class="lg ml10">推荐店铺</text>
+          <icon class="signboard xsmall" style="color: #F8C6CF"/>
+          <text class="ml10">推荐店铺</text>
         </view>
-        <view class="row">
-          <text>查看更多</text>
+        <view class="row" @tap="back">
+          <text class="muted sm">查看更多</text>
           <icon class="more" color="gray"/>
         </view>
       </view>
@@ -129,7 +129,7 @@
                       </block>
                     </view>
                     <view class="row">
-                      <text class="muted xs mr10">销量</text>
+                      <text class="muted xs mr10">{{item.salesVolume}}</text>
                       <text class="muted xs mr10" wx:if="{{item.distance > 0}}">|</text>
                       <text class="muted xs" wx:if="{{item.distance > 0}}">{{item.distance}}m</text>
                     </view>
@@ -187,6 +187,19 @@
       this.recommendatioShopList = recommendatioShopList;
       this.loaded();
     };
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {name} = this.subShopInfo
+      const imageUrl = this.subShopInfo.images ? this.subShopInfo.images[0].url : this.subShopInfo.avatar
+      console.info(name, imageUrl)
+      return {
+        title: name,
+        imageUrl: imageUrl,
+        path: `/pages/shop/sub_shop_detail?subShopId=${this.subShopId}`
+      }
+    }
     methods = {
       /**
        * 预览轮播图
@@ -217,6 +230,15 @@
           name: name,
           address: describe
         });
+      },
+      back() {
+        wepy.navigateBack();
+      },
+      shopDetail(subShop) {
+        this.$navigate(`/pages/shop/sub_shop_detail?subShopId=${subShop.shopId}`)
+      },
+      shopMore() {
+        this.$navigate(`/pages/shop/sub_shop_menu?shopName=${this.subShopInfo.name}&shopId=${this.subShopId}`)
       }
     };
     computed = {};

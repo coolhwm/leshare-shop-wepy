@@ -6,6 +6,8 @@
         <view class="weui-badge tab-num" wx:if="{{item.count > 0}}">{{item.count}}</view>
       </view>
     </block>
+
+    <view style="width: 100%;height: {{heightText}};"></view>
   </scroll-view>
 </template>
 
@@ -16,6 +18,9 @@
     props = {
       tab: {
         twoWay: true
+      },
+      heightText: {
+        default: '0rpx'
       }
     };
     data = {};

@@ -1,0 +1,225 @@
+<template>
+  <!--主内容区域-->
+  <view class="main-box row" style="top: {{top}};bottom:{{bottom}}">
+    <!--分类侧边栏-->
+    <SideTab :tab.sync="categoryTab" @change.user="switchTab" heightText="160rpx"/>
+
+    <!--右侧滚动-->
+    <scroll-view scroll-y class="goods-box" bindscrolltolower="onReachBottom">
+
+      <!--分类名称-->
+      <view class="goods-title row">
+        <text class="weak">{{selectedCategoryName}}</text>
+      </view>
+
+      <!--商品列表-->
+      <view class="goods-list">
+        <repeat for="{{page.list}}" key="index" index="index" item="item">
+          <GoodsItem :goods.sync="item"/>
+        </repeat>
+      </view>
+
+      <Loadmore :page.sync="page" emptyText="暂无商品"/>
+
+      <view style="width: 100%;height: {{heightText}};"></view>
+    </scroll-view>
+
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import goods from '../../api/goods';
+  import pagination from '../../mixins/pagination';
+  import GoodsItem from '../../components/shop/menu_goods_item';
+  import SideTab from '../../components/common/side_tab';
+  import Loadmore from '../../components/weui/loadmore';
+  import router from '../../mixins/router';
+  import Event from '../../utils/Event';
+
+  @connect({
+    discount: store.get('discount')
+  })
+  export default class MenuBox extends wepy.component {
+    props = {
+      // 顶部距离
+      top: {
+        default: '0px'
+      },
+      // 底部距离
+      bottom: {
+        default: '0px'
+      },
+      // 是否显示领取优惠券
+      isCoupon: {
+        default: true
+      },
+      bussType: {
+        default: ''
+      },
+      heightText: {
+        default: '0rpx'
+      },
+      shopId: {}
+    };
+    data = {
+      categoryTab: null,
+      page: {},
+      pages: {}
+    };
+    async onLoad () {
+      await store.wait();
+      await this.doLoad();
+      Event.listen(Event.GOODS_CATEGORY_RELOAD, this.doReload.bind(this), this);
+    }
+    async doReload () {
+      this.pages = {};
+      await this.doLoad();
+    }
+    async doLoad () {
+      const categories = await goods.subShopCategory(this.shopId)
+      const list = categories.list.filter(item => item.bussType === this.bussType)
+      if (list.length > 0) {
+        categories.list = list
+      }
+      this.categoryTab = categories;
+      console.info(this.categoryTab, categories)
+      // 加载商品列表
+      this.page = goods.subShopGoodsList(this.discount);
+      await this.next();
+      this.$apply();
+    }
+    /**
+     * 分页参数
+     */
+    params() {
+      return {
+        category_id: this.categoryTab.selectedId,
+        sub_shop_id: this.shopId,
+        by: 'sales_volume'
+      };
+    }
+    /**
+     * 分页缓存
+     */
+    onPageLoad() {
+      this.pages[this.categoryTab.selectedId] = this.page;
+    }
+    /**
+     * 同步购物车数量
+     */
+    setCartNum() {
+      // 同步商品列表的计数器
+      this.setGoodsNum();
+      // 同步左侧列表
+      this.setCategoryNum();
+    }
+    /**
+     * 设置商列表数量
+     */
+    setGoodsNum() {
+      // 处理商品列表
+      this.page.list.forEach(goods => {
+        goods.num = this.countCartGoodNum(goods.id);
+      });
+    }
+    /**
+     * 设置商品分类数量
+     */
+    setCategoryNum() {
+      if (!this.categoryTab.list) {
+        return;
+      }
+      this.categoryTab.list.forEach(item => {
+        item.count = 0;
+        this.carts.forEach(cart => {
+          if (cart.innerCid && item.id == cart.innerCid) {
+            item.count += cart.goodsNum;
+          }
+        });
+      });
+    }
+    methods = {
+      switchTab(selectedId) {
+        this.categoryTab.selectedId = selectedId;
+        // 先判断缓存中是否存在商品列表
+        if (this.pages[selectedId] && this.pages[selectedId].list.length > 0) {
+          this.page = this.pages[selectedId];
+          this.$apply();
+        } else {
+          this.page = goods.subShopGoodsList(this.discount);
+          this.reload();
+        }
+      },
+      /**
+       * 到达底部
+       */
+      async onReachBottom () {
+        await this.next();
+      }
+    };
+    computed = {
+      /**
+       * 被选择的分类名称
+       */
+      selectedCategoryName() {
+        if (this.categoryTab && this.categoryTab.list) {
+          const selectedId = this.categoryTab.selectedId;
+          const categoryItem = this.categoryTab.list.find(item => item.id == selectedId);
+          if (categoryItem != null) {
+            return categoryItem.title;
+          }
+        }
+      },
+      /**
+       * 导出购物车对象
+       */
+      sync() {
+        if (this.cart == null || this.page.list == null) return;
+        this.carts = this.cart.carts;
+        // 同步购物车数量
+        this.setCartNum();
+      }
+    };
+    mixins = [pagination, router];
+    events = {};
+    components = {
+      SideTab: SideTab,
+      GoodsItem: GoodsItem,
+      Loadmore: Loadmore
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .main-box{
+    width: 100%;
+    position: absolute;
+
+    .goods-box{
+      flex: 1;
+      height: 100%;
+      .goods-title{
+        height: 30px;
+        padding-left: 20rpx;
+        align-items: center;
+        border-bottom: $border;
+      }
+      .goods-list{
+        background-color: #FFF;
+        padding-left: 10px;
+      }
+    }
+    .coupon-box{
+      padding: 10px 0 10px 20rpx;
+      height: 60px;
+      width: 545rpx;
+      border-bottom: $border;
+      white-space: nowrap;
+    }
+  }
+</style>

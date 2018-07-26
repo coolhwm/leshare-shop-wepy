@@ -1,0 +1,166 @@
+<template>
+  <view class="goods-item row" @tap="checkImage({{goods}})">
+    <image class="goods-image" lazy-load src="{{goods.imageUrl}}"></image>
+    <view class="goods-main column" >
+      <!-- 主体区域-->
+      <view>
+        <view class="goods-name row-between">
+          <text class="inline">{{goods.name}}</text>
+        </view>
+        <view class="row">
+          <view class="column goods-subhead">
+            <text class="xxs muted inline"  wx:if="{{goods.subhead != null}}">{{goods.subhead}}</text>
+            <view class="row sale-tag-box">
+              <text class="xxs muted">已售{{goods.salesVolume}}件</text>
+              <block wx:for="{{goods.tags}}" wx:key="index" wx:index="index" wx:for-item="item">
+                <text wx:if="{{item.show}}" class="xxs primary tag-box ml10">{{item.tag}}</text>
+              </block>
+            </view>
+          </view>
+          <!--折扣信息-->
+          <view class="discount-box row" wx:if="{{goods.discount}}">
+            <view class="discount-rate"><text>{{goods.discountRate}}</text></view>
+            <view class="discount-text"><text>{{goods.discountText}}</text></view>
+          </view>
+        </view>
+      </view>
+
+      <!--价格及数量选择区域-->
+      <view class="row-between">
+        <!--价格-->
+        <view class="price-box">
+          <view class="goods-unit">￥</view>
+          <text class="goods-price">{{goods.priceLable}}</text>
+          <text class="original-price" wx:if="{{goods.discount}}">￥{{goods.originalPrice}}</text>
+        </view>
+
+        <!--数量选择器-->
+        <block>
+          <view class="quantity row">
+            <block wx:if="{{goods.num > 0}}">
+              <view class="number">
+                <text>{{goods.num}}</text>
+              </view>
+            </block>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class MenuGoodsItem extends wepy.component {
+    props = {
+      goods: {
+      }
+    };
+    components = {
+    };
+    methods = {
+      checkImage(goods) {
+        wepy.previewImage({
+          urls: [goods.imageUrl]
+        });
+      }
+    };
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .goods-item{
+    padding: 20rpx 20rpx 20rpx 0;
+    border-bottom: $border;
+    .goods-image{
+      width: 140rpx;
+      height: 140rpx;
+    }
+    .goods-main{
+      margin-left: 20rpx;
+      flex: 1;
+      justify-content: flex-start;
+      min-height: 140rpx;
+      .goods-name,.goods-subhead{
+        max-width: 370rpx;
+        overflow:hidden;
+      }
+      .goods-sku-badge{
+        background-color: $color-primary;
+        color: #FFF;
+        border-radius: 5px;
+        padding: 4rpx 10rpx;
+        font-size: $text-xxs;
+        width: 72rpx;
+      }
+      .sale-tag-box text{
+        white-space:nowrap;
+      }
+      .tag-box{
+        border:1px solid $color-primary;
+        border-radius: 4rpx;
+        padding: 5rpx;
+        line-height: $text-xxs;
+      }
+    }
+
+    .price-box{
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      .goods-unit{
+        color: $color-major;
+        font-size: $text-sm;
+      }
+      .goods-price{
+        color: $color-major;
+        font-size: $text-xl;
+      }
+      .original-price{
+        color: $color-muted;
+        font-size: $text-xs;
+        text-decoration: line-through;
+      }
+    }
+
+    .discount-box{
+      border: 1px solid $color-major;
+      height: 30rpx;
+      margin-left: 14rpx;
+      text {
+        font-size: $text-xxs;
+      }
+      view{
+        display: flex;
+        align-items: center;
+        height: 30rpx;
+        padding: 0 3px;
+      }
+      .discount-rate{
+        background-color: $color-major;
+        text{
+          color: #FFF;
+        }
+      }
+      .discount-text {
+        text{
+          color: $color-major;
+        }
+      }
+    }
+  }
+
+  .quantity{
+    .number{
+      font-size: $text-sm;
+      min-width: 50rpx;
+      text-align: center;
+    }
+  }
+
+</style>

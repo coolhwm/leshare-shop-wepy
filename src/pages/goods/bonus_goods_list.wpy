@@ -80,7 +80,7 @@
     background-color: white;
     padding: 10rpx 20rpx;
     align-items: center;
-    margin: 0 5rpx;
+    margin-top: -10rpx;
     .image-box{
       width: 60rpx;
       height: 60rpx;

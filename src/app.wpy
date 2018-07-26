@@ -167,7 +167,8 @@
         'pages/assist/assist_detail',
         'pages/assist/list',
         'pages/shop/sub_shop_list',
-        'pages/shop/sub_shop_detail'
+        'pages/shop/sub_shop_detail',
+        'pages/shop/sub_shop_menu'
       ],
       window: {
         backgroundTextStyle: 'dark',
