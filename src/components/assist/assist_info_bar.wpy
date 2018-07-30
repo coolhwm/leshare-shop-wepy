@@ -14,15 +14,6 @@
       <text>助力活动已成功</text>
     </view>
     <view class="column-center" wx:elif="{{assist.status !== 'TIMEOUT'}}">
-      <view class="status-time-box row">
-        <text class="mr10">剩余</text>
-        <view class="time-num-box">{{content.hour}}</view>
-        <text>:</text>
-        <view class="time-num-box">{{content.min}}</view>
-        <text>:</text>
-        <view class="time-num-box">{{content.sec}}</view>
-        <text class="ml10">结束</text>
-      </view>
       <button wx:if="{{assist.isHead}}" class="btn-box" open-type="share">分享助力</button>
     </view>
     <view class="column-center" wx:if="{{!assist.isHead && (assist.status !== 'TIMEOUT' && !assist.isTimeOut)}}">
@@ -85,13 +76,7 @@
     };
     computed = {};
     components = {};
-    watch = {
-      assist (assist) {
-        if (assist != null) {
-          this.countdowm(assist.dueTime.replace(/-/g, '/'), 'assistTime');
-        }
-      }
-    };
+    watch = {};
     mixins = [countdown];
   }
 </script>

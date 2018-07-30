@@ -16,7 +16,7 @@
       
       <!--tab划出内容栏-->
       <view class="tabs-box" wx:if="{{display}}">
-        <view wx:if="{{tabs.selectedId}}" class="row">
+        <view wx:if="{{tabs.selectedId}}" class="row sub-shop-tab-box">
           <text class="{{selectTabTitle === '全部分类' ? 'select-tab-box' : ''}} tabs-item-box" wx:if="{{tabs.selectedId === 'TAG'}}"  @tap="clearSelect('全部分类')">全部分类</text>
           <text class="{{selectTabTitle === '商圈' ? 'select-tab-box' : ''}} tabs-item-box" wx:if="{{tabs.selectedId === 'BUSSINESS_AREA'}}"  @tap="clearSelect('商圈')">商圈</text>
           <text class="{{selectTabTitle === '智能排序' ? 'select-tab-box' : ''}} tabs-item-box" wx:if="{{tabs.selectedId === 'SORT'}}"  @tap="clearSelect('智能排序')">智能排序</text>
@@ -76,10 +76,13 @@
               <view class="column">
                 <text>{{goodsItem.name}}</text>
                 <text class="muted xxs">销量{{goodsItem.salesVolume}}</text>
-                <view class="row">
-                  <text class="major xs">￥</text>
-                  <text class="major lg">{{goodsItem.price}}</text>
-                  <text class="xs cancel ml10">￥{{goodsItem.originalPrice}}</text>
+                <view class="row-between" style="width: 430rpx;">
+                  <view>
+                    <text class="major xs">￥</text>
+                    <text class="major lg">{{goodsItem.price}}</text>
+                    <text class="xs cancel ml10">￥{{goodsItem.originalPrice}}</text>
+                  </view>
+                  <text class="btn-buy-box">立即购买</text>
                 </view>
               </view>
             </view>
@@ -122,9 +125,9 @@
       },
       tabs: {
         list: [
-          {id: 'TAG', title: '全部分类'},
-          {id: 'BUSSINESS_AREA', title: '商圈'},
-          {id: 'SORT', title: '智能排序'}
+          {id: 'TAG', title: '全部分类', isTag: false},
+          {id: 'BUSSINESS_AREA', title: '商圈', isTag: false},
+          {id: 'SORT', title: '智能排序', isTag: false}
         ],
         selectedId: null
       },
@@ -204,8 +207,9 @@
       },
       // 清空选择的参数
       async clearSelect(tag) {
-        const oldTag = this.tabs.list.find(item => item.id === this.tabs.selectedId).title
-        this.tags = _.without(this.tags, oldTag)
+        const oldTag = this.tabs.list.find(item => item.id === this.tabs.selectedId)
+        oldTag.isTag = false
+        this.tags = _.without(this.tags, oldTag.title)
         if (this.tags.length > 0) {
           this.tag = this.tags.join(',')
         } else {
@@ -236,7 +240,9 @@
             this.$invoke('Notice', 'open', notice);
           }
         } else {
-          this.tabs.list.find(item => item.id === this.tabs.selectedId).title = tag
+          const newTag = this.tabs.list.find(item => item.id === this.tabs.selectedId)
+          newTag.title = tag
+          newTag.isTag = true
           if (this.tabs.selectedId === 'AREA') {
             this.area = tag
           } else if (this.tabs.selectedId === 'SORT') {
@@ -246,8 +252,9 @@
               this.by = 'sales_volume'
             }
           } else {
-            this.tags.push(tag)
-            this.tags = _.uniq(this.tags)
+            this.tags = this.tabs.list
+              .filter(item => item.id !== 'AREA' && item.id !== 'SORT' && item.isTag === true)
+              .map(item => item.title)
             this.tag = this.tags.join(',')
           }
         }
@@ -310,6 +317,9 @@
   .tab-icon-box{
     color: $color-normal;
   }
+  .sub-shop-tab-box{
+    flex-wrap: wrap;
+  }
   .list-name-box{
     font-weight: bold;
   }
@@ -360,7 +370,7 @@
   .tabs-box{
     position: absolute;
     background-color: white;
-    width: 100%;
+    width: 710rpx;
     padding: 20rpx;
   }
   .tab-box{
@@ -371,11 +381,19 @@
     padding: 14rpx 30rpx;
     border-radius: 10rpx;
     background-color: #F7F7F7;
-    margin: 16rpx;
+    margin: 10rpx;
     font-size: $text-xs;
   }
   .select-tab-box{
     background-color: lighten($color-primary, 10%);
     color: white;
+  }
+  .btn-buy-box{
+    background-color: $color-primary;
+    color: white;
+    font-size: $text-xs;
+    line-height: $text-nm;
+    padding: 5rpx 10rpx;
+    border-radius: 10rpx;
   }
 </style>

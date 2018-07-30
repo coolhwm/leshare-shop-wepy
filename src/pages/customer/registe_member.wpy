@@ -259,7 +259,7 @@
       Loading: Loading
     };
     config = {
-      navigationBarTitleText: '注册会员'
+      navigationBarTitleText: '绑定手机'
     };
     mixins = [input, base];
 
