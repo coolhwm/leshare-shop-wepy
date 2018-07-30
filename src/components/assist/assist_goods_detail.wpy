@@ -10,7 +10,10 @@
           <text class="detail-price-box">￥0.00</text>
           <text class="muted sellPrice-box sm">￥{{detail.originalPrice}}</text>
         </view>
-        <text class="detail-price-box">需助力人数:{{detail.leastAssist}}</text>
+        <view class="row-between">
+          <text class="detail-price-box">需{{detail.leastAssist}}人助力</text>
+          <text class="lg">{{detail.dueTime}} 结束</text>
+        </view>
       </view>
     </view>
   </view>
@@ -38,7 +41,7 @@
 
 <style lang="scss">
   @import "../../styles/variable";
-  $img-height: 220rpx;
+  $img-height: 160rpx;
   .detail-detail-box{
     margin-bottom: 10rpx;
     background: white;

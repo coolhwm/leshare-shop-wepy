@@ -76,7 +76,7 @@
       this.$invoke('TimeOutBar', 'clear');
     };
     async onPullDownRefresh () {
-      await this.update();
+      await this.update(this.ruleId);
       wepy.stopPullDownRefresh();
     }
     async update (ruleId) {

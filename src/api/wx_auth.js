@@ -96,10 +96,10 @@ export async function checkUserMember() {
   const member = store.getState('member');
   if (member == null) {
     console.info('[wx_login] member info is empty');
-    await Tips.modal('请点击注册会员，享受更多会员特权');
+    await Tips.modal('请点击绑定手机，享受更多会员特权');
     wepy.switchTab({url: '/pages/customer/index_template'});
     // 抛出异常
-    throw new Error('尚未注册会员');
+    throw new Error('尚未绑定手机');
   }
   // 还需要检查用户信息是否完整
   await checkUserInfo();

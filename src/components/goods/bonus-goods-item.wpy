@@ -1,5 +1,5 @@
 <template>
-  <view class="row bonus-goods-item" @tap="goods({{detail}})">
+  <view class="row bonus-goods-item">
     <view>
       <image class="goods-image"  lazy-load src="{{detail.imageUrl}}" ></image>
     </view>

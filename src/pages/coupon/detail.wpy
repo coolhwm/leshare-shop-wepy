@@ -24,7 +24,7 @@
       <text class="mt10 xs">{{tips}}</text>
     </view>
 
-    <view class="qr-box column-center" wx:if="{{coupon.expiredType === 'FIX_TERM' && !coupon.isUse}}">
+    <view class="qr-box column-center" wx:if="{{!coupon.isUse}}">
       <text class="muted mb20 lg">该优惠卷还未生效</text>
     </view>
     <view wx:else>
@@ -114,6 +114,9 @@
             this.$apply();
           }
         }, 3000);
+        wx.onUserCaptureScreen(function(res) {
+          Tips.modal('卡券二维码截屏无效，请本人出示二维码!')
+        })
         console.info(`[coupon] check coupon status, start interval=${interval}`);
       }
       this.subShop = this.coupon.subShop;
@@ -122,7 +125,7 @@
     onUnload () {
       console.info(`[coupon] exit page, clear interval=${interval}`);
       clearInterval(interval);
-    }
+    };
     methods = {
       async check() {
         await Tips.confirm('确认自助核销？该优惠券将被使用，操作后请将结果给店家展示');

@@ -67,6 +67,9 @@ export default class assist extends base {
     for (let i = 0; i < data.leftJoin; i++) {
       data.details.push({})
     }
+    if (data.dueTime.slice(11, 19) === '00:00:00') {
+      data.dueTime = data.dueTime.slice(0, 10)
+    }
     return data
   }
 
