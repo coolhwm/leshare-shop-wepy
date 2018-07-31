@@ -60,8 +60,8 @@
               </view>
               <view>
                 <view class="column">
-                  <text class="muted xs row-end">已售{{item.salesVolume}}件</text>
                   <text class="muted xs row-end">{{item.distanceDesc}}</text>
+                  <text class="muted xs row-end">已售{{item.salesVolume}}件</text>
                 </view>
               </view>
 
@@ -269,7 +269,9 @@
         }
         this.display = false;
         this.tabs.selectedId = null;
+        await Tips.loading();
         await this.updateList();
+        await Tips.loaded();
       },
       close() {
         this.display = false;
@@ -287,17 +289,17 @@
         await Tips.loaded();
       },
       shopDetail(subShop) {
-        this.$navigate(`/pages/shop/sub_shop_detail?subShopId=${subShop.shopId}`)
+        this.$navigate(`/pages/shop/sub_shop_detail?subShopId=${subShop.shopId}`);
       },
       goodsDetail(goods) {
-        this.$navigate(`/pages/goods/detail?goodsId=${goods.id}`)
+        this.$navigate(`/pages/goods/detail?goodsId=${goods.id}`);
       }
     };
     computed = {
       // 选中标签
       selectTabTitle() {
-        if (!this.tabs.selectedId) return
-        return this.tabs.list.find(item => item.id === this.tabs.selectedId).title
+        if (!this.tabs.selectedId) return;
+        return this.tabs.list.find(item => item.id === this.tabs.selectedId).title;
       }
     };
     events = {};
