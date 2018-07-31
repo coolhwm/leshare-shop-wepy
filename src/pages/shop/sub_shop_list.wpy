@@ -169,6 +169,9 @@
       if (this.isLocation) {
         this.location = await wepy.getLocation();
         this.isLocation = false;
+        if (this.location) {
+          this.position();
+        }
         await this.updateList();
       }
     };
