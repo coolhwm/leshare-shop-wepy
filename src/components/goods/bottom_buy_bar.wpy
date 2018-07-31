@@ -16,7 +16,7 @@
       <text class="white">立即预约</text>
     </view>
   </view>
-  <view class="row buy-bar-box" wx:elif="{{goods.type === 'digit' || goods.paymentType === 'bonus'}}">
+  <view class="row buy-bar-box" wx:elif="{{goods.paymentType === 'bonus'}}">
     <view class="column-center  btn-fav">
       <button plain class="column-center" open-type="contact">
         <icon class="service" color="gray"/>
@@ -32,6 +32,21 @@
     </view>
     <view class="column-center btn-service" @tap="handleBonus({{goods}})" wx:if="{{goods.paymentType === 'bonus' &&goods.type !== 'digit' }}">
       <text class="white xl">立即兑换</text>
+    </view>
+  </view>
+  <view class="row buy-bar-box" wx:elif="{{goods.type === 'digit'}}">
+    <view class="column-center  btn-fav">
+      <button plain class="column-center" open-type="contact">
+        <icon class="service" color="gray"/>
+        <text>客服</text>
+      </button>
+    </view>
+    <view class="column-center btn-goto-cart" @tap="home">
+      <icon class="home" color="gray"/>
+      <text>首页</text>
+    </view>
+    <view class="column-center btn-service" @tap="handleDigit({{goods}})" wx:if="{{goods.type === 'digit'}}">
+      <text class="white xl">立即购买</text>
     </view>
   </view>
   <view class="row buy-bar-box" wx:else>

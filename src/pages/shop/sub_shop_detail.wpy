@@ -128,11 +128,6 @@
                         <text class="mr10 xs">{{tag}}</text>
                       </block>
                     </view>
-                    <view class="row">
-                      <text class="muted xs mr10">{{item.salesVolume}}</text>
-                      <text class="muted xs mr10" wx:if="{{item.distance > 0}}">|</text>
-                      <text class="muted xs" wx:if="{{item.distance > 0}}">{{item.distance}}m</text>
-                    </view>
                   </view>
                   <text class="muted xs list-address-box">{{item.address}}</text>
                 </view>
