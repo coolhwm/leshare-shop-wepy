@@ -118,7 +118,10 @@ export default class shop extends base {
    */
   static RecommendationShopList() {
     const url = `${this.baseUrl}/shops/sub_shop_list?from=0&limit=5`;
-    return this.get(url);
+    return this.post(url, {
+      from: 0,
+      limit: 5
+    });
   }
   /***
    * 子商户图文详情

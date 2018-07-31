@@ -83,7 +83,7 @@ export default class Pagination {
       Object.assign(param, args);
       return http.get(url, param);
     } else if (this.method === 'POST') {
-      let requestUrl = `${url}?from=${param.from}&limit${param.limit}`;
+      let requestUrl = `${url}?from=${param.from}&limit=${param.limit}`;
       if (args.by != null) {
         requestUrl += `&by=${args.by}`;
       }
