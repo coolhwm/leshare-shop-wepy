@@ -46,7 +46,7 @@
       <text>{{coupon.desc}}</text>
     </view>
 
-    <view class="btn-panel" wx:if="{{!success && coupon.isSelfUse}}">
+    <view class="btn-panel" wx:if="{{!success && coupon.isSelfUse && coupon.isUse}}">
       <button class="weui-btn" type="primary"  @tap="check" wx:if="{{coupon.isSelfUse}}">自助核销</button>
     </view>
 

@@ -143,6 +143,7 @@ export default class coupon extends base {
       coupon.beginTime = this._convertTimestapeToDay(data.beginTime);
       coupon.dueTime = this._convertTimestapeToDay(data.dueTime);
     } else {
+      coupon.isUse = (new Date(data.beginTime.replace(/-/g, '/')) - new Date()) <= 0;
       coupon.beginTime = this._convertTimestapeToDay(coupon.beginTime);
       coupon.dueTime = this._convertTimestapeToDay(coupon.dueTime);
     }

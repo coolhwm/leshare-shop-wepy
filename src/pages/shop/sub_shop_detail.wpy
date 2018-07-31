@@ -22,10 +22,10 @@
           </block>
         </view>
         <view class="row mt10">
-          <block wx:for="{{subShopInfo.tags.TYPE}}" wx:for-item="item" wx:for-index="index" wx:key="index">
+          <block wx:for="{{subShopInfo.tags.TAG}}" wx:for-item="item" wx:for-index="index" wx:key="index">
             <text class="mr10">{{item}}</text>
           </block>
-          <text wx:if="{{subShopInfo.tags.TYPE && subShopInfo.tags.BUSSINESS_AREA}}" class="mr10">|</text>
+          <text wx:if="{{subShopInfo.tags.TAG && subShopInfo.tags.BUSSINESS_AREA}}" class="mr10">|</text>
           <block wx:for="{{subShopInfo.tags.BUSSINESS_AREA}}" wx:for-item="item" wx:for-index="index" wx:key="index">
             <text class="mr10">{{item}}</text>
           </block>
