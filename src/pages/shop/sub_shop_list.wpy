@@ -46,7 +46,7 @@
             </view>
             <view class="row-between" style="width: 580rpx">
               <view class="column">
-                <view class="row">
+                <view class="row" wx:if="{{item.tags}}">
                   <block wx:for="{{item.tags.TAG}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
                     <text class="mr10 xs">{{tag}}</text>
                   </block>
@@ -55,15 +55,14 @@
                     <text class="mr10 xs">{{tag}}</text>
                   </block>
                 </view>
+                <text class="mr10 xs" wx:else>其他</text>
                 <text class="muted xs list-address-box">{{item.address}}</text>
               </view>
               <view>
-                <view class="row">
-                  <text class="muted xs mr10">已售{{item.salesVolume}}件</text>
-                  <text class="muted xs mr10" wx:if="{{item.distance > 0}}">|</text>
-                  <text class="muted xs" wx:if="{{item.distance > 0}}">{{item.distanceDesc}}</text>
+                <view class="column">
+                  <text class="muted xs row-end">已售{{item.salesVolume}}件</text>
+                  <text class="muted xs row-end">{{item.distanceDesc}}</text>
                 </view>
-                <view wx:if="{{item.tags.TAG}}" style="height: 38rpx;"></view>
               </view>
 
 
@@ -171,7 +170,9 @@
       }
     };
     params() {
-      let param = {};
+      let param = {
+        goods: 1
+      };
       if (this.area) param.area = this.area;
       if (this.tag) param.tag = this.tag;
       if (this.bussArea) param.bussArea = this.bussArea;
@@ -358,7 +359,7 @@
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
-    width: 360rpx;
+    width: 300rpx;
   }
   .shop-box{
     padding: 20rpx;
