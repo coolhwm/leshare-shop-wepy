@@ -25,7 +25,7 @@
     </view>
 
     <view class="qr-box column-center" wx:if="{{!coupon.isUse}}">
-      <text class="muted mb20 lg">该优惠卷还未生效</text>
+      <text class="muted mb20 lg">该优惠劵还未生效</text>
     </view>
     <view wx:else>
       <view class="qr-box column-center" wx:if="{{!success && coupon.supportType != 1}}">

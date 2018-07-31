@@ -175,7 +175,7 @@
   import InShopTab from '../../components/order/inshop_tab';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
-  import WxUtils from '../../utils/WxUtils';
+  // import WxUtils from '../../utils/WxUtils';
   import Loading from '../../components/common/loading';
   import Cart from '../../utils/Cart';
 

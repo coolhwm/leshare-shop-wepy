@@ -109,14 +109,19 @@ export default class shop extends base {
    */
   static subShopList() {
     const url = `${this.baseUrl}/shops/sub_shop_list`;
-    return new Page(url);
+    const page = new Page(url);
+    page.method = 'POST';
+    return page;
   }
   /***
    * 推荐子商户列表
    */
   static RecommendationShopList() {
     const url = `${this.baseUrl}/shops/sub_shop_list?from=0&limit=5`;
-    return this.get(url);
+    return this.post(url, {
+      from: 0,
+      limit: 5
+    });
   }
   /***
    * 子商户图文详情

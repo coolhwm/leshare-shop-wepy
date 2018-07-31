@@ -277,7 +277,7 @@
   @import "../../styles/variable";
 
   .remark-box {
-    margin-bottom: 10 rpx;
+    margin-bottom: 10rpx;
   }
 
   //汇总栏
@@ -287,13 +287,13 @@
     .final-box {
       float: right;
       width: 100%;
-      padding-top: 10 rpx;
+      padding-top: 10rpx;
       border-top: $border;
       text-align: right;
     }
 
     .price-box {
-      padding: 5 rpx 0;
+      padding: 5rpx 0;
     }
   }
 
@@ -302,7 +302,7 @@
     position: fixed;
     z-index: 10000;
     bottom: 0;
-    height: 100 rpx;
+    height: 100rpx;
     width: 100%;
     background-color: #FFF;
     border-top: $border;
@@ -314,8 +314,8 @@
     /*操作底栏*/
     .trade-confirm-button {
       height: 100%;
-      width: 280 rpx;
-      line-height: 100 rpx;
+      width: 280rpx;
+      line-height: 100rpx;
       text-align: center;
       background-color: $color-primary;
       color: #FFF;
@@ -324,14 +324,11 @@
       }
     }
 
-    .trade-confirm-disable {
-      background-color: #B0B0B0;
-    }
   }
 
   .tarde-action-bar-placeholder {
     width: 100%;
-    height: 100 rpx;
+    height: 100rpx;
   }
 
 </style>

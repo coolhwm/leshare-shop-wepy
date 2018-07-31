@@ -44,8 +44,8 @@
                 <text class="list-tag-box white xxs ml10">{{item}}</text>
               </block>
             </view>
-            <view class="column">
-              <view class="row-between" style="width: 580rpx">
+            <view class="row-between" style="width: 580rpx">
+              <view class="column">
                 <view class="row">
                   <block wx:for="{{item.tags.TAG}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
                     <text class="mr10 xs">{{tag}}</text>
@@ -55,19 +55,24 @@
                     <text class="mr10 xs">{{tag}}</text>
                   </block>
                 </view>
+                <text class="muted xs list-address-box">{{item.address}}</text>
+              </view>
+              <view>
                 <view class="row">
                   <text class="muted xs mr10">已售{{item.salesVolume}}件</text>
                   <text class="muted xs mr10" wx:if="{{item.distance > 0}}">|</text>
                   <text class="muted xs" wx:if="{{item.distance > 0}}">{{item.distanceDesc}}</text>
                 </view>
+                <view wx:if="{{item.tags.TAG}}" style="height: 38rpx;"></view>
               </view>
-              <text class="muted xs list-address-box">{{item.address}}</text>
-              <!--<view>-->
-                <!--<block wx:for="{{item.tags.NORMAL}}" wx:for-item="item" wx:for-index="index" wx:key="index">-->
-                  <!--<text class="list-muted-tag-box muted xxs mr10">{{item}}</text>-->
-                <!--</block>-->
-              <!--</view>-->
+
+
             </view>
+            <!--<view>-->
+              <!--<block wx:for="{{item.tags.NORMAL}}" wx:for-item="item" wx:for-index="index" wx:key="index">-->
+                <!--<text class="list-muted-tag-box muted xxs mr10">{{item}}</text>-->
+              <!--</block>-->
+            <!--</view>-->
           </view>
 
           <view wx:for="{{item.goodsList}}" wx:for-index="goodsIndex" wx:for-item="goodsItem" wx:key="goodsIndex" class="column mt10">
@@ -115,6 +120,7 @@
   import CoverPanel from '../../components/common/cover_panel';
   import Notice from '../../components/shop/notice';
   import map from '../../api/map';
+  import Tips from '../../utils/Tips';
 
   export default class SubShopList extends wepy.page {
     data = {
@@ -142,7 +148,8 @@
       area: null,
       isLocation: false,
       address: null,
-      by: null
+      by: null,
+      bussArea: null
     }
     async onLoad () {
       try {
@@ -150,6 +157,9 @@
       } finally {
         const tags = await shop.subShopTag();
         this.tagList = _.extend(this.tagList, tags);
+        if (this.location) {
+          this.position();
+        }
         await this.updateList();
       }
     };
@@ -161,75 +171,71 @@
       }
     };
     params() {
-      let param = {}
-      if (this.tag && this.area) {
-        param.tag = this.tag
-        param.area = this.area
-      } else if (!this.tag && this.area) {
-        param.area = this.area
-      } else if (this.tag && !this.area) {
-        param.tag = this.tag
-      }
+      let param = {};
+      if (this.area) param.area = this.area;
+      if (this.tag) param.tag = this.tag;
+      if (this.bussArea) param.bussArea = this.bussArea;
       if (this.location) {
-        param.longitude = this.location.longitude
-        param.latitude = this.location.latitude
+        param.longitude = this.location.longitude;
+        param.latitude = this.location.latitude;
       }
       if (this.by === 'distance') {
-        param.by = this.by
-        param.sort = 'asc'
+        param.by = this.by;
+        param.sort = 'asc';
       } else if (this.by === 'sales_volume') {
-        param.by = this.by
-        param.sort = 'desc'
+        param.by = this.by;
+        param.sort = 'desc';
       }
-      return param
+      return param;
     }
     // 商铺列表刷新
     async updateList() {
       this.page = await shop.subShopList();
-      if (this.location) {
-        this.position();
-      }
       await this.next();
     }
     // 重新定位
     async position() {
-      const { latitude, longitude } = this.location
-      const addressInfo = await map.reverse(latitude, longitude)
-      this.address = addressInfo.current.display
+      const { latitude, longitude } = this.location;
+      const addressInfo = await map.reverse(latitude, longitude);
+      this.address = addressInfo.current.display;
       this.$apply();
     }
     methods = {
       // 选取tab
       selectTab(tab) {
-        this.tabs.selectedId = tab.id
-        this.selectTabList = this.tagList[tab.id]
-        this.display = true
+        this.tabs.selectedId = tab.id;
+        this.selectTabList = this.tagList[tab.id];
+        this.display = true;
       },
       // 清空选择的参数
       async clearSelect(tag) {
-        const oldTag = this.tabs.list.find(item => item.id === this.tabs.selectedId)
-        oldTag.isTag = false
-        this.tags = _.without(this.tags, oldTag.title)
+        const oldTag = this.tabs.list.find(item => item.id === this.tabs.selectedId);
+        oldTag.isTag = false;
+        this.tags = _.without(this.tags, oldTag.title);
         if (this.tags.length > 0) {
-          this.tag = this.tags.join(',')
+          this.tag = this.tags.join(',');
         } else {
-          this.tag = null
+          this.tag = null;
         }
-        this.tabs.list.find(item => item.id === this.tabs.selectedId).title = tag
+        this.tabs.list.find(item => item.id === this.tabs.selectedId).title = tag;
         if (tag === '全城') {
-          this.area = null
+          this.area = null;
         } else if (tag === '智能排序') {
-          this.by = null
+          this.by = null;
+        } else if (tag === '商圈') {
+          this.bussArea = null;
         }
-        this.display = false
-        this.tabs.selectedId = null
-        await this.updateList()
+        this.display = false;
+        this.tabs.selectedId = null;
+        await Tips.loading();
+        await this.updateList();
+        await Tips.loaded();
       },
       // 选择标签
       async select(tag) {
         if (tag === '离我最近' && !this.location) {
           try {
-            this.location = await wepy.getLocation()
+            this.location = await wepy.getLocation();
           } catch (e) {
             const notice = {
               title: '提示',
@@ -240,40 +246,44 @@
             this.$invoke('Notice', 'open', notice);
           }
         } else {
-          const newTag = this.tabs.list.find(item => item.id === this.tabs.selectedId)
-          newTag.title = tag
-          newTag.isTag = true
+          const newTag = this.tabs.list.find(item => item.id === this.tabs.selectedId);
+          newTag.title = tag;
+          newTag.isTag = true;
           if (this.tabs.selectedId === 'AREA') {
-            this.area = tag
+            this.area = tag;
+          } else if (this.tabs.selectedId === 'BUSSINESS_AREA') {
+            this.bussArea = tag;
           } else if (this.tabs.selectedId === 'SORT') {
             if (tag === '离我最近') {
-              this.by = 'distance'
+              this.by = 'distance';
             } else if (tag === '销量最高') {
-              this.by = 'sales_volume'
+              this.by = 'sales_volume';
             }
           } else {
             this.tags = this.tabs.list
-              .filter(item => item.id !== 'AREA' && item.id !== 'SORT' && item.isTag === true)
+              .filter(item => item.id !== 'AREA' && item.id !== 'SORT' && item.id !== 'BUSSINESS_AREA' && item.isTag === true)
               .map(item => item.title)
-            this.tag = this.tags.join(',')
+            this.tag = this.tags.join(',');
           }
         }
-        this.display = false
-        this.tabs.selectedId = null
-        await this.updateList()
+        this.display = false;
+        this.tabs.selectedId = null;
+        await this.updateList();
       },
       close() {
-        this.display = false
-        this.tabs.selectedId = null
+        this.display = false;
+        this.tabs.selectedId = null;
       },
       // 重新授权获取坐标
       async getLocation() {
-        this.isLocation = true
+        this.isLocation = true;
         // this.location = await wepy.getLocation()
         // await this.updateList();
       },
-      relocation() {
-        this.position();
+      async relocation() {
+        await Tips.loading();
+        await this.position();
+        await Tips.loaded();
       },
       shopDetail(subShop) {
         this.$navigate(`/pages/shop/sub_shop_detail?subShopId=${subShop.shopId}`)
@@ -348,7 +358,7 @@
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
-    width: 400rpx;
+    width: 360rpx;
   }
   .shop-box{
     padding: 20rpx;

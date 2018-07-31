@@ -22,6 +22,8 @@ export default class Pagination {
     this.empty = true;
     // 是否需要清除
     this.toClear = false;
+    // 请求方式
+    this.method = 'GET';
   }
 
   /**
@@ -39,8 +41,8 @@ export default class Pagination {
     // 附加参数
     this.loading = true;
     try {
-      Object.assign(param, args);
-      const data = await http.get(this.url, param);
+      // 发起请求
+      const data = await this.request(this.url, param, args);
       // 底部判断
       if (data === null || data.length < 1) {
         if (this.toClear) {
@@ -67,6 +69,30 @@ export default class Pagination {
       return this;
     } finally {
       this.loading = false;
+    }
+  }
+
+  /***
+   * 发起请求
+   * @param url
+   * @param param 分页参数
+   * @param args 查询参数
+   */
+  request(url, param, args) {
+    if (this.method === 'GET') {
+      Object.assign(param, args);
+      return http.get(url, param);
+    } else if (this.method === 'POST') {
+      let requestUrl = `${url}?from=${param.from}&limit=${param.limit}`;
+      if (args.by != null) {
+        requestUrl += `&by=${args.by}`;
+      }
+      if (args.sort != null) {
+        requestUrl += `&sort=${args.sort}`;
+      }
+      return http.post(requestUrl, args);
+    } else {
+      throw new Error('请求参数page.method错误');
     }
   }
 

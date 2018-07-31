@@ -117,24 +117,27 @@
                     <text class="list-tag-box white xxs ml10">{{item}}</text>
                   </block>
                 </view>
-                <view class="column">
-                  <view class="row-between" style="width: 580rpx">
+                <view class="row-between" style="width: 550rpx">
+                  <view class="column">
                     <view class="row">
-                      <block wx:for="{{item.tags.TYPE}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
+                      <block wx:for="{{item.tags.TAG}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
                         <text class="mr10 xs">{{tag}}</text>
                       </block>
-                      <text wx:if="{{item.tags.TYPE}}" class="xs mr10">|</text>
+                      <text wx:if="{{item.tags.TAG}}" class="xs mr10">|</text>
                       <block wx:for="{{item.tags.BUSSINESS_AREA}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
                         <text class="mr10 xs">{{tag}}</text>
                       </block>
                     </view>
-                    <view class="row">
-                      <text class="muted xs mr10">{{item.salesVolume}}</text>
-                      <text class="muted xs mr10" wx:if="{{item.distance > 0}}">|</text>
-                      <text class="muted xs" wx:if="{{item.distance > 0}}">{{item.distance}}m</text>
-                    </view>
+                    <text class="muted xs list-address-box">{{item.address}}</text>
                   </view>
-                  <text class="muted xs list-address-box">{{item.address}}</text>
+                  <view>
+                    <view class="row">
+                      <text class="muted xs mr10">已售{{item.salesVolume}}件</text>
+                      <text class="muted xs mr10" wx:if="{{item.distance > 0}}">|</text>
+                      <text class="muted xs" wx:if="{{item.distance > 0}}">{{item.distanceDesc}}</text>
+                    </view>
+                    <view wx:if="{{item.tags.TAG}}" style="height: 38rpx;"></view>
+                  </view>
                 </view>
               </view>
             </view>
