@@ -222,10 +222,17 @@
         // 处理配送方式
         await this.updateDelivery();
       }
+      // 处理配送费
       this.goodsList.forEach(item => {
         item.goodsFoodBoxFee = item.goodsFoodBoxFee * item.count
       });
       this.trade.foodBoxFee = this.goodsList.reduce((prev, current) => prev + current.goodsFoodBoxFee, 0);
+      // 处理默认的付款方式（仅线下支付）
+      if (this.shop.offPay === 2) {
+        this.trade.paymentText = '线下支付';
+        this.trade.paymentType = 0;
+        this.trade.onlinePayType = null;
+      }
       // 刷新价格
       this.updateTradePrice();
       // 可用卡券
@@ -310,7 +317,7 @@
        * 选择付款方式
        */
       async paymentType () {
-        if (this.shop.offPay === 0 || this.isForhearOrPack) {
+        if (this.shop.offPay === 0 || this.shop.offPay === 2 || this.isForhearOrPack) {
           return;
         }
         const trade = this.trade;
