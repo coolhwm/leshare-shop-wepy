@@ -134,7 +134,7 @@
         if (this.dealPrice == 0) {
           await Tips.alert('请输入正确付款金额!');
           return;
-        };
+        }
         const param = {
           orderType: 40,
           paymentType: 1,
