@@ -38,11 +38,14 @@
         <image src="{{item.avatar}}" class="avatar-image-box mr10"/>
         <view class="column">
           <view class="column" @tap="shopDetail({{item}})">
-            <view>
-              <text class="list-name-box">{{item.name}}</text>
-              <block wx:for="{{item.tags.ACTIVITY}}" wx:for-item="item" wx:for-index="index" wx:key="index">
-                <text class="list-tag-box white xxs ml10">{{item}}</text>
-              </block>
+            <view class="row-between">
+              <view>
+                <text class="list-name-box">{{item.name}}</text>
+                <block wx:for="{{item.tags.ACTIVITY}}" wx:for-item="item" wx:for-index="index" wx:key="index">
+                  <text class="list-tag-box white xxs ml10">{{item}}</text>
+                </block>
+              </view>
+              <text class="muted xs row-end">{{item.distanceDesc}}</text>
             </view>
             <view class="row-between" style="width: 580rpx">
               <view class="column">
@@ -60,8 +63,8 @@
               </view>
               <view>
                 <view class="column">
-                  <text class="muted xs row-end">{{item.distanceDesc}}</text>
                   <text class="muted xs row-end">已售{{item.salesVolume}}件</text>
+                  <text style="height: 38rpx;"></text>
                 </view>
               </view>
 
