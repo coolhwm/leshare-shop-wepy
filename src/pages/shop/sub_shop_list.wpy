@@ -28,7 +28,8 @@
     </view>
 
     <view wx:if="{{location}}" class="address-box row">
-      <text class="sm">当前位置：{{address}}</text>
+      <text class="sm" wx:if="{{address != null && address != 'null'}}">当前位置：{{address}}</text>
+      <text class="sm" wx:else>当前位置：定位中</text>
       <text class="btn-box xs ml10" @tap="relocation">[重新定位]</text>
     </view>
 
@@ -83,7 +84,7 @@
               <view class="column">
                 <text>{{goodsItem.name}}</text>
                 <text class="muted xxs">销量{{goodsItem.salesVolume}}</text>
-                <view class="row-between" style="width: 430rpx;">
+                <view class="row-between" style="width: 440rpx;">
                   <view>
                     <text class="major xs">￥</text>
                     <text class="major lg">{{goodsItem.price}}</text>
