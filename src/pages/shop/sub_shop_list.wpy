@@ -13,12 +13,12 @@
           </view>
         </block>
       </view>
-      
+
       <!--tab划出内容栏-->
       <view class="tabs-box" wx:if="{{display}}">
         <view wx:if="{{tabs.selectedId}}" class="row sub-shop-tab-box">
           <text class="{{selectTabTitle === '全部分类' ? 'select-tab-box' : ''}} tabs-item-box" wx:if="{{tabs.selectedId === 'TAG'}}"  @tap="clearSelect('全部分类')">全部分类</text>
-          <text class="{{selectTabTitle === '商圈' ? 'select-tab-box' : ''}} tabs-item-box" wx:if="{{tabs.selectedId === 'BUSSINESS_AREA'}}"  @tap="clearSelect('商圈')">商圈</text>
+          <text class="{{selectTabTitle === '全部商圈' ? 'select-tab-box' : ''}} tabs-item-box" wx:if="{{tabs.selectedId === 'BUSSINESS_AREA'}}"  @tap="clearSelect('全部商圈')">全部商圈</text>
           <text class="{{selectTabTitle === '智能排序' ? 'select-tab-box' : ''}} tabs-item-box" wx:if="{{tabs.selectedId === 'SORT'}}"  @tap="clearSelect('智能排序')">智能排序</text>
           <block wx:for="{{selectTabList}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
             <text @tap="select({{tag}})" class="tabs-item-box {{selectTabTitle === tag ? 'select-tab-box' : ''}}">{{tag}}</text>
@@ -131,7 +131,7 @@
       tabs: {
         list: [
           {id: 'TAG', title: '全部分类', isTag: false},
-          {id: 'BUSSINESS_AREA', title: '商圈', isTag: false},
+          {id: 'BUSSINESS_AREA', title: '全部商圈', isTag: false},
           {id: 'SORT', title: '智能排序', isTag: false}
         ],
         selectedId: null
@@ -223,7 +223,7 @@
           this.area = null;
         } else if (tag === '智能排序') {
           this.by = null;
-        } else if (tag === '商圈') {
+        } else if (tag === '全部商圈') {
           this.bussArea = null;
         }
         this.display = false;
