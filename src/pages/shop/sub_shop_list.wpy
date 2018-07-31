@@ -115,6 +115,7 @@
   import CoverPanel from '../../components/common/cover_panel';
   import Notice from '../../components/shop/notice';
   import map from '../../api/map';
+  import Tips from '../../utils/Tips';
 
   export default class SubShopList extends wepy.page {
     data = {
@@ -142,7 +143,8 @@
       area: null,
       isLocation: false,
       address: null,
-      by: null
+      by: null,
+      bussArea: null
     }
     async onLoad () {
       try {
@@ -161,27 +163,22 @@
       }
     };
     params() {
-      let param = {}
-      if (this.tag && this.area) {
-        param.tag = this.tag
-        param.area = this.area
-      } else if (!this.tag && this.area) {
-        param.area = this.area
-      } else if (this.tag && !this.area) {
-        param.tag = this.tag
-      }
+      let param = {};
+      if (this.area) param.area = this.area;
+      if (this.tag) param.tag = this.tag;
+      if (this.bussArea) param.bussArea = this.bussArea;
       if (this.location) {
-        param.longitude = this.location.longitude
-        param.latitude = this.location.latitude
+        param.longitude = this.location.longitude;
+        param.latitude = this.location.latitude;
       }
       if (this.by === 'distance') {
-        param.by = this.by
-        param.sort = 'asc'
+        param.by = this.by;
+        param.sort = 'asc';
       } else if (this.by === 'sales_volume') {
-        param.by = this.by
-        param.sort = 'desc'
+        param.by = this.by;
+        param.sort = 'desc';
       }
-      return param
+      return param;
     }
     // 商铺列表刷新
     async updateList() {
@@ -220,6 +217,8 @@
           this.area = null
         } else if (tag === '智能排序') {
           this.by = null
+        } else if (tag === '商圈') {
+          this.bussArea = null
         }
         this.display = false
         this.tabs.selectedId = null
@@ -245,6 +244,8 @@
           newTag.isTag = true
           if (this.tabs.selectedId === 'AREA') {
             this.area = tag
+          } else if (this.tabs.selectedId === 'BUSSINESS_AREA') {
+            this.bussArea = tag
           } else if (this.tabs.selectedId === 'SORT') {
             if (tag === '离我最近') {
               this.by = 'distance'
@@ -253,7 +254,7 @@
             }
           } else {
             this.tags = this.tabs.list
-              .filter(item => item.id !== 'AREA' && item.id !== 'SORT' && item.isTag === true)
+              .filter(item => item.id !== 'AREA' && item.id !== 'SORT' && item.id !== 'BUSSINESS_AREA' && item.isTag === true)
               .map(item => item.title)
             this.tag = this.tags.join(',')
           }
@@ -272,8 +273,10 @@
         // this.location = await wepy.getLocation()
         // await this.updateList();
       },
-      relocation() {
-        this.position();
+      async relocation() {
+        await Tips.loading();
+        await this.position();
+        await Tips.loaded();
       },
       shopDetail(subShop) {
         this.$navigate(`/pages/shop/sub_shop_detail?subShopId=${subShop.shopId}`)

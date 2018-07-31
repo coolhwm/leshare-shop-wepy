@@ -118,7 +118,7 @@
                   </block>
                 </view>
                 <view class="column">
-                  <view class="row-between" style="width: 580rpx">
+                  <view class="row-between" style="width: 550rpx">
                     <view class="row">
                       <block wx:for="{{item.tags.TYPE}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
                         <text class="mr10 xs">{{tag}}</text>
