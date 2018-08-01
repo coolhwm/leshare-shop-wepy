@@ -48,7 +48,7 @@
               </view>
               <text class="muted xs row-end">{{item.distanceDesc}}</text>
             </view>
-            <view class="row-between" style="width: 580rpx">
+            <view class="row-between" style="width: 550rpx">
               <view class="column">
                 <view class="row" wx:if="{{item.tags}}">
                   <block wx:for="{{item.tags.TAG}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
@@ -71,30 +71,17 @@
 
 
             </view>
-            <!--<view>-->
-              <!--<block wx:for="{{item.tags.NORMAL}}" wx:for-item="item" wx:for-index="index" wx:key="index">-->
-                <!--<text class="list-muted-tag-box muted xxs mr10">{{item}}</text>-->
-              <!--</block>-->
-            <!--</view>-->
           </view>
 
-          <view wx:for="{{item.goodsList}}" wx:for-index="goodsIndex" wx:for-item="goodsItem" wx:key="goodsIndex" class="column mt10">
-            <view class="row" @tap="goodsDetail({{goodsItem}})">
-              <image src="{{goodsItem.imageUrl}}/small" class="goods-image-box mr10"/>
-              <view class="column">
-                <text>{{goodsItem.name}}</text>
-                <text class="muted xxs">销量{{goodsItem.salesVolume}}</text>
-                <view class="row-between" style="width: 440rpx;">
-                  <view>
-                    <text class="major xs">￥</text>
-                    <text class="major lg">{{goodsItem.price}}</text>
-                    <text class="xs cancel ml10">￥{{goodsItem.originalPrice}}</text>
-                  </view>
-                  <text class="btn-buy-box">立即购买</text>
-                </view>
+          <view class="{{item.goodsList.length > 0 ? 'shop-goods-box' : ''}}">
+            <view wx:for="{{item.goodsList}}" wx:for-index="goodsIndex" wx:for-item="goodsItem" wx:key="goodsIndex" class="column">
+              <view class="row" style="width: 550rpx">
+                <icon class="sale xsmall" color="major"/>
+                <text class="goods-name-box xs">{{goodsItem.price}}元购{{goodsItem.name}}</text>
               </view>
             </view>
           </view>
+
         </view>
       </view>
     </view>
@@ -368,23 +355,30 @@
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
-    width: 300rpx;
+    width: 400rpx;
+    margin-bottom: 5rpx;
+  }
+  .goods-name-box{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    width: 520rpx;
   }
   .shop-box{
-    padding: 20rpx;
-     background-color: white;
+    padding: 20rpx 20rpx 16rpx;
+    background-color: white;
   }
   .shop-box + .shop-box{
     border-top: $border;
   }
   .avatar-image-box{
-    width: 120rpx;
-    height: 120rpx;
+    width: 140rpx;
+    height: 140rpx;
     border: $border;
   }
   .goods-image-box{
-    width: 120rpx;
-    height: 120rpx;
+    width: 110rpx;
+    height: 110rpx;
     border: $border;
   }
   .tabs-box{
@@ -415,5 +409,9 @@
     line-height: $text-nm;
     padding: 5rpx 10rpx;
     border-radius: 10rpx;
+  }
+  .shop-goods-box{
+    border-top: $border;
+    padding-top: 6rpx;
   }
 </style>

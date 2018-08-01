@@ -53,6 +53,7 @@
       <view class="row sub-top-box">
         <icon class="mini-program xsmall" style="color: #43B045"/>
         <text class="ml10">商家小程序</text>
+        <text wx:if="{{subShopInfo.useParentBonus > 0}}" class="qrcode-tag-box primary ml10 xs">商品可抵扣{{subShopInfo.useParentBonus}}积分</text>
       </view>
       <view class="row-between mini-program-content-box" @tap="checkMaCode">
         <view class="column">
@@ -311,7 +312,8 @@
     }
     .sub-top-box{
       border-bottom: $border;
-      padding-bottom: 10rpx;
+      padding-bottom: 14rpx;
+      padding-top: 6rpx;
       margin-bottom: 10rpx;
     }
     .shop-name-box{
@@ -401,6 +403,12 @@
       width: 120rpx;
       height: 120rpx;
       border: $border;
+    }
+    .qrcode-tag-box{
+      border:1px solid $color-primary;
+      border-radius: 4rpx;
+      padding: 5rpx;
+      line-height: $text-xxs;
     }
   }
 
