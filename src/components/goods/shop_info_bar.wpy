@@ -4,7 +4,7 @@
       <image class="avatar-box" src="{{subShop.avatar}}"/>
       <view class="column ml20">
         <text class="lg inline shop-name-box">{{subShop.name}}</text>
-        <text class="xs muted inline shop-address-box" @tap="address">{{subShop.address}}</text>
+        <text class="xs muted inline shop-address-box">{{subShop.address}}</text>
       </view>
     </view>
     <view class="action-box">
@@ -38,19 +38,6 @@
        */
       phone() {
         wepy.makePhoneCall({phoneNumber: this.subShop.phone});
-      },
-      /**
-       * 导航
-       */
-      address () {
-        const longitude = this.subShop.longitude;
-        const latitude = this.subShop.latitude;
-        wepy.openLocation({
-          latitude: Number(latitude),
-          longitude: Number(longitude),
-          name: this.subShop.name,
-          address: this.subShop.address
-        });
       }
     };
   }
