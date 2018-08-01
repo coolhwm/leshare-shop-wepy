@@ -5,7 +5,9 @@
       <view class="row-between">
         <view class="user-info-container row">
           <icon class="shop" color="gray" />
-          <text class="sm ml10">{{shopName}}</text>
+          <text class="sm ml10" wx:if="{{order.subShopName != null}}">{{order.subShopName}}</text>
+          <text class="sm ml10" wx:elif="{{order.subShop != null}}">{{order.subShop.name}}</text>
+          <text class="sm ml10" wx:else>{{shopName}}</text>
         </view>
         <text class="sm primary" wx:if="{{order.statusText}}">{{order.statusText}}{{order.paymentType == 0 ? '(线下支付)' : ''}}{{order.tableNum ? '(' + order.tableNum + '桌)': ''}}</text>
       </view>
