@@ -484,15 +484,19 @@ export default class order extends base {
   }
 
   /**
-   * 商品时候为虚拟商品
+   * 商品是否为虚拟商品
    */
   static _processIsDigit(detail) {
     const goodsList = detail.orderGoodsInfos;
     if (goodsList == null || goodsList.length < 1) {
       detail.isDigit = false;
       return;
+    } else if (goodsList[0].goods == null) {
+      detail.isDigit = false;
+      return;
+    } else {
+      detail.isDigit = detail.orderType == '90' || goodsList[0].goods.type == 'digit';
     }
-    detail.isDigit = detail.orderType == '90' || goodsList[0].goods.type == 'digit';
     if (detail.isDigit) {
       detail.digitType = goodsList[0].digitGoodsExchange.digitType;
     }

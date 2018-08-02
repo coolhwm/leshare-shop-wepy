@@ -5,7 +5,11 @@
 
     <!--待支付-->
     <view wx:if="{{mode === 'pay'}}" class="pay-box column-between">
-      <view class="header-box column-between">
+      <view class="header-box column-between" wx:if="{{subShopInfo != null}}">
+        <image class="logo-image" src="{{subShopInfo.avatar}}/medium"/>
+        <text class="lg">{{subShopInfo.name}}</text>
+      </view>
+      <view class="header-box column-between" wx:else>
         <image class="logo-image" src="{{shop.avatar}}/medium"/>
         <text class="lg">{{shop.name}}</text>
       </view>
@@ -87,6 +91,8 @@
   import Loading from '../../components/common/loading';
   import FormTips from '../../components/weui/tips';
   import topUp from '../../api/top_up';
+  import WxUtils from '../../utils/WxUtils';
+  import shop from '../../api/shop'
 
   @connect({
     shop: store.get('shop'),
@@ -107,13 +113,19 @@
         onlinePayText: '微信支付'
       },
       balanceText: '',
-      topUpRule: null
+      topUpRule: null,
+      subShopId: null,
+      subShopInfo: null
     };
-    async onLoad () {
+    async onLoad ({scene}) {
       await initWxAppSync();
       if (this.card.supplyBalance == 1 && this.member != null && this.member.balance > 0) {
         this.payType.onlinePayType = 'balance';
         this.payType.onlinePayText = '余额支付';
+      }
+      if (scene) {
+        this.subShopId = WxUtils.parseQrScene(scene, 'subShopId')
+        this.subShopInfo = await shop.subShopInfo(this.subShopId)
       }
       if (this.card.supplyBalance == 1 && this.member != null && this.member.balance == 0) {
         this.topUpRule = await topUp.getTopUp();
@@ -146,6 +158,9 @@
           param.couponPrice = this.selectedCoupon.price;
           param.couponUsedId = this.selectedCoupon.id;
           param.finalPrice = (this.dealPrice * 1 - this.selectedCoupon.price * 1).toFixed(2);
+        }
+        if (this.subShopId) {
+          param.subShopId = this.subShopId
         }
         try {
           // 创建订单
