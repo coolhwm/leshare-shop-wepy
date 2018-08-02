@@ -90,7 +90,7 @@
         </view>
       </view>
 
-      <!--子商户区域-->
+      <!--归属门店区域-->
       <view class="mt20">
         <ShopInfoBar :subShop.sync="subShop"/>
       </view>

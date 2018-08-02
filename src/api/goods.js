@@ -82,7 +82,7 @@ export default class goods extends base {
     return this.get(url).then(data => this._createGoodsCategories(data));
   }
   /***
-   * 子商户店铺商品列表
+   * 归属门店店铺商品列表
    */
   static subShopGoodsList(discount) {
     const url = `${this.baseUrl}/goods/sub_shop/list`;

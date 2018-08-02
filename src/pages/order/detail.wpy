@@ -33,7 +33,7 @@
       <InShopStatus :order.sync="order" />
     </block>
 
-    <!--子商户-->
+    <!--归属门店-->
     <view class="mb10 mt10">
       <ShopInfoBar :subShop.sync="subShop"/>
     </view>

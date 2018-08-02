@@ -105,7 +105,7 @@ export default class shop extends base {
   }
 
   /***
-   * 子商户列表
+   * 归属门店列表
    */
   static subShopList() {
     const url = `${this.baseUrl}/shops/sub_shop_list`;
@@ -114,14 +114,14 @@ export default class shop extends base {
     return page;
   }
   /***
-   * 推荐子商户列表
+   * 推荐归属门店列表
    */
   static RecommendationShopList() {
     const url = `${this.baseUrl}/shops/sub_shop_list?from=0&limit=5`;
     return this.post(url, {});
   }
   /***
-   * 子商户图文详情
+   * 归属门店图文详情
    */
   static subShopDetail(subShopId) {
     const url = `${this.baseUrl}/shops/details?sub_shop_id=${subShopId}`;
@@ -129,7 +129,7 @@ export default class shop extends base {
   }
 
   /***
-   * 子商户信息详情
+   * 归属门店信息详情
    */
   static subShopInfo(subShopId) {
     const url = `${this.baseUrl}/shops/sub_shop/${subShopId}`;
@@ -137,14 +137,14 @@ export default class shop extends base {
   }
 
   /***
-   * 子商户商品详情
+   * 归属门店商品详情
    */
   static goodsList(subShopId) {
     const url = `${this.baseUrl}/goods/list?sub_shop_id=${subShopId}&is_new=1`;
     return this.get(url)
   }
   /***
-   * 子商户商品详情
+   * 归属门店商品详情
    */
   static subShopGoodsList(subShopId) {
     const url = `${this.baseUrl}/goods/sub_shop/list?sub_shop_id=${subShopId}&is_new=1&from=0&limit=10&by=sales_volume`;
@@ -157,7 +157,7 @@ export default class shop extends base {
     })
   }
   /***
-   * 子商户标签
+   * 归属门店标签
    */
   static subShopTag() {
     const url = `${this.baseUrl}/shops/shop_tag`;
