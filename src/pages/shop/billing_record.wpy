@@ -3,7 +3,10 @@
     <block wx:for="{{page.list}}" wx:index="index" wx:for-item="detail" wx:key="index">
       <view class="row-between detail-box">
         <view class="column">
-          <text class="desc-box lg">{{detail.typeDesc}}</text>
+          <view class="row">
+            <text class="desc-box lg">{{detail.typeDesc}}</text>
+            <text wx:if="{{detail.subShopName}}" class="ml10 muted xs">{{detail.subShopName}}</text>
+          </view>
           <text class="muted xs">{{detail.createTime}}</text>
         </view>
         <text class="money-box {{detail.costMoney > '0' ? 'add-money' : ''}}">{{detail.costMoney}}</text>

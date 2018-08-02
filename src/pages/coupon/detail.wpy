@@ -3,7 +3,7 @@
   <view wx:if="{{init}}">
     <CouponItem :coupon.sync="coupon" />
 
-    <!--子商户-->
+    <!--归属门店-->
     <view class="shop-box" wx:if="{{subShop != null}}">
       <ShopInfoBar :subShop.sync="subShop"/>
     </view>

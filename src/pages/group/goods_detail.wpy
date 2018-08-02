@@ -17,7 +17,7 @@
     <!--商品基本信息展示及服务信息-->
     <GoodsMsgBar :rule.sync="rules"/>
 
-    <!--子商户区域-->
+    <!--归属门店区域-->
     <view class="mb10">
       <ShopInfoBar :subShop.sync="subShop"/>
     </view>
