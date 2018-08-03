@@ -112,11 +112,12 @@ const doInit = async (initHandler) => {
       // 清空等待队列
       console.info('[store] store init completed');
       loadingQueue.forEach(callback => callback());
+      isInit = true;
     } catch (err) {
       console.info('[store] store init fail, rest store status');
+      isInit = false;
       meta = {};
     } finally {
-      isInit = true;
       isLoading = false;
       loadingQueue = [];
     }

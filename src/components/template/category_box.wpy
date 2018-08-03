@@ -85,13 +85,13 @@
       await this.doLoad();
     }
     async doLoad () {
-      const categories = {...this.categories}
-      const list = categories.list.filter(item => item.bussType === this.bussType)
+      const categories = {...this.categories};
+      const list = categories.list.filter(item => item.bussType === this.bussType);
       if (list.length > 0) {
         categories.list = list
       }
       this.categoryTab = categories;
-      console.info(this.categoryTab, categories)
+      console.info(this.categoryTab, categories);
       // 加载商品列表
       this.page = goods.listFood(this.discount);
       await this.next();
