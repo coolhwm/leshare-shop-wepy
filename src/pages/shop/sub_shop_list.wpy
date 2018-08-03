@@ -35,10 +35,10 @@
 
     <!--列表展现-->
     <view wx:for="{{page.list}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="column {{item.goodsList.length > 0 ? 'shop-box' : 'no-goods-shop-box'}}">
-      <view class="row" style="align-items: flex-start;">
+      <view class="row" style="align-items: flex-start;"  @tap="shopDetail({{item}})">
         <image src="{{item.avatar}}" class="avatar-image-box mr10"/>
         <view class="column">
-          <view class="column" @tap="shopDetail({{item}})">
+          <view class="column">
             <view class="row-between">
               <view>
                 <text class="list-name-box">{{item.name}}</text>
@@ -48,7 +48,7 @@
               </view>
               <text class="muted xs row-end">{{item.distanceDesc}}</text>
             </view>
-            <view class="row-between" style="width: 540rpx">
+            <view class="row-between" style="width: 536rpx">
               <view class="column">
                 <view class="row" wx:if="{{item.tags}}">
                   <block wx:for="{{item.tags.TAG}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
@@ -75,7 +75,7 @@
 
           <view class="{{item.goodsList.length > 0 ? 'shop-goods-box' : ''}}">
             <view wx:for="{{item.goodsList}}" wx:for-index="goodsIndex" wx:for-item="goodsItem" wx:key="goodsIndex" class="column">
-              <view class="row" style="width: 540rpx">
+              <view class="row" style="width: 536rpx">
                 <icon class="sale xsmall" color="major"/>
                 <text class="goods-name-box xs">{{goodsItem.price}}元购{{goodsItem.name}}</text>
               </view>
@@ -329,7 +329,7 @@
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
-    width: 540rpx;
+    width: 536rpx;
   }
   .tab-icon-box{
     color: $color-normal;
@@ -372,7 +372,7 @@
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
-    width: 520rpx;
+    width: 536rpx;
   }
   .shop-box{
     padding: 20rpx 20rpx 6rpx;
@@ -392,6 +392,7 @@
     width: 150rpx;
     height: 150rpx;
     border: 1px solid #F7F7F7;
+    margin-right: 20rpx;
   }
   .goods-image-box{
     width: 110rpx;
