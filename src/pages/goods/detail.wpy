@@ -83,6 +83,13 @@
           <icon class="more" color="gray"/>
         </view>
 
+        <!--限制条件-->
+        <view class="comment-box row" @tap="comments" wx:if="{{detail.limitBonus || detail.limitCoupon || detail.maxCostBonus > 0}}">
+          <text class="muted mr20" wx:if="{{detail.limitBonus}}">▪ 不可使用积分</text>
+          <text class="muted mr20" wx:if="{{detail.limitCoupon}}">▪ 不可使用优惠券</text>
+          <text class="muted mr20" wx:if="{{detail.maxCostBonus > 0}}">▪ 最多使用{{detail.maxCostBonus}}积分</text>
+        </view>
+
         <!--评价向导-->
         <view class="comment-box row-between" @tap="comments" wx:if="{{isComment}}">
           <text class="muted">{{commentText}}</text>
