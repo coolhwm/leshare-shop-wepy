@@ -28,13 +28,13 @@
     </view>
 
     <view wx:if="{{location}}" class="address-box row">
-      <text class="sm" wx:if="{{address != null && address != 'null'}}">当前位置：{{address}}</text>
+      <text class="sm location-address-box" wx:if="{{address != null && address != 'null'}}">当前位置：{{address}}</text>
       <text class="sm" wx:else>当前位置：定位中</text>
       <text class="btn-box xs ml10" @tap="relocation">[重新定位]</text>
     </view>
 
     <!--列表展现-->
-    <view wx:for="{{page.list}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="shop-box column">
+    <view wx:for="{{page.list}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="column {{item.goodsList.length > 0 ? 'shop-box' : 'no-goods-shop-box'}}">
       <view class="row" style="align-items: flex-start;">
         <image src="{{item.avatar}}" class="avatar-image-box mr10"/>
         <view class="column">
@@ -315,11 +315,21 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .container{
+    width: 750rpx;
+    overflow: hidden;
+  }
   .sub-shop-top-box{
     position: relative;
     z-index: 1000;
     background-color: white;
     border-bottom: $border;
+  }
+  .location-address-box{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    width: 550rpx;
   }
   .tab-icon-box{
     color: $color-normal;
@@ -365,16 +375,23 @@
     width: 520rpx;
   }
   .shop-box{
-    padding: 20rpx 20rpx 16rpx;
+    padding: 20rpx 20rpx 6rpx;
+    background-color: white;
+  }
+  .no-goods-shop-box{
+    padding: 20rpx;
     background-color: white;
   }
   .shop-box + .shop-box{
     border-top: $border;
   }
+  .no-goods-shop-box + .no-goods-shop-box{
+    border-top: $border;
+  }
   .avatar-image-box{
     width: 140rpx;
     height: 140rpx;
-    border: $border;
+    border: 1px solid #F7F7F7;
   }
   .goods-image-box{
     width: 110rpx;
@@ -411,7 +428,7 @@
     border-radius: 10rpx;
   }
   .shop-goods-box{
-    border-top: $border;
+    border-top: 1px solid #F7F7F7;
     padding-top: 6rpx;
   }
 </style>

@@ -86,7 +86,6 @@
           <text wx:else>{{bonusText}}</text>
         </view>
       </view>
-
     </view>
 
     <!--信息汇总-->
@@ -135,6 +134,13 @@
         </view>
         <view class="weui-cell__ft">
         </view>
+      </view>
+    </view>
+
+    <!--限制信息-->
+    <view class="panel summary-box mb10">
+      <view class="limit-box" wx:for="{{limitations}}" wx:for-item="item" wx:key="index">
+        <text>▪ {{item.text}}</text>
       </view>
     </view>
 
@@ -786,6 +792,22 @@
           }
         });
         return reduceFee.toFixed(2);
+      },
+      limitations() {
+        const list = []
+        this.trade.orderGoodsInfos.forEach(item => {
+          if (item.limitCoupon) {
+            list.push({
+              text: `${item.goodsName}不得使用优惠券`
+            })
+          }
+          if (item.limitBonus) {
+            list.push({
+              text: `${item.goodsName}不得使用积分`
+            })
+          }
+        })
+        return list;
       }
     };
     components = {
