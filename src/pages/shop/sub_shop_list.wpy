@@ -48,7 +48,7 @@
               </view>
               <text class="muted xs row-end">{{item.distanceDesc}}</text>
             </view>
-            <view class="row-between" style="width: 550rpx">
+            <view class="row-between" style="width: 540rpx">
               <view class="column">
                 <view class="row" wx:if="{{item.tags}}">
                   <block wx:for="{{item.tags.TAG}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
@@ -75,7 +75,7 @@
 
           <view class="{{item.goodsList.length > 0 ? 'shop-goods-box' : ''}}">
             <view wx:for="{{item.goodsList}}" wx:for-index="goodsIndex" wx:for-item="goodsItem" wx:key="goodsIndex" class="column">
-              <view class="row" style="width: 550rpx">
+              <view class="row" style="width: 540rpx">
                 <icon class="sale xsmall" color="major"/>
                 <text class="goods-name-box xs">{{goodsItem.price}}元购{{goodsItem.name}}</text>
               </view>
@@ -329,7 +329,7 @@
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
-    width: 550rpx;
+    width: 540rpx;
   }
   .tab-icon-box{
     color: $color-normal;
@@ -389,8 +389,8 @@
     border-top: $border;
   }
   .avatar-image-box{
-    width: 140rpx;
-    height: 140rpx;
+    width: 150rpx;
+    height: 150rpx;
     border: 1px solid #F7F7F7;
   }
   .goods-image-box{
