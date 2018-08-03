@@ -20,18 +20,21 @@
 
   export default class ShopInfoBar extends wepy.component {
     props = {
-      subShop: {}
+      subShop: {},
+      isSubShop: {}
     };
     methods = {
       async code() {
-        const code = this.subShop.maCodeUrl;
-        if (code == null) {
-          return;
+        if (this.isSubShop) {
+          const code = this.subShop.maCodeUrl;
+          if (code == null) {
+            return;
+          }
+          await Tips.modal('长按二维码跳转商家小程序');
+          wepy.previewImage({
+            urls: [this.subShop.maCodeUrl]
+          })
         }
-        await Tips.modal('长按二维码跳转商家小程序');
-        wepy.previewImage({
-          urls: [this.subShop.maCodeUrl]
-        })
       },
       /**
        * 打电话

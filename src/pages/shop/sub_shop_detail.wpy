@@ -262,6 +262,8 @@
   @import "../../styles/variable";
   .sub-shop-detail-box{
     $swiper-height: 400rpx;
+    width: 750rpx;
+    overflow: hidden;
     .goods-swiper{
       height: $swiper-height;
       width: 750rpx;
