@@ -140,14 +140,14 @@ export default class shop extends base {
    * 归属门店商品详情
    */
   static goodsList(subShopId) {
-    const url = `${this.baseUrl}/goods/list?sub_shop_id=${subShopId}&is_new=1`;
+    const url = `${this.baseUrl}/goods/list?rel_shop_id=${subShopId}&is_new=1`;
     return this.get(url)
   }
   /***
    * 归属门店商品详情
    */
   static subShopGoodsList(subShopId) {
-    const url = `${this.baseUrl}/goods/sub_shop/list?sub_shop_id=${subShopId}&is_new=1&from=0&limit=10&by=sales_volume`;
+    const url = `${this.baseUrl}/goods/list?sub_shop_id=${subShopId}&is_new=1&from=0&limit=10&by=sales_volume`;
     return this.get(url).then(data => {
       data.forEach(item => {
         item.isPrice = true
