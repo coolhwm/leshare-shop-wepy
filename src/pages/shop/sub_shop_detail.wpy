@@ -209,7 +209,7 @@
        * 预览轮播图
        */
       previewDetailSwiper() {
-        const urls = this.shop.images.map(value => value.url);
+        const urls = this.subShopInfo.images.map(value => value.url);
         wepy.previewImage({
           urls: urls
         });
