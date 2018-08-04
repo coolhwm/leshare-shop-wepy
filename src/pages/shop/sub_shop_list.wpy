@@ -34,7 +34,7 @@
     </view>
 
     <!--列表展现-->
-    <view wx:for="{{page.list}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="column {{item.goodsList.length > 0 ? 'shop-box' : 'no-goods-shop-box'}}">
+    <view wx:for="{{page.list}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="column shop-box">
       <view class="row" style="align-items: flex-start;"  @tap="shopDetail({{item}})">
         <!--图片-->
         <image src="{{item.avatar}}" class="avatar-image-box mr10"/>
