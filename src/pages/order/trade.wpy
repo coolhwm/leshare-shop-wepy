@@ -138,7 +138,7 @@
     </view>
 
     <!--限制信息-->
-    <view class="panel summary-box mb10">
+    <view class="panel summary-box mb10" wx:if="{{limitations.length > 0}}">
       <view class="limit-box" wx:for="{{limitations}}" wx:for-item="item" wx:key="index">
         <text>▪ {{item.text}}</text>
       </view>

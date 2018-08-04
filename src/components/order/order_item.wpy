@@ -3,7 +3,7 @@
     <!--顶栏/基本信息-->
     <view class="order-header-container colunm">
       <view class="row-between">
-        <view class="user-info-container row">
+        <view class="user-info-container row" @tap="shopDetail({{order}})">
           <icon class="shop" color="gray" />
           <text class="sm ml10" wx:if="{{order.subShopName != null}}">{{order.subShopName}}</text>
           <text class="sm ml10" wx:elif="{{order.subShop != null}}">{{order.subShop.name}}</text>
@@ -202,6 +202,9 @@
           return;
         }
         this.$root.$navigate(`/pages/order/detail?orderId=${orderId}`);
+      },
+      shopDetail(order) {
+        this.$root.$navigate(`/pages/shop/sub_shop_detail?subShopId=${order.subShopId}`)
       }
     };
     components = {
