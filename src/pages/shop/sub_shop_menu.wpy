@@ -7,8 +7,8 @@
     <MenuBox bussType="food" heightText="160rpx" :shopId.sync="shopId"/>
 
 
-    <view class="menu-button-box">
-      <button @tap="maCode">前往商家小程序</button>
+    <view class="menu-button-box row-center column-center">
+      <text class="xxl white" @tap="maCode">前往商家小程序</text>
     </view>
   </view>
 </template>
@@ -61,9 +61,7 @@
     bottom: 0;
     left: 0;
     width: 750rpx;
-    button{
-      background-color: $color-primary;
-      color: white;
-    }
+    height: 100rpx;
+    background-color: $color-primary;
   }
 </style>
