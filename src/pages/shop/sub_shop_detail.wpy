@@ -95,6 +95,19 @@
       </view>
     </vierw>
 
+    <vierw class="column signboard-box mt10" wx:if="{{detail.goodsDetails.length > 0}}">
+      <view class="row-between sub-top-box">
+        <view class="row">
+          <icon class="square-shop xsmall" style="color: #F8C6CF;"/>
+          <text class="ml10">商家详情</text>
+        </view>
+      </view>
+      <view class="mt10">
+        <!--详情区域-->
+        <DetailList :detail.sync="detail" :isShowTitle="isShowTitle"/>
+      </view>
+    </vierw>
+
     <vierw class="column signboard-box mt10">
       <view class="row-between sub-top-box">
         <view class="row">
@@ -160,7 +173,8 @@
   import shop from '../../api/shop'
   import GoodsRow from '../../components/template/goods/goods_row';
   import Tips from '../../utils/Tips';
-  import GoodsMini from '../../components/goods/goods_mini_box'
+  import GoodsMini from '../../components/goods/goods_mini_box';
+  import DetailList from '../../components/goods/detail_list';
 
   @connect({
     shop: store.get('shop')
@@ -172,7 +186,11 @@
       subShopId: null,
       goodsList: null,
       subShopGoodsList: null,
-      recommendatioShopList: null
+      recommendatioShopList: null,
+      detail: {
+        goodsDetails: []
+      },
+      isShowTitle: false
     };
     async onLoad ({subShopId}) {
       await initWxApp();
@@ -185,7 +203,7 @@
         shop.RecommendationShopList()
       ]);
       this.subShopInfo = subShopInfo;
-      this.subShopDetail = subShopDetail;
+      this.detail.goodsDetails = subShopDetail;
       this.goodsList = goodsList;
       this.subShopGoodsList = subShopGoodsList;
       this.recommendatioShopList = recommendatioShopList;
@@ -249,7 +267,8 @@
     components = {
       Loading: Loading,
       GoodsRow: GoodsRow,
-      GoodsMini: GoodsMini
+      GoodsMini: GoodsMini,
+      DetailList: DetailList
     };
     mixins = [base];
     config = {
@@ -315,12 +334,12 @@
     .sub-top-box{
       border-bottom: $border;
       padding-bottom: 14rpx;
-      padding-top: 6rpx;
+      padding-top: 10rpx;
       margin-bottom: 10rpx;
     }
     .sale-top-box{
       padding-bottom: 14rpx;
-      padding-top: 6rpx;
+      padding-top: 10rpx;
     }
     .shop-name-box{
       font-size: 40rpx;
@@ -352,6 +371,10 @@
     .signboard-box{
       background-color: white;
       padding: 10rpx;
+      .detail-box{
+        margin-top: 0;
+        border-top: none;
+      }
     }
     .mini-box{
       width: 750rpx;
