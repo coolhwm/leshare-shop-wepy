@@ -68,14 +68,16 @@
                   <text style="height: 38rpx;"></text>
                 </view>
               </view>
-
-
             </view>
           </view>
 
           <view class="{{item.goodsList.length > 0 ? 'shop-goods-box' : ''}}">
             <view wx:for="{{item.goodsList}}" wx:for-index="goodsIndex" wx:for-item="goodsItem" wx:key="goodsIndex" class="column">
-              <view class="row" style="width: 536rpx">
+              <view class="row" style="width: 536rpx" wx:if="{{goodsItem.paymentType === 'bonus'}}">
+                <icon class="square-coupon xsmall" style="color: #F3514F"/>
+                <text class="goods-name-box xs">{{goodsItem.price}}积分兑{{goodsItem.name}}</text>
+              </view>
+              <view class="row" style="width: 536rpx" wx:else>
                 <icon class="sale xsmall" color="major"/>
                 <text class="goods-name-box xs">{{goodsItem.price}}元购{{goodsItem.name}}</text>
               </view>
@@ -329,7 +331,7 @@
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
-    width: 536rpx;
+    max-width: 536rpx;
   }
   .tab-icon-box{
     color: $color-normal;
