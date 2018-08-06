@@ -51,7 +51,7 @@
     async update () {
       this.detail = await assist.assistInfo(this.assistId);
       this.goodsDetail = this.detail.goods;
-      if (!this.detail.isHelp && this.detail.assistRuleTip) await Tips.modal(this.detail.assistRuleTip);
+      if (this.detail.isHelp && this.detail.assistRuleTip) await Tips.modal(this.detail.assistRuleTip);
       this.loaded();
     }
     onShow() {
