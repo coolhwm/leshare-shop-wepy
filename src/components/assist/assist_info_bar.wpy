@@ -22,7 +22,12 @@
         <span>{{assist.assistRuleTip}}</span>
         <view class="btn-box" @tap="want({{assist}})">我也要</view>
       </view>
-      <view wx:else class="btn-box" @tap="help({{assist.ruleId}}, {{assist.id}})">为TA助力</view>
+      <block wx:else>
+        <button class="btn-box"  open-type="getPhoneNumber" bindgetphonenumber="regist" wx:if="{{member == null}}">
+          为TA助力
+        </button>
+        <view wx:else class="btn-box" @tap="help()">为TA助力</view>
+      </block>
     </view>
     <view class="column-center mt20">
       <view class="row">
@@ -42,33 +47,48 @@
 
 <script>
   import wepy from 'wepy';
-  import { checkUserInfoWithError } from '../../api/wx_auth';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import { checkUserInfoWithError, handleGetPhoneNumber } from '../../api/wx_auth';
   import countdown from '../../mixins/countdown';
   import assist from '../../api/assist';
   import Tips from '../../utils/Tips';
 
+  @connect({
+    member: store.get('member')
+  })
   export default class assistInfoBar extends wepy.component {
     props = {
       assist: {}
     };
     data = {
     };
+    async onLoad () {
+      await store.wait();
+    }
+    async doHelp () {
+      await checkUserInfoWithError();
+      const data = {
+        id: this.assist.id,
+        ruleId: this.assist.ruleId
+      };
+      try {
+        await Tips.loading();
+        await assist.assistActivity(data);
+        Tips.loaded();
+        this.$emit('help', this.assist.id);
+      } catch (err) {
+        await Tips.loaded();
+        await Tips.modal(err.message);
+      }
+    }
     methods = {
-      async help (ruleId, assistId) {
-        await checkUserInfoWithError();
-        const data = {
-          id: assistId,
-          ruleId: ruleId
-        }
-        try {
-          await Tips.loading();
-          await assist.assistActivity(data);
-          Tips.loaded();
-          this.$emit('help', assistId);
-        } catch (err) {
-          await Tips.loaded();
-          await Tips.modal(err.message);
-        }
+      async regist({detail}) {
+        await handleGetPhoneNumber(detail);
+        await this.doHelp();
+      },
+      async help () {
+        await this.doHelp();
       },
       async want (assist) {
         this.$root.$navigate(`/pages/assist/goods_detail?ruleId=${assist.ruleId}`);

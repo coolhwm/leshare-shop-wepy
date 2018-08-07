@@ -113,6 +113,7 @@ export default class Cart {
       goodsPrice = goods.sellPrice;
       originalPrice = goods.originalPrice;
     }
+    console.info(goods);
     return {
       goodsId: goods.id,
       goodsSku: selText.skuSelected,
@@ -134,6 +135,7 @@ export default class Cart {
       goodsType: goods.type,
       limitCoupon: goods.limitCoupon == null ? false : goods.limitCoupon,
       limitBonus: goods.limitBonus == null ? false : goods.limitBonus,
+      maxCostBonus: goods.maxCostBonus == null ? false : goods.maxCostBonus,
       paymentType: goods.paymentType
     };
   }

@@ -25,19 +25,30 @@
     <view wx:elif="{{rule.limitCount <= rule.joinCount}}" class="column-center btn-disabled">
       <text>已售罄</text>
     </view>
-    <view wx:else class="column-center btn-assist" @tap="begin">
-      <text>发起助力</text>
-    </view>
+    <block wx:else>
+      <button class="column-center btn-assist" plain  style="border-radius: 0" open-type="getPhoneNumber" bindgetphonenumber="regist" wx:if="{{member == null}}">
+        <text>发起助力</text>
+      </button>
+      <view wx:else  class="column-center btn-assist" @tap="begin">
+        <text>发起助力</text>
+      </view>
+    </block>
   </view>
 </template>
 
 <script>
   import favorite from '../../api/favorite';
+  import { connect } from 'wepy-redux';
+  import { handleGetPhoneNumber } from '../../api/wx_auth';
+  import store from '../../store/utils';
   import router from '../../mixins/router';
   import wepy from 'wepy';
   import Tips from '../../utils/Tips';
   import assist from '../../api/assist'
 
+  @connect({
+    member: store.get('member')
+  })
   export default class AssistBar extends wepy.component {
     props = {
       rule: {}
@@ -47,6 +58,25 @@
       state: 'begin',
       id: ''
     };
+    async onLoad () {
+      await store.wait();
+    }
+    async doBegin() {
+      try {
+        await Tips.loading();
+        const data = {
+          ruleId: this.rule.id
+        };
+        const result = await assist.assistActivity(data);
+        await Tips.success('开启助力');
+        Tips.loaded();
+        this.$root.$redirect(`../assist/assist_detail?assistId=${result.id}`);
+      } catch (err) {
+        await Tips.loaded();
+        await Tips.modal(err.message);
+        wepy.navigateBack();
+      }
+    }
     methods = {
       async fav() {
         if (this.isFav) {
@@ -62,21 +92,12 @@
       home () {
         this.$root.$switch(`/pages/home/template`)
       },
+      async regist({detail}) {
+        await handleGetPhoneNumber(detail);
+        await this.doBegin();
+      },
       async begin() {
-        try {
-          await Tips.loading();
-          const data = {
-            ruleId: this.rule.id
-          }
-          const result = await assist.assistActivity(data);
-          await Tips.success('开启助力');
-          Tips.loaded();
-          this.$root.$redirect(`../assist/assist_detail?assistId=${result.id}`);
-        } catch (err) {
-          await Tips.loaded();
-          await Tips.modal(err.message);
-          wepy.navigateBack();
-        }
+        await this.doBegin();
       }
     };
     computed = {

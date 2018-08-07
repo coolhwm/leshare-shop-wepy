@@ -138,9 +138,9 @@
     </view>
 
     <!--限制信息-->
-    <view class="panel summary-box mb10" wx:if="{{limitations.length > 0}}">
-      <view class="limit-box" wx:for="{{limitations}}" wx:for-item="item" wx:key="index">
-        <text>▪ {{item.text}}</text>
+    <view class="panel summary-box mb10" wx:if="{{limits.length > 0}}">
+      <view class="limit-box" wx:for="{{limits}}" wx:for-item="item" wx:key="index">
+        <text class="sm muted">▪ {{item}}</text>
       </view>
     </view>
 
@@ -213,7 +213,9 @@
       type: '', // buy/group/join/bargain
       isLimitCoupon: false,
       isLimitBonus: false,
-      isSubmit: false
+      isSubmit: false,
+      limits: [],
+      goodsLimitMaxBonus: 0
     };
     cartManager = Cart.create();
     async onLoad (params, {preload}) {
@@ -243,6 +245,7 @@
       }
       // 刷新价格
       this.updateTradePrice();
+      this.updateLimits();
       // 可用卡券
       if (this.type !== 'group' && this.type !== 'join' && this.type !== 'bargain') {
         this.coupons = await coupon.available(this.trade.orderGoodsInfos);
@@ -257,6 +260,20 @@
     async upDateMember () {
       await store.refresh('member');
     };
+    updateLimits() {
+      this.trade.orderGoodsInfos.forEach(item => {
+        if (item.limitCoupon) {
+          this.limits.push(`${item.goodsName}不得使用优惠券`);
+        }
+        if (item.limitBonus) {
+          this.limits.push(`${item.goodsName}不得使用优惠券`);
+        }
+        if (item.maxCostBonus) {
+          this.limits.push(`${item.goodsName}仅可使用${item.maxCostBonus}积分`);
+          this.goodsLimitMaxBonus += item.maxCostBonus;
+        }
+      });
+    }
     methods = {
       input({detail}) {
         this.trade.message = detail.value;
@@ -772,8 +789,10 @@
           money: 0,
           text: `请选择`
         }];
+        // 计算最多使用的积分，按照积分限制为主
+        const maxBonus = this.goodsLimitMaxBonus > 0 ? this.goodsLimitMaxBonus : maxReduceBonus;
         for (let curBonus = costBonusUnit, curMoney = reduceMoney;
-             curBonus <= maxReduceBonus && curMoney <= orderPrice && curBonus <= bonus;
+             curBonus <= maxBonus && curMoney <= orderPrice && curBonus <= bonus;
              curBonus += costBonusUnit, curMoney += reduceMoney) {
           list.push({
             bonus: curBonus,
@@ -802,22 +821,6 @@
         });
         return reduceFee.toFixed(2);
       },
-      limitations() {
-        const list = []
-        this.trade.orderGoodsInfos.forEach(item => {
-          if (item.limitCoupon) {
-            list.push({
-              text: `${item.goodsName}不得使用优惠券`
-            })
-          }
-          if (item.limitBonus) {
-            list.push({
-              text: `${item.goodsName}不得使用积分`
-            })
-          }
-        })
-        return list;
-      }
     };
     components = {
       Tips: FormTips,

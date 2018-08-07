@@ -146,6 +146,7 @@ export default class order extends base {
         discountText: goods.discountText,
         goodsType: goods.goodsType,
         limitCoupon: goods.limitCoupon,
+        maxCostBonus: goods.maxCostBonus,
         limitBonus: goods.limitBonus,
         paymentType: goods.paymentType
       };
