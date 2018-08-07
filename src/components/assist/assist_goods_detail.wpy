@@ -4,9 +4,10 @@
       <image src="{{detail.imageUrl}}" mode="aspectFill"/>
     </view>
     <view class="column detail-goods-msg-box">
-      <text class="detail-goods-name lg">{{detail.ruleName}}</text>
+      <text class="lg">{{detail.ruleName}}</text>
+      <text class="xs muted">{{detail.ruleTip}}</text>
       <view class="column">
-        <view class="row mt10">
+        <view class="row">
           <text class="detail-price-box">￥0.00</text>
           <text class="muted sellPrice-box sm">￥{{detail.originalPrice}}</text>
         </view>

@@ -157,6 +157,7 @@
     <view class="tarde-action-bar-placeholder">
     </view>
 
+    <ButtonWidget/>
   </view>
 </template>
 
@@ -184,6 +185,7 @@
   // import WxUtils from '../../utils/WxUtils';
   import Loading from '../../components/common/loading';
   import Cart from '../../utils/Cart';
+  import ButtonWidget from '../../components/template/button_widget';
 
   @connect({
     shop: store.get('shop'),
@@ -823,7 +825,8 @@
       AddressSelector: AddressSelector,
       OrderItem: OrderItem,
       InShopTab: InShopTab,
-      Loading: Loading
+      Loading: Loading,
+      ButtonWidget: ButtonWidget
     };
     mixins = [base];
     config = {

@@ -15,6 +15,12 @@
 
     <view class="column shop-top-box">
       <view class="column-center top-box">
+        <view class="share-box">
+          <button open-type="share" plain class="column-center">
+            <icon class="share-round" color="gray"/>
+            <text class="muted sm">分享</text>
+          </button>
+        </view>
         <text class="shop-name-box mb10">{{subShopInfo.name}}</text>
         <view>
           <block wx:for="{{subShopInfo.tags.NORMAL}}" wx:for-item="item" wx:for-index="index" wx:key="index">
@@ -329,6 +335,11 @@
         padding: 5rpx;
         line-height: $text-xxs;
         margin: 0 5rpx;
+      }
+      .share-box{
+        position: absolute;
+        border-left: $border;
+        right: 30rpx;
       }
     }
     .sub-top-box{
