@@ -4,19 +4,16 @@
       <image class="top-avatar-box" src="{{assist.avatar}}" />
       <view class="row-between" style="flex: 1;">
         <text class="mr20 xl">{{assist.nickName}}</text>
-        <text class="primary xxl" wx:if="{{assist.remainder > 0}}">仅剩{{assist.remainder}}份</text>
+        <text class="primary xxl" wx:if="{{assist.remainder > 0 && assist.status !== 'SUCCESS'}}">仅剩{{assist.remainder}}份</text>
       </view>
     </view>
-    <view class="column-center" wx:if="{{assist.status == 'SUCCESS'}}">
-      <text class="xxl">该活动已成功</text>
-    </view>
-    <view class="column-center" wx:elif="{{assist.status == 'TIMEOUT'}}">
+    <view class="column-center" wx:if="{{assist.status == 'TIMEOUT'}}">
       <text class="xxl primary">该活动已结束</text>
     </view>
     <view class="column-center" wx:elif="{{assist.limitCount <= assist.successCount}}">
       <text class="xxl primary">来迟了，奖品已被领光</text>
     </view>
-    <view class="column-center" wx:elif="{{assist.status !== 'TIMEOUT'}}">
+    <view class="column-center" wx:elif="{{assist.status !== 'TIMEOUT' && assist.status !== 'SUCCESS'}}">
       <button wx:if="{{assist.isHead}}" class="btn-box" open-type="share">分享助力</button>
     </view>
     <view class="column-center" wx:if="{{!assist.isHead && (assist.status !== 'TIMEOUT' && !assist.isTimeOut && assist.limitCount > assist.successCount)}}">
