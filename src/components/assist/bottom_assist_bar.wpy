@@ -22,8 +22,8 @@
     <view wx:elif="{{rule.assist}}" class="column-center btn-disabled">
       <text>限助力{{rule.perLimitCount}}次</text>
     </view>
-    <view wx:elif="{{rule.limitCount <= rule.joinCount}}" class="column-center btn-disabled">
-      <text>已售罄</text>
+    <view wx:elif="{{rule.limitCount <= rule.successCount}}" class="column-center btn-disabled">
+      <text>活动已结束</text>
     </view>
     <block wx:else>
       <button class="column-center btn-assist" plain  style="border-radius: 0" open-type="getPhoneNumber" bindgetphonenumber="regist" wx:if="{{member == null}}">

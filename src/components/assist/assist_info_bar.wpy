@@ -4,11 +4,11 @@
       <image class="top-avatar-box" src="{{assist.avatar}}" />
       <view>
         <text class="mr20 xl">{{assist.nickName}}</text>
-        <text class="primary">助力免费得{{assist.ruleName}}</text>
+        <text class="primary">目前已有{{assist.joinCount}}人正在参与活动，剩余{{assist.remainder}}份可领取，快邀请好友为你助力吧</text>
       </view>
     </view>
-    <view class="column-center" wx:if="{{assist.status == 'TIMEOUT'}}">
-      <text>本活动已过期</text>
+    <view class="column-center" wx:if="{{assist.status == 'TIMEOUT' || assist.limitCount <= assist.successCount}}">
+      <text>本活动已结束</text>
     </view>
     <view class="column-center" wx:elif="{{assist.status == 'SUCCESS'}}">
       <text>助力活动已成功</text>
@@ -16,10 +16,10 @@
     <view class="column-center" wx:elif="{{assist.status !== 'TIMEOUT'}}">
       <button wx:if="{{assist.isHead}}" class="btn-box" open-type="share">分享助力</button>
     </view>
-    <view class="column-center" wx:if="{{!assist.isHead && (assist.status !== 'TIMEOUT' && !assist.isTimeOut)}}">
+    <view class="column-center" wx:if="{{!assist.isHead && (assist.status !== 'TIMEOUT' && !assist.isTimeOut && assist.limitCount > assist.successCount)}}">
       <view wx:if="{{assist.isHelp}}" class="btn-box" @tap="want({{assist}})">我也要</view>
       <view wx:elif="{{assist.assist}}" class="muted column-center">
-        <span>{{assist.assistRuleTip}}</span>
+        <text>{{assist.assistRuleTip}}</text>
         <view class="btn-box" @tap="want({{assist}})">我也要</view>
       </view>
       <block wx:else>
@@ -31,7 +31,7 @@
     </view>
     <view class="column-center mt20">
       <view class="row">
-        <text class="muted">──────</text><text class="muted ml10 mr10">{{assist.joinCount}}人助力</text><text class="muted">──────</text>
+        <text class="muted">──────</text><text class="muted ml10 mr10">{{assist.helpCount}}人助力</text><text class="muted">──────</text>
       </view>
       <view class="row details-box mt10">
         <block wx:for="{{assist.details}}" wx:for-item="detail" wx:key="index">

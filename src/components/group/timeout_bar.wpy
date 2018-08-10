@@ -10,7 +10,7 @@
     <view class="column-center time-box" wx:elif="{{rule.isBegin}}">
       <text class="white">活动未开始</text>
     </view>
-    <view class="column-center time-box" wx:elif="{{rule.isTimeOut}}">
+    <view class="column-center time-box" wx:elif="{{rule.isTimeOut || rule.limitCount <= rule.successCount}}">
       <text class="white">活动已结束</text>
     </view>
     <view class="column-center time-box" wx:else>
