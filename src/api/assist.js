@@ -93,8 +93,8 @@ export default class assist extends base {
     };
     const BARGAIN_ACTION_FUNCNAME = {
       PROCESSING: 'help',
-      TIMEOUT: 'detail',
-      ORDERED: 'detail'
+      TIMEOUT: 'ruleDetail',
+      SUCCESS: 'ruleDetail'
     };
     const action = {};
     action.name = BARGAIN_ACTION_NAME[data.status];

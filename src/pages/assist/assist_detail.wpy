@@ -5,11 +5,11 @@
     <!--商品详情栏-->
     <GoodsDetail :detail.sync="detail"/>
 
-    <!--砍价信息-->
-    <AssistInfoBar :assist.sync="detail" @help.user="help"/>
+    <!--助力信息-->
+    <AssistInfoBar :assist.sync="detail" @help.user="help" @upDate.user="upDate"/>
 
-    <!--砍价玩法栏-->
-    <BargainRuleBar title="助力玩法" firstBottom="发起助力" secondBottom="帮忙助力" thirdTop="人数达标" thirdBottom="获取商品"/>
+    <!--助力玩法栏-->
+    <BargainRuleBar title="助力玩法" ruleTip="（数量有限，送完即止）" firstBottom="发起助力" secondBottom="帮忙助力" thirdTop="人数达标" thirdBottom="获取商品"/>
 
     <!--商品详情-->
     <DetailList :detail.sync="goodsDetail" />
@@ -91,6 +91,9 @@
           content: `您已为好友助力成功!`
         };
         this.$invoke('Notice', 'open', notice);
+        this.update(assistId)
+      },
+      upDate (assistId) {
         this.update(assistId)
       }
     };

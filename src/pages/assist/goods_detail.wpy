@@ -23,7 +23,7 @@
     </view>
 
     <!--砍价玩法栏-->
-    <BargainRuleBar title="助力玩法" firstBottom="发起助力" secondBottom="帮忙助力" thirdTop="人数达标" thirdBottom="获取商品"/>
+    <BargainRuleBar title="助力玩法" ruleTip="（数量有限，送完即止）" firstBottom="发起助力" secondBottom="帮忙助力" thirdTop="人数达标" thirdBottom="获取商品"/>
 
     <!--评论预览-->
     <CommentPreview :goodsId.sync="goodsId"/>

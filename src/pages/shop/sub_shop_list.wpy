@@ -27,12 +27,6 @@
       </view>
     </view>
 
-    <view wx:if="{{location}}" class="address-box row">
-      <text class="sm location-address-box" wx:if="{{address != null && address != 'null'}}">当前位置：{{address}}</text>
-      <text class="sm" wx:else>当前位置：定位中</text>
-      <text class="btn-box xs ml10" @tap="relocation">[重新定位]</text>
-    </view>
-
     <!--列表展现-->
     <view wx:for="{{page.list}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="column shop-box">
       <view class="row" style="align-items: flex-start;"  @tap="shopDetail({{item}})">
@@ -151,9 +145,6 @@
       } finally {
         const tags = await shop.subShopTag();
         this.tagList = _.extend(this.tagList, tags);
-        if (this.location) {
-          this.position();
-        }
         await this.updateList();
       }
     };
@@ -161,9 +152,6 @@
       if (this.isLocation) {
         this.location = await wepy.getLocation();
         this.isLocation = false;
-        if (this.location) {
-          this.position();
-        }
         await this.updateList();
       }
     };
@@ -191,13 +179,6 @@
     async updateList() {
       this.page = await shop.subShopList();
       await this.next();
-    }
-    // 重新定位
-    async position() {
-      const { latitude, longitude } = this.location;
-      const addressInfo = await map.reverse(latitude, longitude);
-      this.address = addressInfo.current.display;
-      this.$apply();
     }
     methods = {
       // 选取tab
@@ -280,11 +261,6 @@
         this.isLocation = true;
         // this.location = await wepy.getLocation()
         // await this.updateList();
-      },
-      async relocation() {
-        await Tips.loading();
-        await this.position();
-        await Tips.loaded();
       },
       shopDetail(subShop) {
         this.$navigate(`/pages/shop/sub_shop_detail?subShopId=${subShop.shopId}`);

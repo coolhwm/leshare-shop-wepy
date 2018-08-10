@@ -49,8 +49,8 @@
     help (detail) {
       this.$root.$navigate(`/pages/assist/assist_detail?assistId=${detail.activityId}`)
     }
-    detail(detail) {
-      this.$root.$navigate(`/pages/assist/assist_detail?assistId=${detail.activityId}`)
+    ruleDetail(detail) {
+      this.$root.$navigate(`/pages/assist/goods_detail?ruleId=${detail.ruleId}`)
     }
     methods = {
       assistDetail(activityId) {

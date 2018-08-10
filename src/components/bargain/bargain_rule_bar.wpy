@@ -1,6 +1,9 @@
 <template>
   <view class="column group-info-box">
-    <text class="top-box">{{title}}</text>
+    <view class="top-box">
+      <text>{{title}}</text>
+      <text class="xs muted" wx:if="{{ruleTip}}">{{ruleTip}}</text>
+    </view>
     <view class="row-around content-box">
       <view class="column-center info-rule-box">
         <icon class="selected large" color="gray"/>
@@ -52,6 +55,9 @@
       },
       thirdBottom: {
         default: '下单购买'
+      },
+      ruleTip: {
+        detail: null
       }
     };
     methods = {
