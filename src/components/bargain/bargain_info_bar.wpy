@@ -48,7 +48,9 @@
       <view class="help-text" wx:if="{{bargain.isHelp || bargain.isFloor}}">
         <text class="{{bargain.isHelp ? 'primary' : ''}}">{{bargain.helpText}}</text>
       </view>
-      <view wx:if="{{!bargain.isHelp && !bargain.isFloor && bargain.status != 'ORDERED' && bargain.status != 'TIMEOUT'}}" class="btn-box" @tap="help({{bargain.rule.id}}, {{bargain.id}})">帮TA砍一刀</view>
+      <block wx:if="{{!bargain.isHelp && !bargain.isFloor && bargain.status != 'ORDERED' && bargain.status != 'TIMEOUT'}}">
+        <view  class="btn-box" @tap="help({{bargain.rule.id}}, {{bargain.id}})">帮TA砍一刀</view>
+      </block>
       <view wx:elif="{{bargain.isHelp}}" class="btn-box" @tap="want({{bargain.rule.id}})">我也要</view>
       <view wx:elif="{{bargain.status == 'ORDERED' || bargain.status == 'TIMEOUT'}}" class="btn-end-box">砍价已结束</view>
     </view>
