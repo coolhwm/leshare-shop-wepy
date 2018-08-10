@@ -135,7 +135,7 @@
     computed = {
       subShop() {
         if (this.rules && this.rules.goods) {
-          return this.rules.goods.subShop != null ? this.rules.goods.subShop : this.shop;
+          return this.rules.goods.relShop != null ? this.rules.goods.relShop : this.shop;
         }
       },
       detail() {

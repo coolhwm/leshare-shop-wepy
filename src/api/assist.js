@@ -46,6 +46,8 @@ export default class assist extends base {
     data.endTime = data.dueTime;
     data.isTimeOut = new Date(data.endTime).getTime() < new Date().getTime();
     data.isBegin = new Date(data.startTime).getTime() > new Date().getTime();
+    data.remainder = data.limitCount * 1 - data.successCount * 1;
+    if (data.remainder < 0) data.remainder = 0
     return data
   }
 
@@ -53,8 +55,10 @@ export default class assist extends base {
    * 处理助力详情
    */
   static _processAssistInfo(data) {
-    data.joinCount = data.details.length
-    data.joinRate = data.joinCount / data.leastAssist
+    data.helpCount = data.details.length;
+    data.joinRate = data.helpCount / data.leastAssist;
+    data.remainder = data.limitCount * 1 - data.successCount * 1;
+    if (data.remainder < 0) data.remainder = 0
     data.originalPrice = Lang._fixedPrice(data.originalPrice);
     data.isTimeOut = new Date(data.dueTime).getTime() < new Date().getTime()
     const { id: userId } = wepy.$instance.globalData.auth['user'];

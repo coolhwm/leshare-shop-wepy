@@ -38,7 +38,7 @@
 </template>
 <script>
   import wepy from 'wepy';
-  import { initWxApp } from '../../api/wx_auth';
+  import { initWxAppSync } from '../../api/wx_auth'
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import base from '../../mixins/base';
@@ -68,7 +68,7 @@
       list: []
     };
     async onLoad ({ruleId}) {
-      await initWxApp();
+      await initWxAppSync();
       this.ruleId = ruleId;
       await this.update(this.ruleId);
     };
@@ -83,7 +83,7 @@
       this.ruleId = ruleId;
       this.rule = await assist.rule(this.ruleId);
       this.goodsDetail = this.rule.goods;
-      this.subShop = this.goodsDetail.subShop != null ? this.goodsDetail.subShop : this.shop;
+      this.subShop = this.goodsDetail.relShop != null ? this.goodsDetail.relShop : this.shop;
       this.goodsId = this.rule.goods.id;
       this.loaded();
     }

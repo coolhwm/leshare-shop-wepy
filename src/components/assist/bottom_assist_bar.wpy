@@ -22,8 +22,8 @@
     <view wx:elif="{{rule.assist}}" class="column-center btn-disabled">
       <text>限助力{{rule.perLimitCount}}次</text>
     </view>
-    <view wx:elif="{{rule.limitCount <= rule.joinCount}}" class="column-center btn-disabled">
-      <text>已售罄</text>
+    <view wx:elif="{{rule.limitCount <= rule.successCount}}" class="column-center btn-disabled">
+      <text>活动已结束</text>
     </view>
     <view wx:else class="column-center btn-assist" @tap="begin">
       <text>发起助力</text>

@@ -102,7 +102,7 @@
       this.rule = rule;
       this.list = list;
       this.goodsDetail = this.rule.goods;
-      this.subShop = this.goodsDetail.subShop != null ? this.goodsDetail.subShop : this.shop;
+      this.subShop = this.goodsDetail.relShop != null ? this.goodsDetail.relShop : this.shop;
       this.goodsId = this.rule.goods.id;
       this.loaded();
     }
