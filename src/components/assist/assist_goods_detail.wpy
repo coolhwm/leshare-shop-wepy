@@ -12,8 +12,8 @@
           <text class="muted sellPrice-box sm">￥{{detail.originalPrice}}</text>
         </view>
         <view class="row-between">
-          <text class="detail-price-box">需{{detail.leastAssist}}人助力</text>
-          <text class="lg">{{detail.dueTime}} 结束</text>
+          <text></text>
+          <text class="xs muted">{{detail.joinCount}}人参与</text>
         </view>
       </view>
     </view>

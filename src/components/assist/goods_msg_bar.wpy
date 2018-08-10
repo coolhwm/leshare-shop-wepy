@@ -14,7 +14,10 @@
         </view>
       </view>
       <text class="goods-name-box">{{rule.goods.name}}</text>
-      <text class="muted xxs">目前{{rule.joinCount}}人正在参与，剩余{{rule.remainder}}份可领取</text>
+      <view class="row-between rule-tip-box">
+        <text class="xs primary">仅剩{{rule.remainder}}份</text>
+        <text class="xs muted mr10">{{rule.joinCount}}人参与</text>
+      </view>
     </view>
     <view class="share-box">
       <button class="column-center" plain open-type="share">
@@ -70,7 +73,7 @@
     .goods-name-box{
       font-size: 30rpx;
       line-height: 30rpx;
-      margin-bottom: 6rpx;
+      margin-bottom: 10rpx;
     }
     .share-box {
       width: 40px;
@@ -95,5 +98,8 @@
     .row icon{
       color: $color-primary;
     }
+  }
+  .rule-tip-box{
+    line-height: $text-xs;
   }
 </style>

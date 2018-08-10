@@ -2,16 +2,19 @@
   <view class="column assist-info-box">
     <view class="row info-top-box">
       <image class="top-avatar-box" src="{{assist.avatar}}" />
-      <view>
+      <view class="row-between" style="flex: 1;">
         <text class="mr20 xl">{{assist.nickName}}</text>
-        <text class="primary">目前已有{{assist.joinCount}}人正在参与活动，剩余{{assist.remainder}}份可领取，快邀请好友为你助力吧</text>
+        <text class="primary xxl" wx:if="{{assist.remainder > 0}}">仅剩{{assist.remainder}}份</text>
       </view>
     </view>
-    <view class="column-center" wx:if="{{assist.status == 'TIMEOUT' || assist.limitCount <= assist.successCount}}">
-      <text>本活动已结束</text>
+    <view class="column-center" wx:if="{{assist.status == 'SUCCESS'}}">
+      <text class="xxl">该活动已成功</text>
     </view>
-    <view class="column-center" wx:elif="{{assist.status == 'SUCCESS'}}">
-      <text>助力活动已成功</text>
+    <view class="column-center" wx:elif="{{assist.status == 'TIMEOUT'}}">
+      <text class="xxl primary">该活动已结束</text>
+    </view>
+    <view class="column-center" wx:elif="{{assist.limitCount <= assist.successCount}}">
+      <text class="xxl primary">来迟了，奖品已被领光</text>
     </view>
     <view class="column-center" wx:elif="{{assist.status !== 'TIMEOUT'}}">
       <button wx:if="{{assist.isHead}}" class="btn-box" open-type="share">分享助力</button>
@@ -25,8 +28,11 @@
       <view wx:else class="btn-box" @tap="help({{assist.ruleId}}, {{assist.id}})">为TA助力</view>
     </view>
     <view class="column-center mt20">
-      <view class="row">
-        <text class="muted">──────</text><text class="muted ml10 mr10">{{assist.helpCount}}人助力</text><text class="muted">──────</text>
+      <view class="row" wx:if="{{assist.leftJoin > 0}}">
+        <text class="muted">──────</text><text class="muted ml10 mr10">还需{{assist.leftJoin}}人助力</text><text class="muted">──────</text>
+      </view>
+      <view wx:else>
+        <text class="muted">──────</text><text class="muted ml10 mr10">已助力成功</text><text class="muted">──────</text>
       </view>
       <view class="row details-box mt10">
         <block wx:for="{{assist.details}}" wx:for-item="detail" wx:key="index">
@@ -68,6 +74,7 @@
         } catch (err) {
           await Tips.loaded();
           await Tips.modal(err.message);
+          this.$emit('upDate', assistId);
         }
       },
       async want (assist) {
