@@ -47,12 +47,11 @@
       this.assistId = assistId;
       await initWxAppSync();
       await this.update();
+      this.loaded();
     };
     async update () {
       this.detail = await assist.assistInfo(this.assistId);
       this.goodsDetail = this.detail.goods;
-      if (this.detail.isHelp && this.detail.assistRuleTip) await Tips.modal(this.detail.assistRuleTip);
-      this.loaded();
     }
     onShow() {
       if (this.init) {
@@ -69,6 +68,7 @@
     };
     async onPullDownRefresh () {
       await this.update();
+      this.loaded();
       wepy.stopPullDownRefresh();
     }
     /**
@@ -84,17 +84,23 @@
       };
     }
     methods = {
-      help (assistId) {
+      async help (assistId) {
+        this.assistId = assistId
         const notice = {
           title: '太棒了',
           btnText: '确定',
           content: `您已为好友助力成功!`
         };
         this.$invoke('Notice', 'open', notice);
-        this.update(assistId)
+        await Tips.loading();
+        await this.update();
+        if (this.detail.isHelp && this.detail.assistRuleTip) await Tips.modal(this.detail.assistRuleTip);
+        this.loaded();
       },
       upDate (assistId) {
-        this.update(assistId)
+        this.assistId = assistId
+        this.update();
+        this.loaded();
       }
     };
     computed = {};

@@ -289,7 +289,7 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   @import "../../styles/variable";
   .sub-shop-detail-box{
     $swiper-height: 400rpx;

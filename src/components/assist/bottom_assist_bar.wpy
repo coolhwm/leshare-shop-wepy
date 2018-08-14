@@ -10,7 +10,10 @@
       <icon class="like{{!isFav ? '' : '-fill'}} normal" style="color: {{!isFav ? 'gray' : 'red'}}" />
       <text class="xs">收藏</text>
     </view>
-    <view wx:if="{{!rule.use}}" class="column-center btn-disabled">
+    <view wx:if="{{rule.limitCount <= rule.successCount}}" class="column-center btn-disabled">
+      <text>活动已结束</text>
+    </view>
+    <view wx:elif="{{!rule.use}}" class="column-center btn-disabled">
       <text>活动已关闭</text>
     </view>
     <view wx:elif="{{rule.isBegin}}" class="column-center btn-disabled">
@@ -21,9 +24,6 @@
     </view>
     <view wx:elif="{{rule.assist}}" class="column-center btn-disabled">
       <text>限助力{{rule.perLimitCount}}次</text>
-    </view>
-    <view wx:elif="{{rule.limitCount <= rule.successCount}}" class="column-center btn-disabled">
-      <text>活动已结束</text>
     </view>
     <block wx:else>
       <button class="column-center btn-assist" plain  style="border-radius: 0" open-type="getPhoneNumber" bindgetphonenumber="regist" wx:if="{{member == null}}">

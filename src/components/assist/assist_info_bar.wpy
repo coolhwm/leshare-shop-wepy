@@ -83,7 +83,7 @@
       } catch (err) {
         await Tips.loaded();
         await Tips.modal(err.message);
-        this.$emit('upDate', assistId);
+        this.$emit('upDate', this.assist.id);
       }
     }
 

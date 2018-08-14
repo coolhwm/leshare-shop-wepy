@@ -13,7 +13,7 @@
         </view>
         <view class="row-between">
           <text></text>
-          <text class="xs muted">{{detail.joinCount}}人参与</text>
+          <text class="xs muted">{{detail.joinCount}}人正在抢</text>
         </view>
       </view>
     </view>

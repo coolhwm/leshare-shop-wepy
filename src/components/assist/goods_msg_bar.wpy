@@ -15,9 +15,10 @@
       </view>
       <text class="goods-name-box mb20">{{rule.goods.name}}</text>
       <view class="row-between rule-tip-box">
-        <text class="xs primary">仅剩{{rule.remainder}}份</text>
-        <text class="xs muted mr10">{{rule.joinCount}}人参与</text>
+        <text class="xs muted ">{{rule.joinCount}}人正在抢</text>
+        <text class="xs muted mr10">{{rule.assistCount}}人已参与</text>
       </view>
+      <text class="xs primary mt10">仅剩{{rule.remainder}}份</text>
     </view>
     <view class="share-box">
       <button class="column-center" plain open-type="share">
