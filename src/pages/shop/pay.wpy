@@ -74,6 +74,9 @@
         <button class="weui-btn" type="primary" @tap="finish">完成</button>
       </view>
     </view>
+
+    <ButtonWidget/>
+
   </view>
 
 </template>
@@ -93,6 +96,7 @@
   import topUp from '../../api/top_up';
   import WxUtils from '../../utils/WxUtils';
   import shop from '../../api/shop'
+  import ButtonWidget from '../../components/template/button_widget';
 
   @connect({
     shop: store.get('shop'),
@@ -304,7 +308,8 @@
     };
     components = {
       Loading: Loading,
-      Tips: FormTips
+      Tips: FormTips,
+      ButtonWidget: ButtonWidget
     };
     mixins = [base, input];
     config = {
