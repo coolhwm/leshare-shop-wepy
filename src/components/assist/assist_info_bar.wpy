@@ -23,7 +23,7 @@
         <view class="btn-box" @tap="want({{assist}})">我也要</view>
       </view>
       <block wx:else>
-        <button class="btn-box"  open-type="getPhoneNumber" bindgetphonenumber="regist" wx:if="{{member == null}}">
+        <button class="btn-box" open-type="getPhoneNumber" bindgetphonenumber="regist" wx:if="{{member == null}}">
           为TA助力
         </button>
         <view wx:else class="btn-box" @tap="help()">为TA助力</view>
@@ -60,7 +60,7 @@
   @connect({
     member: store.get('member')
   })
-  export default class assistInfoBar extends wepy.component {
+  export default class AssistInfoBar extends wepy.component {
     props = {
       assist: {}
     };

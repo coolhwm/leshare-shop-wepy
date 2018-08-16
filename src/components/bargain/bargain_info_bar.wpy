@@ -49,7 +49,10 @@
         <text class="{{bargain.isHelp ? 'primary' : ''}}">{{bargain.helpText}}</text>
       </view>
       <block wx:if="{{!bargain.isHelp && !bargain.isFloor && bargain.status != 'ORDERED' && bargain.status != 'TIMEOUT'}}">
-        <view  class="btn-box" @tap="help({{bargain.rule.id}}, {{bargain.id}})">帮TA砍一刀</view>
+        <button class="btn-box" open-type="getPhoneNumber" bindgetphonenumber="regist" wx:if="{{member == null}}">
+          帮TA砍一刀
+        </button>
+        <view wx:else class="btn-box" @tap="help">帮TA砍一刀</view>
       </block>
       <view wx:elif="{{bargain.isHelp}}" class="btn-box" @tap="want({{bargain.rule.id}})">我也要</view>
       <view wx:elif="{{bargain.status == 'ORDERED' || bargain.status == 'TIMEOUT'}}" class="btn-end-box">砍价已结束</view>
@@ -74,24 +77,36 @@
 
 <script>
   import wepy from 'wepy';
-  import { checkUserInfoWithError } from '../../api/wx_auth';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import { checkUserInfoWithError, handleGetPhoneNumber } from '../../api/wx_auth';
   import countdown from '../../mixins/countdown';
   import bargain from '../../api/bargain';
   import customerList from '../../components/bargain/customer_list'
 
+  @connect({
+    member: store.get('member')
+  })
   export default class BargainInfoBar extends wepy.component {
     props = {
       bargain: {}
     };
     data = {
     };
+    async doHelp () {
+      await checkUserInfoWithError();
+      const result = await bargain.GoodsBargain(this.bargain.rule.id, this.bargain.id);
+      const { id: userId } = wepy.$instance.globalData.auth['user'];
+      const price = result.details.find(item => item.customer.id === userId).reducePrice;
+      this.$emit('help', price, this.bargain.id);
+    }
     methods = {
-      async help (ruleId, bargainId) {
-        await checkUserInfoWithError();
-        const result = await bargain.GoodsBargain(ruleId, bargainId);
-        const { id: userId } = wepy.$instance.globalData.auth['user'];
-        const price = result.details.find(item => item.customer.id === userId).reducePrice;
-        this.$emit('help', price, bargainId);
+      async regist({detail}) {
+        await handleGetPhoneNumber(detail);
+        await this.doHelp();
+      },
+      async help () {
+        await this.doHelp()
       },
       async want () {
         this.$root.$navigate(`/pages/bargain/bargain_more`);
