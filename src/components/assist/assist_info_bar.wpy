@@ -65,7 +65,7 @@
       assist: {}
     };
     data = {
-    };
+    } ;
     async onLoad () {
       await store.wait();
     }
