@@ -290,7 +290,7 @@
             success: (res) => {
               console.log(res)
             }
-          })
+          });
           break;
         case 'SHARE':
           // 分享好友
