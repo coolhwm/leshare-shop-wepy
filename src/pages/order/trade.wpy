@@ -102,6 +102,10 @@
         <text>餐盒费</text>
         <text class="major">+￥{{trade.foodBoxFee}}</text>
       </view>
+      <view class="price-box row-between" wx:if="{{serviceFee > 0}}">
+        <text>服务费</text>
+        <text class="major">+￥{{serviceFee}}</text>
+      </view>
       <view class="price-box row-between" wx:if="{{trade.couponPrice > 0 && !isLimitCoupon}}">
         <text>优惠券</text>
         <text class="major">-￥{{trade.couponPrice}}</text>
@@ -393,6 +397,7 @@
         if (this.trade.orderType === TYPE.TAKEAWAY) {
           this.trade.deliveryType = 'CITY';
         }
+        this.trade.serviceFee = this.serviceFee;
         // 表单ID
         this.trade.formId = detail.formId;
 
@@ -648,6 +653,8 @@
       if (trade.orderType != 30) {
         trade.finalPrice += trade.foodBoxFee ? parseFloat(trade.foodBoxFee) : 0;
       }
+      // 服务费
+      trade.finalPrice += this.serviceFee ? parseFloat(this.serviceFee) : 0;
       // 优惠券
       if (!this.isLimitCoupon) {
         trade.finalPrice -= trade.couponPrice ? parseFloat(trade.couponPrice) : 0;
@@ -821,6 +828,13 @@
         });
         return reduceFee.toFixed(2);
       },
+      serviceFee() {
+        // if (this.shop == null) return 0;
+        // const dealPrice = this.trade.dealPrice;
+        // const serviceFee = dealPrice * (this.shop.serviceFee / 100);
+        // if (serviceFee > 0) return serviceFee.toFixed(2);
+        return 0;
+      }
     };
     components = {
       Tips: FormTips,
