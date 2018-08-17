@@ -118,6 +118,10 @@
         <text>餐盒费</text>
         <text class="major">+￥{{order.foodBoxFee}}</text>
       </view>
+      <view class="price-box row-between" wx:if="{{order.serviceFee > 0}}">
+        <text>服务费</text>
+        <text class="major">+￥{{order.serviceFee}}</text>
+      </view>
       <view class="price-box row-between" wx:if="{{order.couponPrice > 0}}">
         <text>优惠券</text>
         <text class="major">-￥{{order.couponPrice}}</text>

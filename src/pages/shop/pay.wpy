@@ -56,6 +56,14 @@
             </view>
           </view>
         </block>
+
+        <block wx:if="{{subShopInfo.serviceFee > 0}}">
+          <view class="coupon-box row">
+            <view class="weui-cell__bd">服务费</view>
+            <view class="weui-cell__ft" wx:if="{{dealPrice}}">￥{{serviceFeeText}}</view>
+            <view class="weui-cell__ft" wx:else>{{serviceFeeText}}</view>
+          </view>
+        </block>
         <view class="button-box">
           <button class="weui-btn" type="primary" @tap="offline">立即付款</button>
         </view>
@@ -162,6 +170,10 @@
           param.couponPrice = this.selectedCoupon.price;
           param.couponUsedId = this.selectedCoupon.id;
           param.finalPrice = (this.dealPrice * 1 - this.selectedCoupon.price * 1).toFixed(2);
+        }
+        if (this.subShopInfo.serviceFee > 0) {
+          param.serviceFee = this.serviceFeeText * 1
+          param.finalPrice = param.finalPrice * 1 + param.serviceFee * 1
         }
         if (this.subShopId) {
           param.subShopId = this.subShopId
@@ -287,6 +299,15 @@
           this.payType.onlinePayType = 'wxpay';
           this.payType.onlinePayText = '微信支付';
           return `${this.member.balance}元（余额不足）`
+        }
+      },
+      serviceFeeText() {
+        if (this.subShopInfo == null) return
+        if (this.dealPrice == 0) {
+          return `${this.subShopInfo.serviceFee}%`
+        } else {
+          const serviceFee = this.dealPrice * (this.subShopInfo.serviceFee / 100)
+          return serviceFee.toFixed(2)
         }
       }
     };
