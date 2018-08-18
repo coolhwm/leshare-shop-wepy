@@ -29,7 +29,7 @@
         </view>
         <!--支付方式-->
         <!--TODO 0为店铺不支持余额支付-->
-        <view class="coupon-box row" wx:if="{{card.supplyBalance == 0 || member == null || member.balance == 0}}">
+        <view class="coupon-box row" wx:if="{{card.supplyBalance == 0 || member == null || member.balance < dealPrice}}">
           <view class="weui-cell__bd">支付方式</view>
           <view class="weui-cell__ft">{{payType.onlinePayText}}</view>
         </view>
