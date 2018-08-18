@@ -41,7 +41,7 @@
         <block wx:if="{{payType.onlinePayType == 'balance'}}">
           <view class="coupon-box row" wx:if="{{card.supplyBalance == 1}}">
             <view class="weui-cell__bd">余额</view>
-            <view class="weui-cell__ft">{{balanceText}}</view>
+            <view class="weui-cell__ft">{{balanceText}}元</view>
           </view>
         </block>
         <block wx:if="{{payType.onlinePayType != 'balance' && card.supplyBalance == 1 && member != null && member.balance == 0}}">
@@ -171,7 +171,7 @@
           param.couponUsedId = this.selectedCoupon.id;
           param.finalPrice = (this.dealPrice * 1 - this.selectedCoupon.price * 1).toFixed(2);
         }
-        if (this.subShopInfo.serviceFee > 0) {
+        if (this.subShopInfo && this.subShopInfo.serviceFee > 0) {
           param.serviceFee = this.serviceFeeText * 1
           param.finalPrice = param.finalPrice * 1 + param.serviceFee * 1
         }
