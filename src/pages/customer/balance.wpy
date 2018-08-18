@@ -3,7 +3,7 @@
     <view class="balance-box column-between">
       <view class="column-center">
         <view class="icon-box column">
-          <icon class="balance" style="color: #F9C907;font-size: 50px;"/>
+          <icon class="balance icon-balance-box"/>
         </view>
         <text class="xl">储值金额</text>
         <view class="money-box" wx:if="{{member == null}}">￥0.00</view>
@@ -65,8 +65,7 @@
     mixins = [base];
     config = {
       navigationBarTextStyle: 'white',
-      navigationBarTitleText: '我的储值',
-      navigationBarBackgroundColor: '#FF8929'
+      navigationBarTitleText: '我的储值'
     };
   }
 </script>
@@ -90,6 +89,10 @@
       border-radius: 50%;
       background-color: #F9DE69;
     }
+    .icon-balance-box{
+      color: #F9C907;
+      font-size: 50px;
+    }
     .money-box{
       font-size: 40px;
     }
@@ -99,7 +102,7 @@
       border-radius: 50px;
     }
     .payment-box{
-      background-color: #FF953F;
+      background-color: $color-primary;
       color: #fff;
     }
   }
