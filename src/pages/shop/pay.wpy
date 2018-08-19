@@ -172,8 +172,8 @@
           param.finalPrice = (this.dealPrice * 1 - this.selectedCoupon.price * 1).toFixed(2);
         }
         if (this.subShopInfo && this.subShopInfo.serviceFee > 0) {
-          param.serviceFee = this.serviceFeeText * 1
-          param.finalPrice = param.finalPrice * 1 + param.serviceFee * 1
+          param.serviceFee = this.serviceFeeText * 1;
+          param.finalPrice = (param.finalPrice * 1 + param.serviceFee * 1).toFixed(2);
         }
         if (this.subShopId) {
           param.subShopId = this.subShopId

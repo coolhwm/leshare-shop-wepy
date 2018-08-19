@@ -286,9 +286,9 @@
           break;
         case 'CAMERA':
           // 扫码
-          wepy.scanCode({
-            success: (res) => {
-              console.log(res)
+          wepy.scanCode().then(result => {
+            if (result.path) {
+              this.$root.$navigate('/' + result.path);
             }
           });
           break;
