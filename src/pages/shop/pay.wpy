@@ -48,11 +48,11 @@
           <view class="coupon-box row" wx:if="{{card.supplyBalance == 1}}">
             <view class="weui-cell__bd">余额</view>
             <view class="weui-cell__ft" @tap="topUp">
-              <text class="muted xs">0元(</text>
-              <text class="muted xs">满{{topUpRule[0].baseFee}}元</text>
+              <text class="muted xs">0元</text>
+              <text class="muted xs" wx:if="{{topUpRule.length > 0}}">(满{{topUpRule[0].baseFee}}元</text>
               <text class="muted xs" wx:if="{{topUpRule[0].giftCoupon != null && topUpRule[0].coupons != null && topUpRule[0].coupons.length > 0}}">送{{topUpRule[0].coupons.length}}张劵</text>
               <text class="muted xs" wx:elif="{{topUpRule[0].giftFee > 0  }}">送{{topUpRule[0].giftFee}}元</text>
-              <text class="muted xs">) ></text>
+              <text class="muted xs" wx:if="{{topUpRule.length > 0}}">) ></text>
             </view>
           </view>
         </block>
