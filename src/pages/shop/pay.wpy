@@ -75,8 +75,12 @@
       <view class="header-box column-between">
         <icon class="confirm" style="font-size: 50px;height: 50px;"/>
         <text class="xxl pay-success">支付成功</text>
-        <text class="mb20">{{shop.name}}</text>
-        <text class="price-box">￥{{result.finalPrice}}</text>
+        <text class="mb20"  wx:if="{{subShopInfo != null}}">{{subShopInfo.name}}</text>
+        <text class="mb20" wx:else>{{shop.name}}</text>
+        <view class="column-center">
+          <text class="price-box">￥{{result.dealPrice}}</text>
+          <text class="sm muted mt5" wx:if="{{result.serviceFee}}">另收取服务费￥{{result.serviceFee}}</text>
+        </view>
       </view>
       <view class="button-box">
         <button class="weui-btn" type="primary" @tap="finish">完成</button>
