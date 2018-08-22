@@ -35,7 +35,7 @@ export default class config extends base {
       customPageId: data.customPageId,
       page: data.homePageConfig,
       card: data.memberCard,
-      // member: data.member,
+      member: data.member,
       user: data.customer,
       campaign: data.campaignCoupon,
       categories: goods._createGoodsCategories(data.goodsInnerCategories),
