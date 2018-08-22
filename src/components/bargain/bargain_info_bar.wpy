@@ -48,12 +48,12 @@
       <view class="help-text" wx:if="{{bargain.isHelp || bargain.isFloor}}">
         <text class="{{bargain.isHelp ? 'primary' : ''}}">{{bargain.helpText}}</text>
       </view>
-      <block wx:if="{{!bargain.isHelp && !bargain.isFloor && bargain.status != 'ORDERED' && bargain.status != 'TIMEOUT'}}">
-        <button class="btn-box" open-type="getPhoneNumber" bindgetphonenumber="regist" wx:if="{{member == null}}">
+      <form  report-submit="true"  wx:if="{{!bargain.isHelp && !bargain.isFloor && bargain.status != 'ORDERED' && bargain.status != 'TIMEOUT'}}" @submit="reportFormId">
+        <button class="btn-box" plain style="padding: 0" open-type="getPhoneNumber" form-type="submit" bindgetphonenumber="regist" wx:if="{{member == null}}">
           帮TA砍一刀
         </button>
-        <view wx:else class="btn-box" @tap="help">帮TA砍一刀</view>
-      </block>
+        <button wx:else class="btn-box" plain @tap="help" form-type="submit" style="padding: 0" >帮TA砍一刀</button>
+      </form>
       <view wx:elif="{{bargain.isHelp}}" class="btn-box" @tap="want({{bargain.rule.id}})">我也要</view>
       <view wx:elif="{{bargain.status == 'ORDERED' || bargain.status == 'TIMEOUT'}}" class="btn-end-box">砍价已结束</view>
     </view>
@@ -79,6 +79,7 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
+  import router from '../../mixins/router';
   import { checkUserInfoWithError, handleGetPhoneNumber } from '../../api/wx_auth';
   import countdown from '../../mixins/countdown';
   import bargain from '../../api/bargain';
@@ -131,7 +132,7 @@
         }
       }
     };
-    mixins = [countdown];
+    mixins = [countdown, router];
   }
 </script>
 
@@ -196,8 +197,8 @@
     .btn-box{
       background-color: $color-primary;
       color:white;
-      padding: 10rpx 0;
       width: 500rpx;
+      padding: 10rpx 0;
       border-radius: 5rpx;
       margin: 20rpx 0;
       text-align: center;

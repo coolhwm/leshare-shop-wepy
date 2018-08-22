@@ -143,7 +143,13 @@ export async function handleGetPhoneNumber(detail) {
       await store.refresh('member');
     }
   } catch (e) {
-    console.warn('注册失败', e);
+    // 判断已注册的情况
+    if (e.serverCode == 52000) {
+      console.info('[login] 用户已注册，刷新本地缓存', e);
+      await store.refresh('member');
+    } else {
+      console.warn('注册失败', e);
+    }
   }
 }
 
