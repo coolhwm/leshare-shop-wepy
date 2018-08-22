@@ -1,0 +1,51 @@
+<template>
+  <view class="group-goods-bar-placeholder">
+  </view>
+  <view class="row-between group-goods-bar-box">
+    <view class="price-box ml20">
+      <text class="primary sm mr10">合计</text>
+      <text class="white xxs">￥</text>
+      <text class="white lg">{{price}}</text>
+    </view>
+    <view class="go-order-box mr20">
+      <text class="primary lg">去下单</text>
+      <icon class="more primary"/>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class GroupBar extends wepy.component {
+    props = {
+      price: {}
+    };
+    data = {
+    };
+    methods = {
+    };
+    computed = {
+    };
+    watch = {
+    };
+    mixins = [];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .group-goods-bar-box{
+    position: fixed;
+    bottom: 0;
+    height: 100rpx;
+    width: 100%;
+    border-top: $border;
+    background-color: #1a1a1a;
+  }
+  .group-goods-bar-placeholder{
+    height: 105rpx;
+    width: 100%;
+  }
+</style>

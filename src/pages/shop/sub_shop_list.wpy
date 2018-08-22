@@ -107,7 +107,6 @@
   import _ from 'underscore';
   import CoverPanel from '../../components/common/cover_panel';
   import Notice from '../../components/shop/notice';
-  import map from '../../api/map';
   import Tips from '../../utils/Tips';
 
   export default class SubShopList extends wepy.page {

@@ -1,0 +1,85 @@
+<template>
+  <view class="group-goods-item-container column">
+    <text class="row name-box text-weight">{{detail.name}}</text>
+    <view class="row">
+      <image src="{{detail.imgUrl}}" mode="aspectFit" class="image-box"/>
+      <view class="botton-box">
+        <view class="price-box">
+          <text class="text-weight" style="font-size: 20rpx;line-height: 30rpx;">￥</text>
+          <text class="text-weight" style="font-size: 34rpx;line-height: 34rpx;">{{detail.price}}</text>
+        </view>
+        <view class="row-center go-box" @tap="goDetail">
+          <text class="mr10">去定制</text>
+          <view class="go-botton-box row-center column-center">
+            <icon class="more xsmall text-weight" style="color: #000;"/>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  export default class GroupGoodsListItem extends wepy.component {
+    props = {
+      detail: {}
+    };
+    data = {};
+    methods = {
+      goDetail() {
+        this.$root.$navigate(`/pages/group_goods/detail?id=${this.detail.id}`)
+      }
+    };
+    components = {};
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  $image-width: ( 750rpx - 80rpx ) / 2;
+  .group-goods-item-container{
+    background-color: white;
+    border-radius: 20rpx;
+    margin: 20rpx 20rpx 0;
+    padding: 20rpx;
+    .name-box {
+      flex-direction: row-reverse;
+      font-size: 40rpx;
+      line-height: 40rpx;
+    }
+    .image-box{
+      width: $image-width;
+      height: $image-width;
+    }
+    .text-weight{
+      font-weight: bold;
+    }
+    .botton-box{
+      flex: 1;
+      height: $image-width;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .price-box{
+      width: $image-width;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      align-items: flex-end;
+      margin-top: 16rpx;
+    }
+    .go-box{
+      width: $image-width;
+      margin-top: 16rpx;
+    }
+    .go-botton-box{
+      width: 40rpx;
+      height: 40rpx;
+      border-radius: 20rpx;
+      background-color: $color-primary-yellow;
+    }
+  }
+
+</style>

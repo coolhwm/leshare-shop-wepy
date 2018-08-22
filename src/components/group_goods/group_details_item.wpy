@@ -1,0 +1,66 @@
+<template>
+  <view class="group-detail-item-box {{detail.groupValue.length === 1 ? 'column-center' : ''}}">
+    <view class="row-between group-name-box" wx:if="{{detail.groupValue.length > 1}}">
+      <text>{{detail.group}}</text>
+      <view class="row">
+        <text>全部</text>
+        <icon class="more"/>
+      </view>
+    </view>
+    <view wx:if="{{detail.groupValue.length === 1}}" class="column-center">
+      <image src="{{detail.groupValue[0].goods.imageUrl}}"/>
+      <text>{{detail.groupValue[0].goods.name}}</text>
+    </view>
+    <swiper wx:else class="goods-swiper" indicator-dots="true" circular="true" @change="changeGoods">
+      <block wx:for="{{detail.groupValue}}" wx:key="id" wx:for-item="item" wx:index="index">
+        <swiper-item class="column-center">
+          <image src="{{item.goods.imageUrl}}"/>
+          <text>{{item.goods.name}}</text>
+        </swiper-item>
+      </block>
+    </swiper>
+
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  export default class GroupDetailsItem extends wepy.component {
+    props = {
+      detail: {}
+    };
+    data = {
+      selGoodsIndex: 0
+    };
+    methods = {
+      changeGoods(event) {
+        this.selGoodsIndex = event.detail.current
+        this.$emit('changeGoods', this.detail.groupValue[this.selGoodsIndex])
+      }
+    };
+    components = {};
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .group-detail-item-box{
+    background-color: white;
+    height: 550rpx;
+    border-bottom: $border;
+
+    .group-name-box{
+      padding: 10rpx 10rpx 0;
+    }
+    image{
+      width: 350rpx;
+      height: 350rpx;
+    }
+    .goods-swiper{
+      height: 500rpx;
+      image{
+        margin-top: -60rpx;
+      }
+    }
+  }
+
+</style>

@@ -1,0 +1,77 @@
+<template>
+  <Loading :init.sync="init"/>
+  <view class="group-goods-detail-box">
+    <repeat for="{{detail.groupDetails}}" key="index" index="index" item="item">
+      <GroupDetailsItem :detail.sync="item" @changeGoods.user="changeGoods"/>
+    </repeat>
+
+    <GroupGoodsBar :price.sync="finalPrice"/>
+  </view>
+
+
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Loading from '../../components/common/loading';
+  import base from '../../mixins/base';
+  import groupGoods from '../../api/group_goods';
+  import GroupDetailsItem from '../../components/group_goods/group_details_item'
+  import GroupGoodsBar from '../../components/group_goods/bottom-group-goods-bar'
+
+  export default class GroupGoodsDetail extends wepy.page {
+    data = {
+      init: false,
+      id: null,
+      detail: null
+    };
+    async onLoad({id}) {
+      this.id = id
+      this.detail = await groupGoods.detail(this.id)
+      this.loaded()
+    };
+    methods = {
+      // 切换商品
+      changeGoods(detail) {
+        this.detail.goodsList.forEach((item, index) => {
+          if (item.groupIndex === detail.groupIndex) {
+            this.detail.goodsList.splice(index, 1)
+            this.detail.goodsList.push(detail)
+          }
+        })
+      }
+    };
+    computed = {
+      // 计算总价
+      finalPrice() {
+        if (this.detail == null) return
+        if (this.detail.goodsList.length < 1) return this.detail.price
+        const prices = this.detail.goodsList.map(item => {
+          return item.diffPrice
+        })
+        let originalPrice = this.detail.price * 1
+        prices.forEach(item => {
+          originalPrice += item
+        })
+        return originalPrice
+      }
+    };
+    components = {
+      Loading: Loading,
+      GroupDetailsItem: GroupDetailsItem,
+      GroupGoodsBar: GroupGoodsBar
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '组合详情'
+    };
+  }
+</script>
+
+<style lang="scss" scoped>
+  @import "../../styles/variable";
+  .group-goods-detail-box{
+    background-color: white;
+    height: 100%;
+  }
+</style>
