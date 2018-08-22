@@ -25,14 +25,14 @@
     <view wx:elif="{{rule.assist}}" class="column-center btn-disabled">
       <text>限助力{{rule.perLimitCount}}次</text>
     </view>
-    <block wx:else>
-      <button class="column-center btn-assist" plain  style="border-radius: 0" open-type="getPhoneNumber" bindgetphonenumber="regist" wx:if="{{member == null}}">
+    <form wx:else report-submit="true" @submit="reportFormId" style="height: 100%" >
+      <button class="column-center btn-assist" plain  style="border-radius: 0" open-type="getPhoneNumber" form-type="submit" bindgetphonenumber="regist" wx:if="{{member == null}}">
         <text>发起助力</text>
       </button>
-      <view wx:else  class="column-center btn-assist" @tap="begin">
+      <button wx:else  class="column-center btn-assist"  plain  style="border-radius: 0" @tap="begin">
         <text>发起助力</text>
-      </view>
-    </block>
+      </button>
+    </form>
   </view>
 </template>
 

@@ -127,13 +127,14 @@ export async function saveWxUserPhone (data) {
  * 处理电话号码事件
  */
 export async function handleGetPhoneNumber(detail) {
-  if (detail.errMsg == 'getPhoneNumber:fail user deny') {
+  if (detail.errMsg == 'getPhoneNumber:fail user deny' || detail.errMsg == 'getPhoneNumber:fail:cancel to confirm login') {
     await Tips.alert('请允许授权');
     throw new Error('用户未授权电话号码');
   }
   try {
     // 其他错误不尝试注册
     if (detail.errMsg != 'getPhoneNumber:ok') {
+      console.info(`[login] get phone number fail, message=${detail.errMsg}`, detail);
       return;
     }
     Tips.loading();
