@@ -18,6 +18,13 @@ export default class group extends base {
     const url = `${this.baseUrl}/group_goods/rules?status=1`;
     return new Page(url);
   }
+  /***
+   * 组合购下单
+   */
+  static order(trade, ruleId) {
+    const url = `${this.baseUrl}/orders/group_goods/${ruleId}`;
+    return this.post(url, trade)
+  }
   // 处理数据
   static _processDetail(data) {
     let details = []

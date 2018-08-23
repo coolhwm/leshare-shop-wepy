@@ -113,7 +113,6 @@ export default class Cart {
       goodsPrice = goods.sellPrice;
       originalPrice = goods.originalPrice;
     }
-    console.info(goods);
     return {
       goodsId: goods.id,
       goodsSku: selText.skuSelected,

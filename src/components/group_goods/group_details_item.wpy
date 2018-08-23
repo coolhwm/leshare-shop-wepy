@@ -1,25 +1,23 @@
 <template>
   <view class="group-detail-item-box {{detail.groupValue.length === 1 ? 'column-center' : ''}}">
-    <view class="row-between group-name-box" wx:if="{{detail.groupValue.length > 1}}">
+    <view class="row-center group-name-box" wx:if="{{detail.groupValue.length > 1}}">
       <text>{{detail.group}}</text>
-      <view class="row">
-        <text>全部</text>
-        <icon class="more"/>
-      </view>
     </view>
     <view wx:if="{{detail.groupValue.length === 1}}" class="column-center">
       <image src="{{detail.groupValue[0].goods.imageUrl}}"/>
       <text>{{detail.groupValue[0].goods.name}}</text>
     </view>
     <swiper wx:else class="goods-swiper" indicator-dots="true" circular="true" @change="changeGoods">
-      <block wx:for="{{detail.groupValue}}" wx:key="id" wx:for-item="item" wx:index="index">
+      <block wx:for="{{detail.groupValue}}" wx:key="id" wx:for-item="item" wx:index="index"  style="height: 90%;">
         <swiper-item class="column-center">
-          <image src="{{item.goods.imageUrl}}"/>
-          <text>{{item.goods.name}}</text>
+          <view class="column-center card">
+            <image src="{{item.goods.imageUrl}}"/>
+            <text class="mt10 sm">{{item.goods.name}}</text>
+            <text class="mt10 sm">+{{item.diffPrice}}（原价：￥{{item.goods.sellPrice}}）</text>
+          </view>
         </swiper-item>
       </block>
     </swiper>
-
   </view>
 </template>
 <script>
@@ -45,21 +43,26 @@
   @import "../../styles/variable";
   .group-detail-item-box{
     background-color: white;
-    height: 550rpx;
+    height: 480rpx;
     border-bottom: $border;
-
     .group-name-box{
-      padding: 10rpx 10rpx 0;
+      padding-top: 20rpx;
     }
     image{
-      width: 350rpx;
-      height: 350rpx;
+      width: 180rpx;
+      height: 180rpx;
     }
     .goods-swiper{
-      height: 500rpx;
-      image{
-        margin-top: -60rpx;
-      }
+      height: 400rpx;
+    }
+    .card{
+      margin-top: -40rpx;
+      padding: 20rpx;
+      border-radius: 20rpx;
+      border: $border;
+      box-shadow: 5px 5px 5px $color-muted;
+      width: 600rpx;
+      height:280rpx;
     }
   }
 

@@ -7,7 +7,7 @@
       <text class="white xxs">￥</text>
       <text class="white lg">{{price}}</text>
     </view>
-    <view class="go-order-box mr20">
+    <view class="go-order-box mr20" @tap="buy">
       <text class="primary lg">去下单</text>
       <icon class="more primary"/>
     </view>
@@ -24,6 +24,9 @@
     data = {
     };
     methods = {
+      buy() {
+        this.$emit('buy')
+      }
     };
     computed = {
     };
