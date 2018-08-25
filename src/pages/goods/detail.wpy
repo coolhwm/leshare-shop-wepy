@@ -210,12 +210,12 @@
       subShop: {},
       isSubShop: false
     };
-    async onLoad ({goodsId, type}) {
+    async onLoad ({goodsId, type, scene}) {
       await initWxAppSync();
-      this.goodsId = goodsId;
+      this.goodsId = goodsId || scene;
       const [detail, count] = await Promise.all([
-        goods.getInfo(goodsId, this.discount),
-        comment.count(goodsId)
+        goods.getInfo(this.goodsId, this.discount),
+        comment.count(this.goodsId)
       ]);
       this.detail = detail;
       if (this.detail == null || this.detail.status == 1) {
@@ -229,7 +229,6 @@
       this.page = comment.page();
       this.tab = this.createTab();
       this.isSubShop = this.detail.relShop != null;
-      console.info(this.shop)
       this.subShop = this.isSubShop ? this.detail.relShop : this.shop;
       this.loaded();
     };

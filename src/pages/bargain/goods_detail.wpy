@@ -84,10 +84,10 @@
       subShop: {},
       list: []
     };
-    async onLoad ({ruleId}) {
+    async onLoad ({ruleId, scene}) {
       await initWxApp();
-      this.ruleId = ruleId;
-      await this.update(ruleId);
+      this.ruleId = ruleId || scene;
+      await this.update(this.ruleId);
     };
     onUnload() {
       this.$invoke('TimeOutBar', 'clear');

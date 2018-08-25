@@ -67,9 +67,9 @@
       subShop: {},
       list: []
     };
-    async onLoad ({ruleId}) {
+    async onLoad ({ruleId, scene}) {
       await initWxAppSync();
-      this.ruleId = ruleId;
+      this.ruleId = ruleId || scene;
       await this.update(this.ruleId);
     };
     onUnload() {
