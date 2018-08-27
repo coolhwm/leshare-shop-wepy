@@ -27,7 +27,8 @@
           <view class="label primary small {{coupon.status == 'NEVER_USED' ? '' : 'disabled'}}" wx:if="{{coupon.supportType == 2}}">线下</view>
           <text class="coupon-title-text">{{coupon.name}}</text>
         </view>
-        <text class="muted sm">{{coupon.beginTime}}-{{coupon.dueTime}}</text>
+        <text class="muted sm" wx:if="{{isDetail && coupon.expiredType == 'FIX_TERM'}}">{{'使用有效期' + coupon.fixedTerm + '天'}} {{ coupon.fixedBeginTerm > 0 ? ',' + coupon.fixedBeginTerm + '天后生效' : ''}}</text>
+        <text class="muted sm" wx:else>{{coupon.beginTime}}-{{coupon.dueTime}}</text>
       </view>
 
       <!--分隔符-->
