@@ -56,17 +56,16 @@
         goodsList.forEach(item => {
           item.goodsNum = 1
         })
+        // const repeatId = null
         for (let i = 0; i < goodsList.length; i++) {
           const isRepeat = goodsList.filter(item => item.goodsId === goodsList[i].goodsId).length > 1
-          console.info(i, isRepeat)
           if (isRepeat) {
-            goodsList.splice(i, 1)
             goodsList.forEach(item => {
               if (item.goodsId === goodsList[i].goodsId) item.goodsNum += 1
             })
+            goodsList.splice(i, 1)
           }
         }
-        console.info(goodsList)
         const trade = order.createCartTrade(goodsList, param);
         console.info(trade)
         trade.dealPrice = this.finalPrice

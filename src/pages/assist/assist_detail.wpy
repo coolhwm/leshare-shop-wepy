@@ -94,7 +94,7 @@
         this.$invoke('Notice', 'open', notice);
         await Tips.loading();
         await this.update();
-        if (this.detail.isHelp && this.detail.assistRuleTip) await Tips.modal(this.detail.assistRuleTip);
+        // if (this.detail.isHelp && this.detail.assistRuleTip) await Tips.modal(this.detail.assistRuleTip);
         this.loaded();
       },
       upDate (assistId) {
