@@ -6,7 +6,8 @@
       <icon wx:elif="{{item.rank === 3}}" class="third mr10" style="color: #EFCB91"/>
       <text wx:else class="mr10 row-center column-center" style="width: 24px;">{{item.rank}}</text>
       <image class="avator" src="{{item.avator}}"></image>
-      <text class="ml10">{{item.name}}</text>
+      <text class="ml10" wx:if="{{item.name}}">{{item.name}}</text>
+      <text class="ml10" wx:else>微信用户</text>
     </view>
     <text class="major">{{item.bonus}}</text>
   </view>
