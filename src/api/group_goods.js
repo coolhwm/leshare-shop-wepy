@@ -33,7 +33,8 @@ export default class group extends base {
       details.push({
         group: data[`group${i}Name`],
         groupValue: groupItem,
-        groupNum: i
+        groupNum: i,
+        selGoodsIndex: 0
       })
     }
     details = details.filter(item => {

@@ -2,13 +2,14 @@
   <Loading :init.sync="init"/>
 
   <view class="column" wx:if="{{init}}">
+    <image src="https://img.leshare.shop/goods_group_bar.jpg" mode="aspectFill" style="width: 750rpx; height:160rpx;"/>
+
     <repeat for="{{page.list}}" key="index" index="index" item="item">
       <GroupGoodsItem :detail.sync="item"/>
     </repeat>
-    <!-- 加载提示 -->
-    <Loadmore :page.sync="page"/>
+
     <!--占位符-->
-    <Placeholder :show.sync="isPageEmpty" message="您还没有相关组合活动商品" />
+    <Placeholder :show.sync="isPageEmpty" message="您还没有相关组合购商品" />
   </view>
 
 </template>

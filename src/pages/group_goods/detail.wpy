@@ -20,7 +20,6 @@
   import GroupGoodsBar from '../../components/group_goods/bottom-group-goods-bar';
   import order from '../../api/order';
   import Cart from '../../utils/Cart';
-  import _ from 'underscore'
 
   export default class GroupGoodsDetail extends wepy.page {
     data = {
@@ -79,7 +78,7 @@
       // 计算总价
       finalPrice() {
         if (this.detail == null) return
-        if (this.detail.goodsList.length < 1) return this.detail.price
+        if (this.detail.goodsList.length < 1) return this.detail.price.toFixed(2)
         const prices = this.detail.goodsList.map(item => {
           return item.diffPrice
         })
@@ -87,7 +86,7 @@
         prices.forEach(item => {
           originalPrice += item
         })
-        return originalPrice
+        return originalPrice.toFixed(2)
       }
     };
     components = {

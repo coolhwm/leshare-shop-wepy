@@ -1,85 +1,80 @@
 <template>
-  <view class="group-goods-item-container column">
-    <text class="row name-box text-weight">{{detail.name}}</text>
-    <view class="row">
-      <image src="{{detail.imgUrl}}" mode="aspectFit" class="image-box"/>
-      <view class="botton-box">
-        <view class="price-box">
-          <text class="text-weight" style="font-size: 20rpx;line-height: 30rpx;">￥</text>
-          <text class="text-weight" style="font-size: 34rpx;line-height: 34rpx;">{{detail.price}}</text>
+  <view class="row bargain_more_item">
+    <image class="img-box mr20" src="{{detail.imgUrl}}"/>
+    <view class="column content-box">
+      <text class="lg">{{detail.name}}</text>
+      <view class="row-between">
+        <view class="row">
+          <text class="xxs muted">组合购低至</text>
+          <text class="primary xxl">￥{{detail.price}}</text>
         </view>
-        <view class="row-center go-box" @tap="goDetail">
-          <text class="mr10">去定制</text>
-          <view class="go-botton-box row-center column-center">
-            <icon class="more xsmall text-weight" style="color: #000;"/>
-          </view>
+        <text class="muted sm origin">￥{{detail.originalPrice}}</text>
+      </view>
+      <view class="row-between">
+        <view>
+          <text class="muted sm" wx:if="{{detail.group1Name}}">{{detail.group1Name}}</text>
+          <text class="muted sm" wx:if="{{detail.group2Name}}">/{{detail.group2Name}}</text>
+          <text class="muted sm" wx:if="{{detail.group3Name}}">/{{detail.group3Name}}</text>
+          <text class="muted sm" wx:if="{{detail.group4Name}}">/{{detail.group4Name}}</text>
         </view>
+        <view class="btn-box" @tap="goDetail({{detail.id}})">去定制<icon class="more ml10 xsmall" color="white"/></view>
       </view>
     </view>
   </view>
 </template>
+
 <script>
   import wepy from 'wepy';
-  export default class GroupGoodsListItem extends wepy.component {
-    props = {
+  import base from '../../mixins/base';
+
+  export default class GroupGoodsItem extends wepy.component {
+    prop = {
       detail: {}
     };
-    data = {};
+    data = {
+    };
+    async onLoad () {
+    };
     methods = {
-      goDetail() {
-        this.$root.$navigate(`/pages/group_goods/detail?id=${this.detail.id}`)
+      goDetail(id) {
+        this.$root.$navigate(`/pages/group_goods/detail?id=${id}`)
       }
     };
-    components = {};
+    computed = {
+    };
+    components = {
+    };
+    mixins = [base];
+    config = {
+    };
   }
 </script>
 
 <style lang="scss">
   @import "../../styles/variable";
-
-  $image-width: ( 750rpx - 80rpx ) / 2;
-  .group-goods-item-container{
+  $img-width:180rpx;
+  .bargain_more_item{
     background-color: white;
-    border-radius: 20rpx;
-    margin: 20rpx 20rpx 0;
+    margin: 10rpx 10rpx 0;
     padding: 20rpx;
-    .name-box {
-      flex-direction: row-reverse;
-      font-size: 40rpx;
-      line-height: 40rpx;
+    .img-box{
+      width: $img-width;
+      height: $img-width;
     }
-    .image-box{
-      width: $image-width;
-      height: $image-width;
-    }
-    .text-weight{
-      font-weight: bold;
-    }
-    .botton-box{
+    .content-box{
+      height: $img-width;
+      justify-content: space-between;
       flex: 1;
-      height: $image-width;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
     }
-    .price-box{
-      width: $image-width;
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-end;
-      align-items: flex-end;
-      margin-top: 16rpx;
+    .origin{
+      text-decoration: line-through;
     }
-    .go-box{
-      width: $image-width;
-      margin-top: 16rpx;
-    }
-    .go-botton-box{
-      width: 40rpx;
-      height: 40rpx;
-      border-radius: 20rpx;
-      background-color: $color-primary-yellow;
+    .btn-box{
+      background-color: $color-primary;
+      color: white;
+      padding: 8rpx 16rpx;
+      border-radius: 5rpx;
+      font-size: $text-sm;
     }
   }
-
 </style>

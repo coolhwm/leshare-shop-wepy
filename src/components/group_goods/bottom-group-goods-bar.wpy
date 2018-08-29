@@ -1,16 +1,12 @@
 <template>
-  <view class="group-goods-bar-placeholder">
-  </view>
-  <view class="row-between group-goods-bar-box">
-    <view class="price-box ml20">
-      <text class="primary sm mr10">合计</text>
-      <text class="white xxs">￥</text>
-      <text class="white lg">{{price}}</text>
+  <view class="tarde-action-bar row-end">
+    <view>
+      <text>合计 </text>
+      <text class="major mr20">￥{{price}}</text>
     </view>
-    <view class="go-order-box mr20" @tap="buy">
-      <text class="primary lg">去下单</text>
-      <icon class="more primary"/>
-    </view>
+    <form class="trade-confirm-button row-center" @tap="buy">
+      <button plain form-type="submit" >去下单</button>
+    </form>
   </view>
 </template>
 
@@ -39,16 +35,33 @@
 <style lang="scss">
   @import "../../styles/variable";
 
-  .group-goods-bar-box{
+  .tarde-action-bar{
     position: fixed;
+    z-index: 10000;
     bottom: 0;
     height: 100rpx;
     width: 100%;
+    background-color: #FFF;
     border-top: $border;
-    background-color: #1a1a1a;
-  }
-  .group-goods-bar-placeholder{
-    height: 105rpx;
-    width: 100%;
+
+    text{
+      font-size: $text-xxl;
+    }
+
+    .trade-confirm-button{
+      height: 100%;
+      width: 280rpx;
+      line-height: 100rpx;
+      text-align: center;
+      background-color: $color-primary;
+      color: #FFF;
+      button{
+        color: #FFF;
+      }
+    }
+
+    .trade-confirm-disable{
+      background-color: #B0B0B0;
+    }
   }
 </style>

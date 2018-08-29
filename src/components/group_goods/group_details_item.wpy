@@ -1,69 +1,52 @@
 <template>
-  <view class="group-detail-item-box {{detail.groupValue.length === 1 ? 'column-center' : ''}}">
-    <view class="row-center group-name-box" wx:if="{{detail.groupValue.length > 1}}">
-      <text>{{detail.group}}</text>
+  <view class="group-item-box column">
+    <view class="title-box">
+      <text class="mr10">请选择{{detail.group}}</text>
+      <text>(已选择:{{detail.groupValue[detail.selGoodsIndex].goods.name}})</text>
     </view>
-    <view wx:if="{{detail.groupValue.length === 1}}" class="column-center">
-      <image src="{{detail.groupValue[0].goods.imageUrl}}"/>
-      <text>{{detail.groupValue[0].goods.name}}</text>
+    <view wx:if="{{detail.groupValue.length == 1}}" style="padding: 0 14rpx;">
+      <repeat for="{{detail.groupValue}}" key="index" index="index" item="item"  style="height: 90%;">
+        <GroupDetailGoods :item.sync="item"/>
+      </repeat>
     </view>
-    <swiper wx:else class="goods-swiper" indicator-dots="true" circular="true" @change="changeGoods">
-      <block wx:for="{{detail.groupValue}}" wx:key="id" wx:for-item="item" wx:index="index"  style="height: 90%;">
+    <swiper class="goods-swiper" indicator-dots="true" circular="true" @change="changeGoods" wx:else>
+      <repeat for="{{detail.groupValue}}" key="index" index="index" item="item"  style="height: 90%;">
         <swiper-item class="column-center">
-          <view class="column-center card">
-            <image src="{{item.goods.imageUrl}}"/>
-            <text class="mt10 sm">{{item.goods.name}}</text>
-            <text class="mt10 sm">+{{item.diffPrice}}（原价：￥{{item.goods.sellPrice}}）</text>
-          </view>
+          <GroupDetailGoods :item.sync="item" />
         </swiper-item>
-      </block>
+      </repeat>
     </swiper>
   </view>
+
 </template>
 <script>
   import wepy from 'wepy';
+  import GroupDetailGoods from '../../components/group_goods/group_detail_goods'
   export default class GroupDetailsItem extends wepy.component {
     props = {
       detail: {}
     };
-    data = {
-      selGoodsIndex: 0
-    };
     methods = {
       changeGoods(event) {
-        this.selGoodsIndex = event.detail.current
-        this.$emit('changeGoods', this.detail.groupValue[this.selGoodsIndex])
+        this.detail.selGoodsIndex = event.detail.current
+        this.$emit('changeGoods', this.detail.groupValue[this.detail.selGoodsIndex])
       }
     };
-    components = {};
+    components = {
+      GroupDetailGoods: GroupDetailGoods
+    };
   }
 </script>
 
 <style lang="scss">
   @import "../../styles/variable";
-  .group-detail-item-box{
-    background-color: white;
-    height: 480rpx;
+  .group-item-box{
     border-bottom: $border;
-    .group-name-box{
-      padding-top: 20rpx;
-    }
-    image{
-      width: 180rpx;
-      height: 180rpx;
+    .title-box{
+      padding: 15rpx;
     }
     .goods-swiper{
-      height: 400rpx;
-    }
-    .card{
-      margin-top: -40rpx;
-      padding: 20rpx;
-      border-radius: 20rpx;
-      border: $border;
-      box-shadow: 5px 5px 5px $color-muted;
-      width: 600rpx;
-      height:280rpx;
+      height: 266rpx;
     }
   }
-
 </style>
