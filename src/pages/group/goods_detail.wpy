@@ -83,9 +83,10 @@
       processing: {},
       list: []
     };
-    async onLoad ({ruleId}) {
+    async onLoad ({ruleId, scene}) {
+      this.ruleId = ruleId || scene;
       await initWxAppSync();
-      await this.update(ruleId);
+      await this.update(this.ruleId);
     };
     onUnload() {
       this.$invoke('TimeOutBar', 'clear');

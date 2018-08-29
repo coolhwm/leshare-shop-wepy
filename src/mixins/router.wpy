@@ -286,11 +286,11 @@
           break;
         case 'CAMERA':
           // 扫码
-          wepy.scanCode({
-            success: (res) => {
-              console.log(res)
+          wepy.scanCode().then(result => {
+            if (result.path) {
+              this.$root.$navigate('/' + result.path);
             }
-          })
+          });
           break;
         case 'SHARE':
           // 分享好友
@@ -389,6 +389,7 @@
     }
     methods = {
       reportFormId({detail}) {
+        console.info(`[form] form_id=${detail.formId}`);
         shop.reportFormId(detail.formId);
       },
       routeToCart() {

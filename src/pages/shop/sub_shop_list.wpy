@@ -286,7 +286,7 @@
     };
     mixins = [base, pagination];
     config = {
-      navigationBarTitleText: '一品品精选',
+      navigationBarTitleText: '好店推荐',
       enablePullDownRefresh: true
     };
   }

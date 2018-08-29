@@ -68,10 +68,10 @@
       userGroup: null,
       list: null
     };
-    async onLoad ({groupId}) {
+    async onLoad ({groupId, scene}) {
       await initWxAppSync();
       await checkUserInfo();
-      const [detail, list] = await Promise.all([group.groupDetail(groupId), group.recommendList()]);
+      const [detail, list] = await Promise.all([group.groupDetail(groupId || scene), group.recommendList()]);
       this.detail = detail;
       this.list = list;
       this.rule = this.detail.rule;

@@ -5,11 +5,11 @@
       <image class="avatar"  src="{{avatarUrl}}"/>
       <view class="user-name" style="color: {{card.color}}">{{nickName}}</view>
     </view>
-    <view class="column-center">
-      <button  class="registe-btn" wx:if="{{card.extraParam != null && card.extraParam != '' && card.extraParam != '[]'}}" @tap="complexRegist" style="color: {{card.color}}">绑定手机</button>
-      <button  open-type="getPhoneNumber" class="registe-btn" bindgetphonenumber="regist" wx:else style="color: {{card.color}}">绑定手机</button>
+    <form class="column-center"  report-submit="true" @submit="reportFormId">
+      <button  class="registe-btn" wx:if="{{card.extraParam != null && card.extraParam != '' && card.extraParam != '[]'}}" form-type="submit" @tap="complexRegist" style="color: {{card.color}}">绑定手机</button>
+      <button  class="registe-btn" open-type="getPhoneNumber" bindgetphonenumber="regist" wx:else style="color: {{card.color}}" form-type="submit">绑定手机</button>
       <text class="xxs mt10" style="color: {{card.color}}">立即绑定手机可享受积分与折扣特权</text>
-    </view>
+    </form>
   </view>
 
   <!-- 会员卡区域 -->
@@ -52,6 +52,7 @@
   import base from '../../mixins/base'
   import Event from '../../utils/Event';
   import Tips from '../../utils/Tips';
+  import router from '../../mixins/router';
 
   @connect({
     member: store.get('member'),
@@ -157,7 +158,7 @@
         }
       }
     };
-    mixins = [base]
+    mixins = [base, router]
   }
 </script>
 
@@ -167,8 +168,13 @@
     align-items: flex-start;
   }
   .registe-btn {
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: transparent;
     color: white;
+    width: 200rpx;
     font-size: $text-nm;
     border: 1px solid white;
     border-radius: 10px;

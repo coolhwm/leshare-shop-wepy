@@ -81,7 +81,7 @@
       </repeat>
     </view>
 
-    <vierw class="column signboard-box mt10" wx:if="{{subShopGoodsList.length > 0}}">
+    <view class="column signboard-box mt10" wx:if="{{subShopGoodsList.length > 0}}">
       <view class="row-between sub-top-box">
         <view class="row">
           <icon class="signboard xsmall"/>
@@ -99,9 +99,9 @@
           </repeat>
         </scroll-view>
       </view>
-    </vierw>
+    </view>
 
-    <vierw class="column signboard-box mt10" wx:if="{{detail.goodsDetails.length > 0}}">
+    <view class="column signboard-box mt10" wx:if="{{detail.goodsDetails.length > 0}}">
       <view class="row-between sub-top-box">
         <view class="row">
           <icon class="square-shop xsmall" style="color: #F8C6CF;"/>
@@ -112,9 +112,9 @@
         <!--详情区域-->
         <DetailList :detail.sync="detail" :isShowTitle="isShowTitle"/>
       </view>
-    </vierw>
+    </view>
 
-    <vierw class="column signboard-box mt10">
+    <view class="column signboard-box mt10">
       <view class="row-between sub-top-box">
         <view class="row">
           <icon class="signboard xsmall" style="color: #F8C6CF"/>
@@ -164,7 +164,7 @@
           </view>
         </view>
       </view>
-    </vierw>
+    </view>
 
     <ButtonWidget :bottom.sync="bottom"/>
 

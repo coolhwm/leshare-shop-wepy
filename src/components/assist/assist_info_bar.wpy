@@ -22,12 +22,12 @@
         <text>{{assist.assistRuleTip}}</text>
         <view class="btn-box" @tap="want({{assist}})">我也要</view>
       </view>
-      <block wx:else>
-        <button class="btn-box" open-type="getPhoneNumber" bindgetphonenumber="regist" wx:if="{{member == null}}">
+      <form report-submit="true" @submit="reportFormId" wx:else>
+        <button class="btn-box" open-type="getPhoneNumber" bindgetphonenumber="regist" form-type="submit" wx:if="{{member == null}}">
           为TA助力
         </button>
-        <view wx:else class="btn-box" @tap="help()">为TA助力</view>
-      </block>
+        <button wx:else class="btn-box" @tap="help()" form-type="submit">为TA助力</button>
+      </form>
     </view>
     <view class="column-center mt20">
       <view class="row" wx:if="{{assist.leftJoin > 0}}">
@@ -55,6 +55,7 @@
   import { checkUserInfoWithError, handleGetPhoneNumber } from '../../api/wx_auth';
   import countdown from '../../mixins/countdown';
   import assist from '../../api/assist';
+  import router from '../../mixins/router';
   import Tips from '../../utils/Tips';
 
   @connect({
@@ -65,7 +66,7 @@
       assist: {}
     };
     data = {
-    };
+    } ;
     async onLoad () {
       await store.wait();
     }
@@ -102,7 +103,7 @@
     computed = {};
     components = {};
     watch = {};
-    mixins = [countdown];
+    mixins = [countdown, router];
   }
 </script>
 

@@ -18,7 +18,7 @@
         <text class="lg">付款金额</text>
         <view class="row input-box">
           <text class="xxl mr10">￥</text>
-          <input type="digit" confirm-type="确认付款" bindinput="dealPriceInput" placeholder="请输入付款金额" maxlength="4"/>
+          <input type="digit" confirm-type="确认付款" bindinput="dealPriceInput" placeholder="请输入付款金额" maxlength="6"/>
         </view>
         <view class="coupon-box row">
           <view class="weui-cell__bd">优惠券
@@ -64,9 +64,9 @@
             <view class="weui-cell__ft" wx:else>{{serviceFeeText}}</view>
           </view>
         </block>
-        <view class="button-box">
-          <button class="weui-btn" type="primary" @tap="offline">立即付款</button>
-        </view>
+        <form class="button-box" report-submit="true" @submit="reportFormId">
+          <button class="weui-btn" type="primary" form-type="submit" @tap="offline">立即付款</button>
+        </form>
       </view>
     </view>
 
@@ -75,8 +75,12 @@
       <view class="header-box column-between">
         <icon class="confirm" style="font-size: 50px;height: 50px;"/>
         <text class="xxl pay-success">支付成功</text>
-        <text class="mb20">{{shop.name}}</text>
-        <text class="price-box">￥{{result.finalPrice}}</text>
+        <text class="mb20"  wx:if="{{subShopInfo != null}}">{{subShopInfo.name}}</text>
+        <text class="mb20" wx:else>{{shop.name}}</text>
+        <view class="column-center">
+          <text class="price-box">￥{{result.dealPrice}}</text>
+          <text class="sm muted mt5" wx:if="{{result.serviceFee}}">另收取服务费￥{{result.serviceFee}}</text>
+        </view>
       </view>
       <view class="button-box">
         <button class="weui-btn" type="primary" @tap="finish">完成</button>
@@ -104,6 +108,7 @@
   import topUp from '../../api/top_up';
   import WxUtils from '../../utils/WxUtils';
   import shop from '../../api/shop'
+  import router from '../../mixins/router';
   import ButtonWidget from '../../components/template/button_widget';
 
   @connect({
@@ -129,15 +134,19 @@
       subShopId: null,
       subShopInfo: null
     };
-    async onLoad ({scene}) {
+    async onLoad ({scene, subShopId}) {
       await initWxAppSync();
       if (this.card.supplyBalance == 1 && this.member != null && this.member.balance > 0) {
         this.payType.onlinePayType = 'balance';
         this.payType.onlinePayText = '余额支付';
       }
       if (scene) {
-        this.subShopId = WxUtils.parseQrScene(scene, 'subShopId')
-        this.subShopInfo = await shop.subShopInfo(this.subShopId)
+        this.subShopId = WxUtils.parseQrScene(scene, 'subShopId');
+      } else if (subShopId) {
+        this.subShopId = subShopId;
+      }
+      if (this.subShopId) {
+        this.subShopInfo = await shop.subShopInfo(this.subShopId);
       }
       if (this.card.supplyBalance == 1 && this.member != null && this.member.balance == 0) {
         this.topUpRule = await topUp.getTopUp();
@@ -172,8 +181,8 @@
           param.finalPrice = (this.dealPrice * 1 - this.selectedCoupon.price * 1).toFixed(2);
         }
         if (this.subShopInfo && this.subShopInfo.serviceFee > 0) {
-          param.serviceFee = this.serviceFeeText * 1
-          param.finalPrice = param.finalPrice * 1 + param.serviceFee * 1
+          param.serviceFee = this.serviceFeeText * 1;
+          param.finalPrice = (param.finalPrice * 1 + param.serviceFee * 1).toFixed(2);
         }
         if (this.subShopId) {
           param.subShopId = this.subShopId
@@ -332,7 +341,7 @@
       Tips: FormTips,
       ButtonWidget: ButtonWidget
     };
-    mixins = [base, input];
+    mixins = [base, input, router];
     config = {
       navigationBarTitleText: '在线支付'
     };
@@ -344,7 +353,6 @@
   .container{
     padding: 40rpx;
   }
-
   .pay-box{
     padding: 40rpx;
     background-color: #fff;
@@ -356,7 +364,6 @@
         border-radius: 50%;
       }
     }
-
     .content-box{
       margin-top: 20rpx;
       .input-box, .coupon-box{
