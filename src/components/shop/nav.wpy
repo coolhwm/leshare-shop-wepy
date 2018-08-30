@@ -5,7 +5,7 @@
       <icon class="inshop mr10" color="primary" wx:if="{{mode == 2}}"/>
       <text>{{title}}</text>
     </view>
-    <view class="footer row" @tap="change({{mode}})" wx:if="{{shop.inShop == 1}}">
+    <view class="footer row" @tap="change({{mode}})" wx:if="{{shop.sellMode == 'BOTH'}}">
       <text class="xs mr10 muted">{{exchangeText}}</text>
       <icon class="exchange" color="primary"/>
     </view>
@@ -35,6 +35,9 @@
     };
     methods = {
       change (mode) {
+        if (this.shop.sellMode != 'BOTH') {
+          return;
+        }
         if (mode == 1) {
           this.mode = 2
         } else {
