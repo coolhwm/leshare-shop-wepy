@@ -79,7 +79,7 @@
      * 切换模式
      */
     switchMode(mode) {
-      if (this.shop.sellMode != 'BOTH') {
+      if (this.shop.sellMode && this.shop.sellMode != 'BOTH') {
         return;
       }
       this.mode = mode;
