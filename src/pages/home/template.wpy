@@ -73,7 +73,7 @@
       </block>
       <!--广告窗口-->
       <block wx:if="{{item.type == 'AD_BANNER'}}">
-        <VideoBox :param.sync="item" />
+        <ad unit-id="{{item.unitId}}"></ad>
       </block>
 
 
