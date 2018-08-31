@@ -186,7 +186,11 @@
           param.finalPrice = (this.dealPrice * 1 - this.selectedCoupon.price * 1).toFixed(2);
         }
         if (this.subShopInfo && this.subShopInfo.serviceFee > 0) {
+<<<<<<< HEAD
+          param.serviceFee = this.serviceFeeText * 1
+=======
           param.serviceFee = this.serviceFeeText * 1;
+>>>>>>> ef416cfab04a9f005546ab4961b7b79534984743
           param.finalPrice = (param.finalPrice * 1 + param.serviceFee * 1).toFixed(2);
         }
         // 处理传入的店铺
