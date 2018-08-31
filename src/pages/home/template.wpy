@@ -71,6 +71,10 @@
       <block wx:if="{{item.type == 'VIDEO_BOX'}}">
         <VideoBox :param.sync="item" />
       </block>
+      <!--广告窗口-->
+      <block wx:if="{{item.type == 'AD_BANNER'}}">
+        <VideoBox :param.sync="item" />
+      </block>
 
 
       <!--间隔-->
