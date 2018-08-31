@@ -7,10 +7,12 @@
       <view class="out_crl">
         <view class="second_crl" @tap="sign">
           <form class="in_crl" report-submit="true" @submit="reportFormId" >
-            <text class="sign_state" wx:if="{{signed}}">已签到</text>
-            <button plain class="sign_state" form-type="submit" wx:if="{{!signed}}"><text>签到</text></button>
-            <view class="line"/>
-            <text class="sign_times">连续{{signIn.continuationTimes}}天</text>
+            <button plain form-type="submit">
+              <text class="sign_state" wx:if="{{signed}}">已签到</text>
+              <text class="sign_state" wx:if="{{!signed}}"><text>签到</text></text>
+              <view class="line"/>
+              <text class="sign_times">连续{{signIn.continuationTimes}}天</text>
+            </button>
           </form>
         </view>
       </view>
@@ -219,6 +221,10 @@
     padding: 50rpx 0rpx 10rpx 35rpx;
   }
   .in_crl {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     background: #FFF;
     border-radius: 1000rpx;
     border: 2rpx solid #7fbcff;
@@ -275,7 +281,6 @@
   }
   .sign_times {
     font-size: 30rpx;
-    margin-top: 15rpx;
     color: $color-primary-blue;
     display: block;
   }

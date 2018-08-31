@@ -56,8 +56,8 @@
       createTime: null,
       list: []
     };
-    async onLoad ({bargainId, isBegin}) {
-      this.bargainId = bargainId;
+    async onLoad ({bargainId, isBegin, scene}) {
+      this.bargainId = bargainId || scene;
       await initWxAppSync();
       await this.update(bargainId);
       if (isBegin) {

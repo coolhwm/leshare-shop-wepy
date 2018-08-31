@@ -33,16 +33,16 @@
     <view wx:elif="{{rule.limitCount <= rule.bargainedCount}}" class="column-center btn-disabled">
       <text>已售罄</text>
     </view>
-    <block wx:else>
-      <button class="column-center btn-bargain" style="border-radius: 0" plain  open-type="getPhoneNumber" bindgetphonenumber="regist" wx:if="{{member == null}}">
+    <form wx:else report-submit="true" style="height: 100%" @submit="reportFormId" >
+      <button class="column-center btn-bargain" style="border-radius: 0" plain  open-type="getPhoneNumber" form-type="submit" bindgetphonenumber="regist" wx:if="{{member == null}}">
         <text class="xxl money-box" style="line-height: 50rpx;">￥{{rule.floorPrice}}</text>
         <text style="line-height: 42rpx;">发起砍价</text>
       </button>
-      <view class="column-center btn-bargain" @tap="begin" wx:else>
-        <text class="xxl money-box">￥{{rule.floorPrice}}</text>
-        <text>发起砍价</text>
-      </view>
-    </block>
+      <button class="column-center btn-bargain" style="border-radius: 0" plain @tap="begin" form-type="submit" wx:else>
+        <text class="xxl money-box" style="line-height: 50rpx;">￥{{rule.floorPrice}}</text>
+        <text style="line-height: 42rpx;">发起砍价</text>
+      </button>
+    </form>
   </view>
 </template>
 

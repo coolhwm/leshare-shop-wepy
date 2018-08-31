@@ -43,8 +43,8 @@
       detail: null,
       goodsDetail: null
     };
-    async onLoad ({assistId}) {
-      this.assistId = assistId;
+    async onLoad ({assistId, scene}) {
+      this.assistId = assistId || scene;
       await initWxAppSync();
       await this.update();
       this.loaded();

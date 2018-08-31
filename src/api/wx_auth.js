@@ -127,13 +127,14 @@ export async function saveWxUserPhone (data) {
  * 处理电话号码事件
  */
 export async function handleGetPhoneNumber(detail) {
-  if (detail.errMsg == 'getPhoneNumber:fail user deny') {
+  if (detail.errMsg == 'getPhoneNumber:fail user deny' || detail.errMsg == 'getPhoneNumber:fail:cancel to confirm login') {
     await Tips.alert('请允许授权');
     throw new Error('用户未授权电话号码');
   }
   try {
     // 其他错误不尝试注册
     if (detail.errMsg != 'getPhoneNumber:ok') {
+      console.info(`[login] get phone number fail, message=${detail.errMsg}`, detail);
       return;
     }
     Tips.loading();
@@ -142,7 +143,13 @@ export async function handleGetPhoneNumber(detail) {
       await store.refresh('member');
     }
   } catch (e) {
-    console.warn('注册失败', e);
+    // 判断已注册的情况
+    if (e.serverCode == 52000) {
+      console.info('[login] 用户已注册，刷新本地缓存', e);
+      await store.refresh('member');
+    } else {
+      console.warn('注册失败', e);
+    }
   }
 }
 
