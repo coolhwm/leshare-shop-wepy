@@ -23,7 +23,12 @@
     <view class="line-box">
       <wepySignTime :list.sync="signDay"/>
     </view>
-    <ad unit-id="adunit-d919a7d9dccb430f"></ad>
+
+    <!--广告栏-->
+    <view class="ad-banner" wx:if="{{adUnitId}}">
+      <ad unit-id="{{adUnitId}}"></ad>
+    </view>
+
     <!--tab模块-->
     <tab :tab.sync="tab" fixed="0"/>
     <scroll-view scroll-y="true" class="swiper-item-box">
@@ -93,7 +98,8 @@
       signed: false,
       signIn: null,
       type: '',
-      bonusPank: null
+      bonusPank: null,
+      adUnitId: null
     };
     params () {
       return {

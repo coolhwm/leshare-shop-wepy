@@ -11,8 +11,9 @@
     <!--助力玩法栏-->
     <BargainRuleBar title="助力玩法" ruleTip="（数量有限，送完即止）" firstBottom="发起助力" secondBottom="帮忙助力" thirdTop="人数达标" thirdBottom="获取商品"/>
 
-    <view class="ad-banner">
-      <ad unit-id="adunit-465a0c9efc16a72f"></ad>
+    <!--广告栏-->
+    <view class="ad-banner" wx:if="{{adUnitId}}">
+      <ad unit-id="{{adUnitId}}"></ad>
     </view>
 
     <!--商品详情-->
@@ -45,7 +46,8 @@
       assistId: null,
       init: false,
       detail: null,
-      goodsDetail: null
+      goodsDetail: null,
+      adUnitId: null
     };
     async onLoad ({assistId, scene}) {
       this.assistId = assistId || scene;

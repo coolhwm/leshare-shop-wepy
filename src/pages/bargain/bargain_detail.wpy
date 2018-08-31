@@ -11,6 +11,11 @@
     <!--砍价玩法栏-->
     <BargainRuleBar/>
 
+    <!--广告栏-->
+    <view class="ad-banner" wx:if="{{adUnitId}}">
+      <ad unit-id="{{adUnitId}}"></ad>
+    </view>
+
     <!--更多虚拟商品-->
     <block wx:if="{{list && list.length > 0}}">
       <view class="detail-title row-center mt10">
@@ -54,7 +59,8 @@
       detail: null,
       rule: null,
       createTime: null,
-      list: []
+      list: [],
+      adUnitId: null
     };
     async onLoad ({bargainId, isBegin, scene}) {
       this.bargainId = bargainId || scene;
@@ -142,5 +148,8 @@
     height: 90rpx;
     border-bottom: $border;
     background-color: #FFF;
+  }
+  .ad-banner{
+    margin-top: 10rpx;
   }
 </style>
