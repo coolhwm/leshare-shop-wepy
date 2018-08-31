@@ -47,7 +47,8 @@
 
   @connect({
     member: store.get('member'),
-    card: store.get('card')
+    card: store.get('card'),
+    shop: store.get('shop')
   })
   export default class ShopIndex extends wepy.page {
     data = {
@@ -78,6 +79,9 @@
      * 切换模式
      */
     switchMode(mode) {
+      if (this.shop.sellMode && this.shop.sellMode != 'BOTH') {
+        return;
+      }
       this.mode = mode;
       this.$apply();
     }
@@ -102,7 +106,7 @@
     }
     methods = {
       change (mode) {
-        this.mode = mode
+        this.switchMode(mode);
       }
     };
     computed = {

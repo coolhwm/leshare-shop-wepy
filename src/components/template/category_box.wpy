@@ -48,7 +48,7 @@
     member: store.get('member'),
     card: store.get('card'),
     pickCoupons: store.get('pickCoupons'),
-    categories: store.get('categories'),
+    // categories: store.get('categories'),
     cart: store.get('cart'),
     discount: store.get('discount')
   })
@@ -85,7 +85,7 @@
       await this.doLoad();
     }
     async doLoad () {
-      const categories = {...this.categories};
+      const categories = await goods.categories();
       const list = categories.list.filter(item => item.bussType === this.bussType);
       if (list.length > 0) {
         categories.list = list

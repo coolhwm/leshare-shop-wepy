@@ -59,8 +59,11 @@ export default class goods extends base {
   /**
    * 查询商品目录
    */
-  static categories (pid = 0) {
-    const url = `${this.baseUrl}/goods/inner_category`;
+  static categories (subShopId) {
+    let url = `${this.baseUrl}/goods/inner_category`;
+    if (subShopId) {
+      url += `?sub_shop_id=${subShopId}`;
+    }
     return this.get(url).then(data => this._createGoodsCategories(data));
   }
 

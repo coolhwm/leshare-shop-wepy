@@ -259,6 +259,10 @@
       }
       // 自动选择优惠券
       this.setDefaultCoupon();
+      // 处理默认店铺
+      if (this.shop.platformRule) {
+        this.trade.subShopId = this.shop.platformRule.defaultShop;
+      }
       this.loaded();
       // 事件注册
       Event.listen(Event.TRADE_ADDRESS_UPDATE, this.updateAddress.bind(this), this);

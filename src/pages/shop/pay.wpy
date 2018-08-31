@@ -140,6 +140,11 @@
         this.payType.onlinePayType = 'balance';
         this.payType.onlinePayText = '余额支付';
       }
+      // 处理默认店铺
+      if (this.shop.platformRule) {
+        this.subShopId = this.shop.platformRule.defaultShop;
+      }
+      // 扫码、传参的店铺
       if (scene) {
         this.subShopId = WxUtils.parseQrScene(scene, 'subShopId');
       } else if (subShopId) {
@@ -188,6 +193,7 @@
 >>>>>>> ef416cfab04a9f005546ab4961b7b79534984743
           param.finalPrice = (param.finalPrice * 1 + param.serviceFee * 1).toFixed(2);
         }
+        // 处理传入的店铺
         if (this.subShopId) {
           param.subShopId = this.subShopId
         }
