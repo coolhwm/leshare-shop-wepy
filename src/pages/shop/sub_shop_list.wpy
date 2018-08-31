@@ -137,9 +137,10 @@
       address: null,
       by: null,
       bussArea: null
-    }
+    };
     async onLoad () {
       try {
+        Tips.loading('定位中');
         this.location = await wepy.getLocation();
       } finally {
         const tags = await shop.subShopTag();
