@@ -304,7 +304,7 @@
       await order.cancelRefundOrder(orderId, refundUuid);
       await Tips.success('取消成功');
       Event.emit(Event.ORDER_LIST_UPDATE);
-      Route.backOrRedirect('/pages/customer/index');
+      Route.backOrRedirect('/pages/customer/index_template');
     }
     /**
      * 退款详情

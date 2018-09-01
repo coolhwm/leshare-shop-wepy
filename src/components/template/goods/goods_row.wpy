@@ -38,7 +38,7 @@
         </view>
         <view class="price-box" wx:else>
           <view class="goods-unit">￥</view>
-          <text class="goods-price">{{goods.price ? goods.price : goods.priceLable}}</text>
+          <text class="goods-price">{{goods.price != null ? goods.price : goods.priceLable}}</text>
           <text class="original-price" wx:if="{{goods.originalPrice}}">￥{{goods.originalPrice}}</text>
         </view>
       </view>

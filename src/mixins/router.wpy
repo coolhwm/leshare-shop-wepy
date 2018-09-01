@@ -155,9 +155,9 @@
      */
     routeToCustomer () {
       if (this.isTab()) {
-        this.$root.$switch(`/pages/customer/index`);
+        this.$root.$switch(`/pages/customer/index_template`);
       } else {
-        this.$root.$navigate(`/pages/customer/index`);
+        this.$root.$navigate(`/pages/customer/index_template`);
       }
     }
     /**

@@ -134,7 +134,7 @@
       await store.refresh('member');
       clearInterval(interval);
       this.loaded();
-      setTimeout(async () => WxUtils.backOrRedirect('/pages/customer/index'), 2000);
+      setTimeout(async () => WxUtils.backOrRedirect('/pages/customer/index_template'), 2000);
     };
     computed = {
       numberText() {
