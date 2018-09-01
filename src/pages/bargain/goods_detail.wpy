@@ -26,7 +26,12 @@
     <BargainRuleBar/>
 
     <!--评论预览-->
-    <CommentPreview :goodsId.sync="goodsId"/>
+    <!--<CommentPreview :goodsId.sync="goodsId"/>-->
+
+    <!--广告栏-->
+    <view class="ad-banner" wx:if="{{adUnitId}}">
+      <ad unit-id="{{adUnitId}}"></ad>
+    </view>
 
 
     <!--商品详情-->
@@ -82,7 +87,8 @@
       rule: {},
       goodsDetail: {},
       subShop: {},
-      list: []
+      list: [],
+      adUnitId: null
     };
     async onLoad ({ruleId, scene}) {
       await initWxApp();
@@ -165,5 +171,8 @@
     height: 90rpx;
     border-bottom: $border;
     background-color: #FFF;
+  }
+  .ad-banner{
+    margin-top: 10rpx;
   }
 </style>
