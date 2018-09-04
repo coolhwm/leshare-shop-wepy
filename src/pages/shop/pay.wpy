@@ -372,6 +372,7 @@
       }
     }
     .content-box{
+      width: 100%;
       margin-top: 20rpx;
       .input-box, .coupon-box{
         border-bottom: $border;
