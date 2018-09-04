@@ -52,6 +52,9 @@
     <Notice/>
 
     <Popups />
+
+    <ButtonWidget :bottom.sync="bottom"/>
+
   </view>
 </template>
 
@@ -77,6 +80,7 @@
   import Notice from '../../components/shop/notice';
   import member from '../../api/member';
   import Popups from '../../components/shop/popups'
+  import ButtonWidget from '../../components/template/button_widget';
 
   @connect({
     member: store.get('member')
@@ -199,7 +203,8 @@
       Notice: Notice,
       Loading: Loading,
       bonusPankItem: bonusPankItem,
-      Popups: Popups
+      Popups: Popups,
+      ButtonWidget: ButtonWidget
     };
     mixins = [base, pagination, router];
   }
