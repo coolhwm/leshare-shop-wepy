@@ -287,7 +287,7 @@
         case 'CAMERA':
           // 扫码
           wepy.scanCode().then(result => {
-            console.info(result);
+            console.info('[scan] result=', result);
             if (result.path) {
               const part = result.path.split('?');
               if (part.length < 1) {
@@ -296,8 +296,15 @@
               }
               let toUrl = '/' + part[0];
               if (part.length > 1) {
-                toUrl += '?' + encodeURIComponent(part[1]);
+                const param = part[1].split('=');
+                if (param.length == 2) {
+                  toUrl += `?scene=${param[1]}`;
+                }
+                if (param.length == 3) {
+                  toUrl += '?scene=' + encodeURIComponent(param[1] + '=' + param[2]);
+                }
               }
+              console.info('[scna] to url=', toUrl);
               this.$root.$navigate(toUrl);
             }
           });
