@@ -233,11 +233,21 @@
         this.isLimitCoupon = this.goodsList.some(item => item.limitCoupon);
         this.isLimitBonus = this.goodsList.some(item => item.limitBonus);
       }
+      // 处理配送方式
       if (orderUtils.isDeliveryOrder(this.trade.orderType)) {
         // 默认地址
-        this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
-        // 处理配送方式
-        await this.updateDelivery();
+        try {
+          this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
+          await this.updateDelivery();
+        } catch (e) {
+          if (e.serverCode == '20005') {
+            await Tips.modal('部分商品已下架，请重新选购');
+            Event.emit(Event.GOODS_CATEGORY_RELOAD);
+            this.cartManager.clear();
+            wepy.navigateBack();
+            return;
+          }
+        }
       }
       // 处理配送费
       this.goodsList.forEach(item => {
@@ -517,7 +527,6 @@
           // 虚拟商品名单
           return await digit.order(trade);
         } else if (this.type === 'groupGoods') {
-          console.info('groupGoods')
           return await groupGoods.order(trade, this.trade.ruleId)
         } else {
           // 普通订单
