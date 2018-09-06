@@ -42,14 +42,19 @@
       <block wx:if="{{trade.paymentType == 1}}">
         <!--支付方式-->
         <!--TODO 0为店铺不支持余额支付-->
-        <view class="weui-cell weui-cell_access" wx:if="{{card.supplyBalance == 0 || member == null}}">
-          <view class="weui-cell__bd">支付方式</view>
-          <view class="weui-cell__ft">微信支付</view>
-        </view>
-        <view class="weui-cell weui-cell_access" wx:else  @tap="onlinePayType">
+        <view class="weui-cell weui-cell_access" @tap="onlinePayType" wx:if="{{shop.payType == 'BOTH' && member != null && card.supplyBalance == 1}}">
           <view class="weui-cell__bd">支付方式</view>
           <view class="weui-cell__ft weui-cell__ft_in-access">{{trade.onlinePayText}}</view>
         </view>
+        <view class="weui-cell weui-cell_access" wx:elif="{{shop.payType == 'BALANCE'}}" >
+          <view class="weui-cell__bd">支付方式</view>
+          <view class="weui-cell__ft">余额支付</view>
+        </view>
+        <view class="weui-cell weui-cell_access" wx:else >
+          <view class="weui-cell__bd">支付方式</view>
+          <view class="weui-cell__ft">微信支付</view>
+        </view>
+
         <!--显示余额-->
         <block wx:if="{{trade.onlinePayType == 'balance'}}">
           <view class="weui-cell weui-cell_access" wx:if="{{card.supplyBalance == 1}}">
