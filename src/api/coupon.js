@@ -106,7 +106,7 @@ export default class coupon extends base {
     return this.post(url, visit);
   }
   /**
-   * 根据id查询卡卷详情
+   * 根据id查询卡券详情
    */
   static detail(id) {
     const url = `${this.baseUrl}/coupons/info/${id}`;

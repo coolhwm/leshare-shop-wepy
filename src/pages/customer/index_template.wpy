@@ -40,7 +40,7 @@
         <OrderBar :param.sync="item" :count.sync="count"/>
       </block>
 
-      <!--卡卷订单栏-->
+      <!--卡券订单栏-->
       <block wx:if="{{item.type == 'COUPON_ORDER_BAR'}}">
         <couponOrderBar :param.sync="item" :count.sync="count"/>
       </block>

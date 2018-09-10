@@ -329,6 +329,10 @@
           // 店铺信息
           this.$root.$navigate(`/pages/shop/about_us`);
           break;
+        case 'SUB_SHOP':
+          // 子商户信息
+          this.$root.$navigate(`/pages/shop/sub_shop_detail?subShopId=${targetId}`);
+          break;
         case 'USER_INFO':
           // 用户资料
           this.$root.$navigate(`/pages/customer/info`);
