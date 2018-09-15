@@ -33,7 +33,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
 
   .tarde-action-bar{
     position: fixed;

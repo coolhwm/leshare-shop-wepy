@@ -522,7 +522,6 @@
           // 虚拟商品名单
           return await digit.order(trade);
         } else if (this.type === 'groupGoods') {
-          console.info('groupGoods')
           return await groupGoods.order(trade, this.trade.ruleId)
         } else {
           // 普通订单

@@ -16,13 +16,13 @@
 
 <script>
   import wepy from 'wepy';
-  import base from '../../mixins/base';
-  import pagination from '../../mixins/pagination';
-  import Loading from '../../components/common/loading';
+  import base from '../../../mixins/base';
+  import pagination from '../../../mixins/pagination';
+  import Loading from '../../../components/common/loading';
   import GroupGoodsItem from '../../components/group_goods/group_goods_list_item';
   import groupGoods from '../../api/group_goods';
-  import Placeholder from '../../components/common/placeholder';
-  import Loadmore from '../../components/weui/loadmore';
+  import Placeholder from '../../../components/common/placeholder';
+  import Loadmore from '../../../components/weui/loadmore';
 
   export default class GroupGoodsList extends wepy.page {
     data = {
@@ -52,5 +52,5 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
 </style>

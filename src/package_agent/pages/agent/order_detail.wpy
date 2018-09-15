@@ -54,11 +54,11 @@
 
 <script>
   import wepy from 'wepy'
-  import base from '../../mixins/base';
-  import Placeholder from '../../components/common/placeholder';
-  import Loadmore from '../../components/weui/loadmore';
-  import Loading from '../../components/common/loading';
-  import OrderGoods from '../../components/order/order_goods';
+  import base from '../../../mixins/base';
+  import Placeholder from '../../../components/common/placeholder';
+  import Loadmore from '../../../components/weui/loadmore';
+  import Loading from '../../../components/common/loading';
+  import OrderGoods from '../../../components/order/order_goods';
   import agent from '../../api/agent'
 
   export default class Singular extends wepy.page {
@@ -86,7 +86,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   .order-item-container {
     border-top: $border;
     border-bottom: $border;

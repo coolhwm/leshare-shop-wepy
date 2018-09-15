@@ -35,9 +35,9 @@
 
 <script>
   import wepy from 'wepy';
-  import CoverPanel from '../common/cover_panel';
+  import CoverPanel from '../../../components/common/cover_panel';
   import agent from '../../api/agent';
-  import Tips from '../../utils/Tips';
+  import Tips from '../../../utils/Tips';
 
   export default class Notice extends wepy.component {
     data = {
@@ -88,7 +88,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   .notice-box{
     position: absolute;
     top:0;

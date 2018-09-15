@@ -152,15 +152,6 @@
         'pages/shop/pay',
         'pages/shop/super_poster',
         'pages/customer/info',
-        'pages/agent/apply',
-        'pages/agent/cash',
-        'pages/agent/clientele',
-        'pages/agent/config',
-        'pages/agent/groups',
-        'pages/agent/index',
-        'pages/agent/order_detail',
-        'pages/agent/recharge',
-        'pages/agent/singular',
         'pages/order/bonusTrade',
         'pages/goods/bonus_goods_list',
         'pages/assist/goods_detail',
@@ -168,9 +159,30 @@
         'pages/assist/list',
         'pages/shop/sub_shop_list',
         'pages/shop/sub_shop_detail',
-        'pages/shop/sub_shop_menu',
-        'pages/group_goods/list',
-        'pages/group_goods/detail'
+        'pages/shop/sub_shop_menu'
+      ],
+      subPackages: [
+        {
+          root: 'package_agent',
+          pages: [
+            'pages/agent/apply',
+            'pages/agent/cash',
+            'pages/agent/clientele',
+            'pages/agent/config',
+            'pages/agent/groups',
+            'pages/agent/index',
+            'pages/agent/order_detail',
+            'pages/agent/recharge',
+            'pages/agent/singular'
+          ]
+        },
+        {
+          root: 'package_group_goods',
+          pages: [
+            'pages/group_goods/list',
+            'pages/group_goods/detail'
+          ]
+        }
       ],
       window: {
         backgroundTextStyle: 'dark',

@@ -93,16 +93,16 @@
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
-  import store from '../../store/utils';
-  import { initWxApp } from '../../api/wx_auth';
-  import base from '../../mixins/base';
-  import input from '../../mixins/input';
-  import Copyright from '../../components/common/copyright';
-  import Loading from '../../components/common/loading';
-  import FormTips from '../../components/weui/tips';
+  import store from '../../../store/utils';
+  import { initWxApp } from '../../../api/wx_auth';
+  import base from '../../../mixins/base';
+  import input from '../../../mixins/input';
+  import Copyright from '../../../components/common/copyright';
+  import Loading from '../../../components/common/loading';
+  import FormTips from '../../../components/weui/tips';
   import agent from '../../api/agent';
-  import Tips from '../../utils/Tips';
-  import Notice from '../../components/shop/notice';
+  import Tips from '../../../utils/Tips';
+  import Notice from '../../../components/shop/notice';
 
   @connect({
     shop: store.get('shop')
@@ -137,7 +137,7 @@
         this.input = this.infoData
       }
       if (this.input != null && this.input.status == 'ENABLE') {
-        this.$redirect(`/pages/agent/index`);
+        this.$redirect(`/package_agent/pages/agent/index`);
       } else {
         this.loaded();
       }
@@ -153,7 +153,7 @@
           this.infoData = await agent.agentInfo();
           await Tips.success('申请提交');
           if (this.infoData.status == 'ENABLE') {
-            this.$redirect(`/pages/agent/index`);
+            this.$redirect(`/package_agent/pages/agent/index`);
           }
           this.$apply();
         } catch (err) {
@@ -212,7 +212,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   .form-box{
     margin: 20rpx;
     border-left: $border;

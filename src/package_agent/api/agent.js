@@ -1,8 +1,8 @@
-import base from './base';
-import Page from '../utils/Page';
-import goods from './goods';
-import order from './order';
-import Lang from '../utils/Lang';
+import base from '../../api/base';
+import Page from '../../utils/Page';
+import goods from '../../api/goods';
+import order from '../../api/order';
+import Lang from '../../utils/Lang';
 
 export default class agent extends base {
 

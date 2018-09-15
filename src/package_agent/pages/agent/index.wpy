@@ -54,10 +54,10 @@
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
-  import store from '../../store/utils';
-  import base from '../../mixins/base';
-  import tips from '../../utils/Tips';
-  import Copyright from '../../components/common/copyright';
+  import store from '../../../store/utils';
+  import base from '../../../mixins/base';
+  import tips from '../../../utils/Tips';
+  import Copyright from '../../../components/common/copyright';
   import Cash from '../../components/agent/cash'
   import agent from '../../api/agent'
 
@@ -155,7 +155,7 @@
         this.check = false;
       },
       action(name, id) {
-        this.$navigate(`/pages/agent/${name}`, {id: id})
+        this.$navigate(`/package_agent/pages/agent/${name}`, {id: id})
       },
       open (id) {
         this.$invoke('Cash', 'open', {id: id});
@@ -179,7 +179,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   .information-box{
     background-color: #FF4544;
     padding: 30rpx;

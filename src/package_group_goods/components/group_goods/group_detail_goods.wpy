@@ -43,7 +43,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   .goods-row-box{
     background-color: white;
     align-items: center;

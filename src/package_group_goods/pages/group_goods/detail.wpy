@@ -13,13 +13,13 @@
 
 <script>
   import wepy from 'wepy'
-  import Loading from '../../components/common/loading';
-  import base from '../../mixins/base';
+  import Loading from '../../../components/common/loading';
+  import base from '../../../mixins/base';
   import groupGoods from '../../api/group_goods';
   import GroupDetailsItem from '../../components/group_goods/group_details_item';
   import GroupGoodsBar from '../../components/group_goods/bottom-group-goods-bar';
-  import order from '../../api/order';
-  import Cart from '../../utils/Cart';
+  import order from '../../../api/order';
+  import Cart from '../../../utils/Cart';
 
   export default class GroupGoodsDetail extends wepy.page {
     data = {
@@ -71,7 +71,7 @@
         trade.finalPrice = this.finalPrice;
         trade.ruleId = this.id;
         this.$preload('params', {trade, type: 'groupGoods'});
-        this.$navigate(`../order/trade`);
+        this.$navigate(`/pages/order/trade`);
       }
     };
     computed = {
@@ -102,7 +102,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   .group-goods-detail-box{
     background-color: white;
     height: 100%;

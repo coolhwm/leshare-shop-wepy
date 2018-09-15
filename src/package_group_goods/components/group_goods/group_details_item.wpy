@@ -21,7 +21,7 @@
 </template>
 <script>
   import wepy from 'wepy';
-  import GroupDetailGoods from '../../components/group_goods/group_detail_goods'
+  import GroupDetailGoods from './group_detail_goods'
   export default class GroupDetailsItem extends wepy.component {
     props = {
       detail: {}
@@ -39,7 +39,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   .group-item-box{
     border-bottom: $border;
     .title-box{

@@ -33,7 +33,7 @@
     methods = {
       orderDetail(detail) {
         if (detail.type === 'commission') {
-          this.$root.$navigate(`/pages/agent/singular?id=${detail.agentId}&orderId=${detail.resultId}`);
+          this.$root.$navigate(`/package_agent/pages/agent/singular?id=${detail.agentId}&orderId=${detail.resultId}`);
         }
       }
     };
@@ -42,7 +42,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   .detail-box{
     padding: 18rpx;
     margin: 10rpx 10rpx 0;

@@ -25,7 +25,7 @@
 
 <script>
   import wepy from 'wepy';
-  import base from '../../mixins/base';
+  import base from '../../../mixins/base';
 
   export default class GroupGoodsItem extends wepy.component {
     prop = {
@@ -37,7 +37,7 @@
     };
     methods = {
       goDetail(id) {
-        this.$root.$navigate(`/pages/group_goods/detail?id=${id}`)
+        this.$root.$navigate(`/package_group_goods/pages/group_goods/detail?id=${id}`)
       }
     };
     computed = {
@@ -51,7 +51,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   $img-width:180rpx;
   .bargain_more_item{
     background-color: white;
