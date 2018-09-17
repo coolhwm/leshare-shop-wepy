@@ -47,10 +47,10 @@
        * 跳转拼团详情
        */
       group (status, groupId) {
-        this.$root.$navigate(`/pages/group/group_detail?groupId=${groupId}`);
+        this.$root.$navigate(`/package_group/pages/group/group_detail?groupId=${groupId}`);
       },
       agent(id) {
-        this.$root.$navigate(`/pages/group/goods_detail?ruleId=${id}`);
+        this.$root.$navigate(`/package_group/pages/group/goods_detail?ruleId=${id}`);
       }
     };
     components = {};
@@ -58,7 +58,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
 
   .order-item-container {
     border-top: $border;

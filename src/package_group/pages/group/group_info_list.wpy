@@ -15,12 +15,12 @@
 
 <script>
   import wepy from 'wepy';
-  import base from '../../mixins/base';
-  import pagination from '../../mixins/pagination.wpy';
-  import Loading from '../../components/common/loading';
-  import SilderPanel from '../../components/goods/slider_buy_panel';
+  import base from '../../../mixins/base';
+  import pagination from '../../../mixins/pagination.wpy';
+  import Loading from '../../../components/common/loading';
+  import SilderPanel from '../../../components/goods/slider_buy_panel';
   import group from '../../api/group';
-  import router from '../../mixins/router';
+  import router from '../../../mixins/router';
   import ProcessItem from '../../components/group/gourp_process_item';
 
   export default class GroupInfoList extends wepy.page {
@@ -46,6 +46,6 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
 
 </style>

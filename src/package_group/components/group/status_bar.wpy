@@ -54,8 +54,8 @@
 
 <script>
   import wepy from 'wepy';
-  import router from '../../mixins/router';
-  import countdown from '../../mixins/countdown';
+  import router from '../../../mixins/router';
+  import countdown from '../../../mixins/countdown';
 
   export default class StatusBar extends wepy.component {
     props = {
@@ -67,7 +67,7 @@
     };
     methods = {
       open() {
-        this.$root.$navigate(`/pages/group/goods_detail?ruleId=${this.detail.ruleId}`);
+        this.$root.$navigate(`/package_group/pages/group/goods_detail?ruleId=${this.detail.ruleId}`);
       },
       join() {
         const {goods, goodsGroupSkuDetails, id} = this.detail.rule;
@@ -98,7 +98,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   $avatar-width: 80rpx;
   $line-width: 140rpx;
   .status-box{

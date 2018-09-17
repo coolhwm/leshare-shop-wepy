@@ -1,5 +1,5 @@
 import base from './base';
-import api from './group';
+import api from '../api/group';
 import wepy from 'wepy';
 import order from './order'
 import Page from '../utils/Page';

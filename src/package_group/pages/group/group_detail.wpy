@@ -44,16 +44,16 @@
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
-  import { initWxAppSync, checkUserInfo } from '../../api/wx_auth';
-  import store from '../../store/utils';
+  import { initWxAppSync, checkUserInfo } from '../../../api/wx_auth';
+  import store from '../../../store/utils';
   import GroupGoodsDetail from '../../components/group/group_goods_detail'
   import GroupInfoBar from '../../components/group/group_info_bar';
   import StatusBar from '../../components/group/status_bar';
-  import base from '../../mixins/base';
+  import base from '../../../mixins/base';
   import group from '../../api/group'
-  import Loading from '../../components/common/loading';
-  import SilderPanel from '../../components/goods/slider_buy_panel';
-  import ButtonWidget from '../../components/template/button_widget';
+  import Loading from '../../../components/common/loading';
+  import SilderPanel from '../../../components/goods/slider_buy_panel';
+  import ButtonWidget from '../../../components/template/button_widget';
   import GroupItem from '../../components/group/group_more_item';
 
   @connect({
@@ -107,7 +107,7 @@
       return {
         title: shareName,
         imageUrl: imageUrl,
-        path: `/pages/group/group_detail?groupId=${this.detail.id}`
+        path: `/package_group/pages/group/group_detail?groupId=${this.detail.id}`
       };
     }
     methods = {
@@ -134,7 +134,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   .group-order-box{
     background-color: white;
     margin-bottom: 10rpx;

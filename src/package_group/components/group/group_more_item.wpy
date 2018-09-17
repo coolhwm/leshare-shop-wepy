@@ -2,7 +2,9 @@
   <view class="row group-goods-box">
     <image class="img-box mr20" src="{{item.goods.imageUrl}}"/>
     <view class="column content-box">
-      <text class="lg inline">{{item.goods.name}}</text>
+      <view class="goods-name">
+        <text class="lg">{{item.goods.name}}</text>
+      </view>
       <view class="row-between">
         <text class="primary xxl">￥{{item.price}}</text>
         <text class="muted sm origin">￥{{item.goods.sellPrice	}}</text>
@@ -17,7 +19,7 @@
 
 <script>
   import wepy from 'wepy';
-  import base from '../../mixins/base';
+  import base from '../../../mixins/base';
 
   export default class GroupMoreItem extends wepy.component {
     prop = {
@@ -29,7 +31,7 @@
     };
     methods = {
       group (id) {
-        this.$root.$navigate(`/pages/group/goods_detail?ruleId=${id}`)
+        this.$root.$navigate(`/package_group/pages/group/goods_detail?ruleId=${id}`)
       }
     };
     computed = {
@@ -43,7 +45,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   $img-width:180rpx;
   .group-goods-box{
     background-color: white;
@@ -52,6 +54,10 @@
     .img-box{
       width: $img-width;
       height: $img-width;
+    }
+    .goods-name{
+      // 总宽 - 图宽 - box左右margin - box左右padding - 图右外边距
+      max-width: 750rpx - $img-width - 20rpx - 40rpx - 20rpx;
     }
     .content-box{
       height: $img-width;

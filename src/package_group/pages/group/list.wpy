@@ -19,15 +19,15 @@
 
 <script>
   import wepy from 'wepy';
-  import base from '../../mixins/base';
+  import base from '../../../mixins/base';
   import group from '../../api/group';
-  import pagination from '../../mixins/pagination.wpy';
-  import Placeholder from '../../components/common/placeholder';
-  import ZanTab from '../../components/zanui/tab';
+  import pagination from '../../../mixins/pagination.wpy';
+  import Placeholder from '../../../components/common/placeholder';
+  import ZanTab from '../../../components/zanui/tab';
   import GroupItem from '../../components/group/group_list_item';
-  import Loadmore from '../../components/weui/loadmore';
-  import Loading from '../../components/common/loading';
-  import Event from '../../utils/Event';
+  import Loadmore from '../../../components/weui/loadmore';
+  import Loading from '../../../components/common/loading';
+  import Event from '../../../utils/Event';
 
   export default class OrderList extends wepy.page {
     def = {
@@ -81,5 +81,5 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
 </style>

@@ -36,7 +36,7 @@
 
 <script>
   import wepy from 'wepy';
-  import ProcessItem from '../../components/group/gourp_process_item';
+  import ProcessItem from './gourp_process_item';
 
   export default class GroupInfoBar extends wepy.component {
     props = {
@@ -45,18 +45,9 @@
     methods = {
       moreGroup (ruleId) {
         if (ruleId === null) return;
-        this.$root.$navigate(`/pages/group/group_info_list?ruleId=${ruleId}`)
+        this.$root.$navigate(`/package_group/pages/group/group_info_list?ruleId=${ruleId}`)
       }
     };
-    watch = {
-      processing (detail) {
-        detail.forEach(item => {
-          if (item.rule.goodsGroupSkuDetails.length <= 0) {
-            item.rule.goods.rulePrice = item.rule.price;
-          }
-        })
-      }
-    }
     components = {
       ProcessItem: ProcessItem
     };
@@ -64,7 +55,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   .group-info-box{
     background-color: white;
     padding: 0 20rpx;

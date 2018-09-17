@@ -25,7 +25,7 @@
 </template>
 <script>
   import wepy from 'wepy';
-  import router from '../../mixins/router';
+  import router from '../../../mixins/router';
 
   export default class GroupProcessItem extends wepy.component {
     props = {
@@ -35,7 +35,7 @@
     }
     methods = {
       joined (item) {
-        this.$root.$navigate(`/pages/group/group_detail?groupId=${item.id}`);
+        this.$root.$navigate(`/package_group/pages/group/group_detail?groupId=${item.id}`);
       }
     };
     mixins = [router];
@@ -43,7 +43,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   .info-item-box + .info-item-box{
     border-top: $border;
   }

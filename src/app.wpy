@@ -133,16 +133,11 @@
         'pages/coupon/use',
         'pages/shop/about_us',
         'pages/customer/comment_list',
-        'pages/group/goods_detail',
-        'pages/group/list',
-        'pages/group/group_detail',
-        'pages/group/group_info_list',
         'pages/customer/balance',
         'pages/bargain/goods_detail',
         'pages/bargain/bargain_detail',
         'pages/bargain/list',
         'pages/booking/order',
-        'pages/group/group_more',
         'pages/bargain/bargain_more',
         'pages/booking/list',
         'pages/booking/booking_detail',
@@ -181,6 +176,16 @@
           pages: [
             'pages/group_goods/list',
             'pages/group_goods/detail'
+          ]
+        },
+        {
+          root: 'package_group',
+          pages: [
+            'pages/group/group_more',
+            'pages/group/goods_detail',
+            'pages/group/list',
+            'pages/group/group_detail',
+            'pages/group/group_info_list'
           ]
         }
       ],

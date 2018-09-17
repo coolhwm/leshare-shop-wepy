@@ -37,10 +37,10 @@
 </template>
 
 <script>
-  import favorite from '../../api/favorite';
-  import router from '../../mixins/router';
+  import favorite from '../../../api/favorite';
+  import router from '../../../mixins/router';
   import wepy from 'wepy';
-  import Tips from '../../utils/Tips';
+  import Tips from '../../../utils/Tips';
 
   export default class GroupBar extends wepy.component {
     props = {
@@ -104,7 +104,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
 
   $btn-width: 260rpx;
   $btn-sm-width: (750rpx - $btn-width * 2) / 2;
