@@ -1,0 +1,171 @@
+<template>
+  <view class="sub-goods-box">
+
+    <!--商户信息区域-->
+    <view class="shop-box" @tap="shopDetail({{item}})">
+      <!--LOGO-->
+      <image src="{{item.avatar}}" class="logo"/>
+
+      <!--右侧主体区域-->
+      <view class="main-box">
+        <view class="row">
+          <text class="shop-name">{{item.name}}</text>
+          <icon class="recommend small" color="primary" wx:if="{{item.isActivity}}"/>
+        </view>
+
+
+        <!--评分/销售量/距离-->
+        <view class="row-between mt5">
+          <view class="row">
+            <view class="shop-grade row">
+              <icon class="star-fill" /><text >4.9</text>
+            </view>
+            <text class="text-muted">已售{{item.salesVolume}}件</text>
+          </view>
+          <text class="text-muted">{{item.distanceDesc}}</text>
+        </view>
+
+        <!--标签-->
+        <view class="row-between mt5">
+          <text class="xs">{{item.tagText}}</text>
+          <view class="small-tag">{{item.activityTag}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!--商品信息区域-->
+    <repeat for="{{item.goodsList}}" index="goodsIndex" item="goods" key="goodsIndex" >
+      <view class="goods-item-box row" @tap="goodsDetail({{goods}})">
+        <view class="column price-box">
+          <!--销售价/兑换积分-->
+          <text class="major xl" wx:if="{{goods.paymentType === 'bonus'}}">{{goods.price}}积分</text>
+          <text class="major xl" wx:else>￥{{goods.price}}</text>
+          <!--原价-->
+          <text class="muted xs">原价:￥{{goods.originalPrice}}</text>
+        </view>
+        <view class="column info-box mt5">
+          <!--商品名称-->
+          <view class="row">
+            <icon class="square-coupon goods-icon small" color="major"/>
+            <text class="inline">{{goods.simpleName}}</text>
+          </view>
+          <view class="row">
+            <text class="muted xs">已售{{goods.salesVolume}}件</text>
+            <!--积分规则-->
+            <view class="row ml20" wx:if="{{goods.bounsText}}">
+              <icon class="bouns xsmall" color="primary"/>
+              <text class="primary xxs">{{goods.bounsText}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </repeat>
+  </view>
+
+</template>
+<script>
+  import wepy from 'wepy';
+  export default class SubGoodsItem extends wepy.component {
+    props = {
+      item: {}
+    };
+    data = {};
+    methods = {
+      shopDetail(subShop) {
+        this.$root.$navigate(`/pages/shop/sub_shop_detail?subShopId=${subShop.shopId}`);
+      },
+      goodsDetail(goods) {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${goods.id}`);
+      }
+    };
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .mt5 {
+    margin-top: 5rpx;
+  }
+  .text-muted{
+    color: $color-muted;
+    font-size: $text-xs;
+  }
+  .sub-goods-box{
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 0 20rpx;
+    margin-bottom: 10rpx;
+  }
+  .small-tag{
+    border: #f49897 solid 1px;
+    border-radius: 3rpx;
+    padding: 0 5rpx;
+    font-size: $text-xxs;
+    color: $color-primary;
+  }
+  .mini-tag {
+    border: $color-major solid 1px;
+    border-radius: 3rpx;
+    padding: 0 5rpx;
+    font-size: 20rpx;
+    color: $color-major;
+  }
+  /*店铺信息区域*/
+  .shop-box {
+    display: flex;
+    flex-direction: row;
+    padding: 20rpx 0;
+    .logo{
+      border: 1px solid #E9E9E9;
+      border-radius: 5px;
+      width: 150rpx;
+      height: 150rpx;
+      min-height: 150rpx;
+      min-width: 150rpx;
+    }
+    .main-box{
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      margin-left: 20rpx;
+    }
+    .shop-name{
+      font-size: $text-xl;
+      font-weight: bold;
+    }
+    .shop-grade{
+      icon{
+        font-size: $text-lg;
+        margin-right: 5rpx;
+      }
+      text{
+        font-size: $text-xs;
+        color: $color-major;
+      }
+      margin-right: 15rpx;
+    }
+  }
+  /*商品区域*/
+  .goods-item-box{
+    padding: 15rpx 0;
+    border-top: 1rpx solid #EFEFEF;
+
+    .price-box{
+      align-items: flex-end;
+      width: 150rpx;
+      min-width: 150rpx;
+    }
+    .goods-icon{
+      margin-right: 5rpx;
+    }
+    .info-box{
+      flex: 1;
+      max-width: 550rpx;
+      margin-left: 20rpx;
+    }
+  }
+</style>

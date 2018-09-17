@@ -28,61 +28,9 @@
     </view>
 
     <!--列表展现-->
-    <view wx:for="{{page.list}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="column shop-box">
-      <view class="row" style="align-items: flex-start;"  @tap="shopDetail({{item}})">
-        <!--图片-->
-        <image src="{{item.avatar}}" class="avatar-image-box mr10"/>
-        <view class="column" style="width:510rpx;max-width:510rpx;">
-          <!--第一行：名称/活动/距离-->
-          <view class="row-between">
-            <view class="row">
-              <!--店铺名称-->
-              <text class="list-name-box">{{item.name}}</text>
-              <!--活动标签-->
-              <block wx:for="{{item.tags.ACTIVITY}}" wx:for-item="item" wx:for-index="index" wx:key="index">
-                <text class="list-tag-box white xxs ml10">{{item}}</text>
-              </block>
-            </view>
-            <!--距离-->
-            <text class="xs row-end">{{item.distanceDesc}}</text>
-          </view>
-
-          <!--第二行：标签/销售量-->
-          <view class="row-between mt5">
-            <view class="row" wx:if="{{item.tags}}">
-              <block wx:for="{{item.tags.TAG}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
-                <text class="mr10 xs">{{tag}}</text>
-              </block>
-              <text wx:if="{{item.tags.TAG}}" class="xs mr10 muted">|</text>
-              <block wx:for="{{item.tags.BUSSINESS_AREA}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
-                <text class="mr10 xs">{{tag}}</text>
-              </block>
-            </view>
-            <text class="mr10 xs" wx:else>其他</text>
-            <text class="xs row-end">已售{{item.salesVolume}}件</text>
-          </view>
-
-          <!--第三行：地址-->
-          <view class="row-between mt5">
-            <text class="muted xs list-address-box">{{item.address}}</text>
-          </view>
-
-          <!--第四行：商品-->
-          <view class="{{item.goodsList.length > 0 ? 'shop-goods-box' : ''}}">
-            <view wx:for="{{item.goodsList}}" wx:for-index="goodsIndex" wx:for-item="goodsItem" wx:key="goodsIndex" class="column goods-item-box">
-              <view class="row"  wx:if="{{goodsItem.paymentType === 'bonus'}}">
-                <icon class="square-coupon xsmall" style="color: #F3514F"/>
-                <text class="goods-name-box xs">{{goodsItem.price}}积分兑{{goodsItem.name}}</text>
-              </view>
-              <view class="row" wx:else>
-                <icon class="sale xsmall" color="major"/>
-                <text class="goods-name-box xs">{{goodsItem.price}}元购{{goodsItem.name}}</text>
-              </view>
-            </view>
-          </view>
-        </view>
-      </view>
-    </view>
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <ShopItem :item.sync="item" />
+    </repeat>
 
     <!-- 加载提示 -->
     <Loadmore :page.sync="page"/>
@@ -108,6 +56,7 @@
   import CoverPanel from '../../components/common/cover_panel';
   import Notice from '../../components/shop/notice';
   import Tips from '../../utils/Tips';
+  import ShopItem from '../../components/shop/sub_shop_item';
 
   export default class SubShopList extends wepy.page {
     data = {
@@ -242,7 +191,7 @@
           } else {
             this.tags = this.tabs.list
               .filter(item => item.id !== 'AREA' && item.id !== 'SORT' && item.id !== 'BUSSINESS_AREA' && item.isTag === true)
-              .map(item => item.title)
+              .map(item => item.title);
             this.tag = this.tags.join(',');
           }
         }
@@ -259,14 +208,6 @@
       // 重新授权获取坐标
       async getLocation() {
         this.isLocation = true;
-        // this.location = await wepy.getLocation()
-        // await this.updateList();
-      },
-      shopDetail(subShop) {
-        this.$navigate(`/pages/shop/sub_shop_detail?subShopId=${subShop.shopId}`);
-      },
-      goodsDetail(goods) {
-        this.$navigate(`/pages/goods/detail?goodsId=${goods.id}`);
       }
     };
     computed = {
@@ -283,7 +224,8 @@
       Loadmore: Loadmore,
       tab: Tab,
       CoverPanel: CoverPanel,
-      Notice: Notice
+      Notice: Notice,
+      ShopItem: ShopItem
     };
     mixins = [base, pagination];
     config = {
@@ -319,60 +261,6 @@
   .sub-shop-tab-box{
     flex-wrap: wrap;
   }
-  .list-name-box{
-    font-size: $text-lg;
-    font-weight: bold;
-  }
-  .list-tag-box{
-    border-radius: 4rpx;
-    padding: 5rpx 10rpx;
-    line-height: $text-xxs;
-    background-color: $color-primary;
-  }
-  .list-muted-tag-box{
-    border:1px solid $color-muted;
-    border-radius: 4rpx;
-    padding: 0 5rpx;
-    line-height: $text-xxs;
-  }
-  .address-box{
-    padding: 10rpx 20rpx;
-    border-bottom: $border;
-    background-color: white;
-    .btn-box{
-      padding: 0 6rpx;
-      color: lighten($color-danger, 10%);
-    }
-  }
-  .list-address-box{
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    margin-bottom: 5rpx;
-  }
-  .goods-name-box{
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  .shop-box{
-    padding: 20rpx;
-    background-color: white;
-    border-top: $border;
-    border-bottom: $border;
-    margin-top: 10rpx;
-  }
-  .no-goods-shop-box{
-    padding: 20rpx;
-    background-color: white;
-  }
-  .avatar-image-box{
-    min-width: 180rpx;
-    width: 180rpx;
-    height: 180rpx;
-    border: 1px solid #F7F7F7;
-    margin-right: 20rpx;
-  }
   .tabs-box{
     position: absolute;
     background-color: white;
@@ -393,21 +281,5 @@
   .select-tab-box{
     background-color: lighten($color-primary, 10%);
     color: white;
-  }
-  .btn-buy-box{
-    background-color: $color-primary;
-    color: white;
-    font-size: $text-xs;
-    line-height: $text-nm;
-    padding: 5rpx 10rpx;
-    border-radius: 10rpx;
-  }
-  .shop-goods-box{
-    margin-top: 5rpx;
-    border-top: 1px solid #F7F7F7;
-    padding-top: 10rpx;
-  }
-  .goods-item-box{
-    height: 20px;
   }
 </style>
