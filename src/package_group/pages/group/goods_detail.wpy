@@ -118,7 +118,7 @@
       return {
         title: shareName,
         imageUrl: imageUrl,
-        path: `/package_group/pages/group/goods_detail?groupId=${this.ruleId}`
+        path: `/package_group/pages/group/goods_detail?ruleId=${this.ruleId}`
       };
     }
     methods = {
