@@ -271,7 +271,8 @@ export default class shop extends base {
         // 处理简化名称
         const nameArr = goods.name.split(' ');
         if (nameArr.length >= 2 && nameArr[1].length > 1) {
-          goods.simpleName = nameArr[1];
+          nameArr[0] = '';
+          goods.simpleName = nameArr.join(' ');
         } else {
           goods.simpleName = goods.name;
         }

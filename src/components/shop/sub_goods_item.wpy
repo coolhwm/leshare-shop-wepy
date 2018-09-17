@@ -4,7 +4,7 @@
     <!--商户信息区域-->
     <view class="shop-box" @tap="shopDetail({{item}})">
       <!--LOGO-->
-      <image src="{{item.avatar}}" class="logo"/>
+      <image src="{{item.avatar}}/small" class="logo"/>
 
       <!--右侧主体区域-->
       <view class="main-box">
@@ -49,10 +49,10 @@
             <icon class="square-coupon goods-icon small" color="major"/>
             <text class="inline">{{goods.simpleName}}</text>
           </view>
-          <view class="row">
+          <view class="row-between">
             <text class="muted xs">已售{{goods.salesVolume}}件</text>
             <!--积分规则-->
-            <view class="row ml20" wx:if="{{goods.bounsText}}">
+            <view class="row" wx:if="{{goods.bounsText}}">
               <icon class="bouns xsmall" color="primary"/>
               <text class="primary xxs">{{goods.bounsText}}</text>
             </view>
@@ -151,7 +151,7 @@
   }
   /*商品区域*/
   .goods-item-box{
-    padding: 15rpx 0;
+    padding: 10rpx 0;
     border-top: 1rpx solid #EFEFEF;
 
     .price-box{

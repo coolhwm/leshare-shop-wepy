@@ -2,17 +2,13 @@
   <view  class="column shop-box">
     <view class="row" style="align-items: flex-start;"  @tap="shopDetail({{item}})">
       <!--图片-->
-      <image src="{{item.avatar}}" class="avatar-image-box mr10"/>
+      <image src="{{item.avatar}}/small" class="avatar-image-box mr10"/>
       <view class="column" style="width:510rpx;max-width:510rpx;">
         <!--第一行：名称/活动/距离-->
         <view class="row-between">
           <view class="row">
             <!--店铺名称-->
             <text class="list-name-box inline">{{item.name}}</text>
-            <!--活动标签-->
-            <!--<repeat for="{{item.tags.ACTIVITY}}" item="item" index="index" key="index">-->
-              <!--<text class="list-tag-box white xxs ml10">{{item}}</text>-->
-            <!--</repeat>-->
           </view>
           <!--距离-->
           <text class="xs row-end" wx:if="{{item.distance > 0}}">{{item.distanceDesc}}</text>
