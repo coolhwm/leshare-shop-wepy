@@ -46,15 +46,18 @@
         <view class="column info-box mt5">
           <!--商品名称-->
           <view class="row">
-            <icon class="square-coupon goods-icon small" color="major"/>
+            <!--装饰图-->
+            <icon class="duihuan goods-icon small" style="color:#70bc46;" wx:if="{{goods.paymentType === 'bonus'}}"/>
+            <icon class="square-coupon goods-icon small" color="major" wx:else/>
+            <!--商品简化名称-->
             <text class="inline">{{goods.simpleName}}</text>
           </view>
-          <view class="row-between">
+          <view class="row">
             <text class="muted xs">已售{{goods.salesVolume}}件</text>
             <!--积分规则-->
-            <view class="row" wx:if="{{goods.bounsText}}">
-              <icon class="bouns xsmall" color="primary"/>
-              <text class="primary xxs">{{goods.bounsText}}</text>
+            <view class="row bouns-text" wx:if="{{goods.bounsText}}">
+              <icon class="bouns xsmall"/>
+              <text class="xxs">{{goods.bounsText}}</text>
             </view>
           </view>
         </view>
@@ -165,6 +168,12 @@
     .info-box{
       flex: 1;
       max-width: 550rpx;
+      margin-left: 20rpx;
+    }
+    .bouns-text{
+      icon, text {
+        color: $color-muted;
+      }
       margin-left: 20rpx;
     }
   }

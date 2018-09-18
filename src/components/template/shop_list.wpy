@@ -25,6 +25,7 @@
         list: [
         ]
       },
+      init: false,
       location: null
     };
     params() {
@@ -45,8 +46,13 @@
     methods = {
       async load(location) {
         this.location = location;
-        this.page = await shop.subShopList();
+        this.page = shop.subShopList();
         await this.next();
+      }
+    };
+    computed = {
+      loading() {
+        return this.init ? this.page.loading : true;
       }
     };
     mixins = [base, pagination];

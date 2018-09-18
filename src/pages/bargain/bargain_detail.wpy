@@ -6,7 +6,7 @@
     <GoodsDetail :bargain.sync="detail"/>
 
     <!--砍价信息-->
-    <BargainInfoBar :bargain.sync="detail" @help.user="help"/>
+    <BargainInfoBar :detail.sync="detail" @help.user="help"/>
 
     <!--砍价玩法栏-->
     <BargainRuleBar/>

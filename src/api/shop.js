@@ -270,9 +270,8 @@ export default class shop extends base {
       item.goodsList.forEach(goods => {
         // 处理简化名称
         const nameArr = goods.name.split(' ');
-        if (nameArr.length >= 2 && nameArr[1].length > 1) {
-          nameArr[0] = '';
-          goods.simpleName = nameArr.join(' ');
+        if (nameArr.length == 2 && nameArr[1].length > 1) {
+          goods.simpleName = nameArr[1];
         } else {
           goods.simpleName = goods.name;
         }
@@ -281,7 +280,9 @@ export default class shop extends base {
           goods.bounsText = `免费兑换`;
         } else if (goods.maxCostBonus > 0) {
           const bounsPrice = (goods.maxCostBonus / 100).toFixed(0);
-          goods.bounsText = `积分抵${bounsPrice}元`;
+          if (bounsPrice > 0) {
+            goods.bounsText = `抵${bounsPrice}元`;
+          }
         }
       })
     }
