@@ -2,8 +2,8 @@
   <view class="column share-box" style="bottom:{{bottom ? bottom : param.bottom}}">
     <block wx:for="{{param.buttons}}" wx:key="action" wx:for-index="index" wx:for-item="button">
       <button plain hover-class="none"  @tap="routeByAction({{button}})" open-type="{{button.openType}}" class="column-center">
-        <icon class="{{button.iconClass}} xsmall" color="gray"/>
-        <text class="muted" style="line-height: 16rpx; font-size: 14rpx;">{{button.title}}</text>
+        <icon class="{{button.iconClass}} xsmall"/>
+        <text class="primary" style="line-height: 16rpx; font-size: 16rpx;">{{button.title}}</text>
       </button>
     </block>
   </view>
@@ -57,10 +57,11 @@
       justify-content: center;
       align-items: center;
       margin-top: 10rpx;
-      width: 88rpx;
-      height: 88rpx;
+      width: 74rpx;
+      height: 74rpx;
       border: $border;
       border-radius: 50%;
+      padding: 0;
     }
   }
 </style>

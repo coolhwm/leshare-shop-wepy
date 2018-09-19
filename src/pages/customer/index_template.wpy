@@ -55,6 +55,11 @@
         <Separator :param.sync="item" />
       </block>
 
+      <!--广告窗口-->
+      <block wx:if="{{item.type == 'AD_BANNER'}}">
+        <ad unit-id="{{item.unitId}}"></ad>
+      </block>
+
     </repeat>
 
     <!--插件-->

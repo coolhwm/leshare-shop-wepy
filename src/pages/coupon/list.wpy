@@ -16,6 +16,11 @@
 
     <!--占位符-->
     <Placeholder :show.sync="isPageEmpty" message="您还没有相关优惠券" />
+
+    <!--广告栏-->
+    <view class="ad-banner" wx:if="{{adUnitId}}">
+      <ad unit-id="{{adUnitId}}"></ad>
+    </view>
   </view>
 </template>
 
@@ -51,7 +56,8 @@
         }],
         selectedId: 'NEVER_USED',
         scroll: false
-      }
+      },
+      adUnitId: null
     };
     async onLoad () {
       this.page = coupon.page();
@@ -96,4 +102,6 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .ad-banner{
+  }
 </style>

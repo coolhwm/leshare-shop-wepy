@@ -2,7 +2,7 @@ import Tips from './Tips';
 import wepy from 'wepy';
 
 export default class WxUtils {
-  static tabUrls = ['/pages/home/template', '/pages/goods/category', '/pages/goods/cart', '/pages/customer/index', '/pages/customer/index_template'];
+  static tabUrls = ['/pages/home/template', '/pages/goods/category', '/pages/goods/cart', '/pages/customer/index_template', '/pages/customer/index_template'];
   static mapUrls = {
     '/pages/shop/index': '/pages/home/template',
     '/pages/home/home': '/pages/home/template'
@@ -12,7 +12,7 @@ export default class WxUtils {
     const paramStr = decodeURIComponent(scene);
     const paramMap = paramStr.split('=');
     if (paramMap == null || paramMap.length != 2) {
-      console.warn('[scene]parse scene error', scene);
+      console.warn('[scene]parse scene error：', scene);
       return null;
     }
     if (paramMap[0] != key) {

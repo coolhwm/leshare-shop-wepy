@@ -102,6 +102,11 @@
         <ShopInfoBar :subShop.sync="subShop" :isSubShop.sync="isSubShop"/>
       </view>
 
+      <!--广告栏-->
+      <view class="ad-banner" wx:if="{{adUnitId}}">
+        <ad unit-id="{{adUnitId}}"></ad>
+      </view>
+
       <!--详情区域-->
       <DetailList :detail.sync="detail" />
 
@@ -208,7 +213,8 @@
       isContact: true,
       isShare: true,
       subShop: {},
-      isSubShop: false
+      isSubShop: false,
+      adUnitId: null
     };
     async onLoad ({goodsId, type, scene}) {
       await initWxAppSync();
@@ -472,5 +478,8 @@
         padding: 20rpx;
       }
     }
+  }
+  .ad-banner{
+    margin-top: 20rpx;
   }
 </style>

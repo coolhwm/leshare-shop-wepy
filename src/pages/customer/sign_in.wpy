@@ -23,6 +23,12 @@
     <view class="line-box">
       <wepySignTime :list.sync="signDay"/>
     </view>
+
+    <!--广告栏-->
+    <view class="ad-banner" wx:if="{{adUnitId}}">
+      <ad unit-id="{{adUnitId}}"></ad>
+    </view>
+
     <!--tab模块-->
     <tab :tab.sync="tab" fixed="0"/>
     <scroll-view scroll-y="true" class="swiper-item-box">
@@ -46,6 +52,9 @@
     <Notice/>
 
     <Popups />
+
+    <ButtonWidget :bottom.sync="bottom"/>
+
   </view>
 </template>
 
@@ -71,6 +80,7 @@
   import Notice from '../../components/shop/notice';
   import member from '../../api/member';
   import Popups from '../../components/shop/popups'
+  import ButtonWidget from '../../components/template/button_widget';
 
   @connect({
     member: store.get('member')
@@ -92,7 +102,8 @@
       signed: false,
       signIn: null,
       type: '',
-      bonusPank: null
+      bonusPank: null,
+      adUnitId: null
     };
     params () {
       return {
@@ -192,7 +203,8 @@
       Notice: Notice,
       Loading: Loading,
       bonusPankItem: bonusPankItem,
-      Popups: Popups
+      Popups: Popups,
+      ButtonWidget: ButtonWidget
     };
     mixins = [base, pagination, router];
   }

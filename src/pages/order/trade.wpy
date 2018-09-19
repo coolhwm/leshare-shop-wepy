@@ -42,14 +42,19 @@
       <block wx:if="{{trade.paymentType == 1}}">
         <!--支付方式-->
         <!--TODO 0为店铺不支持余额支付-->
-        <view class="weui-cell weui-cell_access" wx:if="{{card.supplyBalance == 0 || member == null}}">
-          <view class="weui-cell__bd">支付方式</view>
-          <view class="weui-cell__ft">微信支付</view>
-        </view>
-        <view class="weui-cell weui-cell_access" wx:else  @tap="onlinePayType">
+        <view class="weui-cell weui-cell_access" @tap="onlinePayType" wx:if="{{shop.payType == 'BOTH' && member != null && card.supplyBalance == 1}}">
           <view class="weui-cell__bd">支付方式</view>
           <view class="weui-cell__ft weui-cell__ft_in-access">{{trade.onlinePayText}}</view>
         </view>
+        <view class="weui-cell weui-cell_access" wx:elif="{{shop.payType == 'BALANCE'}}" >
+          <view class="weui-cell__bd">支付方式</view>
+          <view class="weui-cell__ft">余额支付</view>
+        </view>
+        <view class="weui-cell weui-cell_access" wx:else >
+          <view class="weui-cell__bd">支付方式</view>
+          <view class="weui-cell__ft">微信支付</view>
+        </view>
+
         <!--显示余额-->
         <block wx:if="{{trade.onlinePayType == 'balance'}}">
           <view class="weui-cell weui-cell_access" wx:if="{{card.supplyBalance == 1}}">
@@ -101,10 +106,6 @@
       <view class="price-box row-between" wx:if="{{trade.foodBoxFee > 0 && trade.orderType != 30}}">
         <text>餐盒费</text>
         <text class="major">+￥{{trade.foodBoxFee}}</text>
-      </view>
-      <view class="price-box row-between" wx:if="{{serviceFee > 0}}">
-        <text>服务费</text>
-        <text class="major">+￥{{serviceFee}}</text>
       </view>
       <view class="price-box row-between" wx:if="{{trade.couponPrice > 0 && !isLimitCoupon}}">
         <text>优惠券</text>
@@ -161,7 +162,6 @@
     <view class="tarde-action-bar-placeholder">
     </view>
 
-    <ButtonWidget/>
   </view>
 </template>
 
@@ -170,7 +170,7 @@
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import base from '../../mixins/base';
-  import { checkUserInfo } from '../../api/wx_auth';
+  import { checkUserInfo, initWxAppSync } from '../../api/wx_auth';
   import address from '../../api/address';
   import coupon from '../../api/coupon';
   import order from '../../api/order';
@@ -179,6 +179,7 @@
   import group from '../../api/group';
   import bargain from '../../api/bargain';
   import digit from '../../api/digit';
+  import groupGoods from '../../api/group_goods'
   import FormTips from '../../components/weui/tips';
   import ActionBar from '../../components/common/action_bar';
   import AddressSelector from '../../components/address/select_item';
@@ -223,18 +224,35 @@
     };
     cartManager = Cart.create();
     async onLoad (params, {preload}) {
+      await initWxAppSync();
       await checkUserInfo();
       // 订单数据
       this.trade = preload.params.trade;
       this.type = preload.params.type;
       this.goodsList = this.trade.orderGoodsInfos;
-      this.isLimitCoupon = this.goodsList.some(item => item.limitCoupon);
-      this.isLimitBonus = this.goodsList.some(item => item.limitBonus);
+      // 组合购禁止使用优惠券与积分
+      if (this.type === 'groupGoods') {
+        this.isLimitCoupon = true;
+        this.isLimitBonus = true;
+      } else {
+        this.isLimitCoupon = this.goodsList.some(item => item.limitCoupon);
+        this.isLimitBonus = this.goodsList.some(item => item.limitBonus);
+      }
+      // 处理配送方式
       if (orderUtils.isDeliveryOrder(this.trade.orderType)) {
         // 默认地址
-        this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
-        // 处理配送方式
-        await this.updateDelivery();
+        try {
+          this.selectedAddress = await address.defaultAvailable(this.trade.orderGoodsInfos);
+          await this.updateDelivery();
+        } catch (e) {
+          if (e.serverCode == '20005') {
+            await Tips.modal('部分商品已下架，请重新选购');
+            Event.emit(Event.GOODS_CATEGORY_RELOAD);
+            this.cartManager.clear();
+            wepy.navigateBack();
+            return;
+          }
+        }
       }
       // 处理配送费
       this.goodsList.forEach(item => {
@@ -256,6 +274,10 @@
       }
       // 自动选择优惠券
       this.setDefaultCoupon();
+      // 处理默认店铺
+      if (this.shop.platformRule) {
+        this.trade.subShopId = this.shop.platformRule.defaultShop;
+      }
       this.loaded();
       // 事件注册
       Event.listen(Event.TRADE_ADDRESS_UPDATE, this.updateAddress.bind(this), this);
@@ -397,7 +419,6 @@
         if (this.trade.orderType === TYPE.TAKEAWAY) {
           this.trade.deliveryType = 'CITY';
         }
-        this.trade.serviceFee = this.serviceFee;
         // 表单ID
         this.trade.formId = detail.formId;
 
@@ -510,6 +531,8 @@
         } else if (this.type === 'digit') {
           // 虚拟商品名单
           return await digit.order(trade);
+        } else if (this.type === 'groupGoods') {
+          return await groupGoods.order(trade, this.trade.ruleId)
         } else {
           // 普通订单
           return await order.createOrder(trade, address);
@@ -653,8 +676,6 @@
       if (trade.orderType != 30) {
         trade.finalPrice += trade.foodBoxFee ? parseFloat(trade.foodBoxFee) : 0;
       }
-      // 服务费
-      trade.finalPrice += this.serviceFee ? parseFloat(this.serviceFee) : 0;
       // 优惠券
       if (!this.isLimitCoupon) {
         trade.finalPrice -= trade.couponPrice ? parseFloat(trade.couponPrice) : 0;
@@ -827,13 +848,6 @@
           }
         });
         return reduceFee.toFixed(2);
-      },
-      serviceFee() {
-        // if (this.shop == null) return 0;
-        // const dealPrice = this.trade.dealPrice;
-        // const serviceFee = dealPrice * (this.shop.serviceFee / 100);
-        // if (serviceFee > 0) return serviceFee.toFixed(2);
-        return 0;
       }
     };
     components = {

@@ -29,13 +29,13 @@
         </view>
         <!--支付方式-->
         <!--TODO 0为店铺不支持余额支付-->
-        <view class="coupon-box row" wx:if="{{card.supplyBalance == 0 || member == null || member.balance < dealPrice}}">
-          <view class="weui-cell__bd">支付方式</view>
-          <view class="weui-cell__ft">{{payType.onlinePayText}}</view>
-        </view>
-        <view wx:else class="coupon-box row" @tap="onlinePayType">
+        <view class="coupon-box row" @tap="onlinePayType" wx:if="{{shop.payType == 'BOTH' && card.supplyBalance == 1 &&  member != null && member.balance >= dealPrice }}">
           <view class="weui-cell__bd">支付方式</view>
           <view class="weui-cell__ft weui-cell__ft_in-access">{{payType.onlinePayText}}</view>
+        </view>
+        <view wx:else class="coupon-box row">
+          <view class="weui-cell__bd">支付方式</view>
+          <view class="weui-cell__ft">{{payType.onlinePayText}}</view>
         </view>
         <!--显示余额-->
         <block wx:if="{{payType.onlinePayType == 'balance'}}">
@@ -125,10 +125,6 @@
       selectedCoupon: null,
       mode: 'pay',
       result: null,
-      payType: {
-        onlinePayType: 'wxpay',
-        onlinePayText: '微信支付'
-      },
       balanceText: '',
       topUpRule: null,
       subShopId: null,
@@ -136,11 +132,13 @@
     };
     async onLoad ({scene, subShopId}) {
       await initWxAppSync();
-      if (this.card.supplyBalance == 1 && this.member != null && this.member.balance > 0) {
-        this.payType.onlinePayType = 'balance';
-        this.payType.onlinePayText = '余额支付';
+      // 处理默认店铺
+      if (this.shop.platformRule) {
+        this.subShopId = this.shop.platformRule.defaultShop;
       }
+      // 扫码、传参的店铺
       if (scene) {
+        console.info('page scene', scene);
         this.subShopId = WxUtils.parseQrScene(scene, 'subShopId');
       } else if (subShopId) {
         this.subShopId = subShopId;
@@ -184,6 +182,7 @@
           param.serviceFee = this.serviceFeeText * 1;
           param.finalPrice = (param.finalPrice * 1 + param.serviceFee * 1).toFixed(2);
         }
+        // 处理传入的店铺
         if (this.subShopId) {
           param.subShopId = this.subShopId
         }
@@ -318,6 +317,30 @@
           const serviceFee = this.dealPrice * (this.subShopInfo.serviceFee / 100)
           return serviceFee.toFixed(2)
         }
+      },
+      payType () {
+        if (this.shop == null) {
+          return {
+            onlinePayType: 'wxpay',
+            onlinePayText: '微信支付'
+          }
+        }
+        if (this.shop.payType == 'BOTH' || this.shop.payType == 'WX_PAY') {
+          return {
+            onlinePayType: 'wxpay',
+            onlinePayText: '微信支付'
+          }
+        } else if (this.shop.payType == 'BALANCE') {
+          return {
+            onlinePayType: 'balance',
+            onlinePayText: '余额支付'
+          }
+        } else {
+          return {
+            onlinePayType: 'wxpay',
+            onlinePayText: '微信支付'
+          }
+        }
       }
     };
     watch = {
@@ -365,6 +388,7 @@
       }
     }
     .content-box{
+      width: 100%;
       margin-top: 20rpx;
       .input-box, .coupon-box{
         border-bottom: $border;

@@ -15,10 +15,15 @@
         <text>待付款</text>
         <view class="weui-badge" wx:if="{{count[1] > 0}}">{{count[1]}}</view>
       </view>
-      <view class="column-center" @tap="list(2)">
+      <!--<view class="column-center" @tap="list(2)">-->
+        <!--<icon class="delivery large" color="gray"/>-->
+        <!--<text>待发货</text>-->
+        <!--<view class="weui-badge" wx:if="{{count[2] > 0}}" >{{count[2]}}</view>-->
+      <!--</view>-->
+      <view class="column-center" @tap="list(9)">
         <icon class="delivery large" color="gray"/>
-        <text>待发货</text>
-        <view class="weui-badge" wx:if="{{count[2] > 0}}" >{{count[2]}}</view>
+        <text>已接单</text>
+        <view class="weui-badge" wx:if="{{count[9] > 0}}" >{{count[9]}}</view>
       </view>
       <view class="column-center" @tap="list(3)">
         <icon class="received large" color="gray"/>
