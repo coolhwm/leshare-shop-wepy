@@ -154,7 +154,7 @@
   }
   /*商品区域*/
   .goods-item-box{
-    padding: 10rpx 0;
+    padding: 12rpx 0;
     border-top: 1rpx solid #EFEFEF;
 
     .price-box{

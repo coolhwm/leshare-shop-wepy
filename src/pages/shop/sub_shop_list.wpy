@@ -262,7 +262,7 @@
     flex-wrap: wrap;
   }
   .tabs-box{
-    position: absolute;
+    position: relative;
     background-color: white;
     width: 710rpx;
     padding: 20rpx;
