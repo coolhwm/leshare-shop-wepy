@@ -35,8 +35,8 @@
       if (this.rule) {
         this.display = true
       }
-      const { windowHeight } = await wepy.getSystemInfoSync()
-      this.height = windowHeight
+      const { windowHeight } = await wepy.getSystemInfoSync();
+      this.height = windowHeight;
       this.loaded()
     }
     methods = {
@@ -45,7 +45,7 @@
       },
       async tap(rule) {
         this.display = false;
-        await shop.popupsResults(rule.resultId)
+        await shop.popupsResults(rule.resultId);
         this.doRouteByAction(rule)
       }
     };
