@@ -1,7 +1,7 @@
 <template>
   <view class="popups-notice-box" wx:if="{{display}}">
     <view class="bg-box"></view>
-    <view class="notice-content" style="left: {{375 - rule.width / 2}}rpx;">
+    <view class="notice-content" style="left: {{375 - rule.width / 2}}rpx;top: {{height - rule.height / 2}}rpx">
       <view class="column">
         <view class="row content-box" style="width: {{rule.width + 52}}rpx;">
           <icon class="error close-box" color="gray" @tap="close"/>
@@ -26,7 +26,8 @@
   export default class Notice extends wepy.component {
     data = {
       display: false,
-      rule: null
+      rule: null,
+      height: null
     };
     async onLoad() {
       await store.wait();
@@ -34,6 +35,8 @@
       if (this.rule) {
         this.display = true
       }
+      const { windowHeight } = await wepy.getSystemInfoSync();
+      this.height = windowHeight;
       this.loaded()
     }
     methods = {
@@ -42,7 +45,7 @@
       },
       async tap(rule) {
         this.display = false;
-        await shop.popupsResults(rule.resultId)
+        await shop.popupsResults(rule.resultId);
         this.doRouteByAction(rule)
       }
     };
