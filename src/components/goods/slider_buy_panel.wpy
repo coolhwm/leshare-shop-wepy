@@ -90,6 +90,7 @@
 
 <script>
   import wepy from 'wepy';
+  import base from '../../mixins/base_com';
   import { checkUserInfoWithError } from '../../api/wx_auth';
   import order from '../../api/order';
   import bargain from '../../api/bargain'
@@ -113,7 +114,8 @@
       source: null,
       action: 'cart',
       display: false,
-      proSelected: []
+      proSelected: [],
+      orderType: null
     };
     skuManager = null;
     cartManager = Cart.create();
@@ -194,7 +196,7 @@
           }
         } else {
           const cart = this.cartManager.createCart(this.goods, selText, num);
-          const trade = order.createCartTrade([cart], {orderType: 10});
+          const trade = order.createCartTrade([cart], {orderType: this.orderType || 10});
           if (type === 'join' || type === 'group') {
             const {groupId, ruleId} = this.goods;
             Object.assign(trade, {ruleId, groupId});
@@ -273,7 +275,7 @@
       ZanQuantity: ZanQuantity,
       DiscountBadge: DiscountBadge
     };
-    mixins = [router];
+    mixins = [router, base];
     events = {
       clear() {
         console.info('[SilderPanel] clear');

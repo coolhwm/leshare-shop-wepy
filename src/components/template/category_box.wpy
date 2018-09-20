@@ -90,7 +90,6 @@
         categories.list = list
       }
       this.categoryTab = categories;
-      console.info(this.categoryTab, categories);
       // 加载商品列表
       this.page = goods.listFood(this.discount);
       await this.next();
