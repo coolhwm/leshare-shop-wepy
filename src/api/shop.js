@@ -267,6 +267,7 @@ export default class shop extends base {
     }
     // 处理商品
     if (item.goodsList.length > 0) {
+      // 商品信息处理
       item.goodsList.forEach(goods => {
         // 处理简化名称
         const nameArr = goods.name.split(' ');
@@ -277,14 +278,25 @@ export default class shop extends base {
         }
         // 处理积分抵扣
         if (goods.paymentType == 'bonus') {
-          goods.bounsText = `免费兑换`;
+          // goods.bounsText = `免费兑换`;
         } else if (goods.maxCostBonus > 0) {
           const bounsPrice = (goods.maxCostBonus / 100).toFixed(0);
           if (bounsPrice > 0) {
             goods.bounsText = `抵${bounsPrice}元`;
           }
         }
-      })
+        // 排序号
+        if (goods.paymentType == 'bonus') {
+          goods.sord = 2;
+        } else if (goods.limitType == 'NEW_CUSTOMER') {
+          goods.sord = 1;
+        } else {
+          goods.sord = 3;
+        }
+      });
+      item.goodsList.sort((a, b) => {
+        return a.sord - b.sord;
+      });
     }
   }
 }

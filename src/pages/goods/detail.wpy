@@ -23,7 +23,9 @@
         <!--基本信息-->
         <view class="row-between">
           <view class="goods-content">
-            <view class="small label primary" wx:if="{{detail.isRecommend == 1}}">推荐</view>
+            <view class="small label primary" wx:if="{{detail.limitType == 'NEW_CUSTOMER'}}">新客专享</view>
+            <view class="small label primary" wx:elif="{{detail.paymentType === 'bonus'}}">免费兑换</view>
+            <view class="small label primary" wx:elif="{{detail.isRecommend == 1}}">推荐</view>
             <text class="name">{{detail.name}}</text>
             <view class="goods-subhead" wx:if="{{detail.subhead != null}}">
               <text class="xxs muted">{{detail.subhead}}</text>
@@ -85,9 +87,10 @@
 
         <!--限制条件-->
         <view class="comment-box row" wx:if="{{detail.limitBonus || detail.limitCoupon || detail.maxCostBonus > 0}}">
-          <text class="muted mr20" wx:if="{{detail.limitBonus}}">▪ 不可使用积分</text>
-          <text class="muted mr20" wx:if="{{detail.limitCoupon}}">▪ 不可使用优惠券</text>
-          <text class="muted mr20" wx:if="{{detail.maxCostBonus > 0}}">▪ 最多使用{{detail.maxCostBonus}}积分</text>
+          <text class="muted mr20" wx:if="{{detail.limitBonus}}">▪ 不可用积分</text>
+          <text class="muted mr20" wx:elif="{{detail.maxCostBonus > 0}}">▪ 最多用{{detail.maxCostBonus}}积分</text>
+          <text class="muted mr20" wx:if="{{detail.limitCoupon}}">▪ 不可用优惠券</text>
+          <text class="muted mr20" wx:if="{{detail.limitType == 'NEW_CUSTOMER'}}">▪ 新客专享</text>
         </view>
 
         <!--评价向导-->
