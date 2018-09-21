@@ -4,11 +4,12 @@
       <view class="goods-tag">新客专享</view>
       <image src="{{goods.imageUrl}}/small" class="goods-image"/>
     </view>
-    <view class="row goods-price-box">
+    <view class="row-center goods-price-box">
       <text class="major xxs">首单￥</text>
-      <text class="major xl">{{goods.price}}</text>
+      <text class="major xxl">{{goods.price}}</text>
     </view>
     <text class="inline sm">{{goods.name}}</text>
+    <text class="xxs muted">{{goods.areaTag}}</text>
   </view>
 </template>
 
@@ -61,6 +62,5 @@
     font-size: $text-xxs;
   }
   .goods-price-box{
-    align-items: flex-end;
   }
 </style>

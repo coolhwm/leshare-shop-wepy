@@ -7,6 +7,11 @@
         <SearchBar :param.sync="item"/>
       </block>
 
+      <!--搜索栏-->
+      <block wx:if="{{item.type == 'SEARCH_SHOP_BAR'}}">
+        <SearchShopBar :param.sync="item"/>
+      </block>
+
       <!--店铺信息-->
       <block wx:if="{{item.type == 'SHOP_BAR'}}">
         <ShopBar :param.sync="item"/>
@@ -147,6 +152,7 @@
   import AddressBox from '../../components/template/address_box';
   import VideoBox from '../../components/template/video_box';
   import ShopList from '../../components/template/shop_list';
+  import SearchShopBar from '../../components/template/search_shop_bar';
   import _ from 'underscore';
   import Popups from '../../components/shop/popups'
 
@@ -206,6 +212,7 @@
           wepy.getLocation().then(location => {
             // 加载组件
             this.$invoke('ShopList', 'load', location);
+            this.$invoke('SearchShopBar', 'setLocation', location);
           }, () => {
             this.$invoke('ShopList', 'load', null);
           });
@@ -344,7 +351,8 @@
       AddressBox: AddressBox,
       VideoBox: VideoBox,
       Popups: Popups,
-      ShopList: ShopList
+      ShopList: ShopList,
+      SearchShopBar: SearchShopBar
     };
     computed = {
     };

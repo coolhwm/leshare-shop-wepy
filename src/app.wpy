@@ -170,7 +170,8 @@
         'pages/shop/sub_shop_detail',
         'pages/shop/sub_shop_menu',
         'pages/group_goods/list',
-        'pages/group_goods/detail'
+        'pages/group_goods/detail',
+        'pages/shop/sub_shop_search',
       ],
       window: {
         backgroundTextStyle: 'dark',

@@ -299,8 +299,10 @@ export default class shop extends base {
           goods.sord = 2;
         } else if (goods.limitType == 'NEW_CUSTOMER') {
           goods.sord = 1;
-        } else {
+        } else if (goods.isRecommend == 1) {
           goods.sord = 3;
+        } else {
+          goods.sord = 4;
         }
       });
       item.goodsList.sort((a, b) => {

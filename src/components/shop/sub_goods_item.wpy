@@ -50,11 +50,13 @@
               <!--装饰图-->
               <icon class="gift goods-icon small" style="color:#9266f9;" wx:if="{{goods.limitType === 'NEW_CUSTOMER'}}"/>
               <icon class="duihuan goods-icon small" style="color:#70bc46;" wx:elif="{{goods.paymentType === 'bonus'}}"/>
+              <icon class="recommend-round goods-icon small" style="color:#FE9D01;" wx:elif="{{goods.isRecommend === 1}}"/>
               <icon class="square-coupon goods-icon small" color="major" wx:else/>
               <text class="inline">{{goods.simpleName}}</text>
             </view>
             <text class="ml10 xxs" style="color:#9266f9;" wx:if="{{goods.limitType === 'NEW_CUSTOMER'}}">[新客专享]</text>
             <text class="ml10 xxs" style="color:#70bc46;" wx:elif="{{goods.paymentType === 'bonus'}}">[免费兑换]</text>
+            <text class="ml10 xxs" style="color:#FE9D01;" wx:elif="{{goods.isRecommend === 1}}">[招牌推荐]</text>
           </view>
           <view class="row">
             <text class="muted xs">已售{{goods.salesVolume}}件</text>
