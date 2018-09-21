@@ -200,7 +200,7 @@
         } else {
           // 普通购买
           if (this.goods.limitType == 'NEW_CUSTOMER' && this.orderCount > 0) {
-            Tips.modal('该商品仅限新用户购买');
+            Tips.modal('该商品仅限新用户首单购买');
             return;
           }
           const cart = this.cartManager.createCart(this.goods, selText, num);

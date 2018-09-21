@@ -31,8 +31,8 @@ export default class config extends base {
   }
   static process(data) {
     const config = {
-      // orderCount: data.orderCount,
-      orderCount: 0,
+      orderCount: data.orderCount,
+      // orderCount: 0,
       homePageId: data.homePageId,
       customPageId: data.customPageId,
       page: data.homePageConfig,

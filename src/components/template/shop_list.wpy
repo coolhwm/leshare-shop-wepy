@@ -1,6 +1,6 @@
 <template>
   <view>
-    <view class="row-around goods-list" wx:if="{{goodsList.length > 0}}">
+    <view class="row-around goods-list" wx:if="{{goodsList.length > 0 && param.showActiveBar}}">
       <repeat for="{{goodsList}}" key="index" index="index" item="item">
         <GoodsItem :goods.sync="item"/>
       </repeat>
@@ -16,6 +16,8 @@
 </template>
 
 <script>
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
   import wepy from 'wepy';
   import shop from '../../api/shop';
   import base from '../../mixins/base';
@@ -23,6 +25,9 @@
   import ShopItem from '../shop/sub_goods_item';
   import Loadmore from '../../components/weui/loadmore';
   import GoodsItem from './goods/goods_active';
+  @connect({
+    orderCount: store.get('orderCount')
+  })
   export default class ShopList extends wepy.component {
     props = {
       param: {}
@@ -47,6 +52,9 @@
       return param;
     }
     grepTopShopList() {
+      if (this.orderCount > 0) {
+        return;
+      }
       const list = [];
       this.page.list.forEach(shop => {
         const goods = shop.goodsList.find(item => item.limitType == 'NEW_CUSTOMER');

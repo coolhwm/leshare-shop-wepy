@@ -56,7 +56,7 @@
   import CoverPanel from '../../components/common/cover_panel';
   import Notice from '../../components/shop/notice';
   import Tips from '../../utils/Tips';
-  import ShopItem from '../../components/shop/sub_shop_item';
+  import ShopItem from '../../components/shop/sub_goods_item';
 
   export default class SubShopList extends wepy.page {
     data = {
