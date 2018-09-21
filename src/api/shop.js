@@ -113,6 +113,14 @@ export default class shop extends base {
     page.method = 'POST';
     return page;
   }
+
+  /**
+   * 新人专享的门店列表
+   */
+  static subNewShopList(param) {
+    const url = `${this.baseUrl}/shops/sub_shop_list`;
+    return this.post(url, param)
+  }
   /***
    * 推荐归属门店列表
    */
@@ -257,6 +265,7 @@ export default class shop extends base {
     } else {
       typeTag = '其他'
     }
+    item.areaTag = areaTag;
     // 活动标签
     item.tagText = `${typeTag} | ${areaTag}`;
     if (tags.ACTIVITY && tags.ACTIVITY.length > 0) {

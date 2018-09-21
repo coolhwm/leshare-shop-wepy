@@ -1,5 +1,11 @@
 <template>
   <view>
+    <view class="row-around goods-list" wx:if="{{goodsList.length > 0}}">
+      <repeat for="{{goodsList}}" key="index" index="index" item="item">
+        <GoodsItem :goods.sync="item"/>
+      </repeat>
+    </view>
+
     <repeat for="{{page.list}}" key="index" index="index" item="item">
       <ShopItem :item.sync="item" />
     </repeat>
@@ -16,6 +22,7 @@
   import pagination from '../../mixins/pagination';
   import ShopItem from '../shop/sub_goods_item';
   import Loadmore from '../../components/weui/loadmore';
+  import GoodsItem from './goods/goods_active';
   export default class ShopList extends wepy.component {
     props = {
       param: {}
@@ -25,6 +32,7 @@
         list: [
         ]
       },
+      goodsList: null,
       init: false,
       location: null
     };
@@ -38,15 +46,39 @@
       }
       return param;
     }
-    events = {
-      'on-reach-bottom': async () => {
-        await this.next();
-      }
-    };
+    grepTopShopList() {
+      const list = [];
+      this.page.list.forEach(shop => {
+        const goods = shop.goodsList.find(item => item.limitType == 'NEW_CUSTOMER');
+        // 有匹配的新人礼商品
+        if (goods) {
+          const result = {
+            id: goods.id,
+            imageUrl: goods.imageUrl,
+            name: goods.simpleName,
+            price: goods.price.toFixed(2),
+            originalPrice: goods.originalPrice,
+            areaTag: shop.areaTag
+          };
+          list.push(result);
+        }
+      });
+      this.goodsList = list;
+      this.$apply();
+    }
     methods = {
       async load(location) {
         this.location = location;
+        // 门店列表
         this.page = shop.subShopList();
+        // 翻页
+        await this.next();
+        // 筛选新客列表
+        this.grepTopShopList();
+      }
+    };
+    events = {
+      'on-reach-bottom': async () => {
         await this.next();
       }
     };
@@ -58,11 +90,18 @@
     mixins = [base, pagination];
     components = {
       ShopItem: ShopItem,
-      Loadmore: Loadmore
+      Loadmore: Loadmore,
+      GoodsItem: GoodsItem
     };
   }
 </script>
 
 <style lang="scss">
   @import "../../styles/variable";
+  .goods-list{
+    background-color: #FFFFFF;
+    overflow: hidden;
+    padding: 20rpx;
+    border-bottom: 1px solid #E9E9E9;
+  }
 </style>
