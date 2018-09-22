@@ -6,6 +6,9 @@
 
     <!-- 加载提示 -->
     <Loadmore :page.sync="page"/>
+
+    <!--占位符-->
+    <Placeholder :show.sync="isPageEmpty" message="暂无匹配商家"/>
   </view>
 </template>
 
