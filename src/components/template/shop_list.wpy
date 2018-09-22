@@ -63,13 +63,17 @@
             name: goods.simpleName,
             price: goods.price.toFixed(2),
             originalPrice: goods.originalPrice,
-            areaTag: shop.areaTag
+            areaTag: shop.areaTag,
+            distance: shop.distance
           };
           list.push(result);
         }
       });
-      this.goodsList = list;
-      this.$apply();
+      // 根据距离排序
+      list.sort((a, b) => a.distance - b.distance);
+      // 取距离最近的前三个
+      this.goodsList = list.length <= 3 ? list : list.slice(0, 3);
+        this.$apply();
     }
     methods = {
       async load(location) {

@@ -1,7 +1,7 @@
 <template>
   <view class="shop-info-bar row-between">
     <view class="row" @tap="shopDetail">
-      <image class="avatar-box" src="{{subShop.avatar}}"/>
+      <image class="avatar-box" src="{{subShop.avatar}}/small"/>
       <view class="column ml20">
         <text class="lg inline shop-name-box">{{subShop.name}}</text>
         <text class="xs muted inline shop-address-box">{{subShop.address}}</text>

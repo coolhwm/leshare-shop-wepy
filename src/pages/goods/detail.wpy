@@ -86,11 +86,11 @@
         </view>
 
         <!--限制条件-->
-        <view class="comment-box row" wx:if="{{detail.limitBonus || detail.limitCoupon || detail.maxCostBonus > 0}}">
+        <view class="limit-box row" wx:if="{{detail.limitType == 'NEW_CUSTOMER' || detail.limitBonus || detail.limitCoupon || detail.maxCostBonus > 0}}">
+          <text class="muted mr20" wx:if="{{detail.limitType == 'NEW_CUSTOMER'}}">▪ 新客首单专享</text>
           <text class="muted mr20" wx:if="{{detail.limitBonus}}">▪ 不可用积分</text>
           <text class="muted mr20" wx:elif="{{detail.maxCostBonus > 0}}">▪ 最多用{{detail.maxCostBonus}}积分</text>
           <text class="muted mr20" wx:if="{{detail.limitCoupon}}">▪ 不可用优惠券</text>
-          <text class="muted mr20" wx:if="{{detail.limitType == 'NEW_CUSTOMER'}}">▪ 新客专享</text>
         </view>
 
         <!--评价向导-->
@@ -106,9 +106,9 @@
       </view>
 
       <!--广告栏-->
-      <view class="ad-banner" wx:if="{{adUnitId}}">
-        <ad unit-id="{{adUnitId}}"></ad>
-      </view>
+      <!--<view class="ad-banner" wx:if="{{adUnitId}}">-->
+        <!--<ad unit-id="{{adUnitId}}"></ad>-->
+      <!--</view>-->
 
       <!--详情区域-->
       <DetailList :detail.sync="detail" />
@@ -426,6 +426,14 @@
     padding-top: 20rpx;
     padding-bottom: 20rpx;
     border-top: $border;
+  }
+  .limit-box{
+    padding-top: 15rpx;
+    padding-bottom: 15rpx;
+    border-top: $border;
+    text {
+      font-size: $text-xs;
+    }
   }
   .share-box{
     width: 40px;
