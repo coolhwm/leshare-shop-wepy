@@ -11,7 +11,7 @@
           <view class="order-header-container colunm">
             <view class="row-between">
               <view class="row">
-                <image src="{{item.orderCustomer.avatarUrl}}" class="avatar-box"/>
+                <image src="{{item.orderCustomer.avatarUrl}}/small" class="avatar-box"/>
                 <text class="ml10 sm">{{item.orderCustomer.nickName}}</text>
               </view>
               <text class="sm primary" wx:if="{{item.statusText}}">{{item.statusText}}{{item.paymentType == 0 ? '(线下支付)' : ''}}{{item.tableNum ? '(' + item.tableNum + '桌)': ''}}</text>

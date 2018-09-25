@@ -6,7 +6,7 @@
     <swiper class="shop-swiper" indicator-dots autoplay interval="3000" circular>
       <block wx:for="{{shop.images}}" wx:key="key">
         <swiper-item>
-          <image src="{{item.url}}" mode="aspectFill" class="shop-image" @tap="image({{item.url}})"/>
+          <image src="{{item.url}}/w1080" mode="aspectFill" class="shop-image" @tap="image({{item.url}})"/>
         </swiper-item>
       </block>
     </swiper>

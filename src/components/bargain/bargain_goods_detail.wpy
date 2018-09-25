@@ -1,7 +1,7 @@
 <template>
   <view class="row bargain-detail-box" @tap="detail({{bargain.rule.id}})">
     <view class="bargain-goods-image">
-      <image src="{{bargain.rule.goods.imageUrl}}" mode="aspectFill"/>
+      <image src="{{bargain.rule.goods.imageUrl}}/small" mode="aspectFill"/>
     </view>
     <view class="column bargain-goods-msg-box">
       <text class="bargain-goods-name lg">{{bargain.rule.goods.name}}</text>

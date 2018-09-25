@@ -1,7 +1,7 @@
 <template>
   <view class="goods-fav-container" data-goods-id="{{goods.goodsId}}"  @tap="detail({{goods.goodsId}})">
     <!--商品图片-->
-    <image class="goods-item-img" src="{{goods.imageUrl}}" />
+    <image class="goods-item-img" src="{{goods.imageUrl}}/small" />
 
     <!--商品信息-->
     <view class="goods-info-container">
