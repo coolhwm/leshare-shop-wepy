@@ -60,7 +60,7 @@
     <view class="row-between mt20">
       <view class="row" @tap="open({{detail.details}})">
         <view class="bottom-img-box" wx:for="{{showCustomer}}" wx:key="index" wx:for-item="item" wx:for-index="index">
-          <image class="bottom-img" src="{{item.customer.avatarUrl}}/tiny"/>
+          <image class="bottom-img" src="{{item.customer.avatarUrl}}"/>
         </view>
       </view>
       <view>

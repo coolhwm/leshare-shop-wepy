@@ -1,7 +1,7 @@
 <template>
   <view class="row group-detail-box" @tap="detail({{rule.id}})">
     <view class="group-goods-image">
-      <image src="{{rule.goods.imageUrl}}/small" mode="aspectFill"/>
+      <image src="{{rule.goods.imageUrl}}" mode="aspectFill"/>
     </view>
     <view class="column ml20 group-goods-msg-box">
       <text class="group-goods-name lg ml10">{{rule.goods.name}}</text>
