@@ -88,7 +88,7 @@
   @connect({
     member: store.get('member')
   })
-  export default class BargainInfoBar extends wepy.component {
+  export default class  BargainInfoBar extends wepy.component {
     props = {
       detail: {}
     };
@@ -118,7 +118,6 @@
     };
     computed = {
       showCustomer () {
-        console.info('computed', this.detail);
         if (this.detail == null || this.detail.details == null) return;
         return this.detail.details.slice(-8)
       }
@@ -127,11 +126,10 @@
       customerList: customerList
     };
     watch = {
-      bargain (bargain) {
+      detail (bargain) {
         if (bargain != null) {
-          this.countdowm(detail.createTime.replace(/-/g, '/'), 'groupTime');
+          this.countdowm(bargain.createTime.replace(/-/g, '/'), 'groupTime');
         }
-        console.info('watch', bargain);
       }
     };
     mixins = [countdown, router];
