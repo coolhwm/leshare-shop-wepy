@@ -1,7 +1,7 @@
 <template>
   <view class="order-goods-container row-between">
     <!--商品图片-->
-    <image class="order-goods-image" mode="aspectFill" src="{{goods.imageUrl}}/small"/>
+    <image class="order-goods-image" mode="aspectFill" src="{{goods.imageUrl}}"/>
 
     <!--商品说明-->
     <view class="order-goods-title-container column">
