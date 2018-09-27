@@ -490,7 +490,7 @@
         // 刷新列表
         Event.emit(Event.ORDER_LIST_UPDATE);
         if (isPay && (this.type === 'join' || this.type === 'group')) {
-          this.$redirect('/pages/group/list');
+          this.$redirect('/package_group/pages/group/list');
         } else if (isPay && (this.type === 'bargain')) {
           this.$redirect('/pages/bargain/list');
         } else {

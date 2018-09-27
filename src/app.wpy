@@ -133,16 +133,11 @@
         'pages/coupon/use',
         'pages/shop/about_us',
         'pages/customer/comment_list',
-        'pages/group/goods_detail',
-        'pages/group/list',
-        'pages/group/group_detail',
-        'pages/group/group_info_list',
         'pages/customer/balance',
         'pages/bargain/goods_detail',
         'pages/bargain/bargain_detail',
         'pages/bargain/list',
         'pages/booking/order',
-        'pages/group/group_more',
         'pages/bargain/bargain_more',
         'pages/booking/list',
         'pages/booking/booking_detail',
@@ -152,15 +147,6 @@
         'pages/shop/pay',
         'pages/shop/super_poster',
         'pages/customer/info',
-        'pages/agent/apply',
-        'pages/agent/cash',
-        'pages/agent/clientele',
-        'pages/agent/config',
-        'pages/agent/groups',
-        'pages/agent/index',
-        'pages/agent/order_detail',
-        'pages/agent/recharge',
-        'pages/agent/singular',
         'pages/order/bonusTrade',
         'pages/goods/bonus_goods_list',
         'pages/assist/goods_detail',
@@ -168,9 +154,40 @@
         'pages/assist/list',
         'pages/shop/sub_shop_list',
         'pages/shop/sub_shop_detail',
-        'pages/shop/sub_shop_menu',
-        'pages/group_goods/list',
-        'pages/group_goods/detail'
+        'pages/shop/sub_shop_menu'
+      ],
+      subPackages: [
+        {
+          root: 'package_agent',
+          pages: [
+            'pages/agent/apply',
+            'pages/agent/cash',
+            'pages/agent/clientele',
+            'pages/agent/config',
+            'pages/agent/groups',
+            'pages/agent/index',
+            'pages/agent/order_detail',
+            'pages/agent/recharge',
+            'pages/agent/singular'
+          ]
+        },
+        {
+          root: 'package_group_goods',
+          pages: [
+            'pages/group_goods/list',
+            'pages/group_goods/detail'
+          ]
+        },
+        {
+          root: 'package_group',
+          pages: [
+            'pages/group/group_more',
+            'pages/group/goods_detail',
+            'pages/group/list',
+            'pages/group/group_detail',
+            'pages/group/group_info_list'
+          ]
+        }
       ],
       window: {
         backgroundTextStyle: 'dark',

@@ -1,0 +1,54 @@
+<template>
+  <view class="row-between item-box">
+    <view class="customer-box row">
+      <image class="avatar-box" src="{{item.avatarUrl}}"/>
+      <view class="column name-box">
+        <text class="ml20 inline">{{item.nickName}}</text>
+        <text class="ml20">{{item.phone ? item.phone : detail.phone}}</text>
+      </view>
+    </view>
+    <view class="column time-bonus-box">
+      <text class="muted sm">{{detail.time}}</text>
+      <text class="muted sm">已消费{{detail.accumulative}}元</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class CustomerItem extends wepy.component {
+    props = {
+      item: {},
+      detail: {}
+    };
+    data = {};
+    methods = {};
+    components = {};
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+  .item-box{
+    padding: 18rpx;
+    margin: 10rpx 10rpx 0;
+    border-radius: 30rpx;
+    background-color: white;
+  }
+  .customer-box{
+    align-items: center;
+    .avatar-box{
+      width: 80rpx;
+      height: 80rpx;
+      border: $border;
+      border-radius: 40rpx;
+    }
+    .name-box{
+      width: 350rpx;
+    }
+  }
+  .time-bonus-box{
+    align-items: flex-end;
+  }
+</style>

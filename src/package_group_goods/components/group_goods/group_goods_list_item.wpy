@@ -1,0 +1,80 @@
+<template>
+  <view class="row bargain_more_item">
+    <image class="img-box mr20" src="{{detail.imgUrl}}"/>
+    <view class="column content-box">
+      <text class="lg">{{detail.name}}</text>
+      <view class="row-between">
+        <view class="row">
+          <text class="xxs muted">组合购低至</text>
+          <text class="primary xxl">￥{{detail.price}}</text>
+        </view>
+        <text class="muted sm origin">￥{{detail.originalPrice}}</text>
+      </view>
+      <view class="row-between">
+        <view>
+          <text class="muted sm" wx:if="{{detail.group1Name}}">{{detail.group1Name}}</text>
+          <text class="muted sm" wx:if="{{detail.group2Name}}">/{{detail.group2Name}}</text>
+          <text class="muted sm" wx:if="{{detail.group3Name}}">/{{detail.group3Name}}</text>
+          <text class="muted sm" wx:if="{{detail.group4Name}}">/{{detail.group4Name}}</text>
+        </view>
+        <view class="btn-box" @tap="goDetail({{detail.id}})">去定制<icon class="more ml10 xsmall" color="white"/></view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../../mixins/base';
+
+  export default class GroupGoodsItem extends wepy.component {
+    prop = {
+      detail: {}
+    };
+    data = {
+    };
+    async onLoad () {
+    };
+    methods = {
+      goDetail(id) {
+        this.$root.$navigate(`/package_group_goods/pages/group_goods/detail?id=${id}`)
+      }
+    };
+    computed = {
+    };
+    components = {
+    };
+    mixins = [base];
+    config = {
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+  $img-width:180rpx;
+  .bargain_more_item{
+    background-color: white;
+    margin: 10rpx 10rpx 0;
+    padding: 20rpx;
+    .img-box{
+      width: $img-width;
+      height: $img-width;
+    }
+    .content-box{
+      height: $img-width;
+      justify-content: space-between;
+      flex: 1;
+    }
+    .origin{
+      text-decoration: line-through;
+    }
+    .btn-box{
+      background-color: $color-primary;
+      color: white;
+      padding: 8rpx 16rpx;
+      border-radius: 5rpx;
+      font-size: $text-sm;
+    }
+  }
+</style>

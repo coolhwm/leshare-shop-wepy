@@ -206,10 +206,10 @@
           this.display = false;
           this.$apply();
           if (this.goods.paymentType === 'common') {
-            this.$root.$navigate(`../order/trade`);
+            this.$root.$navigate(`/pages/order/trade`);
           } else {
             if (this.member.bonus >= this.goods.priceLable) {
-              this.$root.$navigate(`../order/bonusTrade`);
+              this.$root.$navigate(`/pages/order/bonusTrade`);
             } else {
               await Tips.modal('积分不足');
               wepy.navigateBack();
