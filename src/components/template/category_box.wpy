@@ -45,7 +45,6 @@
   import Event from '../../utils/Event';
 
   @connect({
-    member: store.get('member'),
     card: store.get('card'),
     pickCoupons: store.get('pickCoupons'),
     // categories: store.get('categories'),
@@ -91,7 +90,6 @@
         categories.list = list
       }
       this.categoryTab = categories;
-      console.info(this.categoryTab, categories);
       // 加载商品列表
       this.page = goods.listFood(this.discount);
       await this.next();

@@ -1,7 +1,7 @@
 <template>
   <view class="row-between info-item-box" @tap.stop="joined({{item}})">
     <view class="row">
-      <image src="{{item.header.customer.avatarUrl}}"/>
+      <image src="{{item.header.customer.avatarUrl}}/small"/>
       <text class="ml20 lg">{{item.header.customer.nickName}}</text>
     </view>
     <view class="row">

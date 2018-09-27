@@ -3,13 +3,13 @@
   <view class="container" wx:if="{{init}}">
     <view class="column-center">
       <view class="avatar-box">
-        <image class="icon-xxl logo-image mb20" src="{{shop.avatar}}"/>
+        <image class="icon-xxl logo-image mb20" src="{{shop.avatar}}/small"/>
         <text class="muted mt10">{{shop.name}}</text>
       </view>
 
       <view class="dash-line"/>
       <view class="member-box">
-        <image class="avatar-image" src="{{user.avatarUrl}}"/>
+        <image class="avatar-image" src="{{user.avatarUrl}}/small"/>
         <image class="qrcode-image" src="{{member.codeUrl}}"/>
       </view>
     </view>

@@ -1,7 +1,7 @@
 <template>
   <view class="row detail-detail-box" @tap="detail({{detail.ruleId}})">
     <view class="detail-goods-image">
-      <image src="{{detail.imageUrl}}" mode="aspectFill"/>
+      <image src="{{detail.imageUrl}}/small" mode="aspectFill"/>
     </view>
     <view class="column detail-goods-msg-box">
       <text class="lg">{{detail.ruleName}}</text>

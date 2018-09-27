@@ -288,15 +288,18 @@
     };
     updateLimits() {
       this.trade.orderGoodsInfos.forEach(item => {
+        const name = this.trade.orderGoodsInfos.length == 1 ? '该商品' : item.goodsName;
         if (item.limitCoupon) {
-          this.limits.push(`${item.goodsName}不得使用优惠券`);
+          this.limits.push(`${name}无法使用优惠券`);
         }
         if (item.limitBonus) {
-          this.limits.push(`${item.goodsName}不得使用优惠券`);
-        }
-        if (item.maxCostBonus) {
-          this.limits.push(`${item.goodsName}仅可使用${item.maxCostBonus}积分`);
+          this.limits.push(`${name}无法使用积分`);
+        } else if (item.maxCostBonus) {
+          this.limits.push(`${name}可使用${item.maxCostBonus}积分`);
           this.goodsLimitMaxBonus += item.maxCostBonus;
+        }
+        if (item.limitType == 'NEW_CUSTOMER') {
+          this.limits.push(`${name}仅限新用户购买`);
         }
       });
     }
@@ -455,6 +458,11 @@
           store.delayReflesh('member');
           wepy.navigateBack();
           return;
+        } else if (trade === 'newCustomer') {
+          // 新人购买
+          await Tips.modal('该商品仅限新用户购买');
+          wepy.navigateBack();
+          return;
         }
         let isPay = false;
         if (trade.onlinePayType === 'balance') {
@@ -562,6 +570,10 @@
         if (e.serverCode == 20007) {
           this.cartManager.clear();
           return 'priceChange';
+        }
+        if (e.serverCode == 20009) {
+          this.cartManager.clear();
+          return 'newCustomer';
         }
         return null;
       }

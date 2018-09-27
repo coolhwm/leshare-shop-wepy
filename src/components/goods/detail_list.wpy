@@ -10,7 +10,7 @@
         <!--文本-->
         <text class="mb20 lg short-text-box" wx:if="{{item.type == 1}}">{{item.content}}</text>
         <!--图片-->
-        <image src="{{item.content}}" lazy-load mode="widthFix" wx:if="{{item.type == 2}}" @tap="previewDetailImages({{item.content}})"/>
+        <image src="{{item.content}}/w1080" lazy-load mode="widthFix" wx:if="{{item.type == 2}}" @tap="previewDetailImages({{item.content}})"/>
         <!--列表-->
         <view class="long-text-box" wx:if="{{item.type == 3}}">
           <view class="title-box">

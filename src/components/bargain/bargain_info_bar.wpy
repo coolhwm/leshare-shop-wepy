@@ -1,16 +1,16 @@
 <template>
   <view class="column bargain-info-box">
     <view class="row info-top-box">
-      <image class="top-avatar-box" src="{{bargain.header.customer.avatarUrl}}" />
+      <image class="top-avatar-box" src="{{detail.header.customer.avatarUrl}}" />
       <view>
-        <text class="mr20 xl">{{bargain.header.customer.nickName}}</text>
+        <text class="mr20 xl">{{detail.header.customer.nickName}}</text>
         <text class="primary">成功参与活动，快快让好友助自己一臂之力</text>
       </view>
     </view>
-    <view class="column-center" wx:if="{{bargain.status == 'TIMEOUT'}}">
+    <view class="column-center" wx:if="{{detail.status == 'TIMEOUT'}}">
       <text>您的砍价活动已过期</text>
     </view>
-    <view class="column-center" wx:elif="{{bargain.status != 'ORDERED'}}">
+    <view class="column-center" wx:elif="{{detail.status != 'ORDERED'}}">
       <view class="status-time-box row">
         <text class="mr10">剩余</text>
         <view class="time-num-box">{{content.hour}}</view>
@@ -20,53 +20,53 @@
         <view class="time-num-box">{{content.sec}}</view>
         <text class="ml10">结束</text>
       </view>
-      <text wx:if="{{bargain.isFloor && bargain.isHead}}">该商品已砍至底价，快去下单购买吧~</text>
+      <text wx:if="{{detail.isFloor && detail.isHead}}">该商品已砍至底价，快去下单购买吧~</text>
     </view>
-    <view class="column-center" wx:elif="{{bargain.status == 'TIMEOUT'}}">
+    <view class="column-center" wx:elif="{{detail.status == 'TIMEOUT'}}">
       <text>已结束</text>
     </view>
-    <view wx:if="{{bargain.isHead}}">
+    <view wx:if="{{detail.isHead}}">
       <view class="back-box">
-        <view class="msg-box" style="width: {{bargain.bargainRate}}%;min-width: 180rpx;">
+        <view class="msg-box" style="width: {{detail.bargainRate}}%;min-width: 180rpx;">
           <icon class="down" style="font-size: 10px; line-height: 10px;"/>
-          <text class="price-box xs primary">现价：￥{{bargain.balance}}</text>
+          <text class="price-box xs primary">现价：￥{{detail.balance}}</text>
         </view>
         <view class="back-msg-box"></view>
       </view>
       <view class="back-box">
-        <view class="process-box" style="width: {{bargain.bargainRate}}%;min-width: 5%;">
+        <view class="process-box" style="width: {{detail.bargainRate}}%;min-width: 5%;">
           <view class="process"></view>
         </view>
         <view class="back"></view>
       </view>
       <view class="row-between mt10">
-        <text class="muted">原价：￥{{bargain.rule.goodsPrice}}</text>
-        <text class="primary">底价：￥{{bargain.rule.floorPrice}}</text>
+        <text class="muted">原价：￥{{detail.rule.goodsPrice}}</text>
+        <text class="primary">底价：￥{{detail.rule.floorPrice}}</text>
       </view>
     </view>
     <view wx:else class="column-center info-btn-box">
-      <view class="help-text" wx:if="{{bargain.isHelp || bargain.isFloor}}">
-        <text class="{{bargain.isHelp ? 'primary' : ''}}">{{bargain.helpText}}</text>
+      <view class="help-text" wx:if="{{detail.isHelp || detail.isFloor}}">
+        <text class="{{detail.isHelp ? 'primary' : ''}}">{{detail.helpText}}</text>
       </view>
-      <form  report-submit="true"  wx:if="{{!bargain.isHelp && !bargain.isFloor && bargain.status != 'ORDERED' && bargain.status != 'TIMEOUT'}}" @submit="reportFormId">
+      <form  report-submit="true"  wx:if="{{!detail.isHelp && !detail.isFloor && detail.status != 'ORDERED' && detail.status != 'TIMEOUT'}}" @submit="reportFormId">
         <button class="btn-box" plain style="padding: 0" open-type="getPhoneNumber" form-type="submit" bindgetphonenumber="regist" wx:if="{{member == null}}">
           帮TA砍一刀
         </button>
         <button wx:else class="btn-box" plain @tap="help" form-type="submit" style="padding: 0" >帮TA砍一刀</button>
       </form>
-      <view wx:elif="{{bargain.isHelp}}" class="btn-box" @tap="want({{bargain.rule.id}})">我也要</view>
-      <view wx:elif="{{bargain.status == 'ORDERED' || bargain.status == 'TIMEOUT'}}" class="btn-end-box">砍价已结束</view>
+      <view wx:elif="{{detail.isHelp}}" class="btn-box" @tap="want({{detail.rule.id}})">我也要</view>
+      <view wx:elif="{{detail.status == 'ORDERED' || detail.status == 'TIMEOUT'}}" class="btn-end-box">砍价已结束</view>
     </view>
     <view class="row-between mt20">
-      <view class="row" @tap="open({{bargain.details}})">
+      <view class="row" @tap="open({{detail.details}})">
         <view class="bottom-img-box" wx:for="{{showCustomer}}" wx:key="index" wx:for-item="item" wx:for-index="index">
           <image class="bottom-img" src="{{item.customer.avatarUrl}}"/>
         </view>
       </view>
       <view>
-        <text class="primary">{{bargain.details.length}}人</text>
+        <text class="primary">{{detail.details.length}}人</text>
         <text class="muted">砍了</text>
-        <text class="primary">{{bargain.allPrice}}元</text>
+        <text class="primary">{{detail.allPrice}}元</text>
       </view>
     </view>
 
@@ -88,18 +88,18 @@
   @connect({
     member: store.get('member')
   })
-  export default class BargainInfoBar extends wepy.component {
+  export default class  BargainInfoBar extends wepy.component {
     props = {
-      bargain: {}
+      detail: {}
     };
     data = {
     };
     async doHelp () {
       await checkUserInfoWithError();
-      const result = await bargain.GoodsBargain(this.bargain.rule.id, this.bargain.id);
+      const result = await bargain.GoodsBargain(this.detail.rule.id, this.detail.id);
       const { id: userId } = wepy.$instance.globalData.auth['user'];
       const price = result.details.find(item => item.customer.id === userId).reducePrice;
-      this.$emit('help', price, this.bargain.id);
+      this.$emit('help', price, this.detail.id);
     }
     methods = {
       async regist({detail}) {
@@ -118,15 +118,15 @@
     };
     computed = {
       showCustomer () {
-        if (this.bargain == null) return;
-        return this.bargain.details.slice(-8)
+        if (this.detail == null || this.detail.details == null) return;
+        return this.detail.details.slice(-8)
       }
     };
     components = {
       customerList: customerList
     };
     watch = {
-      bargain (bargain) {
+      detail (bargain) {
         if (bargain != null) {
           this.countdowm(bargain.createTime.replace(/-/g, '/'), 'groupTime');
         }

@@ -53,8 +53,7 @@
   import Notice from '../../components/shop/notice';
 
   @connect({
-    card: store.get('card'),
-    member: store.get('member')
+    card: store.get('card')
   })
   export default class TopUp extends wepy.page {
     data = {

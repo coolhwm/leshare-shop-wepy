@@ -90,6 +90,7 @@
 
 <script>
   import wepy from 'wepy';
+  import base from '../../mixins/base_com';
   import { checkUserInfoWithError } from '../../api/wx_auth';
   import order from '../../api/order';
   import bargain from '../../api/bargain'
@@ -104,6 +105,7 @@
   import router from '../../mixins/router'
 
   @connect({
+    orderCount: store.get('orderCount'),
     status: store.get('status'),
     member: store.get('member')
   })
@@ -113,7 +115,8 @@
       source: null,
       action: 'cart',
       display: false,
-      proSelected: []
+      proSelected: [],
+      orderType: null
     };
     skuManager = null;
     cartManager = Cart.create();
@@ -176,12 +179,14 @@
           proSelected: this.proSelected.length > 0 ? this.proSelected.toString() : null
         };
         if (type === 'cart') {
+          // 购物车购买
           Tips.success('已加入购物车');
           // 关闭面板
           this.display = false;
           this.$apply();
           this.cartManager.plus(this.goods, selText, num);
         } else if (type === 'begin' || type === 'help') {
+          // 拼团和砍价
           try {
             Tips.loading();
             const result = await bargain.GoodsBargain(this.goods.ruleId, this.goods.id, this.sku.skuText);
@@ -193,8 +198,13 @@
             wepy.navigateBack();
           }
         } else {
+          // 普通购买
+          if (this.goods.limitType == 'NEW_CUSTOMER' && this.orderCount > 0) {
+            Tips.modal('该商品仅限新用户首单购买');
+            return;
+          }
           const cart = this.cartManager.createCart(this.goods, selText, num);
-          const trade = order.createCartTrade([cart], {orderType: 10});
+          const trade = order.createCartTrade([cart], {orderType: this.orderType || 10});
           if (type === 'join' || type === 'group') {
             const {groupId, ruleId} = this.goods;
             Object.assign(trade, {ruleId, groupId});
@@ -273,7 +283,7 @@
       ZanQuantity: ZanQuantity,
       DiscountBadge: DiscountBadge
     };
-    mixins = [router];
+    mixins = [router, base];
     events = {
       clear() {
         console.info('[SilderPanel] clear');

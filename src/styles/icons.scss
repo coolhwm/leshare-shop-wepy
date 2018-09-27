@@ -1,11 +1,11 @@
 @import "variable";
 @font-face {
   font-family: 'iconfont';  /* project id 553949 */
-  src: url('//at.alicdn.com/t/font_553949_yvti8c8upyr.eot');
-  src: url('//at.alicdn.com/t/font_553949_yvti8c8upyr.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_553949_yvti8c8upyr.woff') format('woff'),
-  url('//at.alicdn.com/t/font_553949_yvti8c8upyr.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_553949_yvti8c8upyr.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_553949_mxhsxrv6tu.eot');
+  src: url('//at.alicdn.com/t/font_553949_mxhsxrv6tu.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_553949_mxhsxrv6tu.woff') format('woff'),
+  url('//at.alicdn.com/t/font_553949_mxhsxrv6tu.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_553949_mxhsxrv6tu.svg#iconfont') format('svg');
 }
 @mixin icon-size($size){
   line-height: $size;
@@ -156,3 +156,6 @@ icon.signboard:before { content: "\e604"; }
 icon.address-circle:before { content: "\e63d"; }
 icon.square-shop:before { content: "\e669"; }
 icon.square-coupon:before { content: "\e6b1"; }
+icon.duihuan:before { content: "\e63e"; }
+icon.gift:before { content: "\e68d"; }
+icon.recommend-round:before { content: "\e646"; }
