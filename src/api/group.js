@@ -56,4 +56,13 @@ export default class group extends base {
 
     return detail;
   }
+
+  /***
+   * 处理活动时间状态
+   */
+  static _processTimeStatus(detail) {
+    detail.isTimeOut = new Date(detail.endTime).getTime() < new Date().getTime();
+    const beginTime = detail.startTime || detail.beginTime;
+    detail.isBegin = new Date(beginTime).getTime() > new Date().getTime();
+  }
 }
