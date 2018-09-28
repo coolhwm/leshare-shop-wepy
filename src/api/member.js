@@ -27,13 +27,13 @@ export default class member extends base {
     const url = `${this.baseUrl}/memberCards`;
     return this.get(url);
   }
-  // /**
-  //  * 获取会员信息
-  //  */
-  // static _member() {
-  //   const url = `${this.baseUrl}/members`;
-  //   return this.get(url);
-  // }
+  /**
+   * 获取会员信息
+   */
+  static _member() {
+    const url = `${this.baseUrl}/members`;
+    return this.get(url);
+  }
   /**
    * 获取会员信息
    */

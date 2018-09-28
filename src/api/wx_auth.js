@@ -135,20 +135,23 @@ export async function handleGetPhoneNumber(detail) {
     // 其他错误不尝试注册
     if (detail.errMsg != 'getPhoneNumber:ok') {
       console.info(`[login] get phone number fail, message=${detail.errMsg}`, detail);
-      return;
+      return false;
     }
     Tips.loading();
     const result = await saveWxUserPhone(detail);
     if (result) {
       await store.refresh('member');
+      return true;
     }
   } catch (e) {
     // 判断已注册的情况
     if (e.serverCode == 52000) {
       console.info('[login] 用户已注册，刷新本地缓存', e);
       await store.refresh('member');
+      return true;
     } else {
       console.warn('注册失败', e);
+      return false;
     }
   } finally {
     Tips.loaded();

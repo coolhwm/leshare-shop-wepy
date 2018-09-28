@@ -4,7 +4,7 @@
   <view wx:if="{{init}}">
     <!--头部汇总-->
     <view class="column content-box" @tap="invite">
-      <view class="row-around bonus-box">
+      <view class="row-around title-box">
         <view class="column-center">
           <text class="white xs">本月邀请</text>
           <view class="row number-box mb10">
@@ -144,7 +144,7 @@
 
 <style lang="scss">
   @import "../../../styles/variable";
-  .bonus-box{
+  .title-box{
     background-color: $color-primary;
     padding: 30rpx;
     border-radius: 30rpx;

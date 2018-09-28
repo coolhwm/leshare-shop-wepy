@@ -13,9 +13,13 @@
         <!--中央主区域-->
         <view class="column main-box">
           <!--积分提示-->
-          <view class="row bonus-box" @tap="toBonusDetail">
+          <view class="row title-box" @tap="toBonusDetail" wx:if="{{member}}">
             <text class="xs">当前积分：</text>
             <text class="xxl">{{member.bonus}}</text>
+          </view>
+          <!--未注册提示-->
+          <view class="title-box" wx:else>
+            <text class="xxl">注册会员享福利</text>
           </view>
 
           <!--签到进度栏目-->
@@ -33,11 +37,17 @@
         </view>
 
         <!--右侧按钮区域-->
-        <view class="sign-btn-box" @tap="toSign">
+        <view class="sign-btn-box" @tap="toSign" wx:if="{{member}}">
           <view class="sign-btn column-center">
             <text wx:if="{{signStatus}}">今日已签</text>
             <text wx:else>签到领券</text>
           </view>
+        </view>
+        <!--未注册的情况-->
+        <view class="sign-btn-box" wx:else>
+          <button class="sign-btn column-center" plain open-type="getPhoneNumber"  bindgetphonenumber="regist">
+            <text>立即注册</text>
+          </button>
         </view>
       </view>
 
@@ -142,6 +152,8 @@
   import base from '../../mixins/base';
   import shop from '../../api/shop';
   import Loading from '../../components/common/loading';
+  import Tips from '../../utils/Tips';
+  import { handleGetPhoneNumber } from '../../api/wx_auth';
 
   @connect({
     member: store.get('member')
@@ -162,6 +174,9 @@
      * 加载签到相关数组
      */
     async loadSignData() {
+      if (this.member == null) {
+        return;
+      }
       const sign = await shop.signList(this.member.memberId);
       if (sign == null) {
         return;
@@ -184,6 +199,15 @@
       wepy.stopPullDownRefresh();
     }
     methods = {
+      async regist({detail}) {
+        const success = await handleGetPhoneNumber(detail);
+        if (success) {
+          Tips.success('注册成功');
+        } else {
+          await Tips.modal('注册失败，请至“我的”页面重试');
+          this.$switch('/pages/customer/index_template');
+        }
+      },
       toFellow() {
       },
       toFanGroup() {
@@ -265,7 +289,7 @@
       color: #FFFFFF;
     }
   }
-  .bonus-box{
+  .title-box{
     margin-left: 20rpx;
     text{
       color: #FFFFFF;
