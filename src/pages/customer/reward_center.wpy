@@ -46,46 +46,37 @@
   </view>
 
   <!--菜单栏-->
-  <form class="nav-list-box" report-submit="true" @submit="reportFormId">
-    <view class="list-item-box">
-      <view class="column cell-box weui-cells weui-cells-show">
-        <button plain  form-type="submit"  class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="routeByAction({{item}})" open-type="{{item.openType}}">
-          <view class="weui-cell__bd">
-            <icon class="coupon mr20" style="color: #EE3333; font-size: 24px; line-height: 24px;" />
-            <text>我的卡券</text>
-          </view>
-          <view class="weui-cell__ft weui-cell__ft_in-access">
-            <text class="muted sm">做任务</text>
-          </view>
-        </button>
+  <view class="task-box">
+    <view class="column cell-box weui-cells weui-cells-show">
+      <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__bd">
+          <icon class="coupon mr20" style="color: #EE3333; font-size: 24px; line-height: 24px;" />
+          <text>我的卡券</text>
+        </view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">
+          <text class="muted sm">做任务</text>
+        </view>
       </view>
-
-      <view class="column cell-box weui-cells weui-cells-show">
-        <button plain  form-type="submit"  class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="routeByAction({{item}})" open-type="{{item.openType}}">
-          <view class="weui-cell__bd">
-            <icon class="coupon mr20" style="color: #EE3333; font-size: 24px; line-height: 24px;" />
-            <text>我的卡券</text>
-          </view>
-          <view class="weui-cell__ft weui-cell__ft_in-access">
-            <text class="muted sm">做任务</text>
-          </view>
-        </button>
+      <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__bd">
+          <icon class="coupon mr20" style="color: #EE3333; font-size: 24px; line-height: 24px;" />
+          <text>我的卡券</text>
+        </view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">
+          <text class="muted sm">做任务</text>
+        </view>
       </view>
-
-
-      <view class="column cell-box weui-cells weui-cells-show">
-        <button plain  form-type="submit"  class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="routeByAction({{item}})" open-type="{{item.openType}}">
-          <view class="weui-cell__bd">
-            <icon class="coupon mr20" style="color: #EE3333; font-size: 24px; line-height: 24px;" />
-            <text>我的卡券</text>
-          </view>
-          <view class="weui-cell__ft weui-cell__ft_in-access">
-            <text class="muted sm">做任务</text>
-          </view>
-        </button>
+      <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="weui-cell__bd">
+          <icon class="coupon mr20" style="color: #EE3333; font-size: 24px; line-height: 24px;" />
+          <text>我的卡券</text>
+        </view>
+        <view class="weui-cell__ft weui-cell__ft_in-access">
+          <text class="muted sm">做任务</text>
+        </view>
       </view>
     </view>
-  </form>
+  </view>
 </template>
 
 <script>
@@ -210,16 +201,7 @@
     }
   }
 
-  .nav-list-box{
-    margin-top: 10rpx;
-    background-color: $color-bg-body;
-    button{
-      text-align: left;
-      margin-left: 0;
-      line-height: 1.2em;
-    }
-  }
-  .list-item-box + .list-item-box{
+  .task-box{
     margin-top: 10rpx;
   }
 </style>
