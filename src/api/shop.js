@@ -302,14 +302,17 @@ export default class shop extends base {
           }
         }
         // 排序号
-        if (goods.paymentType == 'bonus') {
+        if (goods.rule) {
+          goods.ruleType = goods.rule.ruleType;
           goods.sord = 2;
+        } else if (goods.paymentType == 'bonus') {
+          goods.sord = 3;
         } else if (goods.limitType == 'NEW_CUSTOMER') {
           goods.sord = 1;
         } else if (goods.isRecommend == 1) {
-          goods.sord = 3;
-        } else {
           goods.sord = 4;
+        } else {
+          goods.sord = 5;
         }
       });
       item.goodsList.sort((a, b) => {

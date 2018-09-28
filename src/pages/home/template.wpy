@@ -206,6 +206,9 @@
      * 调用子组件触发事件
      */
     invokeComponentsEvent() {
+      if (this.components == null) {
+        return;
+      }
       this.components.forEach(item => {
         if (item.type == 'SHOP_LIST') {
           // 拉起定位
@@ -270,6 +273,9 @@
      * 运行触发器
      */
     runTriggers() {
+      if (this.triggers == null) {
+        return;
+      }
       this.triggers.forEach(trigger => {
         const methodName = trigger.method;
         // 执行动态方法
