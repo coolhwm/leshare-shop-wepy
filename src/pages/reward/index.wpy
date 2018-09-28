@@ -184,6 +184,12 @@
       wepy.stopPullDownRefresh();
     }
     methods = {
+      toFellow() {
+      },
+      toFanGroup() {
+      },
+      toWeekGame() {
+      },
       toInvate() {
         this.$navigate(`/package_member/pages/member/invite`);
       },
