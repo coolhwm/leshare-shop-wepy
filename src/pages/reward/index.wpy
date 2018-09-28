@@ -116,7 +116,7 @@
           </view>
         </view>
 
-        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="toBargainList">
           <view class="weui-cell__bd row">
             <icon class="bargain" style="color: #EE3333;" />
             <view class="column">
