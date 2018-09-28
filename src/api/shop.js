@@ -1,6 +1,7 @@
 import base from './base';
 import wepy from 'wepy';
 import Page from '../utils/Page';
+import Lang from '../utils/Lang';
 
 export default class shop extends base {
 
@@ -87,14 +88,20 @@ export default class shop extends base {
    */
   static signList(memberId) {
     const url = `${this.baseUrl}/member_sign?member_id=${memberId}`;
-    return this.get(url);
+    return this.get(url).then(data => {
+      if (data == null) {
+        return;
+      }
+      data.today = data.lastDate == Lang.dateFormate(new Date(), 'yyyyMMdd');
+      return data;
+    });
   }
   /**
    * 签到
    */
   static sign(memberId) {
     const url = `${this.baseUrl}/member_sign?member_id=${memberId}`;
-    return this.post(url);
+    return this.post(url)
   }
   /**
    * 签到历史记录

@@ -2,7 +2,7 @@
   <Loading :init.sync="init"/>
 
   <view wx:if="{{init}}">
-    <image src="https://img.leshare.shop/bouns_bar.jpg" mode="aspectFill" style="width: 750rpx; height:200rpx;"/>
+    <!--<image src="https://img.leshare.shop/bouns_bar.jpg" mode="aspectFill" style="width: 750rpx; height:200rpx;"/>-->
 
     <view class="top-bonus-box row-between">
       <view class="row">
@@ -68,7 +68,7 @@
     };
     mixins = [base, pagination];
     config = {
-      navigationBarTitleText: '积分商品',
+      navigationBarTitleText: '积分商城',
       enablePullDownRefresh: true
     };
   }

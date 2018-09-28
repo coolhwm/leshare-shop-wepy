@@ -1,0 +1,26 @@
+<template>
+  <web-view src="https://mp.weixin.qq.com/s/e61kwTL_uOV1DCIJjv5ZCg"></web-view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+
+  export default class Article extends wepy.page {
+    data = {
+    };
+    onLoad (options) {
+    };
+    methods = {};
+    components = {};
+    computed = {};
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '关注公众号'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

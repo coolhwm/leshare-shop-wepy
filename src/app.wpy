@@ -156,7 +156,8 @@
         'pages/shop/sub_shop_detail',
         'pages/shop/sub_shop_menu',
         'pages/shop/sub_shop_search',
-        'pages/customer/reward_center',
+        'pages/reward/index',
+        'pages/reward/article'
       ],
       subPackages: [
         {
