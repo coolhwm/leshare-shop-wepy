@@ -1,11 +1,11 @@
 import base from './base';
-import api from './group';
+import api from '../api/group';
 import wepy from 'wepy';
 import order from './order'
 import Page from '../utils/Page';
 import goods from './goods'
 
-export default class group extends base {
+export default class bargain extends base {
   /***
    * 根据拼团商品规则ID查找拼团信息(商品)
    */

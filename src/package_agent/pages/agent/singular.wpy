@@ -1,0 +1,192 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view wx:if="{{init}}">
+
+    <view class="column">
+      <block wx:for="{{page.list}}" wx:key="index" wx:index="index" wx:for-item="item">
+
+        <!--顶栏/基本信息-->
+        <view class="order-item-container column">
+          <view class="order-header-container colunm">
+            <view class="row-between">
+              <view class="row">
+                <image src="{{item.orderCustomer.avatarUrl}}/small" class="avatar-box"/>
+                <text class="ml10 sm">{{item.orderCustomer.nickName}}</text>
+              </view>
+              <text class="sm primary" wx:if="{{item.statusText}}">{{item.statusText}}{{item.paymentType == 0 ? '(线下支付)' : ''}}{{item.tableNum ? '(' + item.tableNum + '桌)': ''}}</text>
+            </view>
+            <view class="order-info-container row-between">
+              <text>{{item.orderTime}}</text>
+              <text>{{item.uuid}}</text>
+            </view>
+          </view>
+
+          <!--商品区域-->
+          <view class="order-goods-list-container" @tap="detail({{item.orderId}})">
+            <repeat for="{{item.orderGoodsInfo}}" key="index" index="index" item="infoItem">
+              <view class="{{!item.orderId || index == 0 || expand[item.orderId] ? '' : 'order-goods-fold'}}">
+                <OrderGoods :goods="infoItem"></OrderGoods>
+                <view class="hr" />
+              </view>
+            </repeat>
+            <view wx:if="{{item.orderId && item.orderGoodsInfo.length > 1}}" class="goods-fold-btn row-center" @tap.stop="expand({{item.orderId}})">
+              <text class="muted" wx:if="{{!expand[item.orderId]}}">查看全部 {{item.orderGoodsInfo.length}} 件商品</text>
+              <text class="muted" wx:else>收起商品</text>
+            </view>
+          </view>
+
+
+          <!--汇总信息-->
+          <view class="order-footer-container row-end">
+            <text class="mr20">共{{item.orderGoodsInfo.length}}件商品</text>
+            <text>合计:</text>
+            <text class="major xl mr20">￥{{item.finalPrice}}</text>
+            <text>(含运费￥{{item.postFee}})</text>
+          </view>
+
+          <!--佣金栏-->
+
+          <view class="row-between cash-box">
+            <text>{{item.customerText}}</text>
+            <view class="row">
+              <text>代理佣金:</text>
+              <text class="major xl mr20">￥{{item.fee}}</text>
+              <button class="weui-btn btn-box" type="primary" @tap="orderDetail({{item}})">查看明细</button>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+
+  </view>
+
+  <!--占位符-->
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关分销订单信息"/>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from '../../../mixins/base';
+  import pagination from '../../../mixins/pagination.wpy';
+  import Placeholder from '../../../components/common/placeholder';
+  import Loadmore from '../../../components/weui/loadmore';
+  import Loading from '../../../components/common/loading';
+  import agent from '../../api/agent';
+  import OrderGoods from '../../../components/order/order_goods';
+
+  export default class Singular extends wepy.page {
+    data = {
+      init: false,
+      page: {
+        list: []
+      },
+      expand: {},
+      id: null,
+      list: null
+    };
+    async onLoad ({id, orderId}) {
+      if (orderId) {
+        const data = await agent.agentOrderId(id, orderId);
+        this.page.list.push(data)
+        this.loaded();
+      } else {
+        this.page = await agent.agentOrder(id);
+        this.id = id;
+        await this.next();
+      }
+    }
+    methods = {
+      /**
+       * 商品展开收缩
+       */
+      expand(orderId) {
+        orderId = orderId == null ? 0 : orderId;
+        this.expand[orderId] = !this.expand[orderId];
+      },
+      /**
+       * 订单详情
+       */
+      detail(orderId) {
+        if (this.action == 0) {
+          return;
+        }
+        this.$root.$navigate(`/pages/order/detail?orderId=${orderId}`);
+      },
+      orderDetail(order) {
+        this.$preload('detail', order.orderId);
+        this.$navigate(`/package_agent/pages/agent/order_detail`)
+      }
+    };
+    computed = {};
+    components = {
+      Placeholder: Placeholder,
+      Loadmore: Loadmore,
+      Loading: Loading,
+      OrderGoods: OrderGoods
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '分销订单',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+  .order-item-container {
+    border-top: $border;
+    border-bottom: $border;
+    background-color: #FFF;
+    margin-bottom: 10rpx;
+  }
+
+  /*顶栏*/
+  .order-header-container {
+    padding: 10rpx 25rpx 10rpx 20rpx;
+  }
+  .avatar-box{
+    width: 40rpx;
+    height: 40rpx;
+    border: $border;
+    border-radius: 20rpx;
+  }
+
+  /*底栏*/
+  .order-footer-container {
+    padding-left: 25rpx;
+    padding-right: 20rpx;
+    height: 70rpx;
+  }
+
+  /*顶栏订单信息*/
+  .order-info-container{
+    text{
+      font-size: $text-xs;
+      color:$color-muted;
+    }
+  }
+
+  .order-goods-fold{
+    display: none;
+  }
+
+  .goods-fold-btn{
+    background-color: $color-bg-item;
+    padding-top: 5rpx;
+    padding-bottom: 5rpx;
+  }
+  .cash-box{
+    padding: 10rpx;
+    border-top: 1px dotted $color-border;
+    .btn-box{
+      font-size: 24rpx;
+      padding: 0rpx 20rpx;
+      margin: 10rpx 0;
+    }
+  }
+</style>

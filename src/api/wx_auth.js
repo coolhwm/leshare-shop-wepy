@@ -150,6 +150,8 @@ export async function handleGetPhoneNumber(detail) {
     } else {
       console.warn('注册失败', e);
     }
+  } finally {
+    Tips.loaded();
   }
 }
 

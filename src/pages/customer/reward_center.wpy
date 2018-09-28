@@ -1,0 +1,225 @@
+<template>
+  <view class="top-box">
+    <!--签到栏-->
+    <view class="row sign-box">
+      <!--背景图片-->
+      <view class="sign-icon-box column-center">
+        <image src="https://img.leshare.shop/shop/22/reward-sign-gift.png"></image>
+      </view>
+
+      <!--中央主区域-->
+      <view class="column main-box">
+        <!--积分提示-->
+        <view class="row bonus-box">
+          <text class="xs">当前积分：</text>
+          <text class="xxl">7584</text>
+        </view>
+
+        <!--签到进度栏目-->
+        <view class="sign-bar-box">
+          <image class="sign-gift-icon" src="https://img.leshare.shop/shop/22/reward-gift-icon.png"></image>
+          <view class="sign-done-box">
+            <image class="sign-done-icon" src="https://img.leshare.shop/shop/22/reward-sign-done.png"></image>
+            <image class="sign-done-icon" src="https://img.leshare.shop/shop/22/reward-sign-done.png"></image>
+            <image class="sign-done-icon" src="https://img.leshare.shop/shop/22/reward-sign-done.png"></image>
+          </view>
+          <image class="sign-bar" src="https://img.leshare.shop/shop/22/reward-sign-bar.png"></image>
+        </view>
+        <!--签到礼品提示-->
+        <text class="sign-tips mt10">连续签到7天有机会领免费饮品券</text>
+      </view>
+
+      <!--右侧按钮区域-->
+      <view class="sign-btn-box">
+        <view class="sign-btn column-center">
+          <text>签到领券</text>
+        </view>
+      </view>
+    </view>
+
+    <!--主功能推荐栏-->
+    <view class="row-around menu-box">
+      <image class="menu-image" src="https://img.leshare.shop/shop/22/reward_area_1.png"></image>
+      <image class="menu-image" src="https://img.leshare.shop/shop/22/reward_area_2.png"></image>
+      <image class="menu-image" src="https://img.leshare.shop/shop/22/reward_area_3.png"></image>
+    </view>
+  </view>
+
+  <!--菜单栏-->
+  <form class="nav-list-box" report-submit="true" @submit="reportFormId">
+    <view class="list-item-box">
+      <view class="column cell-box weui-cells weui-cells-show">
+        <button plain  form-type="submit"  class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="routeByAction({{item}})" open-type="{{item.openType}}">
+          <view class="weui-cell__bd">
+            <icon class="coupon mr20" style="color: #EE3333; font-size: 24px; line-height: 24px;" />
+            <text>我的卡券</text>
+          </view>
+          <view class="weui-cell__ft weui-cell__ft_in-access">
+            <text class="muted sm">做任务</text>
+          </view>
+        </button>
+      </view>
+
+      <view class="column cell-box weui-cells weui-cells-show">
+        <button plain  form-type="submit"  class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="routeByAction({{item}})" open-type="{{item.openType}}">
+          <view class="weui-cell__bd">
+            <icon class="coupon mr20" style="color: #EE3333; font-size: 24px; line-height: 24px;" />
+            <text>我的卡券</text>
+          </view>
+          <view class="weui-cell__ft weui-cell__ft_in-access">
+            <text class="muted sm">做任务</text>
+          </view>
+        </button>
+      </view>
+
+
+      <view class="column cell-box weui-cells weui-cells-show">
+        <button plain  form-type="submit"  class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="routeByAction({{item}})" open-type="{{item.openType}}">
+          <view class="weui-cell__bd">
+            <icon class="coupon mr20" style="color: #EE3333; font-size: 24px; line-height: 24px;" />
+            <text>我的卡券</text>
+          </view>
+          <view class="weui-cell__ft weui-cell__ft_in-access">
+            <text class="muted sm">做任务</text>
+          </view>
+        </button>
+      </view>
+    </view>
+  </form>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+
+  export default class RewardCenter extends wepy.page {
+    data = {
+    };
+    onLoad (options) {
+    };
+    methods = {};
+    components = {};
+    computed = {};
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '福利中心'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .top-box{
+    background-color: #F8F8F8;
+    height: 440rpx;
+    border-bottom: $border;
+  }
+  .sign-box{
+    width: 750rpx;
+    overflow: hidden;
+    background-image: url("https://img.leshare.shop/shop/22/reward_bg.png");
+    background-size:100% 100%;
+    height: 200rpx;
+    padding: 20rpx;
+    padding-bottom: 60rpx;
+    align-items: center;
+  }
+
+  .sign-icon-box{
+    height: 90rpx;
+    width: 90rpx;
+    min-height: 90rpx;
+    min-width: 90rpx;
+    border: 2px solid rgba(255,255,255,.4);
+    border-radius: 50%;
+    background-color: #D71F36;
+    image{
+      height: 50rpx;
+      width: 50rpx;
+      min-height: 50rpx;
+      min-width: 50rpx;
+    }
+  }
+  .main-box {
+    margin-left: 10rpx;
+    .sign-tips {
+      font-size: $text-xxs;
+      margin-left: 20rpx;
+      color: #FFFFFF;
+    }
+  }
+  .bonus-box{
+    margin-left: 20rpx;
+    text{
+      color: #FFFFFF;
+    }
+  }
+  .sign-bar-box{
+    position: relative;
+    height: 60rpx;
+    margin-top: 5rpx;
+    .sign-bar{
+      height: 74rpx;
+      width: 404rpx;
+    }
+    .sign-done-box{
+      position: absolute;
+      top: 5rpx;
+      left: 14rpx;
+    }
+    .sign-done-icon{
+      margin-right: 5rpx;
+      height: 50rpx;
+      width: 50rpx;
+    }
+    .sign-gift-icon{
+      position: absolute;
+      top: -60rpx;
+      right: -4rpx;
+      height: 96rpx;
+      width: 86rpx;
+    }
+  }
+  .sign-btn-box{
+    background: url("https://img.leshare.shop/shop/22/reward-sign-btn.png") no-repeat;
+    background-size: cover;
+    width: 200rpx;
+    height: 100rpx;
+    .sign-btn {
+      width: 200rpx;
+      height: 100rpx;
+      border: 0;
+      background: transparent;
+      padding: 0;
+      align-items: center;
+      text{
+        color: #f15353;
+        font-size: $text-lg;
+        font-weight: bold;
+        margin-left: 10rpx;
+      }
+    }
+  }
+  .menu-box{
+    top: -50rpx;
+    position: relative;
+    padding: 0 10rpx;
+    .menu-image{
+      width: 230rpx;
+      height: 197rpx;
+    }
+  }
+
+  .nav-list-box{
+    margin-top: 10rpx;
+    background-color: $color-bg-body;
+    button{
+      text-align: left;
+      margin-left: 0;
+      line-height: 1.2em;
+    }
+  }
+  .list-item-box + .list-item-box{
+    margin-top: 10rpx;
+  }
+</style>

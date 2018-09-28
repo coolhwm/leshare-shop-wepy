@@ -37,10 +37,10 @@
     }
     methods = {
       detail (ruleId) {
-        this.$root.$navigate(`/pages/group/goods_detail?ruleId=${ruleId}`)
+        this.$root.$navigate(`/package_group/pages/group/goods_detail?ruleId=${ruleId}`)
       },
       more () {
-        this.$root.$navigate(`/pages/group/group_more`)
+        this.$root.$navigate(`/package_group/pages/group/group_more`)
       }
     };
     watch = {

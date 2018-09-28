@@ -21,7 +21,7 @@
 
     <view class="success-box column-center"  wx:if="{{success}}">
       <text  style="font-size: 27px">{{message}}</text>
-      <text class="mt10 xs">{{tips}}</text>
+      <text class="mt10 xs" wx:if="{{tips && tips != ''}}">{{tips}}</text>
     </view>
 
     <view class="qr-box column-center" wx:if="{{!coupon.isUse}}">

@@ -355,7 +355,7 @@
           break;
         case 'USER_GROUP':
           // 我的拼团
-          this.$root.$navigate(`/pages/group/list`);
+          this.$root.$navigate(`/package_group/pages/group/list`);
           break;
         case 'FOOD_LIST':
           // 在线点餐
@@ -376,11 +376,11 @@
           break;
         case 'GROUP_LIST':
           // 拼团列表
-          this.$root.$navigate(`/pages/group/group_more`);
+          this.$root.$navigate(`/package_group/pages/group/group_more`);
           break;
         case 'GROUP_GOODS':
           // 某个拼团商品
-          this.$root.$navigate(`/pages/group/goods_detail?ruleId=${targetId}`);
+          this.$root.$navigate(`/package_group/pages/group/goods_detail?ruleId=${targetId}`);
           break;
         case 'BONUS_LIST':
           // 积分商品列表
@@ -396,7 +396,7 @@
           break;
         case 'AGENT':
           // 分销中心
-          this.$root.$navigate(`/pages/agent/apply`);
+          this.$root.$navigate(`/package_agent/pages/agent/apply`);
           break;
         case 'PREVIEW':
           // 查看图片

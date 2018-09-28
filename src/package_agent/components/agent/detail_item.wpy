@@ -1,0 +1,62 @@
+<template>
+  <view class="column  detail-box" @tap="orderDetail({{detail}})">
+    <view class="row-between top-box">
+      <view class="customer-box row">
+        <text class="muted">{{detail.createTime ? detail.createTime : detail.applyTime}}</text>
+      </view>
+      <view class="time-bonus-box">
+        <text class="muted">余额：{{detail.leftFee}}元</text>
+      </view>
+    </view>
+    <view class="row-between mt10">
+      <view class="customer-box row">
+        <text>{{detail.typeDesc}}</text>
+        <text wx:if="{{detail.remark && detail.remark != 0}}" class="muted">({{detail.remark}})</text>
+      </view>
+      <view class="time-bonus-box">
+        <text wx:if="{{detail.costFee < 0}}" style="color: green">{{detail.costFee}}元</text>
+        <text wx:elif="{{detail.type === 'cash' && detail.costFee > 0}}" class="danger">{{detail.costFee}}元(驳回)</text>
+        <text wx:else class="danger">+{{detail.costFee}}元</text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class Notice extends wepy.component {
+    props = {
+      detail: {}
+    };
+    data = {};
+    methods = {
+      orderDetail(detail) {
+        if (detail.type === 'commission') {
+          this.$root.$navigate(`/package_agent/pages/agent/singular?id=${detail.agentId}&orderId=${detail.resultId}`);
+        }
+      }
+    };
+    components = {};
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+  .detail-box{
+    padding: 18rpx;
+    margin: 10rpx 10rpx 0;
+    border-radius: 30rpx;
+    background-color: white;
+    .top-box{
+      border-bottom: $border;
+      padding-bottom: 10rpx;
+    }
+  }
+  .customer-box{
+    align-details: center;
+  }
+  .time-bonus-box{
+    align-details: flex-end;
+  }
+</style>

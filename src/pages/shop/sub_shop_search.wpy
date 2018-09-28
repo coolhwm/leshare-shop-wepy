@@ -1,0 +1,81 @@
+<template>
+  <view>
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <ShopItem :item.sync="item" />
+    </repeat>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+
+    <!--占位符-->
+    <Placeholder :show.sync="isPageEmpty" message="暂无匹配商家"/>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import shop from '../../api/shop';
+  import base from '../../mixins/base';
+  import pagination from '../../mixins/pagination';
+  import Placeholder from '../../components/common/placeholder';
+  import Loading from '../../components/common/loading';
+  import Loadmore from '../../components/weui/loadmore';
+  import ShopItem from '../../components/shop/sub_goods_item';
+
+  export default class SearchShopBar extends wepy.page {
+    data = {
+      page: {
+        list: [
+        ]
+      },
+      init: false,
+      keyword: null,
+      location: null
+    };
+    async onLoad ({keyword}, {preload}) {
+      this.keyword = keyword;
+      this.location = preload.location;
+      this.page = shop.subShopList();
+      await this.next();
+    };
+    params() {
+      const param = {
+        goods: 1
+      };
+      if (this.location) {
+        param.longitude = this.location.longitude;
+        param.latitude = this.location.latitude;
+      }
+      if (this.keyword) {
+        param.keyword = this.keyword;
+      }
+      return param;
+    }
+    methods = {
+
+    };
+    events = {};
+    components = {
+      Placeholder: Placeholder,
+      Loading: Loading,
+      Loadmore: Loadmore,
+      ShopItem: ShopItem
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '搜索结果',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .mt5{
+    margin-top: 5rpx;
+  }
+  .container{
+    width: 750rpx;
+    overflow: hidden;
+  }
+</style>

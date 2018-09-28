@@ -1,0 +1,116 @@
+<template>
+  <view>
+    <view class="row-around goods-list" wx:if="{{goodsList.length > 0 && param.showActiveBar}}">
+      <repeat for="{{goodsList}}" key="index" index="index" item="item">
+        <GoodsItem :goods.sync="item"/>
+      </repeat>
+    </view>
+
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <ShopItem :item.sync="item" />
+    </repeat>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+  </view>
+</template>
+
+<script>
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import wepy from 'wepy';
+  import shop from '../../api/shop';
+  import base from '../../mixins/base';
+  import pagination from '../../mixins/pagination';
+  import ShopItem from '../shop/sub_goods_item';
+  import Loadmore from '../../components/weui/loadmore';
+  import GoodsItem from './goods/goods_active';
+  @connect({
+    orderCount: store.get('orderCount')
+  })
+  export default class ShopList extends wepy.component {
+    props = {
+      param: {}
+    };
+    data = {
+      page: {
+        list: [
+        ]
+      },
+      goodsList: null,
+      init: false,
+      location: null
+    };
+    params() {
+      const param = {
+        goods: 1
+      };
+      if (this.location) {
+        param.longitude = this.location.longitude;
+        param.latitude = this.location.latitude;
+      }
+      return param;
+    }
+    grepTopShopList() {
+      const list = [];
+      this.page.list.forEach(shop => {
+        const goods = shop.goodsList.find(item => item.limitType == 'NEW_CUSTOMER');
+        // 有匹配的新人礼商品
+        if (goods) {
+          const result = {
+            id: goods.id,
+            imageUrl: goods.imageUrl,
+            name: goods.simpleName,
+            price: goods.price.toFixed(2),
+            originalPrice: goods.originalPrice,
+            areaTag: shop.areaTag,
+            distance: shop.distance
+          };
+          list.push(result);
+        }
+      });
+      // 根据距离排序
+      list.sort((a, b) => a.distance - b.distance);
+      // 取距离最近的前三个
+      this.goodsList = list.length <= 3 ? list : list.slice(0, 3);
+        this.$apply();
+    }
+    methods = {
+      async load(location) {
+        this.location = location;
+        // 门店列表
+        this.page = shop.subShopList();
+        // 翻页
+        await this.next();
+        // 筛选新客列表
+        this.grepTopShopList();
+      }
+    };
+    events = {
+      'on-reach-bottom': async () => {
+        await this.next();
+      }
+    };
+    computed = {
+      loading() {
+        return this.init ? this.page.loading : true;
+      }
+    };
+    mixins = [base, pagination];
+    components = {
+      ShopItem: ShopItem,
+      Loadmore: Loadmore,
+      GoodsItem: GoodsItem
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .goods-list{
+    background-color: #FFFFFF;
+    overflow: hidden;
+    padding: 20rpx;
+    border-bottom: 1px solid #E9E9E9;
+  }
+</style>

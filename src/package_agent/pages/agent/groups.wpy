@@ -1,0 +1,59 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view wx:if="{{init}}">
+
+    <view class="column">
+      <repeat for="{{page.list}}" key="index" index="index" item="item">
+        <GroupItem :item.sync="item.customer" :detail.item="item"/>
+      </repeat>
+    </view>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+
+  </view>
+
+  <!--占位符-->
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关下线信息"/>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from '../../../mixins/base';
+  import pagination from '../../../mixins/pagination.wpy';
+  import Placeholder from '../../../components/common/placeholder';
+  import Loadmore from '../../../components/weui/loadmore';
+  import Loading from '../../../components/common/loading';
+  import agent from '../../api/agent';
+  import GroupItem from '../../components/agent/group_item'
+
+  export default class Groups extends wepy.page {
+    data = {
+      init: false,
+      page: {}
+    };
+    async onLoad ({id}) {
+      this.page = await agent.agentGroups(id);
+      await this.next();
+    }
+    methods = {};
+    computed = {};
+    components = {
+      Placeholder: Placeholder,
+      Loadmore: Loadmore,
+      Loading: Loading,
+      GroupItem: GroupItem
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '我的下线',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+
+</style>

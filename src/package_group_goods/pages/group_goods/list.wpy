@@ -1,0 +1,56 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view class="column" wx:if="{{init}}">
+    <image src="https://img.leshare.shop/goods_group_bar.jpg" mode="aspectFill" style="width: 750rpx; height:160rpx;"/>
+
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <GroupGoodsItem :detail.sync="item"/>
+    </repeat>
+
+    <!--占位符-->
+    <Placeholder :show.sync="isPageEmpty" message="您还没有相关组合购商品" />
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../../mixins/base';
+  import pagination from '../../../mixins/pagination';
+  import Loading from '../../../components/common/loading';
+  import GroupGoodsItem from '../../components/group_goods/group_goods_list_item';
+  import groupGoods from '../../api/group_goods';
+  import Placeholder from '../../../components/common/placeholder';
+  import Loadmore from '../../../components/weui/loadmore';
+
+  export default class GroupGoodsList extends wepy.page {
+    data = {
+      init: false,
+      page: []
+    };
+    async onLoad () {
+      this.page = await groupGoods.list();
+      await this.next();
+    };
+    methods = {
+    };
+    computed = {
+    };
+    components = {
+      Loading: Loading,
+      GroupGoodsItem: GroupGoodsItem,
+      Placeholder: Placeholder,
+      Loadmore: Loadmore
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '组合购',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+</style>

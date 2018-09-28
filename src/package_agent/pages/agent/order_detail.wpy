@@ -1,0 +1,126 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view wx:if="{{init}}">
+
+    <view class="column">
+      <repeat for="{{orderDetail}}" key="index" index="index" item="item">
+
+        <!--顶栏/基本信息-->
+        <view class="order-item-container column">
+          <!--商品区域-->
+          <view class="order-goods-list-container">
+            <view>
+              <view class="order-goods-container row-between">
+                <!--商品图片-->
+                <image class="order-goods-image" mode="aspectFill" src="{{item.imageUrl}}"/>
+
+                <!--商品说明-->
+                <view class="order-goods-title-container column">
+                  <text>{{item.goodsName}}</text>
+                  <text class="muted" wx:if="{{item.sku}}">{{item.sku}}</text>
+                  <!--<text class="muted" wx:if="{{item.skuProperty}}">{{item.skuProperty}}</text>-->
+                </view>
+
+                <!--商品购买信息-->
+                <view class="order-goods-buy-container column">
+                  <text>￥{{item.goodsDealPrice}}</text>
+                  <text class="muted">x{{item.count}}</text>
+                </view>
+              </view>
+              <view class="hr" />
+            </view>
+          </view>
+
+          <!--汇总信息-->
+          <view class="order-footer-container row-end">
+            <text>佣金:</text>
+            <text class="major xl mr20">￥{{item.fee}}</text>
+            <text>({{item.rate * 100}}%)</text>
+          </view>
+
+        </view>
+      </repeat>
+    </view>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+
+  </view>
+
+  <!--占位符-->
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关明细信息"/>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from '../../../mixins/base';
+  import Placeholder from '../../../components/common/placeholder';
+  import Loadmore from '../../../components/weui/loadmore';
+  import Loading from '../../../components/common/loading';
+  import OrderGoods from '../../../components/order/order_goods';
+  import agent from '../../api/agent'
+
+  export default class Singular extends wepy.page {
+    data = {
+      init: false,
+      orderDetail: null
+    };
+    async onLoad (options, {preload}) {
+      this.orderDetail = await agent.orderDetail(preload.detail);
+      this.loaded();
+    }
+    methods = {};
+    computed = {};
+    components = {
+      Placeholder: Placeholder,
+      Loadmore: Loadmore,
+      Loading: Loading,
+      OrderGoods: OrderGoods
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '订单明细'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+  .order-item-container {
+    border-top: $border;
+    border-bottom: $border;
+    background-color: #FFF;
+    margin-bottom: 10rpx;
+  }
+
+  /*底栏*/
+  .order-footer-container {
+    padding-left: 25rpx;
+    padding-right: 20rpx;
+    height: 70rpx;
+  }
+
+  .order-goods-container{
+    background-color: $color-bg-item;
+    padding: 10rpx 20rpx 15rpx 25rpx;
+  }
+
+  /*商品图图片*/
+  .order-goods-image{
+    width: 150rpx;
+    height: 150rpx;
+  }
+
+  /*购买信息*/
+  .order-goods-buy-container{
+    text-align: right;
+  }
+
+  /*标题*/
+  .order-goods-title-container{
+    flex:1;
+    height: 100%;
+    padding-left: 28rpx;
+  }
+</style>

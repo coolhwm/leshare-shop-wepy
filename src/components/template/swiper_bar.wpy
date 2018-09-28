@@ -2,7 +2,7 @@
   <!--TODO 自定义高度处理-->
   <swiper indicator-dots="true" indicator-active-color="#EEE" interval="3000" autoplay style="height:{{param.height}}">
     <swiper-item class="swiper-box" wx:for="{{param.data}}" wx:key="index" wx:index="index" >
-      <image mode="aspectFill" src="{{item.url}}" @tap="routeByAction({{item}})"></image>
+      <image mode="aspectFill" src="{{item.url}}/w1080" @tap="routeByAction({{item}})"></image>
     </swiper-item>
   </swiper>
 </template>

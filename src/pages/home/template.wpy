@@ -7,6 +7,11 @@
         <SearchBar :param.sync="item"/>
       </block>
 
+      <!--搜索栏-->
+      <block wx:if="{{item.type == 'SEARCH_SHOP_BAR'}}">
+        <SearchShopBar :param.sync="item"/>
+      </block>
+
       <!--店铺信息-->
       <block wx:if="{{item.type == 'SHOP_BAR'}}">
         <ShopBar :param.sync="item"/>
@@ -71,9 +76,15 @@
       <block wx:if="{{item.type == 'VIDEO_BOX'}}">
         <VideoBox :param.sync="item" />
       </block>
+
       <!--广告窗口-->
       <block wx:if="{{item.type == 'AD_BANNER'}}">
         <ad unit-id="{{item.unitId}}"></ad>
+      </block>
+
+      <!--门店列表-->
+      <block wx:if="{{item.type == 'SHOP_LIST'}}">
+        <ShopList :param.sync="item" />
       </block>
 
 
@@ -140,6 +151,8 @@
   import Separator from '../../components/template/separator';
   import AddressBox from '../../components/template/address_box';
   import VideoBox from '../../components/template/video_box';
+  import ShopList from '../../components/template/shop_list';
+  import SearchShopBar from '../../components/template/search_shop_bar';
   import _ from 'underscore';
   import Popups from '../../components/shop/popups'
 
@@ -178,9 +191,40 @@
       // 登录检查
       await initWxAppSync();
       this.scene = scene;
-      if (pageId) {
-        console.info(`[template] load template page id=${pageId}`);
-        this.pageId = pageId;
+      // 渲染页面组件
+      this.pageId = pageId;
+      await this.renderTemplatePage();
+      // 调用子组件触发事件
+      this.invokeComponentsEvent();
+      // 渲染导航栏
+      this.renderNavigationBar();
+      // 执行触发器
+      this.runTriggers();
+    };
+
+    /**
+     * 调用子组件触发事件
+     */
+    invokeComponentsEvent() {
+      this.components.forEach(item => {
+        if (item.type == 'SHOP_LIST') {
+          // 拉起定位
+          wepy.getLocation().then(location => {
+            // 加载组件
+            this.$invoke('ShopList', 'load', location);
+            this.$invoke('SearchShopBar', 'setLocation', location);
+          }, () => {
+            this.$invoke('ShopList', 'load', null);
+          });
+        }
+      });
+    }
+    /**
+     * 渲染页面
+     */
+    async renderTemplatePage() {
+      if (this.pageId) {
+        console.info(`[template] load template page id=${this.pageId}`);
       } else if (this.homePageId) {
         console.info(`[template] load home page`);
         this.pageId = this.homePageId;
@@ -189,20 +233,7 @@
         console.warn(`[template] page_id is ${this.pageId}, render fail`);
         return;
       }
-      const page = await await config.layout(this.pageId);
-      this.renderTemplatePage(page);
-      console.info(`[template] render template page success`);
-      this.loaded();
-      // 渲染导航栏
-      this.renderNavigationBar();
-      // 执行触发器
-      this.runTriggers();
-    };
-
-    /**
-     * 渲染页面
-     */
-    renderTemplatePage(page) {
+      const page = await config.layout(this.pageId);
       if (page == null) {
         console.info(`[template] page is null, render fail`);
         return;
@@ -211,6 +242,8 @@
       this.plugins = page.plugins;
       this.triggers = page.triggers;
       this.param = page.param;
+      this.loaded();
+      console.info(`[template] render template page success`);
     }
     /**
      * 渲染标题栏
@@ -279,6 +312,22 @@
         return this.param.share;
       }
     }
+
+    /**
+     * 下拉刷新
+     */
+    async onPullDownRefresh () {
+      await this.renderTemplatePage();
+      wepy.stopPullDownRefresh();
+    }
+
+    /**
+     * 到达底部
+     */
+    async onReachBottom () {
+      this.$broadcast('on-reach-bottom');
+    }
+
     methods = {
     };
     components = {
@@ -301,12 +350,15 @@
       BargainBox: BargainBox,
       AddressBox: AddressBox,
       VideoBox: VideoBox,
-      Popups: Popups
+      Popups: Popups,
+      ShopList: ShopList,
+      SearchShopBar: SearchShopBar
     };
     computed = {
     };
     mixins = [base];
     config = {
+      enablePullDownRefresh: true
     };
   }
 </script>

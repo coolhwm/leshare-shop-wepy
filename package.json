@@ -15,7 +15,7 @@
     "redux-actions": "^2.2.1",
     "redux-promise": "^0.5.3",
     "underscore": "^1.8.3",
-    "wepy": "^1.7.1",
+    "wepy": "^1.7.2",
     "wepy-async-function": "^1.4.4",
     "wepy-com-toast": "^1.0.3",
     "wepy-redux": "^1.5.6"

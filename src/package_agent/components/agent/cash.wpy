@@ -1,0 +1,137 @@
+<template>
+  <view class="notice-box" wx:if="{{display}}">
+    <view class="column notice-content">
+      <view class="notice-top-box">
+        <text class="xxl white">提现金额</text>
+        <icon class="close icon-box" color="white" @tap="close"/>
+      </view>
+      <view class="column notice-content-box">
+        <view style="margin-bottom: 40rpx;">
+          <view class="weui-cells weui-cells_after-title input-box">
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">金额</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" type="digit" placeholder="请输入您要提现的金额" @input="input" />
+              </view>
+            </view>
+          </view>
+          <view class="column">
+            <block wx:if="{{validateText != null}}">
+              <text class="danger xs">{{validateText}}</text>
+            </block>
+            <text class="muted xs mt10">* 提现需要管理员审核批准，佣金会从账户扣除冻结，请耐心等待</text>
+          </view>
+        </view>
+        <button @tap="cash">提现</button>
+      </view>
+    </view>
+  </view>
+
+  <CoverPanel :display.sync="display" />
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import CoverPanel from '../../../components/common/cover_panel';
+  import agent from '../../api/agent';
+  import Tips from '../../../utils/Tips';
+
+  export default class Notice extends wepy.component {
+    data = {
+      display: false,
+      agentId: 0,
+      costFee: 0,
+      validateText: null
+    };
+    methods = {
+      open({id}) {
+        this.display = true;
+        this.agentId = id;
+      },
+      close() {
+        this.display = false;
+      },
+      input(e) {
+        this.costFee = e.detail.value;
+        this.validateText = null
+      },
+      async cash() {
+        if (this.costFee <= 0) {
+          this.validateText = '请输入大于0元的金额';
+          return
+        }
+        const param = {
+          cashFee: this.costFee,
+          agentId: this.agentId
+        };
+        try {
+          Tips.loading();
+          await agent.agentCash(param);
+          await Tips.success('申请提现成功');
+        } catch (e) {
+          Tips.loaded();
+          await Tips.confirm(e.message);
+        } finally {
+          this.display = false;
+        }
+        this.$emit('cash');
+        this.$apply();
+      }
+    };
+    components = {
+      CoverPanel: CoverPanel
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+  .notice-box{
+    position: absolute;
+    top:0;
+    right: 0;
+    height: 100%;
+    width: 750rpx;
+    z-index: 10001;
+
+    .notice-content{
+      position: fixed;
+      left: 75rpx;
+      right: 75rpx;
+      top: 30%;
+      width: 600rpx;
+      background-color: white;
+      border-radius: 10rpx;
+    }
+    .notice-top-box{
+      background-color: $color-primary;
+      text-align: center;
+      border-top-left-radius: 10rpx;
+      border-top-right-radius: 10rpx;
+      padding: 20rpx 0;
+      position: relative;
+      .icon-box{
+        position: absolute;
+        right: 10px;
+        top: 24rpx;
+      }
+    }
+    .notice-content-box{
+      padding: 40rpx;
+      .input-box{
+        border-left: $border;
+        border-right: $border;
+        .weui-label{
+          width: 90rpx;
+        }
+      }
+      button{
+        background-color: $color-primary;
+        color: white;
+      }
+    }
+  }
+</style>

@@ -109,9 +109,17 @@ export default class shop extends base {
    */
   static subShopList() {
     const url = `${this.baseUrl}/shops/sub_shop_list`;
-    const page = new Page(url);
+    const page = new Page(url, this._processSubShopData.bind(this));
     page.method = 'POST';
     return page;
+  }
+
+  /**
+   * 新人专享的门店列表
+   */
+  static subNewShopList(param) {
+    const url = `${this.baseUrl}/shops/sub_shop_list`;
+    return this.post(url, param)
   }
   /***
    * 推荐归属门店列表
@@ -242,5 +250,64 @@ export default class shop extends base {
     }
     sign.orderId = 0;
     return sign;
+  }
+  static _processSubShopData(item) {
+    // 处理标签
+    const tags = item.tags;
+    let areaTag, typeTag;
+    if (tags.BUSSINESS_AREA && tags.BUSSINESS_AREA.length > 0) {
+      areaTag = tags.BUSSINESS_AREA[0];
+    } else {
+      areaTag = '其他商圈';
+    }
+    if (tags.TAG && tags.TAG.length > 0) {
+      typeTag = tags.TAG[0];
+    } else {
+      typeTag = '其他'
+    }
+    item.areaTag = areaTag;
+    // 活动标签
+    item.tagText = `${typeTag} | ${areaTag}`;
+    if (tags.ACTIVITY && tags.ACTIVITY.length > 0) {
+      item.activityTag = tags.ACTIVITY[0];
+      item.isActivity = true;
+    } else {
+      item.activityTag = '品质商家'
+    }
+    // 处理商品
+    if (item.goodsList.length > 0) {
+      // 商品信息处理
+      item.goodsList.forEach(goods => {
+        // 处理简化名称
+        const nameArr = goods.name.split(' ');
+        if (nameArr.length == 2 && nameArr[1].length > 1) {
+          goods.simpleName = nameArr[1];
+        } else {
+          goods.simpleName = goods.name;
+        }
+        // 处理积分抵扣
+        if (goods.paymentType == 'bonus') {
+          // goods.bounsText = `免费兑换`;
+        } else if (goods.maxCostBonus > 0) {
+          const bounsPrice = (goods.maxCostBonus / 100).toFixed(0);
+          if (bounsPrice > 0) {
+            goods.bounsText = `抵${bounsPrice}元`;
+          }
+        }
+        // 排序号
+        if (goods.paymentType == 'bonus') {
+          goods.sord = 2;
+        } else if (goods.limitType == 'NEW_CUSTOMER') {
+          goods.sord = 1;
+        } else if (goods.isRecommend == 1) {
+          goods.sord = 3;
+        } else {
+          goods.sord = 4;
+        }
+      });
+      item.goodsList.sort((a, b) => {
+        return a.sord - b.sord;
+      });
+    }
   }
 }

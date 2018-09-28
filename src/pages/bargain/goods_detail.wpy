@@ -6,7 +6,7 @@
     <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" @tap="previewDetailSwiper">
       <block wx:for="{{rule.goods.images}}" wx:key="index">
         <swiper-item>
-          <image src="{{item.url}}/preview" mode="aspectFill" style="width: 750rpx; height:480rpx;"></image>
+          <image src="{{item.url}}/w1080" mode="aspectFill" style="width: 750rpx; height:480rpx;"></image>
         </swiper-item>
       </block>
     </swiper>

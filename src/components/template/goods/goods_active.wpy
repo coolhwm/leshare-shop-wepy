@@ -1,0 +1,66 @@
+<template>
+  <view class="goods-item column-center" @tap="goods({{goods.id}})">
+    <view class="goods-image-box">
+      <view class="goods-tag">新客专享</view>
+      <image src="{{goods.imageUrl}}/small" class="goods-image"/>
+    </view>
+    <view class="row-center goods-price-box">
+      <text class="major xxs">首单￥</text>
+      <text class="major xxl">{{goods.price}}</text>
+    </view>
+    <text class="inline sm">{{goods.name}}</text>
+    <text class="xxs muted">{{goods.areaTag}}</text>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import router from '../../../mixins/router';
+  import DiscountBadge from '../../../components/goods/discount_badge';
+  export default class GoodRowItem extends wepy.component {
+    props = {
+      goods: {}
+    };
+    methods = {
+      goods (id) {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${id}`)
+      }
+    };
+    components = {
+    };
+  }
+</script>
+
+<style lang="scss" scoped>
+  @import "../../../styles/variable";
+  .goods-item{
+
+    width: 220rpx;
+    max-width: 220rpx;
+  }
+  .goods-image-box{
+    position: relative;
+    width: 200rpx;
+    height: 200rpx;
+    min-height: 200rpx;
+    min-width: 200rpx;
+    border: 1px solid #E9E9E9;
+  }
+  .goods-image {
+    width: 200rpx;
+    height: 200rpx;
+    min-height: 200rpx;
+    min-width: 200rpx;
+  }
+  .goods-tag{
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 2rpx 8rpx;
+    background-color: $color-primary;
+    color: #FFFFFF;
+    font-size: $text-xxs;
+  }
+  .goods-price-box{
+  }
+</style>

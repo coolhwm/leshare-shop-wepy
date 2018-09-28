@@ -37,9 +37,9 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   @import "../../styles/variable";
-  $img-height: 220rpx;
+  $img-height: 160rpx;
   .bargain-detail-box{
     margin-bottom: 10rpx;
     background: white;
