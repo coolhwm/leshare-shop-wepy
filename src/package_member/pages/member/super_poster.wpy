@@ -10,14 +10,14 @@
 </template>
 <script>
   import wepy from 'wepy';
-  import base from '../../mixins/base';
-  import member from '../../api/member';
+  import base from '../../../mixins/base';
+  import invite from '../../api/invite';
   import { connect } from 'wepy-redux';
-  import store from '../../store/utils';
-  import Loading from '../../components/common/loading';
-  import ActionBar from '../../components/common/action_bar';
-  import Tips from '../../utils/Tips';
-  import ButtonWidget from '../../components/template/button_widget';
+  import store from '../../../store/utils';
+  import Loading from '../../../components/common/loading';
+  import ActionBar from '../../../components/common/action_bar';
+  import Tips from '../../../utils/Tips';
+  import ButtonWidget from '../../../components/template/button_widget';
   @connect({
     member: store.get('member')
   })
@@ -27,7 +27,7 @@
       url: null
     };
     async onLoad () {
-      this.url = await member.poster();
+      this.url = await invite.poster();
       if (this.url == '') {
         await Tips.modal('尚未开放邀请');
         wepy.navigateBack();
@@ -64,7 +64,7 @@
   }
 </script>
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   .poster-image{
     width: 100%;
   }

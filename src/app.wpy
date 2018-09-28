@@ -102,8 +102,6 @@
         'pages/home/login',
         'pages/shop/index',
         'pages/goods/cart',
-        'pages/goods/favorite',
-        'pages/goods/history',
         'pages/goods/detail',
         'pages/goods/comment_list',
         'pages/goods/search',
@@ -124,16 +122,10 @@
         'pages/coupon/pick',
         'pages/coupon/pick_detail',
         'pages/customer/index_template',
-        'pages/customer/registe_member',
-        'pages/customer/vip_detail',
         'pages/customer/address_list',
-        'pages/customer/bonus_list',
-        'pages/customer/vip_info',
         'pages/customer/sign_in',
         'pages/coupon/use',
         'pages/shop/about_us',
-        'pages/customer/comment_list',
-        'pages/customer/balance',
         'pages/bargain/goods_detail',
         'pages/bargain/bargain_detail',
         'pages/bargain/list',
@@ -141,11 +133,7 @@
         'pages/bargain/bargain_more',
         'pages/booking/list',
         'pages/booking/booking_detail',
-        'pages/shop/top_up',
-        'pages/shop/billing_record',
-        'pages/shop/invite',
         'pages/shop/pay',
-        'pages/shop/super_poster',
         'pages/customer/info',
         'pages/order/bonusTrade',
         'pages/goods/bonus_goods_list',
@@ -161,6 +149,7 @@
       ],
       subPackages: [
         {
+          // 分销中心
           root: 'package_agent',
           pages: [
             'pages/agent/apply',
@@ -175,6 +164,7 @@
           ]
         },
         {
+          // 组合购
           root: 'package_group_goods',
           pages: [
             'pages/group_goods/list',
@@ -182,6 +172,7 @@
           ]
         },
         {
+          // 拼团
           root: 'package_group',
           pages: [
             'pages/group/group_more',
@@ -189,6 +180,30 @@
             'pages/group/list',
             'pages/group/group_detail',
             'pages/group/group_info_list'
+          ]
+        },
+        {
+          // 会员相关
+          root: 'package_member',
+          pages: [
+            'pages/member/invite',
+            'pages/member/super_poster',
+            'pages/member/vip_detail',
+            'pages/member/vip_info',
+            'pages/member/bonus_list',
+            'pages/member/billing_record',
+            'pages/member/balance',
+            'pages/member/top_up',
+            'pages/member/registe_member'
+          ]
+        },
+        {
+          // 用户相关
+          root: 'package_customer',
+          pages: [
+            'pages/customer/comment_list',
+            'pages/customer/favorite',
+            'pages/customer/history'
           ]
         }
       ],

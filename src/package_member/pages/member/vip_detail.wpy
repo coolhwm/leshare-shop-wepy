@@ -64,12 +64,12 @@
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
-  import { initWxAppSync, checkUserMember } from '../../api/wx_auth';
-  import store from '../../store/utils';
-  import base from '../../mixins/base';
-  import VipCard from '../../components/customer/vip_card';
-  import Loading from '../../components/common/loading';
-  import ButtonWidget from '../../components/template/button_widget';
+  import { initWxAppSync, checkUserMember } from '../../../api/wx_auth';
+  import store from '../../../store/utils';
+  import base from '../../../mixins/base';
+  import VipCard from '../../../components/customer/vip_card';
+  import Loading from '../../../components/common/loading';
+  import ButtonWidget from '../../../components/template/button_widget';
 
   @connect({
     member: store.get('member'),
@@ -180,7 +180,7 @@
   }
 </script>
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   .titel-box{
     padding: 20rpx 30rpx;
     font-size: $text-xl;

@@ -15,13 +15,13 @@
 
 <script>
   import wepy from 'wepy';
-  import base from '../../mixins/base';
-  import favorite from '../../api/favorite';
-  import pagination from '../../mixins/pagination.wpy';
-  import Placeholder from '../../components/common/placeholder';
-  import Loadmore from '../../components/weui/loadmore';
-  import FavoriteItem from '../../components/goods/favorite_item';
-  import Tips from '../../utils/Tips';
+  import base from '../../../mixins/base';
+  import favorite from '../../../api/favorite';
+  import pagination from '../../../mixins/pagination';
+  import Placeholder from '../../../components/common/placeholder';
+  import Loadmore from '../../../components/weui/loadmore';
+  import FavoriteItem from '../../components/customer/favorite_item';
+  import Tips from '../../../utils/Tips';
 
   export default class GoodsFavorite extends wepy.page {
     data = {
@@ -57,5 +57,5 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
 </style>

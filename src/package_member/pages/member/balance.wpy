@@ -23,10 +23,10 @@
 
 <script>
   import wepy from 'wepy';
-  import base from '../../mixins/base';
-  import store from '../../store/utils';
+  import base from '../../../mixins/base';
+  import store from '../../../store/utils';
   import { connect } from 'wepy-redux';
-  import Tips from '../../utils/Tips';
+  import Tips from '../../../utils/Tips';
 
   @connect({
     member: store.get('member'),
@@ -49,10 +49,10 @@
         this.$navigate('/pages/shop/pay');
       },
       topUp () {
-        this.$navigate('/pages/shop/top_up')
+        this.$navigate('/package_member/pages/member/top_up')
       },
       check () {
-        this.$navigate('/pages/shop/billing_record')
+        this.$navigate('/package_member/pages/member/billing_record')
       },
       wait() {
         Tips.success('敬请期待');
@@ -71,7 +71,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
 
   .container {
     height: 100%;

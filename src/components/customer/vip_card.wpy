@@ -80,24 +80,24 @@
             await Tips.success('注册成功');
             Event.emit(Event.MEMBER_CARD_UPDATE);
           } else {
-            this.$root.$navigate('/pages/customer/registe_member');
+            this.$root.$navigate('/package_member/pages/member/registe_member');
           }
           Tips.loaded();
         } catch (e) {
           console.info('注册失败', e);
           Tips.loaded();
-          this.$root.$navigate('/pages/customer/registe_member');
+          this.$root.$navigate('/package_member/pages/member/registe_member');
         }
       },
       complexRegist() {
-        this.$root.$navigate('/pages/customer/registe_member');
+        this.$root.$navigate('/package_member/pages/member/registe_member');
       },
       detail() {
         if (this.isDetail == 'false') return;
-        this.$root.$navigate('/pages/customer/vip_detail');
+        this.$root.$navigate('/package_member/pages/member/vip_detail');
       },
       info() {
-        this.$root.$navigate('/pages/customer/vip_info');
+        this.$root.$navigate('/package_member/pages/member/vip_info');
       }
     };
     computed = {

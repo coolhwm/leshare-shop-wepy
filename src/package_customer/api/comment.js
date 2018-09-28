@@ -1,30 +1,14 @@
-import base from './base';
-import Page from '../utils/Page';
+import base from '../../api/base';
+import Page from '../../utils/Page';
 
 export default class comment extends base {
   /**
-   * 评价订单
+   * 买家自己商品评论列表
    */
-  static add (comments) {
-    const url = `${this.baseUrl}/comments`;
-    return this.post(url, comments);
-  }
-
-  /**
-   * 评价列表
-   */
-  static page () {
-    const url = `${this.baseUrl}/comments`;
+  static list() {
+    const url = `${this.baseUrl}/comments/list`;
     return new Page(url, this._processGoodsComment.bind(this));
   }
-  /**
-   * 评价统计
-   */
-  static count (goodsId) {
-    const url = `${this.baseUrl}/comments/count?goods_id=${goodsId}`;
-    return this.get(url);
-  }
-
   /**
    * 处理评价列表数据
    */

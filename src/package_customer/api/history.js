@@ -1,5 +1,5 @@
-import base from './base'
-import Page from '../utils/Page'
+import base from '../../api/base'
+import Page from '../../utils/Page'
 
 /**
  * 商品历史

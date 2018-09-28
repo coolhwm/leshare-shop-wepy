@@ -90,7 +90,7 @@
           </view>
         </view>
 
-        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="toInvate">
           <view class="weui-cell__bd row">
             <icon class="share" style="color: #FF8855;" />
             <view class="column">
@@ -103,7 +103,7 @@
           </view>
         </view>
 
-        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="toSign">
           <view class="weui-cell__bd row">
             <icon class="rank" style="color: #008000;" />
             <view class="column">
@@ -184,8 +184,11 @@
       wepy.stopPullDownRefresh();
     }
     methods = {
+      toInvate() {
+        this.$navigate(`/package_member/pages/member/invite`);
+      },
       toBonusDetail() {
-        this.$navigate(`/pages/customer/bonus_list`);
+        this.$navigate(`/package_member/pages/member/bonus_list`);
       },
       toBargainList() {
         this.$navigate(`/pages/bargain/bargain_more`);
