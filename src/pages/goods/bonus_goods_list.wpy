@@ -6,10 +6,17 @@
 
     <view class="top-bonus-box row-between">
       <view class="row">
-        <image class="image-box mr10" src="{{user.avatarUrl}}"></image>
-        <text>{{member.name}}</text>
+        <!--<image class="image-box mr10" src="{{user.avatarUrl}}"></image>-->
+        <!--<text>{{member.name}}</text>-->
+        <icon class="tab-down" color="white"/>
+        <text class="major">积分商品免费兑换</text>
       </view>
-      <text class="ml10">当前积分:{{member.bonus}}</text>
+      <view class="row" @tap="toBonusDetail">
+        <text>当前积分：</text>
+        <icon class="bouns" color="white"/>
+        <text class="xxl mr10">{{member.bonus}}</text>
+      </view>
+
     </view>
 
     <view class="column">
@@ -57,7 +64,10 @@
     methods = {
       goods(id) {
         this.$navigate(`/pages/goods/detail?goodsId=${id}`)
-      }
+      },
+      toBonusDetail() {
+        this.$navigate(`/package_member/pages/member/bonus_list`);
+      },
     };
     computed = {
     };
@@ -69,6 +79,8 @@
     mixins = [base, pagination];
     config = {
       navigationBarTitleText: '积分商城',
+      navigationBarBackgroundColor: '#FF8929',
+      navigationBarTextStyle: 'white',
       enablePullDownRefresh: true
     };
   }
@@ -76,11 +88,14 @@
 
 <style lang="scss">
   @import "../../styles/variable";
-  .top-bonus-box{
-    background-color: white;
-    padding: 10rpx 20rpx;
+  .top-bonus-box {
+    background-color: #FF8929;
     align-items: center;
-    margin-top: -10rpx;
+    padding: 10rpx 20rpx;
+    // margin-top: -10rpx;
+    text{
+      color: #FFFFFF;
+    }
     .image-box{
       width: 60rpx;
       height: 60rpx;
