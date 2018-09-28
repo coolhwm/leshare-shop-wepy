@@ -1,7 +1,7 @@
 <template>
   <view class="goods-fav-container" data-goods-id="{{goods.goodsId}}"  @tap="detail({{goods.goodsId}})">
     <!--商品图片-->
-    <image class="goods-item-img" src="{{goods.imageUrl}}/small" />
+    <image class="goods-item-img" src="{{goods.imageUrl}}" />
 
     <!--商品信息-->
     <view class="goods-info-container">
@@ -17,7 +17,7 @@
 
 <script>
   import wepy from 'wepy';
-  import Tips from '../../utils/Tips'
+  import Tips from '../../../utils/Tips'
   export default class FavoriteItem extends wepy.component {
     props = {
       goods: {}
@@ -40,7 +40,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   /*基本容器*/
   .goods-fav-container{
     display: flex;

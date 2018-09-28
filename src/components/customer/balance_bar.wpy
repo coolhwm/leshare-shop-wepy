@@ -32,10 +32,10 @@
     data = {};
     methods = {
       pay() {
-        this.$root.$navigate('/pages/customer/balance');
+        this.$root.$navigate('/package_member/pages/member/balance');
       },
       record () {
-        this.$root.$navigate('/pages/shop/billing_record')
+        this.$root.$navigate('/package_member/pages/member/billing_record')
       },
       wait() {
         Tips.success('敬请期待');

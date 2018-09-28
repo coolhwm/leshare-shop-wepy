@@ -26,15 +26,15 @@
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
-  import { initWxAppSync, checkUserMember } from '../../api/wx_auth';
-  import store from '../../store/utils';
+  import { initWxAppSync, checkUserMember } from '../../../api/wx_auth';
+  import store from '../../../store/utils';
   import member from '../../api/member';
-  import BonusItem from '../../components/customer/bonus_item';
-  import base from '../../mixins/base';
-  import pagination from '../../mixins/pagination';
-  import Placeholder from '../../components/common/placeholder';
-  import Loadmore from '../../components/weui/loadmore';
-  import Loading from '../../components/common/loading';
+  import BonusItem from '../../../components/customer/bonus_item';
+  import base from '../../../mixins/base';
+  import pagination from '../../../mixins/pagination';
+  import Placeholder from '../../../components/common/placeholder';
+  import Loadmore from '../../../components/weui/loadmore';
+  import Loading from '../../../components/common/loading';
 
   @connect({
     member: store.get('member')
@@ -55,7 +55,7 @@
     };
     methods = {
       detail() {
-        this.$navigate('/pages/customer/vip_detail');
+        this.$navigate('/package_member/pages/member/vip_detail');
       }
     };
     config = {
@@ -74,7 +74,7 @@
   }
 </script>
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   .bonus-title-box{
     position: relative;
     height: 300rpx;

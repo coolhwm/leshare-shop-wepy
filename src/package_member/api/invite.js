@@ -1,5 +1,6 @@
-import base from './base';
-import Page from '../utils/Page';
+import base from '../../api/base';
+import Page from '../../utils/Page';
+import wepy from 'wepy'
 
 export default class invite extends base {
   /**
@@ -22,6 +23,20 @@ export default class invite extends base {
         nickName: '微信好友',
         avatarUrl: 'http://img.leshare.shop/shop/other/customer_white.png'
       }
+    }
+  }
+  /**
+   * 查看海报
+   */
+  static async poster() {
+    const url = `${this.baseUrl}/members/invite/poster`;
+    const data = await wepy.downloadFile({
+      url: url
+    });
+    if (data.statusCode == 200) {
+      return data.tempFilePath;
+    } else {
+      return null;
     }
   }
 }

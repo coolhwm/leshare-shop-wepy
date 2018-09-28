@@ -41,16 +41,16 @@
 
 <script>
   import wepy from 'wepy';
-  import { initWxAppSync, checkUserMember } from '../../api/wx_auth';
+  import { initWxAppSync, checkUserMember } from '../../../api/wx_auth';
   import { connect } from 'wepy-redux';
-  import store from '../../store/utils';
-  import base from '../../mixins/base';
+  import store from '../../../store/utils';
+  import base from '../../../mixins/base';
   import topUp from '../../api/top_up';
-  import Tips from '../../utils/Tips';
-  import order from '../../api/order';
-  import Loading from '../../components/common/loading';
-  import WxUtils from '../../utils/WxUtils';
-  import Notice from '../../components/shop/notice';
+  import Tips from '../../../utils/Tips';
+  import order from '../../../api/order';
+  import Loading from '../../../components/common/loading';
+  import WxUtils from '../../../utils/WxUtils';
+  import Notice from '../../../components/shop/notice';
 
   @connect({
     card: store.get('card')
@@ -168,7 +168,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   .top-up-box{
     background-color: white;
     padding: 20rpx;

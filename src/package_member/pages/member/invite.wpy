@@ -74,16 +74,16 @@
 <script>
   import wepy from 'wepy'
   import { connect } from 'wepy-redux';
-  import { initWxAppSync, checkUserMember } from '../../api/wx_auth';
-  import store from '../../store/utils';
-  import base from '../../mixins/base';
-  import pagination from '../../mixins/pagination.wpy';
-  import Placeholder from '../../components/common/placeholder';
-  import Loadmore from '../../components/weui/loadmore';
-  import Loading from '../../components/common/loading';
-  import invite from '../../api/invite'
-  import ActionBar from '../../components/common/action_bar';
-  import ButtonWidget from '../../components/template/button_widget';
+  import { initWxAppSync, checkUserMember } from '../../../api/wx_auth';
+  import store from '../../../store/utils';
+  import base from '../../../mixins/base';
+  import pagination from '../../../mixins/pagination.wpy';
+  import Placeholder from '../../../components/common/placeholder';
+  import Loadmore from '../../../components/weui/loadmore';
+  import Loading from '../../../components/common/loading';
+  import invite from '../../api/invite';
+  import ActionBar from '../../../components/common/action_bar';
+  import ButtonWidget from '../../../components/template/button_widget';
 
   @connect({
     card: store.get('card'),
@@ -105,7 +105,7 @@
     methods = {
       async invite() {
         await checkUserMember();
-        this.$navigate('/pages/shop/super_poster');
+        this.$navigate('/package_member/pages/member/super_poster');
       }
     };
     computed = {
@@ -143,7 +143,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   .bonus-box{
     background-color: $color-primary;
     padding: 30rpx;

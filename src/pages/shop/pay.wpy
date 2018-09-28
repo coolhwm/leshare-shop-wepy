@@ -252,7 +252,7 @@
           });
       },
       topUp() {
-        this.$navigate(`/pages/shop/top_up`)
+        this.$navigate(`/package_member/pages/member/top_up`)
       }
     };
     /**

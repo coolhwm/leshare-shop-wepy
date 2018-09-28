@@ -96,17 +96,17 @@
 </template>
 <script>
   import wepy from 'wepy';
-  import base from '../../mixins/base';
+  import base from '../../../mixins/base';
   import { connect } from 'wepy-redux';
-  import { initWxAppSync } from '../../api/wx_auth';
-  import store from '../../store/utils';
-  import input from '../../mixins/input';
-  import FormTips from '../../components/weui/tips';
+  import { initWxAppSync } from '../../../api/wx_auth';
+  import store from '../../../store/utils';
+  import input from '../../../mixins/input';
+  import FormTips from '../../../components/weui/tips';
   import member from '../../api/member';
-  import VCode from '../../components/weui/vcode';
-  import Tips from '../../utils/Tips';
-  import WxUtils from '../../utils/WxUtils';
-  import Loading from '../../components/common/loading';
+  import VCode from '../../../components/weui/vcode';
+  import Tips from '../../../utils/Tips';
+  import WxUtils from '../../../utils/WxUtils';
+  import Loading from '../../../components/common/loading';
 
   @connect({
     card: store.get('card')
@@ -288,7 +288,7 @@
   }
 </script>
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
 
   .registe-box {
     background-color: white;

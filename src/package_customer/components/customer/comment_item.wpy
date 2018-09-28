@@ -38,7 +38,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
 
   .item-box{
     background-color: white;

@@ -19,11 +19,11 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
-  import base from '../../mixins/base'
-  import topUp from '../../api/top_up'
-  import pagination from '../../mixins/pagination';
-  import Placeholder from '../../components/common/placeholder';
+  import wepy from 'wepy';
+  import base from '../../../mixins/base';
+  import topUp from '../../api/top_up';
+  import pagination from '../../../mixins/pagination';
+  import Placeholder from '../../../components/common/placeholder';
 
   export default class BillingRecord extends wepy.page {
     data = {
@@ -46,7 +46,7 @@
 </script>
 
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
   .record-box{
     background-color: white;
     .detail-box{

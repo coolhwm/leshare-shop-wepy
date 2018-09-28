@@ -256,23 +256,23 @@
           break;
         case 'COMMENT_LIST':
           // 我的评论
-          this.$root.$navigate('/pages/customer/comment_list');
+          this.$root.$navigate('/package_customer/pages/customer/comment_list');
           break;
         case 'MEMBER_DETAIL':
           // 会员详情
-          this.$root.$navigate('/pages/customer/vip_detail');
+          this.$root.$navigate('/package_member/pages/member/vip_detail');
           break;
         case 'MEMBER_CODE':
           // 会员码
-          this.$root.$navigate('/pages/customer/vip_info');
+          this.$root.$navigate('/package_member/pages/member/vip_info');
           break;
         case 'MEMBER_BONUS':
           // 会员积分
-          this.$root.$navigate('/pages/customer/bonus_list');
+          this.$root.$navigate('/package_member/pages/member/bonus_list');
           break;
         case 'TOP_UP':
           // 会员充值
-          this.$root.$navigate('/pages/customer/balance');
+          this.$root.$navigate('/package_member/pages/member/balance');
           break;
         case 'ORDER_LIST':
           // 会员充值
@@ -347,7 +347,7 @@
           break;
         case 'USER_INVITE':
           // 邀请页面
-          this.$root.$navigate(`/pages/shop/invite`);
+          this.$root.$navigate(`/package_member/pages/member/invite`);
           break;
         case 'USER_BARGAIN':
           // 我的砍价

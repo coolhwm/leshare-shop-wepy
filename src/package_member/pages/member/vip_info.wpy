@@ -29,14 +29,14 @@
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
-  import { initWxAppSync, checkUserMember } from '../../api/wx_auth';
-  import store from '../../store/utils';
-  import base from '../../mixins/base';
+  import { initWxAppSync, checkUserMember } from '../../../api/wx_auth';
+  import store from '../../../store/utils';
+  import base from '../../../mixins/base';
   import member from '../../api/member';
-  import Tips from '../../utils/Tips';
-  import WxUtils from '../../utils/WxUtils';
-  import Loading from '../../components/common/loading';
-  import ButtonWidget from '../../components/template/button_widget';
+  import Tips from '../../../utils/Tips';
+  import WxUtils from '../../../utils/WxUtils';
+  import Loading from '../../../components/common/loading';
+  import ButtonWidget from '../../../components/template/button_widget';
   let interval = null;
 
   @connect({
@@ -161,7 +161,7 @@
   }
 </script>
 <style lang="scss">
-  @import "../../styles/variable";
+  @import "../../../styles/variable";
 
   .container {
     justify-content: flex-start;
