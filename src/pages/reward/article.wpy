@@ -1,5 +1,5 @@
 <template>
-  <web-view src="https://mp.weixin.qq.com/s/e61kwTL_uOV1DCIJjv5ZCg"></web-view>
+  <web-view src="{{url}}"></web-view>
 </template>
 
 <script>
@@ -8,15 +8,20 @@
 
   export default class Article extends wepy.page {
     data = {
+      url: null
     };
-    onLoad (options) {
+    onLoad (options, {preload}) {
+      const {url, title} = preload.params;
+      this.url = url;
+      wepy.setNavigationBarTitle({
+        title: title
+      });
     };
     methods = {};
     components = {};
     computed = {};
     mixins = [base];
     config = {
-      navigationBarTitleText: '关注公众号'
     };
   }
 </script>

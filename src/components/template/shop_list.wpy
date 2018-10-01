@@ -1,10 +1,19 @@
 <template>
   <view>
-    <view class="row-around goods-list" wx:if="{{goodsList.length > 0 && param.showActiveBar}}">
-      <repeat for="{{goodsList}}" key="index" index="index" item="item">
-        <GoodsItem :goods.sync="item"/>
-      </repeat>
-    </view>
+    <block wx:if="{{goodsList.length > 0 && param.showActiveBar}}">
+      <scroll-view scroll-x class="goods-scroll-list" wx:if="{{goodsList.length > 3}}">
+        <repeat for="{{goodsList}}" key="index" index="index" item="item">
+          <GoodsItem :goods.sync="item"/>
+        </repeat>
+      </scroll-view>
+
+      <view class="goods-row-list" wx:else >
+        <repeat for="{{goodsList}}" key="index" index="index" item="item">
+          <GoodsItem :goods.sync="item"/>
+        </repeat>
+      </view>
+    </block>
+
 
     <repeat for="{{page.list}}" key="index" index="index" item="item">
       <ShopItem :item.sync="item" />
@@ -54,9 +63,15 @@
     grepTopShopList() {
       const list = [];
       this.page.list.forEach(shop => {
-        const goods = shop.goodsList.find(item => item.limitType == 'NEW_CUSTOMER');
-        // 有匹配的新人礼商品
-        if (goods) {
+        if (shop.goodsList == null) {
+          return;
+        }
+        shop.goodsList.filter(goods => {
+          if (!goods.isTop) {
+            return false;
+          }
+          return !(goods.goodsType == 'NEW_CUSTOMER' && this.orderCount > 0);
+        }).forEach(goods => {
           const result = {
             id: goods.id,
             imageUrl: goods.imageUrl,
@@ -64,16 +79,29 @@
             price: goods.price.toFixed(2),
             originalPrice: goods.originalPrice,
             areaTag: shop.areaTag,
-            distance: shop.distance
+            distance: shop.distance,
+            goodsType: goods.goodsType,
+            typeText: goods.typeText
           };
+          if (goods.rule) {
+            result.price = goods.rule.price.toFixed(2);
+            result.ruleId = goods.rule.ruleId;
+          }
+          if (goods.goodsType == 'NEW_CUSTOMER') {
+            result.distance = 0;
+          }
+          if (goods.goodsType == 'ASSIST') {
+            result.distance = 1;
+          }
           list.push(result);
-        }
+        });
       });
       // 根据距离排序
       list.sort((a, b) => a.distance - b.distance);
       // 取距离最近的前三个
-      this.goodsList = list.length <= 3 ? list : list.slice(0, 3);
-        this.$apply();
+      this.goodsList = list;
+      // this.goodsList = list.length <= 3 ? list : list.slice(0, 3);
+      this.$apply();
     }
     methods = {
       async load(location) {
@@ -107,9 +135,20 @@
 
 <style lang="scss">
   @import "../../styles/variable";
-  .goods-list{
+  .goods-row-list{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
     background-color: #FFFFFF;
-    overflow: hidden;
+    width: 710rpx;
+    padding: 20rpx;
+    border-bottom: 1px solid #E9E9E9;
+  }
+  .goods-scroll-list{
+    background-color: #FFFFFF;
+    width: 710rpx;
+    white-space: nowrap;
+    height: 330rpx;
     padding: 20rpx;
     border-bottom: 1px solid #E9E9E9;
   }

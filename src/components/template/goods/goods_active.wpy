@@ -1,12 +1,16 @@
 <template>
-  <view class="goods-item column-center" @tap="goods({{goods.id}})">
+  <view class="goods-item column-center" @tap="goods({{goods}})">
     <view class="goods-image-box">
-      <view class="goods-tag">新客专享</view>
+      <view class="goods-tag">{{goods.typeText}}</view>
       <image src="{{goods.imageUrl}}/small" class="goods-image"/>
     </view>
     <view class="row-center goods-price-box">
-      <text class="major xxs">首单￥</text>
-      <text class="major xxl">{{goods.price}}</text>
+      <text class="major xxs" wx:if="{{goods.goodsType === 'NEW_CUSTOMER'}}">首单￥</text>
+      <text class="major xxs" wx:elif="{{goods.goodsType === 'BARGAIN'}}">最低￥</text>
+      <text class="major xxs" wx:elif="{{goods.goodsType === 'GROUP'}}">成团￥</text>
+      <text class="major xxl" wx:if="{{goods.goodsType != 'ASSIST'}}">{{goods.price}}</text>
+      <text class="major lg" wx:if="{{goods.goodsType === 'ASSIST'}}">免费领</text>
+      <text class="major xxs" wx:if="{{goods.goodsType === 'BONUS'}}">积分</text>
     </view>
     <text class="inline sm">{{goods.name}}</text>
     <text class="xxs muted">{{goods.areaTag}}</text>
@@ -22,8 +26,16 @@
       goods: {}
     };
     methods = {
-      goods (id) {
-        this.$root.$navigate(`/pages/goods/detail?goodsId=${id}`)
+      goods (goods) {
+        if (goods.goodsType == 'BARGAIN') {
+          this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${goods.ruleId}`);
+        } else if (goods.goodsType == 'GROUP') {
+          this.$root.$navigate(`/package_group/pages/group/goods_detail?ruleId=${goods.ruleId}`);
+        } else if (goods.goodsType == 'ASSIST') {
+          this.$root.$navigate(`/pages/assist/goods_detail?ruleId=${goods.ruleId}`);
+        } else {
+          this.$root.$navigate(`/pages/goods/detail?goodsId=${goods.id}`)
+        }
       }
     };
     components = {
@@ -34,7 +46,8 @@
 <style lang="scss" scoped>
   @import "../../../styles/variable";
   .goods-item{
-
+    position: relative;
+    display: inline-flex;
     width: 220rpx;
     max-width: 220rpx;
   }

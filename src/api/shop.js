@@ -301,15 +301,33 @@ export default class shop extends base {
             goods.bounsText = `抵${bounsPrice}元`;
           }
         }
+        // 置顶标志处理
+        goods.isTop = false;
         // 排序号
         if (goods.rule) {
-          goods.ruleType = goods.rule.ruleType;
+          goods.goodsType = goods.rule.ruleType;
+          if (goods.goodsType == 'BARGAIN') {
+            goods.typeText = '疯狂砍价';
+          } else if (goods.goodsType == 'GROUP') {
+            goods.typeText = '限时拼团';
+          } else if (goods.goodsType == 'ASSIST') {
+            goods.typeText = '助力领奖';
+          }
           goods.sord = 2;
+          goods.isTop = true;
         } else if (goods.paymentType == 'bonus') {
+          goods.goodsType = 'BONUS';
+          goods.typeText = '免费兑换';
           goods.sord = 3;
+          goods.isTop = true;
         } else if (goods.limitType == 'NEW_CUSTOMER') {
+          goods.goodsType = 'NEW_CUSTOMER';
+          goods.typeText = '新客专享';
+          goods.isTop = true;
           goods.sord = 1;
         } else if (goods.isRecommend == 1) {
+          goods.goodsType = 'RECOMMEND';
+          goods.typeText = '招牌推荐';
           goods.sord = 4;
         } else {
           goods.sord = 5;

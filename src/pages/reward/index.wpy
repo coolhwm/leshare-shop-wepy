@@ -62,7 +62,7 @@
     <!--菜单栏-->
     <view class="task-box">
       <view class="weui-cells weui-cells-show">
-        <view class="row weui-cell weui-cell_access" @tap="follow">
+        <view class="row weui-cell weui-cell_access" @tap="toFellow">
           <view class="weui-cell__bd row">
             <icon class="like" style="color: #EE3333;" />
             <view class="column">
@@ -75,7 +75,7 @@
           </view>
         </view>
 
-        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active"  @tap="toFanGroup">
           <view class="weui-cell__bd row">
             <icon class="groups" style="color: #008000;" />
             <view class="column">
@@ -87,7 +87,7 @@
             <text class="muted sm">+100积分</text>
           </view>
         </view>
-        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active">
+        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="toWeekGame">
           <view class="weui-cell__bd row">
             <icon class="game" style="color: #1296DB;" />
             <view class="column">
@@ -198,6 +198,12 @@
       this.loaded();
       wepy.stopPullDownRefresh();
     }
+    toArticle(title, url) {
+      this.$preload('params', {
+        title, url
+      });
+      this.$navigate('/pages/reward/article');
+    }
     methods = {
       async regist({detail}) {
         const success = await handleGetPhoneNumber(detail);
@@ -209,10 +215,16 @@
         }
       },
       toFellow() {
+        const url = 'https://mp.weixin.qq.com/s/e61kwTL_uOV1DCIJjv5ZCg';
+        this.toArticle('关注公众号', url);
       },
       toFanGroup() {
+        const url = 'https://mp.weixin.qq.com/s/uZ87oZpbQfX8uAun-CaaAw';
+        this.toArticle('粉丝活动群', url);
       },
       toWeekGame() {
+        const url = 'https://mp.weixin.qq.com/s/7c6Sr1EYYdy5swYXZTBOeg';
+        this.toArticle('本周游戏', url);
       },
       toInvate() {
         this.$navigate(`/package_member/pages/member/invite`);

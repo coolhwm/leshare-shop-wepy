@@ -37,7 +37,7 @@
     <repeat for="{{item.goodsList}}" index="goodsIndex" item="goods" key="goodsIndex" >
 
 
-      <view class="goods-item-box row" @tap="assistDetail({{goods}})" wx:if="{{goods.ruleType == 'ASSIST'}}">
+      <view class="goods-item-box row" @tap="assistDetail({{goods}})" wx:if="{{goods.goodsType == 'ASSIST'}}">
         <!--助力商品-->
         <view class="column price-box">
           <!--销售价/兑换积分-->
@@ -67,7 +67,7 @@
         </view>
       </view>
 
-      <view class="goods-item-box row" @tap="bargainDetail({{goods}})" wx:elif="{{goods.ruleType == 'BARGAIN'}}">
+      <view class="goods-item-box row" @tap="bargainDetail({{goods}})" wx:elif="{{goods.goodsType == 'BARGAIN'}}">
         <!--砍价商品-->
         <view class="column price-box">
           <!--销售价/兑换积分-->
@@ -98,7 +98,7 @@
         </view>
       </view>
 
-      <view class="goods-item-box row" @tap="groupDetail({{goods}})" wx:elif="{{goods.ruleType == 'GROUP'}}">
+      <view class="goods-item-box row" @tap="groupDetail({{goods}})" wx:elif="{{goods.goodsType == 'GROUP'}}">
         <!--拼团商品-->
         <view class="column price-box">
           <!--销售价/兑换积分-->
@@ -132,7 +132,7 @@
       <view class="goods-item-box row" @tap="goodsDetail({{goods}})" wx:else>
         <view class="column price-box">
           <!--销售价/兑换积分-->
-          <text class="major xl" wx:if="{{goods.paymentType === 'bonus'}}">{{goods.price}}积分</text>
+          <text class="major xl" wx:if="{{goods.goodsType === 'BONUS'}}">{{goods.price}}积分</text>
           <text class="major xl" wx:else>￥{{goods.price}}</text>
           <!--原价-->
           <text class="muted xs">原价:￥{{goods.originalPrice}}</text>
@@ -142,15 +142,15 @@
           <view class="row-between">
             <view class="row">
               <!--装饰图-->
-              <icon class="gift goods-icon small" style="color:#9266f9;" wx:if="{{goods.limitType === 'NEW_CUSTOMER'}}"/>
-              <icon class="duihuan goods-icon small" style="color:#70bc46;" wx:elif="{{goods.paymentType === 'bonus'}}"/>
-              <icon class="recommend-round goods-icon small" style="color:#FE9D01;" wx:elif="{{goods.isRecommend === 1}}"/>
+              <icon class="gift goods-icon small" style="color:#9266f9;" wx:if="{{goods.goodsType === 'NEW_CUSTOMER'}}"/>
+              <icon class="duihuan goods-icon small" style="color:#70bc46;" wx:elif="{{goods.goodsType === 'BONUS'}}"/>
+              <icon class="recommend-round goods-icon small" style="color:#FE9D01;" wx:elif="{{goods.goodsType === 1}}"/>
               <icon class="square-coupon goods-icon small" color="major" wx:else/>
               <text class="inline">{{goods.simpleName}}</text>
             </view>
-            <text class="ml10 xxs" style="color:#9266f9;" wx:if="{{goods.limitType === 'NEW_CUSTOMER'}}">[新客专享]</text>
-            <text class="ml10 xxs" style="color:#70bc46;" wx:elif="{{goods.paymentType === 'bonus'}}">[免费兑换]</text>
-            <text class="ml10 xxs" style="color:#FE9D01;" wx:elif="{{goods.isRecommend === 1}}">[招牌推荐]</text>
+            <text class="ml10 xxs" style="color:#9266f9;" wx:if="{{goods.goodsType === 'NEW_CUSTOMER'}}">[新客专享]</text>
+            <text class="ml10 xxs" style="color:#70bc46;" wx:elif="{{goods.goodsType === 'BONUS'}}">[免费兑换]</text>
+            <text class="ml10 xxs" style="color:#FE9D01;" wx:elif="{{goods.goodsType === 'RECOMMEND'}}">[招牌推荐]</text>
           </view>
           <view class="row">
             <text class="muted xs">已售{{goods.salesVolume}}件</text>
