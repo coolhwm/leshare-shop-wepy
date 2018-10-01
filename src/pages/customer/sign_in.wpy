@@ -81,6 +81,7 @@
   import member from '../../api/member';
   import Popups from '../../components/shop/popups'
   import ButtonWidget from '../../components/template/button_widget';
+  import Event from '../../utils/Event';
 
   @connect({
     member: store.get('member')
@@ -139,6 +140,7 @@
         content: this.signIn.sevenHistory[0].bonusType == 0 ? `今日已签到，获得${this.signIn.sevenHistory[0].bonusResult}积分` : `今日已签到，获得一张优惠券，快去查看吧`
       };
       this.$invoke('Notice', 'open', notice);
+      Event.emit(Event.SIGN_UPDATE);
     }
 
     async onLoad () {

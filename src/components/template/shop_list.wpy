@@ -66,12 +66,7 @@
         if (shop.goodsList == null) {
           return;
         }
-        shop.goodsList.filter(goods => {
-          if (!goods.isTop) {
-            return false;
-          }
-          return !(goods.goodsType == 'NEW_CUSTOMER' && this.orderCount > 0);
-        }).forEach(goods => {
+        shop.goodsList.filter(goods => goods.isTop).forEach(goods => {
           const result = {
             id: goods.id,
             imageUrl: goods.imageUrl,
@@ -83,13 +78,24 @@
             goodsType: goods.goodsType,
             typeText: goods.typeText
           };
+          // 处理积分商品
+          if (goods.goodsType == 'BONUS') {
+            result.price = goods.price.toFixed(0);
+          }
+          // 处理活动商品
           if (goods.rule) {
             result.price = goods.rule.price.toFixed(2);
             result.ruleId = goods.rule.ruleId;
           }
+          // 如果是新客人，则优先显示，否则显示在最后面
           if (goods.goodsType == 'NEW_CUSTOMER') {
-            result.distance = 0;
+            if (this.orderCount > 1) {
+              result.distance = 99999;
+            } else {
+              result.distance = 0;
+            }
           }
+          // 助力置顶
           if (goods.goodsType == 'ASSIST') {
             result.distance = 1;
           }
@@ -108,10 +114,12 @@
         this.location = location;
         // 门店列表
         this.page = shop.subShopList();
+        this.page.count = 15;
         // 翻页
         await this.next();
         // 筛选新客列表
         this.grepTopShopList();
+        this.page.count = 10;
       }
     };
     events = {

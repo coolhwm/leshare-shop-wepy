@@ -153,6 +153,7 @@
   import shop from '../../api/shop';
   import Loading from '../../components/common/loading';
   import Tips from '../../utils/Tips';
+  import Event from '../../utils/Event';
   import { handleGetPhoneNumber } from '../../api/wx_auth';
 
   @connect({
@@ -167,7 +168,7 @@
     async onLoad () {
       await initWxAppSync();
       await this.loadSignData();
-      this.loaded();
+      Event.listen(Event.SIGN_UPDATE, this.loadSignData.bind(this), this)
     };
 
     /**
@@ -192,10 +193,11 @@
           break;
         }
       }
+      this.loaded();
     }
     async onPullDownRefresh () {
       await this.loadSignData();
-      this.loaded();
+
       wepy.stopPullDownRefresh();
     }
     toArticle(title, url) {
@@ -203,7 +205,7 @@
         title, url
       });
       this.$navigate('/pages/reward/article');
-    }
+    };
     methods = {
       async regist({detail}) {
         const success = await handleGetPhoneNumber(detail);

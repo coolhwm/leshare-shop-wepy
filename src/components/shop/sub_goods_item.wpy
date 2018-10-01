@@ -144,7 +144,7 @@
               <!--装饰图-->
               <icon class="gift goods-icon small" style="color:#9266f9;" wx:if="{{goods.goodsType === 'NEW_CUSTOMER'}}"/>
               <icon class="duihuan goods-icon small" style="color:#70bc46;" wx:elif="{{goods.goodsType === 'BONUS'}}"/>
-              <icon class="recommend-round goods-icon small" style="color:#FE9D01;" wx:elif="{{goods.goodsType === 1}}"/>
+              <icon class="recommend-round goods-icon small" style="color:#FE9D01;" wx:elif="{{goods.goodsType === 'RECOMMEND'}}"/>
               <icon class="square-coupon goods-icon small" color="major" wx:else/>
               <text class="inline">{{goods.simpleName}}</text>
             </view>
