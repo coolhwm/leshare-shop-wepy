@@ -1,11 +1,11 @@
 @import "variable";
 @font-face {
   font-family: 'iconfont';  /* project id 553949 */
-  src: url('//at.alicdn.com/t/font_553949_mdndlkuywo.eot');
-  src: url('//at.alicdn.com/t/font_553949_mdndlkuywo.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_553949_mdndlkuywo.woff') format('woff'),
-  url('//at.alicdn.com/t/font_553949_mdndlkuywo.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_553949_mdndlkuywo.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_553949_z96hbtnfjnc.eot');
+  src: url('//at.alicdn.com/t/font_553949_z96hbtnfjnc.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_553949_z96hbtnfjnc.woff') format('woff'),
+  url('//at.alicdn.com/t/font_553949_z96hbtnfjnc.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_553949_z96hbtnfjnc.svg#iconfont') format('svg');
 }
 @mixin icon-size($size){
   line-height: $size;
@@ -163,3 +163,4 @@ icon.game:before { content: "\e66e"; }
 icon.rank:before { content: "\e647"; }
 icon.pin:before { content: "\e648"; }
 icon.qiang:before { content: "\e649"; }
+icon.mianfei:before { content: "\e64d"; }
