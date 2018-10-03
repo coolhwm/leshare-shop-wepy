@@ -14,9 +14,13 @@
       </view>
     </block>
 
-
     <repeat for="{{page.list}}" key="index" index="index" item="item">
-      <ShopItem :item.sync="item" />
+      <block wx:if="{{param.simple}}">
+        <SimpleItem :item.sync="item" />
+      </block>
+      <block wx:else>
+        <ShopItem :item.sync="item" />
+      </block>
     </repeat>
 
     <!-- 加载提示 -->
@@ -32,6 +36,7 @@
   import base from '../../mixins/base';
   import pagination from '../../mixins/pagination';
   import ShopItem from '../shop/sub_goods_item';
+  import SimpleItem from '../shop/sub_simple_item';
   import Loadmore from '../../components/weui/loadmore';
   import GoodsItem from './goods/goods_active';
   @connect({
@@ -134,6 +139,7 @@
     };
     mixins = [base, pagination];
     components = {
+      SimpleItem: SimpleItem,
       ShopItem: ShopItem,
       Loadmore: Loadmore,
       GoodsItem: GoodsItem

@@ -252,7 +252,7 @@
      * 渲染标题栏
      */
     renderNavigationBar() {
-      if (_.isEmpty(this.param.navigation)) {
+      if (this.param == null || _.isEmpty(this.param.navigation)) {
         return;
       }
       const {titleText, backgroundColor, textStyle} = this.param.navigation;

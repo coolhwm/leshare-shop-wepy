@@ -3,11 +3,15 @@
   <view class="row blance-bar-box">
     <view class="column-center" @tap="wait" wx:if="{{member == null || card.supplyBalance == 0}}">
       <text class="major xxl">￥0</text>
-      <text>我的余额</text>
+      <text>储值余额</text>
     </view>
     <view class="column-center" @tap="record" wx:else>
       <text class="major xxl">￥{{member.balance}}</text>
-      <text>我的余额</text>
+      <text>储值余额</text>
+    </view>
+    <view class="column-center" @tap="record" wx:if="{{shop.supportMemberPoint}}">
+      <text class="major xxl">￥{{member.balance}}</text>
+      <text>优惠余额</text>
     </view>
     <view class="column-center" @tap="pay">
       <icon class="recharge normal" color="major"/>
@@ -23,6 +27,7 @@
   import Tips from '../../utils/Tips';
 
   @connect({
+    shop: store.get('shop'),
     member: store.get('member'),
     card: store.get('card')
   })
