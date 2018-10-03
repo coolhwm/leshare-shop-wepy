@@ -5,12 +5,12 @@
       <text class="major xxl">￥0</text>
       <text>储值余额</text>
     </view>
-    <view class="column-center" @tap="record" wx:else>
-      <text class="major xxl">￥{{member.balance}}</text>
+    <view class="column-center" @tap="record('BALANCE')" wx:else>
+      <text class="major xxl">￥{{member.balance || 0}}</text>
       <text>储值余额</text>
     </view>
-    <view class="column-center" @tap="record" wx:if="{{shop.supportMemberPoint}}">
-      <text class="major xxl">￥{{member.balance}}</text>
+    <view class="column-center" @tap="record('POINT')" wx:if="{{shop.supportMemberPoint}}">
+      <text class="major xxl">￥{{member.point || 0}}</text>
       <text>优惠余额</text>
     </view>
     <view class="column-center" @tap="pay">
@@ -39,8 +39,8 @@
       pay() {
         this.$root.$navigate('/package_member/pages/member/balance');
       },
-      record () {
-        this.$root.$navigate('/package_member/pages/member/billing_record')
+      record (type) {
+        this.$root.$navigate(`/package_member/pages/member/billing_record?accountType=${type}`)
       },
       wait() {
         Tips.success('敬请期待');

@@ -20,10 +20,18 @@ export default class booking extends base {
   }
 
   /***
-   * 查询账单记录
+   * 查询余额账户账单记录
    */
-  static checkRecord () {
+  static listBalanceDetails () {
     const url = `${this.baseUrl}/members/balance_detail?sort=desc`;
+    return new Page(url, this._processRecord.bind(this));
+  }
+
+  /***
+   * 查询优惠账户账单记录
+   */
+  static listPointDetails () {
+    const url = `${this.baseUrl}/member_point/detail_list?sort=desc`;
     return new Page(url, this._processRecord.bind(this));
   }
 

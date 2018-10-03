@@ -1,5 +1,10 @@
 <template>
   <view class="record-box">
+    <!--TAB 页-->
+    <block wx:if="{{shop.supportMemberPoint}}">
+      <ZanTab :tab.sync="tab" @change.user="switchTab" />
+    </block>
+
     <block wx:for="{{page.list}}" wx:index="index" wx:for-item="detail" wx:key="index">
       <view class="row-between detail-box">
         <view class="column">
@@ -20,21 +25,53 @@
 
 <script>
   import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../../store/utils';
+  import { checkUserMember } from '../../../api/wx_auth';
   import base from '../../../mixins/base';
   import topUp from '../../api/top_up';
+  import ZanTab from '../../../components/zanui/tab';
   import pagination from '../../../mixins/pagination';
   import Placeholder from '../../../components/common/placeholder';
 
+  @connect({
+    shop: store.get('shop')
+  })
   export default class BillingRecord extends wepy.page {
     data = {
-      page: []
+      page: [],
+      tab: {
+        list: [
+          {id: 'BALANCE', title: '储值余额'},
+          {id: 'POINT', title: '优惠余额'}
+        ],
+        selectedId: 'BALANCE'
+      }
     };
-    async onLoad () {
-      this.page = await topUp.checkRecord();
-      await this.next();
+    async onLoad ({accountType}) {
+      if (accountType) {
+        this.tab.selectedId = accountType;
+      }
+      await checkUserMember();
+      await this.initAccountPage();
     }
-    methods = {};
+    async initAccountPage() {
+      const value = this.tab.selectedId;
+      if (value == 'BALANCE') {
+        this.page = await topUp.listBalanceDetails();
+        await this.next();
+      } else if (value == 'POINT') {
+        this.page = await topUp.listPointDetails();
+        await this.next();
+      }
+    }
+    methods = {
+      async switchTab() {
+        await this.initAccountPage()
+      }
+    };
     components = {
+      ZanTab: ZanTab,
       Placeholder: Placeholder
     };
     mixins = [base, pagination];

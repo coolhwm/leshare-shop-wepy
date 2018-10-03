@@ -26,8 +26,8 @@
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
-  import { initWxAppSync, checkUserMember } from '../../../api/wx_auth';
   import store from '../../../store/utils';
+  import { initWxAppSync, checkUserMember } from '../../../api/wx_auth';
   import member from '../../api/member';
   import BonusItem from '../../../components/customer/bonus_item';
   import base from '../../../mixins/base';
