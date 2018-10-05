@@ -342,13 +342,33 @@ export default class shop extends base {
       return;
     }
     const result = {};
-    if (rule.available) {
-      // 规则当前生效
-    } else {
-      // 规则当前失效
+    result.available = rule.available;
+    // 规则当前生效
+    if (rule.percent > 0) {
+      result.useTips = `可抵${rule.percent}%`;
+      // if (rule.perMax) {
+      //   result.useTips += `,最多${rule.perMax}元`;
+      // }
+    } else if (rule.perMax) {
+      result.useTips = `可抵${rule.perMax}元`
     }
-    shop.memberPointRule = null
-    shop.point = result
+    // 规则当前失效
+    const list = [];
+    if (rule.beginTime) {
+      list.push(`${rule.beginTime}开始`);
+    }
+    if (rule.date) {
+      list.push(`每月${rule.date}日`);
+    } else if (rule.week) {
+      list.push(`每周${rule.week}`);
+    }
+    if (rule.time) {
+      list.push(`每日${rule.time}`);
+    }
+    result.limitTips = '限' + list.join(',') + '使用';
+    console.info(result.limitTips, result.useTips);
+    shop.memberPointRule = null;
+    shop.point = result;
   }
 
   /**

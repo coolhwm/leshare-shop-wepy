@@ -15,8 +15,11 @@
     </block>
 
     <repeat for="{{page.list}}" key="index" index="index" item="item">
-      <block wx:if="{{param.simple}}">
+      <block wx:if="{{param.shopMode == 'HIDE_SHOP'}}">
         <SimpleItem :item.sync="item" />
+      </block>
+      <block wx:elif="{{param.shopMode == 'POINT_SHOP'}}">
+        <PointItem :item.sync="item" />
       </block>
       <block wx:else>
         <ShopItem :item.sync="item" />
@@ -36,6 +39,7 @@
   import base from '../../mixins/base';
   import pagination from '../../mixins/pagination';
   import ShopItem from '../shop/sub_goods_item';
+  import PointItem from '../shop/sub_point_item';
   import SimpleItem from '../shop/sub_simple_item';
   import Loadmore from '../../components/weui/loadmore';
   import GoodsItem from './goods/goods_active';
@@ -94,7 +98,8 @@
       SimpleItem: SimpleItem,
       ShopItem: ShopItem,
       Loadmore: Loadmore,
-      GoodsItem: GoodsItem
+      GoodsItem: GoodsItem,
+      PointItem: PointItem
     };
   }
 </script>

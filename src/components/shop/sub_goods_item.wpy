@@ -16,18 +16,22 @@
 
         <!--评分/销售量/距离-->
         <view class="row-between mt5">
+          <!--评价/销售量-->
           <view class="row">
             <view class="shop-grade row">
               <icon class="star-fill" /><text >4.9</text>
             </view>
             <text class="text-muted">已售{{item.salesVolume}}件</text>
           </view>
+          <!--距离-->
           <text class="text-muted">{{item.distanceDesc}}</text>
         </view>
 
         <!--标签-->
         <view class="row-between mt5">
+          <!--商圈/分类标签-->
           <text class="xs">{{item.tagText}}</text>
+          <!--商家活动标签-->
           <view class="small-tag">{{item.activityTag}}</view>
         </view>
       </view>

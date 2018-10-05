@@ -176,7 +176,7 @@
 </template>
 <script>
   import wepy from 'wepy';
-  export default class SubGoodsItem extends wepy.component {
+  export default class SubSimpleItem extends wepy.component {
     props = {
       item: {}
     };
