@@ -258,6 +258,63 @@ export default class shop extends base {
     sign.orderId = 0;
     return sign;
   }
+
+  /**
+   * 筛选活动商家的商品
+   */
+  static grepActivityGoodsList(shops) {
+    if (!shops) {
+      return [];
+    }
+    const list = [];
+    shops.forEach(shop => {
+      if (shop.goodsList == null) {
+        return;
+      }
+      shop.goodsList.filter(goods => goods.isTop).forEach(goods => {
+        const result = {
+          id: goods.id,
+          imageUrl: goods.imageUrl,
+          name: goods.simpleName,
+          price: goods.price.toFixed(2),
+          originalPrice: goods.originalPrice,
+          areaTag: shop.areaTag,
+          distance: shop.distance,
+          goodsType: goods.goodsType,
+          typeText: goods.typeText
+        };
+        // 处理积分商品
+        if (goods.goodsType == 'BONUS') {
+          result.price = goods.price.toFixed(0);
+        }
+        // 处理活动商品
+        if (goods.rule) {
+          result.price = goods.rule.price.toFixed(2);
+          result.ruleId = goods.rule.ruleId;
+        }
+        // 如果是新客人，则优先显示，否则显示在最后面
+        if (goods.goodsType == 'NEW_CUSTOMER') {
+          if (this.orderCount > 1) {
+            result.distance = 99999;
+          } else {
+            result.distance = 0;
+          }
+        }
+        // 助力置顶
+        if (goods.goodsType == 'ASSIST') {
+          result.distance = 1;
+        }
+        list.push(result);
+      });
+    });
+    // 根据距离排序
+    list.sort((a, b) => a.distance - b.distance);
+    // 取距离最近的前三个
+    return list
+  }
+  /**
+   * 处理子商户列表
+   */
   static _processSubShopData(item) {
     // 处理标签
     const tags = item.tags;
@@ -285,57 +342,65 @@ export default class shop extends base {
     if (item.goodsList.length > 0) {
       // 商品信息处理
       item.goodsList.forEach(goods => {
-        // 处理简化名称
-        const nameArr = goods.name.split(' ');
-        if (nameArr.length == 2 && nameArr[1].length > 1) {
-          goods.simpleName = nameArr[1];
-        } else {
-          goods.simpleName = goods.name;
-        }
-        // 处理积分抵扣
-        if (goods.paymentType == 'bonus') {
-          // goods.bounsText = `免费兑换`;
-        } else if (goods.maxCostBonus > 0) {
-          const bounsPrice = (goods.maxCostBonus / 100).toFixed(0);
-          if (bounsPrice > 0) {
-            goods.bounsText = `抵${bounsPrice}元`;
-          }
-        }
-        // 置顶标志处理
-        goods.isTop = false;
-        // 排序号
-        if (goods.rule) {
-          goods.goodsType = goods.rule.ruleType;
-          if (goods.goodsType == 'BARGAIN') {
-            goods.typeText = '疯狂砍价';
-          } else if (goods.goodsType == 'GROUP') {
-            goods.typeText = '限时拼团';
-          } else if (goods.goodsType == 'ASSIST') {
-            goods.typeText = '助力领奖';
-          }
-          goods.sord = 2;
-          goods.isTop = true;
-        } else if (goods.paymentType == 'bonus') {
-          goods.goodsType = 'BONUS';
-          goods.typeText = '免费兑换';
-          goods.sord = 3;
-          goods.isTop = true;
-        } else if (goods.limitType == 'NEW_CUSTOMER') {
-          goods.goodsType = 'NEW_CUSTOMER';
-          goods.typeText = '新客专享';
-          goods.isTop = true;
-          goods.sord = 1;
-        } else if (goods.isRecommend == 1) {
-          goods.goodsType = 'RECOMMEND';
-          goods.typeText = '招牌推荐';
-          goods.sord = 4;
-        } else {
-          goods.sord = 5;
-        }
+        this._processSubShopGoods(goods);
       });
+      // 商品排序
       item.goodsList.sort((a, b) => {
         return a.sord - b.sord;
       });
+    }
+  }
+
+  /**
+   * 处理子商户的商品信息
+   */
+  static _processSubShopGoods(goods) {
+    // 处理简化名称
+    const nameArr = goods.name.split(' ');
+    if (nameArr.length == 2 && nameArr[1].length > 1) {
+      goods.simpleName = nameArr[1];
+    } else {
+      goods.simpleName = goods.name;
+    }
+    // 处理积分抵扣
+    if (goods.paymentType == 'bonus') {
+      // goods.bounsText = `免费兑换`;
+    } else if (goods.maxCostBonus > 0) {
+      const bounsPrice = (goods.maxCostBonus / 100).toFixed(0);
+      if (bounsPrice > 0) {
+        goods.bounsText = `抵${bounsPrice}元`;
+      }
+    }
+    // 置顶标志处理
+    goods.isTop = false;
+    // 排序号
+    if (goods.rule) {
+      goods.goodsType = goods.rule.ruleType;
+      if (goods.goodsType == 'BARGAIN') {
+        goods.typeText = '疯狂砍价';
+      } else if (goods.goodsType == 'GROUP') {
+        goods.typeText = '限时拼团';
+      } else if (goods.goodsType == 'ASSIST') {
+        goods.typeText = '助力领奖';
+      }
+      goods.sord = 2;
+      goods.isTop = true;
+    } else if (goods.paymentType == 'bonus') {
+      goods.goodsType = 'BONUS';
+      goods.typeText = '免费兑换';
+      goods.sord = 3;
+      goods.isTop = true;
+    } else if (goods.limitType == 'NEW_CUSTOMER') {
+      goods.goodsType = 'NEW_CUSTOMER';
+      goods.typeText = '新客专享';
+      goods.isTop = true;
+      goods.sord = 1;
+    } else if (goods.isRecommend == 1) {
+      goods.goodsType = 'RECOMMEND';
+      goods.typeText = '招牌推荐';
+      goods.sord = 4;
+    } else {
+      goods.sord = 5;
     }
   }
 }

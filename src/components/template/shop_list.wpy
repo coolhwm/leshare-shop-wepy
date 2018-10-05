@@ -65,55 +65,6 @@
       }
       return param;
     }
-    grepTopShopList() {
-      const list = [];
-      this.page.list.forEach(shop => {
-        if (shop.goodsList == null) {
-          return;
-        }
-        shop.goodsList.filter(goods => goods.isTop).forEach(goods => {
-          const result = {
-            id: goods.id,
-            imageUrl: goods.imageUrl,
-            name: goods.simpleName,
-            price: goods.price.toFixed(2),
-            originalPrice: goods.originalPrice,
-            areaTag: shop.areaTag,
-            distance: shop.distance,
-            goodsType: goods.goodsType,
-            typeText: goods.typeText
-          };
-          // 处理积分商品
-          if (goods.goodsType == 'BONUS') {
-            result.price = goods.price.toFixed(0);
-          }
-          // 处理活动商品
-          if (goods.rule) {
-            result.price = goods.rule.price.toFixed(2);
-            result.ruleId = goods.rule.ruleId;
-          }
-          // 如果是新客人，则优先显示，否则显示在最后面
-          if (goods.goodsType == 'NEW_CUSTOMER') {
-            if (this.orderCount > 1) {
-              result.distance = 99999;
-            } else {
-              result.distance = 0;
-            }
-          }
-          // 助力置顶
-          if (goods.goodsType == 'ASSIST') {
-            result.distance = 1;
-          }
-          list.push(result);
-        });
-      });
-      // 根据距离排序
-      list.sort((a, b) => a.distance - b.distance);
-      // 取距离最近的前三个
-      this.goodsList = list;
-      // this.goodsList = list.length <= 3 ? list : list.slice(0, 3);
-      this.$apply();
-    }
     methods = {
       async load(location) {
         this.location = location;
@@ -123,8 +74,9 @@
         // 翻页
         await this.next();
         // 筛选新客列表
-        this.grepTopShopList();
+        this.goodsList = shop.grepActivityGoodsList(this.page.list);
         this.page.count = 10;
+        this.$apply();
       }
     };
     events = {
