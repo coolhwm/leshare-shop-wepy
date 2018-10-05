@@ -165,9 +165,9 @@ export default class shop extends base {
     const url = `${this.baseUrl}/goods/list?sub_shop_id=${subShopId}&is_new=1&from=0&limit=10&by=sales_volume`;
     return this.get(url).then(data => {
       data.forEach(item => {
-        item.isPrice = true
-        item.isGoodsName = true
-      })
+        item.isPrice = true;
+        item.isGoodsName = true;
+      });
       return data
     })
   }
@@ -317,7 +317,46 @@ export default class shop extends base {
    */
   static _processSubShopData(item) {
     // 处理标签
-    const tags = item.tags;
+    this._processSubShopTags(item);
+    // 处理优惠余额规则
+    this._processPointRule(item);
+    // 处理商品
+    if (item.goodsList.length > 0) {
+      // 商品信息处理
+      item.goodsList.forEach(goods => {
+        this._processSubShopGoods(goods);
+      });
+      // 商品排序
+      item.goodsList.sort((a, b) => {
+        return a.sord - b.sord;
+      });
+    }
+  }
+
+  /**
+   * 处理子商户使用优惠余额的规则
+   */
+  static _processPointRule(shop) {
+    const rule = shop.memberPointRule;
+    if (rule == null) {
+      return;
+    }
+    const result = {};
+    if (rule.available) {
+      // 规则当前生效
+    } else {
+      // 规则当前失效
+    }
+    shop.memberPointRule = null
+    shop.point = result
+  }
+
+  /**
+   * 处理子商户标签
+   */
+  static _processSubShopTags(shop) {
+    // 处理标签
+    const tags = shop.tags;
     let areaTag, typeTag;
     if (tags.BUSSINESS_AREA && tags.BUSSINESS_AREA.length > 0) {
       areaTag = tags.BUSSINESS_AREA[0];
@@ -329,25 +368,14 @@ export default class shop extends base {
     } else {
       typeTag = '其他'
     }
-    item.areaTag = areaTag;
+    shop.areaTag = areaTag;
     // 活动标签
-    item.tagText = `${typeTag} | ${areaTag}`;
+    shop.tagText = `${typeTag} | ${areaTag}`;
     if (tags.ACTIVITY && tags.ACTIVITY.length > 0) {
-      item.activityTag = tags.ACTIVITY[0];
-      item.isActivity = true;
+      shop.activityTag = tags.ACTIVITY[0];
+      shop.isActivity = true;
     } else {
-      item.activityTag = '品质商家'
-    }
-    // 处理商品
-    if (item.goodsList.length > 0) {
-      // 商品信息处理
-      item.goodsList.forEach(goods => {
-        this._processSubShopGoods(goods);
-      });
-      // 商品排序
-      item.goodsList.sort((a, b) => {
-        return a.sord - b.sord;
-      });
+      shop.activityTag = '品质商家'
     }
   }
 
