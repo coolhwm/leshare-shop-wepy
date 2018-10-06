@@ -365,13 +365,15 @@ export default class order extends base {
       goodsPrice: order.finalPrice,
       count: 1
     };
-    if (orderType === TYPE.BALANCE) {
-      goods.goodsName = `余额充值 ${order.finalPrice}元`;
+    if (order.finalPrice == 0) {
+      goods.goodsName = `在线支付 ${order.dealPrice}元`;
+    } else if (orderType === TYPE.BALANCE) {
+      goods.goodsName = `余额充值 ${order.dealPrice}元`;
     } else if (orderType === TYPE.OFFLINE && order.onlinePayType === 'balance') {
-      goods.goodsName = `余额支付 ${order.finalPrice}元`;
+      goods.goodsName = `余额支付 ${order.dealPrice}元`;
       goods.imageUrl = 'http://img.leshare.shop/shop/other/topup.png';
-    } else {
-      goods.goodsName = `微信支付 ${order.finalPrice}元`;
+    }  else {
+      goods.goodsName = `微信支付 ${order.dealPrice}元`;
     }
     order.orderGoodsInfos = [goods];
   }
@@ -403,6 +405,7 @@ export default class order extends base {
     order.dealPrice = Lang._fixedPrice(order.dealPrice);
     order.finalPrice = Lang._fixedPrice(order.finalPrice);
     order.couponPrice = Lang._fixedPrice(order.couponPrice);
+    order.pointUsed = Lang._fixedPrice(order.pointUsed);
     order.reduceFee = Lang._fixedPrice(order.reduceFee);
     order.bonusPrice = Lang._fixedPrice(order.bonusPrice);
     order.foodBoxFee = Lang._fixedPrice(order.foodBoxFee);

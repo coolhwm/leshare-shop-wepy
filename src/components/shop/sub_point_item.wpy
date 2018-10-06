@@ -33,7 +33,7 @@
 
         <!--标签-->
         <view class="row-between mt10">
-          <text class="point-limit-text xxs">{{item.point.limitTips}},{{item.point.useTips}}</text>
+          <text class="point-limit-text xxs" wx:if="{{item.point}}">{{item.point.limitTips}},{{item.point.useTips}}</text>
 
           <!--商家活动标签-->
           <block>
