@@ -34,6 +34,7 @@
         <!--标签-->
         <view class="row-between mt10">
           <text class="point-limit-text xxs" wx:if="{{item.point}}">{{item.point.limitTips}},{{item.point.useTips}}</text>
+          <text class="point-limit-text xxs" wx:else>暂无活动，敬请期待</text>
 
           <!--商家活动标签-->
           <block>
@@ -86,7 +87,7 @@
     align-items: flex-start;
   }
   .point-limit-text{
-    max-width: 360rpx;
+    max-width: 390rpx;
   }
   .small-tag{
     border: #f49897 solid 1px;

@@ -349,7 +349,7 @@ export default class shop extends base {
       // if (rule.perMax) {
       //   result.useTips += `,最多${rule.perMax}元`;
       // }
-    } else if (rule.perMax) {
+    } else if (rule.perMax > 0) {
       result.useTips = `可抵${rule.perMax}元`
     }
     // 规则当前失效
@@ -365,8 +365,11 @@ export default class shop extends base {
     if (rule.time) {
       list.push(`每日${rule.time}`);
     }
-    result.limitTips = '限' + list.join(',') + '使用';
-    console.info(result.limitTips, result.useTips);
+    if (list.length > 0) {
+      result.limitTips = '限' + list.join(',') + '使用';
+    } else {
+      result.limitTips = '全天可用'
+    }
     shop.memberPointRule = null;
     shop.point = result;
   }

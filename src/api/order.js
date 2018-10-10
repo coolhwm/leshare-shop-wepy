@@ -362,7 +362,7 @@ export default class order extends base {
     if (order.orderGoodsInfos && order.orderGoodsInfos.length > 0) return;
     const goods = {
       imageUrl: 'http://img.leshare.shop/shop/other/wxpay.png',
-      goodsPrice: order.finalPrice,
+      goodsPrice: order.dealPrice,
       count: 1
     };
     if (order.finalPrice == 0) {

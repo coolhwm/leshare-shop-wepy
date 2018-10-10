@@ -185,42 +185,12 @@
       if (!this.shop.supportMemberPoint || !this.subId) {
         return;
       }
-      const rule = await point.getShopPointRule(this.subId);
-      if (!rule) {
-        return;
-      }
-      this.pointRule = rule;
-      const priceLimits = [];
-      const { percent, perMax, dayMax, dayUsed } = rule;
-      // 规则已生效
-      const dayUseable = dayMax - dayUsed;
-      priceLimits.push(`可抵${percent > 0 ? percent : 100}%`);
-      if (perMax < dayUseable) {
-        priceLimits.push(`单笔限抵￥${perMax}`);
-      } else {
-        priceLimits.push(`今日还可抵￥${dayUseable}`);
-      }
-      rule.priceTips = priceLimits.join(',');
-      rule.dayUseable = dayUseable;
+      this.pointRule =  await point.getShopPointRule(this.subId);
+      // if (!rule) {
+      //   return;
+      // }
+      // this.pointRule = rule;
 
-      if (!rule.available) {
-        const timeLimits = [];
-        // 规则尚未生效
-        const { beginTime, date, week, time } = rule;
-        if (beginTime) {
-          timeLimits.push(`${beginTime}开始`);
-        }
-        if (date) {
-          timeLimits.push(`每月${date}日`);
-        }
-        if (week) {
-          timeLimits.push(`每周${week}`);
-        }
-        if (time) {
-          timeLimits.push(`每日${time}`);
-        }
-        rule.timeTips = '仅限' + timeLimits.join(',') + '使用';
-      }
       // 再次刷新
       this.updatePaymentTrade();
       this.$apply();
@@ -318,22 +288,26 @@
       }
       // 抵扣金额计算
       const pointRule = this.pointRule;
-      this.pointText = '请输入';
-      if (pointRule && !pointRule.available) {
-        this.pointText = '未在活动时段';
-      } else if (pointRule && dealPrice) {
-        // 券后金额
-        const payPrice = dealPrice - trade.couponPrice;
-        const { dayUseable, perMax, percent } = pointRule;
-        // 比例抵扣
-        const price = percent > 0 ? payPrice * ( percent / 100 ) : payPrice;
-        // 计算可用额度
-        const pointUsed = _.min([price, dayUseable, perMax]);
-        if (price > 0) {
-          trade.pointUsed = pointUsed.toFixed(0);
-          this.pointText = `抵扣￥${trade.pointUsed}`;
-        } else {
-          this.pointText = `无法使用`;
+      if (pointRule) {
+        this.pointText = '请输入';
+        const { dayUseable, perMax, percent, available } = pointRule;
+        if (!available) {
+          this.pointText = '未在活动时段';
+        } else if (dayUseable <= 0) {
+          this.pointText = '已达当日限额';
+        } else if (pointRule && dealPrice) {
+          // 券后金额
+          const payPrice = dealPrice - trade.couponPrice;
+          // 比例抵扣
+          const price = percent > 0 ? payPrice * ( percent / 100 ) : payPrice;
+          // 计算可用额度
+          const pointUsed = _.min([price, dayUseable, perMax]);
+          if (price > 0) {
+            trade.pointUsed = pointUsed.toFixed(0);
+            this.pointText = `抵扣￥${trade.pointUsed}`;
+          } else {
+            this.pointText = `无法使用`;
+          }
         }
       }
       // 最终金额计算（支付金额-优惠券-优惠余额+客服服务费）
