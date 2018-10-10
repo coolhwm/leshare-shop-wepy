@@ -1,5 +1,12 @@
 <template>
   <!--订单信息-->
+  <view>
+    <view class="weui-cells weui-cells-show">
+      <view url="" class="weui-cell weui-cell_access" @tap="list(0)">
+        <view class="weui-cell__bd">我的订单</view>
+      </view>
+    </view>
+  </view>
   <view class="column coupon-order-box">
     <view class="row-around state-box">
       <view class="column-center item-box" @tap="list(1)">
