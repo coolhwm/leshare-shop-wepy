@@ -8,7 +8,27 @@ export default class booking extends base {
    */
   static getTopUp () {
     const url = `${this.baseUrl}/members/balance/rules`;
-    return this.get(url);
+    return this.get(url).then(data => {
+      data.forEach(rule => {
+        const { giftPoint, giftFee, giftCoupon, coupons } = rule;
+        const point = giftPoint || 0;
+        const fee = giftFee || 0;
+        const totalGiftFee = point + fee;
+        const couponNum = giftCoupon && coupons ? coupons.length : 0;
+        rule.couponNum = couponNum;
+        const tips = [];
+        if (totalGiftFee > 0) {
+          tips.push(`${totalGiftFee}元`);
+        }
+        if (couponNum > 0) {
+          tips.push(`${couponNum}张券`);
+        }
+        if (tips.length > 0) {
+          rule.tips = '赠' + tips.join('+');
+        }
+      });
+      return data;
+    });
   }
 
   /***

@@ -138,10 +138,9 @@
         pointUsed: 0
       },
       typing: false,
-      // 尚未整理的字段
       mode: 'pay',
       result: null,
-      topUpRule: null,
+      topUpRule: null
     };
     async onLoad (option) {
       await initWxAppSync();
@@ -185,12 +184,7 @@
       if (!this.shop.supportMemberPoint || !this.subId) {
         return;
       }
-      this.pointRule =  await point.getShopPointRule(this.subId);
-      // if (!rule) {
-      //   return;
-      // }
-      // this.pointRule = rule;
-
+      this.pointRule = await point.getShopPointRule(this.subId);
       // 再次刷新
       this.updatePaymentTrade();
       this.$apply();
@@ -274,7 +268,6 @@
       if (this.serviceRate > 0 && dealPrice) {
         const serviceFee = dealPrice * (this.serviceRate / 100);
         trade.serviceFee = serviceFee.toFixed(2) * 1;
-
       } else {
         trade.serviceFee = 0;
       }
@@ -299,11 +292,11 @@
           // 券后金额
           const payPrice = dealPrice - trade.couponPrice;
           // 比例抵扣
-          const price = percent > 0 ? payPrice * ( percent / 100 ) : payPrice;
+          const price = percent > 0 ? payPrice * (percent / 100) : payPrice;
           // 计算可用额度
           const pointUsed = _.min([price, dayUseable, perMax]);
           if (price > 0) {
-            trade.pointUsed = pointUsed.toFixed(0);
+            trade.pointUsed = Math.floor(pointUsed);
             this.pointText = `抵扣￥${trade.pointUsed}`;
           } else {
             this.pointText = `无法使用`;
@@ -423,7 +416,7 @@
           // 刷新会员信息
           await store.refresh('member');
         } catch (error) {
-          if (error.errMsg == undefined ||error.errMsg == 'requestPayment:fail cancel') {
+          if (error.errMsg == undefined || error.errMsg == 'requestPayment:fail cancel') {
             await Tips.alert('支付取消');
           } else {
             await Tips.error('支付失败');

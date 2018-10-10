@@ -42,7 +42,12 @@
 
       <!--卡券订单栏-->
       <block wx:if="{{item.type == 'COUPON_ORDER_BAR'}}">
-        <couponOrderBar :param.sync="item" :count.sync="count"/>
+        <CouponOrderBar :param.sync="item" :count.sync="count"/>
+      </block>
+
+      <!--卡券订单栏-->
+      <block wx:if="{{item.type == 'PAY_ORDER_BAR'}}">
+        <PayOrderBar :param.sync="item" :count.sync="count"/>
       </block>
 
       <!--版权栏-->
@@ -88,7 +93,8 @@
   import order from '../../api/order';
   import booking from '../../api/booking';
   import Event from '../../utils/Event';
-  import couponOrderBar from '../../components/customer/coupon_order_bar'
+  import CouponOrderBar from '../../components/customer/coupon_order_bar';
+  import PayOrderBar from '../../components/customer/pay_order_bar';
 
   @connect({
     shop: store.get('shop'),
@@ -180,7 +186,8 @@
       BalanceBar: BalanceBar,
       Copyright: Copyright,
       BookingBar: BookingBar,
-      couponOrderBar: couponOrderBar
+      CouponOrderBar: CouponOrderBar,
+      PayOrderBar: PayOrderBar
     };
     computed = {
     };
