@@ -29,7 +29,13 @@
 
     <!--列表展现-->
     <repeat for="{{page.list}}" key="index" index="index" item="item">
-      <ShopItem :item.sync="item" />
+      <block wx:if="{{itemType == 'POINT'}}">
+        <ShopPointItem :item.sync="item" />
+      </block>
+      <block wx:else>
+        <ShopGoodsItem :item.sync="item" />
+      </block>
+
     </repeat>
 
     <!-- 加载提示 -->
@@ -56,7 +62,8 @@
   import CoverPanel from '../../components/common/cover_panel';
   import Notice from '../../components/shop/notice';
   import Tips from '../../utils/Tips';
-  import ShopItem from '../../components/shop/sub_goods_item';
+  import ShopGoodsItem from '../../components/shop/sub_goods_item';
+  import ShopPointItem from '../../components/shop/sub_point_item';
 
   export default class SubShopList extends wepy.page {
     data = {
@@ -73,6 +80,7 @@
         ],
         selectedId: null
       },
+      itemType: 'GOODS',
       tagList: {
         SORT: ['离我最近', '销量最高']
       },
@@ -225,7 +233,8 @@
       tab: Tab,
       CoverPanel: CoverPanel,
       Notice: Notice,
-      ShopItem: ShopItem
+      ShopPointItem: ShopPointItem,
+      ShopGoodsItem: ShopGoodsItem
     };
     mixins = [base, pagination];
     config = {

@@ -55,9 +55,40 @@
       </view>
     </view>
 
+
+    <view class="pay-box mt10 row-between" @tap="shopPay">
+      <view class="title-box row">
+        <icon class="pay" color="major"/>
+        <text class="ml10">在线付款</text>
+      </view>
+      <view class="pay-btn row-center">
+        <text>买单</text>
+      </view>
+    </view>
+
+    <view class="point-box mt10 column" @tap="memberBalance" wx:if="{{pointRule}}">
+      <view class="row-between sub-top-box">
+        <view class="row">
+          <icon class="sale" color="major"/>
+          <text class="ml10">优惠余额</text>
+        </view>
+        <view class="row" @tap="back">
+          <text class="muted sm">查看余额</text>
+          <icon class="more" color="gray"/>
+        </view>
+      </view>
+      <view class="column ml20">
+        <text>• {{pointRule.available ? '当前可使用优惠余额抵扣' : '当前不在活动时段'}}</text>
+        <text>• {{pointRule.priceTips || '无使用金额限制'}}</text>
+        <text>• {{pointRule.timeTips || '无使用时间限制'}}</text>
+      </view>
+    </view>
+
+
+
     <view class="column shop-mini-program-box mt10" wx:if="{{subShopInfo.maCodeUrl}}">
       <view class="row sub-top-box">
-        <icon class="mini-program xsmall" style="color: #43B045"/>
+        <icon class="mini-program" style="color: #43B045"/>
         <text class="ml10">商家小程序</text>
         <text wx:if="{{subShopInfo.useParentBonus > 0}}" class="qrcode-tag-box primary ml10 xs">商品可抵扣{{subShopInfo.useParentBonus}}积分</text>
       </view>
@@ -73,7 +104,7 @@
 
     <view class="column sale-box mt10" wx:if="{{goodsList.length > 0}}">
       <view class="row sale-top-box">
-        <icon class="sale xsmall" style="color: #FF6200"/>
+        <icon class="sale" style="color: #FF6200"/>
         <text class="ml10">优惠信息</text>
       </view>
       <repeat for="{{goodsList}}" key="index" index="index" item="item">
@@ -81,30 +112,30 @@
       </repeat>
     </view>
 
-    <view class="column signboard-box mt10" wx:if="{{subShopGoodsList.length > 0}}">
-      <view class="row-between sub-top-box">
-        <view class="row">
-          <icon class="signboard xsmall"/>
-          <text class="ml10">商家招牌</text>
-        </view>
-        <view class="row" @tap="shopMore">
-          <text class="muted sm">查看更多</text>
-          <icon class="more" color="gray"/>
-        </view>
-      </view>
-      <view class="mt10">
-        <scroll-view scroll-x class="mini-box">
-          <repeat for="{{subShopGoodsList}}" key="index" index="index" item="item">
-            <GoodsMini :goods.sync="item" />
-          </repeat>
-        </scroll-view>
-      </view>
-    </view>
+    <!--<view class="column signboard-box mt10" wx:if="{{subShopGoodsList.length > 0}}">-->
+      <!--<view class="row-between sub-top-box">-->
+        <!--<view class="row">-->
+          <!--<icon class="signboard xsmall"/>-->
+          <!--<text class="ml10">商家招牌</text>-->
+        <!--</view>-->
+        <!--<view class="row" @tap="shopMore">-->
+          <!--<text class="muted sm">查看更多</text>-->
+          <!--<icon class="more" color="gray"/>-->
+        <!--</view>-->
+      <!--</view>-->
+      <!--<view class="mt10">-->
+        <!--<scroll-view scroll-x class="mini-box">-->
+          <!--<repeat for="{{subShopGoodsList}}" key="index" index="index" item="item">-->
+            <!--<GoodsMini :goods.sync="item" />-->
+          <!--</repeat>-->
+        <!--</scroll-view>-->
+      <!--</view>-->
+    <!--</view>-->
 
     <view class="column signboard-box mt10" wx:if="{{detail.goodsDetails.length > 0}}">
       <view class="row-between sub-top-box">
         <view class="row">
-          <icon class="square-shop xsmall" style="color: #F8C6CF;"/>
+          <icon class="square-shop" style="color: #F8C6CF;"/>
           <text class="ml10">商家详情</text>
         </view>
       </view>
@@ -117,7 +148,7 @@
     <view class="column signboard-box mt10">
       <view class="row-between sub-top-box">
         <view class="row">
-          <icon class="signboard xsmall" style="color: #F8C6CF"/>
+          <icon class="signboard" style="color: #F8C6CF"/>
           <text class="ml10">推荐店铺</text>
         </view>
         <view class="row" @tap="back">
@@ -179,7 +210,8 @@
   import store from '../../store/utils';
   import Loading from '../../components/common/loading';
   import { initWxApp } from '../../api/wx_auth';
-  import shop from '../../api/shop'
+  import shop from '../../api/shop';
+  import point from '../../api/point';
   import GoodsRow from '../../components/template/goods/goods_row';
   import Tips from '../../utils/Tips';
   import GoodsMini from '../../components/goods/goods_mini_box';
@@ -201,32 +233,44 @@
         goodsDetails: []
       },
       isShowTitle: false,
-      bottom: '40rpx'
+      bottom: '40rpx',
+      pointRule: null
     };
     async onLoad ({subShopId}) {
       await initWxApp();
       this.subShopId = subShopId;
-      const [subShopInfo, subShopDetail, goodsList, subShopGoodsList, recommendatioShopList] = await Promise.all([
+      const [subShopInfo, subShopDetail, goodsList, recommendatioShopList] = await Promise.all([
         shop.subShopInfo(this.subShopId),
         shop.subShopDetail(this.subShopId),
         shop.goodsList(this.subShopId),
-        shop.subShopGoodsList(this.subShopId),
+        // shop.subShopGoodsList(this.subShopId),
         shop.RecommendationShopList()
       ]);
       this.subShopInfo = subShopInfo;
       this.detail.goodsDetails = subShopDetail;
       this.goodsList = goodsList;
-      this.subShopGoodsList = subShopGoodsList;
+      // this.subShopGoodsList = subShopGoodsList;
       this.recommendatioShopList = recommendatioShopList;
       this.loaded();
+      await this.initPointRule();
     };
+    /**
+     * 初始化优惠余额使用规则（东方伟业）
+     */
+    async initPointRule() {
+      if (!this.shop.supportMemberPoint) {
+        return;
+      }
+      this.pointRule = await point.getShopPointRule(this.subShopId);
+      this.$apply();
+    }
     /**
      * 页面分享
      */
     onShareAppMessage () {
-      const {name} = this.subShopInfo
+      const {name} = this.subShopInfo;
       const imageUrl = this.subShopInfo.images ? this.subShopInfo.images[0].url : this.subShopInfo.avatar
-      console.info(name, imageUrl)
+      console.info(name, imageUrl);
       return {
         title: name,
         imageUrl: imageUrl,
@@ -270,8 +314,14 @@
       shopDetail(subShop) {
         this.$navigate(`/pages/shop/sub_shop_detail?subShopId=${subShop.shopId}`)
       },
+      shopPay() {
+        this.$navigate(`/pages/shop/pay?subShopId=${this.subShopId}`)
+      },
       shopMore() {
         this.$navigate(`/pages/shop/sub_shop_menu?shopName=${this.subShopInfo.name}&shopId=${this.subShopId}`)
+      },
+      memberBalance() {
+        this.$navigate('/package_member/pages/member/balance')
       }
     };
     computed = {};
@@ -455,6 +505,27 @@
       padding: 5rpx;
       line-height: $text-xxs;
     }
+  }
+  .pay-box{
+    background-color: white;
+    height: 80rpx;
+    padding: 10rpx;
+    .pay-btn{
+      align-items: center;
+      border-radius: 25rpx;
+      width: 160rpx;
+      height: 55rpx;
+      margin-right: 10rpx;
+      background: linear-gradient(to right, #eea849, #f46b45);
+      text {
+        color: #FFFFFF;
+      }
+    }
+  }
+
+  .point-box{
+    background-color: white;
+    padding: 10rpx;
   }
 
 </style>

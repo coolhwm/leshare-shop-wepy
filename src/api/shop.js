@@ -351,6 +351,8 @@ export default class shop extends base {
       // }
     } else if (rule.perMax > 0) {
       result.useTips = `可抵${rule.perMax}元`
+    } else if (rule.percent == 0) {
+      result.useTips = `可抵100%`;
     }
     // 规则当前失效
     const list = [];

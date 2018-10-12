@@ -38,7 +38,7 @@
             <view class="weui-cell__bd column">
               <text>优惠余额</text>
               <text class="xxs muted">{{pointRule.priceTips}}</text>
-              <text class="xxs muted" v-if="pointRule.timeTips">{{pointRule.timeTips}}</text>
+              <text class="xxs muted" wx:if="{{pointRule.timeTips && !pointRule.available}}">{{pointRule.timeTips}}</text>
             </view>
             <view class="weui-cell__ft column">
               <text>{{pointText}}</text>

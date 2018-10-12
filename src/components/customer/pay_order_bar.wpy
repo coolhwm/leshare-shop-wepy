@@ -17,12 +17,10 @@
       <view class="column-center item-box" @tap="list(6)">
         <icon class="available normal" color="gray"/>
         <text class="sm">已完成</text>
-        <view class="weui-badge" wx:if="{{count[6] > 0}}">{{count[6]}}</view>
       </view>
       <view class="column-center item-box" @tap="list(5)">
         <icon class="refund normal" color="gray"/>
         <text class="sm">维权/退款</text>
-        <view class="weui-badge" wx:if="{{count[5] > 0}}">{{count[5]}}</view>
       </view>
       <view class="row-center my-order-box item-box" @tap="list(0)">
         <view class="column-center">

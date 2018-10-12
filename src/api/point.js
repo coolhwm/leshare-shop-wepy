@@ -32,25 +32,24 @@ export default class point extends base {
     rule.priceTips = priceLimits.join(',');
     rule.dayUseable = dayUseable;
 
-    if (!rule.available) {
-      const timeLimits = [];
-      // 规则尚未生效
-      const { beginTime, date, week, time } = rule;
-      if (beginTime) {
-        timeLimits.push(`${beginTime}开始`);
-      }
-      if (date) {
-        timeLimits.push(`每月${date}日`);
-      }
-      if (week) {
-        timeLimits.push(`每周${week}`);
-      }
-      if (time) {
-        timeLimits.push(`每日${time}`);
-      }
+    const timeLimits = [];
+    // 规则尚未生效
+    const { beginTime, date, week, time } = rule;
+    if (beginTime) {
+      timeLimits.push(`${beginTime}开始`);
+    }
+    if (date) {
+      timeLimits.push(`每月${date}日`);
+    }
+    if (week) {
+      timeLimits.push(`每周${week}`);
+    }
+    if (time) {
+      timeLimits.push(`每日${time}`);
+    }
+    if (timeLimits.length > 0) {
       rule.timeTips = '仅限' + timeLimits.join(',') + '使用';
     }
-    console.info(rule);
     return rule;
   }
 }
