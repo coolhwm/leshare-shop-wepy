@@ -5,12 +5,13 @@ export default class point extends base {
    *  获取门店规则
    */
   static getShopPointRule (subShopId) {
-    console.info(subShopId);
     const url = `${this.baseUrl}/member_point/rules/${subShopId}`;
     return this.get(url).then(data => this.processPointRule(data));
   }
   static processPointRule(rule) {
-    console.info(rule);
+    if (rule == null) {
+      return;
+    }
     const priceLimits = [];
     // 数值预处理
     rule.isPerMax = rule.perMax > 0;

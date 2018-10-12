@@ -501,7 +501,7 @@ export default class order extends base {
     } else {
       detail.isDigit = detail.orderType == '90' || goodsList[0].goods.type == 'digit';
     }
-    if (detail.isDigit) {
+    if (detail.isDigit && goodsList[0].digitGoodsExchange) {
       detail.digitType = goodsList[0].digitGoodsExchange.digitType;
     }
   }

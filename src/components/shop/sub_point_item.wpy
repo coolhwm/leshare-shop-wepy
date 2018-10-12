@@ -37,11 +37,11 @@
           <text class="point-limit-text xxs" wx:else>暂无活动，敬请期待</text>
 
           <!--商家活动标签-->
-          <block>
-            <block wx:if="{{!item.point}}"></block>
+          <view>
+            <view class="plain-tag"  wx:if="{{!item.point}}">暂无活动</view>
             <view class="small-tag" wx:elif="{{item.point.available}}">{{item.point.useTips}}</view>
             <view class="plain-tag" wx:else>活动未开始</view>
-          </block>
+          </view>
         </view>
       </view>
     </view>

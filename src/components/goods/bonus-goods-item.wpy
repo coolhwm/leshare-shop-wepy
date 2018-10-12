@@ -17,7 +17,7 @@
         </view>
         <!--标签-->
         <block wx:for="{{detail.tags}}" wx:key="index" wx:for-item="tag">
-          <text class="xxs primary tag-box ml10">{{tag.tag}}</text>
+          <text class="xxs tag-box ml10">{{tag.tag}}</text>
         </block>
       </view>
 
@@ -83,7 +83,8 @@
       }
     }
     .tag-box{
-      border:1px solid $color-primary;
+      color: $color-primary-red;
+      border:1px solid $color-primary-red;
       border-radius: 4rpx;
       padding: 5rpx;
       line-height: $text-xxs;
@@ -121,7 +122,7 @@
       }
     }
     .btn-box{
-      background-color: $color-primary;
+      background-color: $color-primary-red;
       color: white;
       padding: 8rpx 16rpx;
       border-radius: 5rpx;

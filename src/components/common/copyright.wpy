@@ -3,7 +3,7 @@
     <view class="weui-footer__links">
       <view class="weui-footer__link">{{company}}</view>
     </view>
-    <view class="weui-footer__text">{{copyright}} {{version}}</view>
+    <view class="weui-footer__text">{{copyright}}</view>
   </view>
 </template>
 

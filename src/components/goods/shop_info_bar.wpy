@@ -17,6 +17,11 @@
 <script>
   import wepy from 'wepy';
 
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  @connect({
+    shop: store.get('shop')
+  })
   export default class ShopInfoBar extends wepy.component {
     props = {
       subShop: {},
@@ -24,6 +29,9 @@
     };
     methods = {
       async shopDetail() {
+        if (this.shop.id == this.subShop.id) {
+          return;
+        }
         this.$root.$navigate(`/pages/shop/sub_shop_detail?subShopId=${this.subShop.id}`)
       },
       /**
