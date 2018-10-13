@@ -86,6 +86,9 @@
     events = {
       'on-reach-bottom': async () => {
         await this.next();
+      },
+      'on-page-refresh': async () => {
+        await this.reload();
       }
     };
     computed = {

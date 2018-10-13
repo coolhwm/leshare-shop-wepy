@@ -9,7 +9,7 @@
 
       <view class="dash-line"/>
       <view class="member-box">
-        <image class="avatar-image" src="{{user.avatarUrl}}/small"/>
+        <image class="avatar-image" src="{{user.avatarUrl}}"/>
         <image class="qrcode-image" src="{{member.codeUrl}}"/>
       </view>
     </view>
@@ -151,7 +151,7 @@
       }
     };
     config = {
-      navigationBarTitleText: '会员卡号'
+      navigationBarTitleText: '我的会员码'
     };
     components = {
       Loading: Loading,

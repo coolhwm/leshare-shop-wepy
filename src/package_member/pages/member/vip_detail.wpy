@@ -45,19 +45,19 @@
       </view>
     </view>
 
-    <view class="list-panel" wx:if="{{card.supplyDiscount == 1}}">
-      <view class="titel-box">会员级别</view>
-      <repeat for="{{card.discountRules}}" key="index" index="index" item="item">
-        <view class="weui-cell">
-          <view class="weui-label muted">{{item.levelName}}</view>
-          <view class="column info-container">
-            <text wx:if="{{item.upgradeFee > 0}}">消费满{{item.upgradeFee}}元可升级</text>
-            <text wx:if="{{item.discount < 100}}">可享部分商品{{item.discount / 10}}折优惠</text>
-            <text wx:else>暂无优惠</text>
-          </view>
-        </view>
-      </repeat>
-    </view>
+    <!--<view class="list-panel" wx:if="{{card.supplyDiscount == 1}}">-->
+      <!--<view class="titel-box">会员级别</view>-->
+      <!--<repeat for="{{card.discountRules}}" key="index" index="index" item="item">-->
+        <!--<view class="weui-cell">-->
+          <!--<view class="weui-label muted">{{item.levelName}}</view>-->
+          <!--<view class="column info-container">-->
+            <!--<text wx:if="{{item.upgradeFee > 0}}">消费满{{item.upgradeFee}}元可升级</text>-->
+            <!--<text wx:if="{{item.discount < 100}}">可享部分商品{{item.discount / 10}}折优惠</text>-->
+            <!--<text wx:else>暂无优惠</text>-->
+          <!--</view>-->
+        <!--</view>-->
+      <!--</repeat>-->
+    <!--</view>-->
   </view>
   <ButtonWidget/>
 </template>
@@ -112,7 +112,8 @@
           }
           describe += `每消费 ${rule.costMoneyUnit} 元可获得 ${rule.increaseBonus} 积分\n`;
           if (rule.isCost == 1) {
-            describe += `每使用 ${rule.costBonusUnit} 积分，抵扣 ${rule.reduceMoney} 元现金，每笔订单最多使用 ${rule.maxReduceBonus} 积分，订单需满 ${rule.limitMoney} 元\n`;
+            // describe += `每使用 ${rule.costBonusUnit} 积分，抵扣 ${rule.reduceMoney} 元现金，每笔订单最多使用 ${rule.maxReduceBonus} 积分，订单需满 ${rule.limitMoney} 元\n`;
+            describe += `每使用 ${rule.costBonusUnit} 积分，抵扣 ${rule.reduceMoney} 元现金，单笔最多使用 ${rule.maxReduceBonus} 积分`;
           }
         }
         // 特权为空的情况

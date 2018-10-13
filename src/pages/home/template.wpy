@@ -87,6 +87,11 @@
         <ShopList :param.sync="item" />
       </block>
 
+      <!--门店列表-->
+      <block wx:if="{{item.type == 'PAYMENT_BAR'}}">
+        <PaymentBar :param.sync="item" />
+      </block>
+
 
       <!--间隔-->
       <view class="h-gap" wx:if="{{item.border !== 'none'}}"></view>
@@ -153,6 +158,7 @@
   import VideoBox from '../../components/template/video_box';
   import ShopList from '../../components/template/shop_list';
   import SearchShopBar from '../../components/template/search_shop_bar';
+  import PaymentBar from '../../components/template/payment_bar';
   import _ from 'underscore';
   import Popups from '../../components/shop/popups'
 
@@ -247,6 +253,7 @@
       this.param = page.param;
       this.loaded();
       console.info(`[template] render template page success`);
+      this.$broadcast('on-page-refresh');
     }
     /**
      * 渲染标题栏
@@ -358,7 +365,8 @@
       VideoBox: VideoBox,
       Popups: Popups,
       ShopList: ShopList,
-      SearchShopBar: SearchShopBar
+      SearchShopBar: SearchShopBar,
+      PaymentBar: PaymentBar
     };
     computed = {
     };

@@ -376,32 +376,32 @@
       },
       // 重构分界线
       async offline () {
+        const { dealPrice, finalPrice } = this.trade;
         if (!this.validate()) return;
-        if (this.trade.dealPrice == 0) {
+        if (dealPrice <= 0) {
           await Tips.alert('请输入金额');
           return;
         }
-        try {
-          // 创建订单
-          const { type } = this.selectedType;
-          const { dealPrice, finalPrice } = this.trade;
-          // 设置支付方式
-          this.trade.onlinePayType = type;
-          if (finalPrice <= 0) {
-            // 实际支付0元的情况
-            await Tips.confirm(`确认支付给${this.shopName}？`);
-          } else if (type == 'balance') {
-            // 余额确认和校验
-            if (this.balance < dealPrice) {
-              await Tips.confirm('余额不足，是否前往充值？');
-              this.$navigate('/package_member/pages/member/top_up');
-              return;
-            } else {
-              await Tips.confirm(`确认使用余额付款￥${this.trade.finalPrice}给${this.shopName}？`);
-            }
+        // 数据校验
+        const { type } = this.selectedType;
+        // 设置支付方式
+        this.trade.onlinePayType = type;
+        if (finalPrice <= 0) {
+          // 实际支付0元的情况
+          await Tips.confirm(`确认支付给“${this.shopName}”？`);
+        } else if (type == 'balance') {
+          // 余额确认和校验
+          if (this.balance < finalPrice) {
+            await Tips.confirm('余额不足，是否前往充值？');
+            this.$navigate('/package_member/pages/member/top_up');
+            return;
+          } else {
+            await Tips.confirm(`确认使用余额付款￥${this.trade.finalPrice}给“${this.shopName}”？`);
           }
+        }
+        try {
           // 生成订单
-          Tips.loading('请稍等');
+          Tips.loading('支付中');
           const trade = await order.offline(this.trade);
           this.result = trade;
           // 微信支付发起请求

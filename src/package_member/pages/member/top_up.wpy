@@ -11,10 +11,12 @@
               <text>{{item.baseFee}}元</text>
               <text class="muted xs">{{item.tips}}</text>
               <icon class="top-up-selected icon-box"/>
+              <icon class="vip-icon forvip" wx:if="{{item.isVip}}"/>
             </view>
             <view class="column-center item-box" wx:else @tap="selected({{index}})">
               <text>{{item.baseFee}}元</text>
               <text class="muted xs">{{item.tips}}</text>
+              <icon class="vip-icon forvip" style="color: #9b9b9b" wx:if="{{item.isVip}}"/>
             </view>
           </block>
         </view>
@@ -46,11 +48,11 @@
   import Tips from '../../../utils/Tips';
   import order from '../../../api/order';
   import Loading from '../../../components/common/loading';
-  import WxUtils from '../../../utils/WxUtils';
   import Notice from '../../../components/shop/notice';
 
   @connect({
-    card: store.get('card')
+    card: store.get('card'),
+    member: store.get('member')
   })
   export default class TopUp extends wepy.page {
     data = {
@@ -78,7 +80,18 @@
     open () {
       const map = new Map();
       const contents = [];
-      const rule  = this.rule;
+      const rule = this.rule;
+      if (rule.suitFirst) {
+        contents.push(`首次充值专享`);
+      }
+      if (rule.memberLevel) {
+        const level = this.member.discountRule;
+        if (level && level.levelName) {
+          contents.push(`${level.levelName}专享`);
+        } else {
+          contents.push(`会员专享`);
+        }
+      }
       if (rule.giftFee) {
         contents.push(`送${rule.giftFee}元储值余额`);
       }
@@ -98,7 +111,7 @@
           contents.push(`送${key}  x${value}张`);
         });
       }
-      const content = contents.length > 0 ? contents.join('\n') : '无赠送';
+      const content = contents.length > 0 ? contents.join('\n') : `可得${rule.baseFee}元储值余额`;
       const title = `充值${rule.baseFee}元`;
       this.$invoke('Notice', 'open', { title, content });
     }
@@ -172,13 +185,14 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   @import "../../../styles/variable";
   .top-up-box{
     background-color: white;
     padding: 20rpx;
     margin-top: -13rpx;
     .item-box, .sel-item-box{
+      position: relative;
       height: 70rpx;
       margin: 20rpx;
       padding: 20rpx;
@@ -198,6 +212,12 @@
       bottom: 0;
       padding: 0;
     }
+  }
+  .vip-icon{
+    position: absolute;
+    font-size: 60rpx;
+    top: 8rpx;
+    right: -3rpx;
   }
   .btn-box{
     background-color: $color-primary;

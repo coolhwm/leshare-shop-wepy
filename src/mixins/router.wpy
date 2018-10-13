@@ -4,6 +4,8 @@
   import Event from '../utils/Event';
   import Tips from '../utils/Tips';
   import api from '../api/goods';
+  import store from '../store/utils';
+
   /**
    * 分页通用方法
    */
@@ -65,8 +67,7 @@
         goods.sellPrice = goods.rulePrice;
       }
       const source = this.$root.$wxpage.route;
-      const action = state;
-      Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
+      Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action: state});
     }
     /**
      * 砍价
@@ -79,8 +80,7 @@
       rule.goods.ruleGoodsPrice = rule.goodsPrice;
       const goods = rule.goods;
       const source = this.$root.$wxpage.route;
-      const action = state;
-      Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action});
+      Event.emit(Event.GOODS_PANEL_OPEN, {goods, source, action: state});
     }
     /**
      * 加入购物车
@@ -279,10 +279,21 @@
           this.$root.$navigate('/pages/order/list');
           break;
         case 'PHONE':
-          // 拨打电话
-          wepy.makePhoneCall({
-            phoneNumber: `${targetId}`
-          });
+          const info = store.getState('shop');
+          let phone;
+          if (targetId) {
+            phone = targetId;
+          } else if (info) {
+            phone = info.phone;
+          }
+          if (phone) {
+            // 拨打电话
+            wepy.makePhoneCall({
+              phoneNumber: `${phone}`
+            });
+          } else {
+            Tips.modal('暂无客服在线');
+          }
           break;
         case 'CAMERA':
           // 扫码

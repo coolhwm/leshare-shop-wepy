@@ -9,6 +9,10 @@ export default class booking extends base {
   static getTopUp () {
     const url = `${this.baseUrl}/members/balance/rules`;
     return this.get(url).then(data => {
+      if (!data) {
+        return [];
+      }
+      data.sort((a, b) => a.baseFee - b.baseFee);
       data.forEach(rule => {
         const { giftPoint, giftFee, giftCoupon, coupons } = rule;
         const point = giftPoint || 0;
@@ -16,6 +20,7 @@ export default class booking extends base {
         const totalGiftFee = point + fee;
         const couponNum = giftCoupon && coupons ? coupons.length : 0;
         rule.couponNum = couponNum;
+        rule.isVip = rule.memberLevel > 0 || rule.suitFirst;
         const tips = [];
         if (totalGiftFee > 0) {
           tips.push(`${totalGiftFee}元`);

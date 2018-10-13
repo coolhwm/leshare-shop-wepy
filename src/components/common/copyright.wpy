@@ -1,9 +1,9 @@
 <template>
-  <view class="weui-footer {{buttom == 'true' ? 'weui-footer_fixed-bottom' : ''}} " @tap="tap" wx:if="{{display}}">
+  <view class="weui-footer {{buttom == 'true' ? 'weui-footer_fixed-bottom' : ''}} " @tap="tap({{param}})" wx:if="{{display}}">
     <view class="weui-footer__links">
-      <view class="weui-footer__link">{{company}}</view>
+      <view class="weui-footer__link">{{param.company || company}}</view>
     </view>
-    <view class="weui-footer__text">{{copyright}}</view>
+    <view class="weui-footer__text">{{param.copyright || copyright}}</view>
   </view>
 </template>
 
@@ -15,15 +15,24 @@
       display: true,
       company: '乐享启创提供技术支持',
       copyright: 'Copyright © 2018 leshare.shop',
-      version: null
+      version: null,
     };
     onLoad () {
       this.version = wepy.$instance.globalData.version;
     }
     mixins= [base];
     methods = {
+      tap(param) {
+        if (!param.phone) {
+          return;
+        }
+        wepy.makePhoneCall({
+          phoneNumber: `${param.phone}`
+        });
+      }
     };
     props ={
+      param: {},
       buttom: {
         default: 'false'
       }
