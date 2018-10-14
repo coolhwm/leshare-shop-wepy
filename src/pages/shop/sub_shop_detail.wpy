@@ -239,20 +239,20 @@
     async onLoad ({subShopId}) {
       await initWxApp();
       this.subShopId = subShopId;
-      const [subShopInfo, subShopDetail, goodsList, recommendatioShopList] = await Promise.all([
+      const [subShopInfo, subShopDetail, goodsList] = await Promise.all([
         shop.subShopInfo(this.subShopId),
         shop.subShopDetail(this.subShopId),
         shop.goodsList(this.subShopId),
         // shop.subShopGoodsList(this.subShopId),
-        shop.RecommendationShopList()
       ]);
       this.subShopInfo = subShopInfo;
       this.detail.goodsDetails = subShopDetail;
       this.goodsList = goodsList;
       // this.subShopGoodsList = subShopGoodsList;
-      this.recommendatioShopList = recommendatioShopList;
       this.loaded();
-      await this.initPointRule();
+      this.initPointRule().then();
+      this.recommendatioShopList = await shop.RecommendationShopList();
+      this.$apply();
     };
     /**
      * 初始化优惠余额使用规则（东方伟业）
