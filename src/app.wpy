@@ -4,7 +4,6 @@
 <script>
 
   import wepy from 'wepy';
-  import WxUtils from './utils/WxUtils';
   import 'wepy-async-function';
   import { setStore } from 'wepy-redux'
   import configStore from './store';
@@ -19,6 +18,7 @@
       pageParams: null,
       componentsParams: null,
       baseUrl: null,
+      launchPath: null,
       version: 'v3.2.3'
     };
     constructor () {
@@ -63,8 +63,6 @@
       return header;
     }
     onLaunch(param) {
-      // 校验SDK
-      WxUtils.checkSDK();
       // 同步开放平台EXT数据
       const ext = wepy.getExtConfigSync();
       console.info('[ext] init ext data', ext);
@@ -77,12 +75,28 @@
       this.syncStoreConfig('login_code');
       this.syncStoreConfig('third_session');
       this.syncStoreConfig('user');
+      // 设置启动参数
+      this.setLaunchParam(param);
+      console.info('[auth]onLaunch end');
+    }
+    setLaunchParam(param) {
+      if (!param) {
+        return;
+      }
       // 获取保存场景值
-      if (param && param.scene) {
+      if (param.scene) {
         console.info('[scene]onLaunch scene', param.scene);
         wepy.$instance.globalData.scene = param.scene;
-        console.info('[auth]onLaunch end');
       }
+      let path = param.path;
+      const query = [];
+      for (let key in param.query) {
+        query.push(`${key}=${param.query[key]}`);
+      }
+      if (query.length > 0) {
+        path = `${path}?${query.join(',')}`;
+      }
+      wepy.$instance.globalData.launchPath = path;
     }
     syncStoreConfig(key) {
       try {

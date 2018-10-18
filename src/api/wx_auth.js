@@ -262,6 +262,11 @@ async function createServerSession () {
     param.inviteId = inviteId;
     console.info(`[wx_login] report invite_id=${inviteId}`);
   }
+  // 启动路径
+  const path = wepy.$instance.globalData.launchPath;
+  if (path) {
+    param.scene = path;
+  }
   const {thirdSession, loginCode, fullShopInfo} = await http.post(url, param);
   // 保存权限信息
   setLoginCode(loginCode);
