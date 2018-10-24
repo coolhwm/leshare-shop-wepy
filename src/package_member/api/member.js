@@ -11,6 +11,13 @@ export default class member extends base {
     return this.post(url, param);
   }
   /**
+   * 手机验证码
+   */
+  static async code(phone) {
+    const url = `${this.baseUrl}/members/sms_code?phone=${phone}`;
+    return this.get(url);
+  }
+  /**
    * 历史积分信息
    */
   static async bonus() {
