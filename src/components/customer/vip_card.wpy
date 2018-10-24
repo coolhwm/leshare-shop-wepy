@@ -3,7 +3,7 @@
   <view class="vip-box column-between" style="background-image: url('{{card.backgroundPicUrl}}');background-repeat:no-repeat; background-size:100% 100%;" wx:if="{{member == null}}">
     <view class="column-center">
       <image class="avatar"  src="{{avatarUrl}}"/>
-      <view class="user-name" style="color: {{card.color}}">{{nickName}}</view>
+      <text class="user-name" style="color: {{card.color}}">{{nickName}}</text>
     </view>
     <form class="column-center"  report-submit="true" @submit="reportFormId">
       <button  class="registe-btn" wx:if="{{card.extraParam != null && card.extraParam != '' && card.extraParam != '[]'}}" form-type="submit" @tap="complexRegist" style="color: {{card.color}}">绑定手机</button>
@@ -206,6 +206,7 @@
       margin-left: 30rpx;
     }
     .user-name{
+      max-width: 300rpx;
       color: white;
       font-size: 32rpx;
     }

@@ -294,7 +294,7 @@
           // 比例抵扣
           const price = percent > 0 ? payPrice * (percent / 100) : payPrice;
           // 计算可用额度
-          const pointUsed = _.min([price, dayUseable, perMax]);
+          const pointUsed = _.min([price, dayUseable, perMax, this.member.point]);
           if (price > 0) {
             trade.pointUsed = Math.floor(pointUsed);
             this.pointText = `抵扣￥${trade.pointUsed}`;

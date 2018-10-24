@@ -57,12 +57,13 @@
     async onLoad () {
       // 登录检查
       await initWxAppSync();
-      await checkUserMember();
+      // await checkUserMember();
       this.page = await goods.listBonus(this.discount, this.bussType);
       await this.next();
     };
     methods = {
-      goods(id) {
+      async goods(id) {
+        await checkUserMember();
         this.$navigate(`/pages/goods/detail?goodsId=${id}`)
       },
       toBonusDetail() {
