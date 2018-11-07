@@ -51,7 +51,7 @@
     <!--提示框-->
     <Notice/>
 
-    <Popups />
+    <!--<Popups />-->
 
     <ButtonWidget :bottom.sync="bottom"/>
 
@@ -79,7 +79,7 @@
   import Loading from '../../components/common/loading';
   import Notice from '../../components/shop/notice';
   import member from '../../api/member';
-  import Popups from '../../components/shop/popups'
+  // import Popups from '../../components/shop/popups'
   import ButtonWidget from '../../components/template/button_widget';
   import Event from '../../utils/Event';
 
@@ -205,7 +205,7 @@
       Notice: Notice,
       Loading: Loading,
       bonusPankItem: bonusPankItem,
-      Popups: Popups,
+      // Popups: Popups,
       ButtonWidget: ButtonWidget
     };
     mixins = [base, pagination, router];
