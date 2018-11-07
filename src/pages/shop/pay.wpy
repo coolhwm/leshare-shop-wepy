@@ -32,11 +32,11 @@
           <view class="weui-cell__ft weui-cell__ft_in-access"  @tap="changeCoupon">{{couponTips}}</view>
         </view>
 
-        <!--优惠余额栏目-->
+        <!--赠送金栏目-->
         <block wx:if="{{shop.supportMemberPoint && pointRule}}">
           <view class="coupon-box row">
             <view class="weui-cell__bd column">
-              <text>优惠余额</text>
+              <text>赠送金</text>
               <text class="xxs muted">{{pointRule.priceTips}}</text>
               <text class="xxs muted" wx:if="{{pointRule.timeTips && !pointRule.available}}">{{pointRule.timeTips}}</text>
             </view>
@@ -151,7 +151,7 @@
       // 初始化支付环境
       await this.initPayment();
       this.loaded();
-      // 初始化优惠余额使用规则
+      // 初始化赠送金使用规则
       await this.initPointRule();
       Event.listen(Event.TRADE_COUPON_UPDATE, this.updateCoupon.bind(this), this);
     };
@@ -178,7 +178,7 @@
       this.updatePaymentTrade();
     }
     /**
-     * 初始化优惠余额使用规则
+     * 初始化赠送金使用规则
      */
     async initPointRule() {
       if (!this.shop.supportMemberPoint || !this.subId) {
@@ -303,7 +303,7 @@
           }
         }
       }
-      // 最终金额计算（支付金额-优惠券-优惠余额+客服服务费）
+      // 最终金额计算（支付金额-优惠券-赠送金+客服服务费）
       const finalPrice = dealPrice - trade.couponPrice - trade.pointUsed + trade.serviceFee;
       if (finalPrice < 0) {
         trade.finalPrice = 0;

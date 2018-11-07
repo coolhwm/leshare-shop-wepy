@@ -93,7 +93,8 @@
       isLocation: false,
       address: null,
       by: null,
-      bussArea: null
+      bussArea: null,
+      showGoods: 1
     };
     async onLoad () {
       try {
@@ -114,7 +115,7 @@
     };
     params() {
       let param = {
-        goods: 1
+        goods: this.showGoods
       };
       if (this.area) param.area = this.area;
       if (this.tag) param.tag = this.tag;

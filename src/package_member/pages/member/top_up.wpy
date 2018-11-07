@@ -96,7 +96,7 @@
         contents.push(`送${rule.giftFee}元储值余额`);
       }
       if (rule.giftPoint) {
-        contents.push(`送${rule.giftPoint}元赠送余额`);
+        contents.push(`送${rule.giftPoint}元赠送金`);
       }
       if (rule.couponNum > 0) {
         rule.coupons.forEach(item => {

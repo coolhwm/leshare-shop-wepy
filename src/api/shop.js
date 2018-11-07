@@ -318,10 +318,10 @@ export default class shop extends base {
   static _processSubShopData(item) {
     // 处理标签
     this._processSubShopTags(item);
-    // 处理优惠余额规则
+    // 处理赠送金规则
     this._processPointRule(item);
     // 处理商品
-    if (item.goodsList.length > 0) {
+    if (item.goodsList && item.goodsList.length > 0) {
       // 商品信息处理
       item.goodsList.forEach(goods => {
         this._processSubShopGoods(goods);
@@ -334,7 +334,7 @@ export default class shop extends base {
   }
 
   /**
-   * 处理子商户使用优惠余额的规则
+   * 处理子商户使用赠送金的规则
    */
   static _processPointRule(shop) {
     const rule = shop.memberPointRule;
@@ -356,8 +356,12 @@ export default class shop extends base {
     }
     // 规则当前失效
     const list = [];
-    if (rule.beginTime) {
-      list.push(`${rule.beginTime}开始`);
+    const now = new Date();
+    if (rule.beginTime && new Date(rule.beginTime) > now) {
+      list.push(`${rule.beginTime.substring(0, 11)}开始`);
+    }
+    if (rule.endTime && new Date(rule.endTime) > now) {
+      list.push(`${rule.endTime.substring(0, 11)}前`);
     }
     if (rule.date) {
       list.push(`每月${rule.date}日`);

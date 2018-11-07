@@ -221,7 +221,7 @@
     border-radius: 3rpx;
     padding: 0 5rpx;
     font-size: $text-xxs;
-    color: $color-primary;
+    color: $color-primary-red;
   }
   .mini-tag {
     border: $color-major solid 1px;

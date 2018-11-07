@@ -35,9 +35,12 @@ export default class point extends base {
 
     const timeLimits = [];
     // 规则尚未生效
-    const { beginTime, date, week, time } = rule;
+    const { beginTime, endTime, date, week, time } = rule;
     if (beginTime) {
-      timeLimits.push(`${beginTime}开始`);
+      timeLimits.push(`${beginTime.substring(0, 11)}开始`);
+    }
+    if (endTime) {
+      timeLimits.push(`${endTime.substring(0, 11)}截止`);
     }
     if (date) {
       timeLimits.push(`每月${date}日`);
@@ -49,7 +52,7 @@ export default class point extends base {
       timeLimits.push(`每日${time}`);
     }
     if (timeLimits.length > 0) {
-      rule.timeTips = '仅限' + timeLimits.join(',') + '使用';
+      rule.timeTips = '限' + timeLimits.join(',') + '使用';
     }
     return rule;
   }
