@@ -415,15 +415,16 @@
           this.mode = 'success';
           // 刷新会员信息
           await store.refresh('member');
+          this.loaded();
         } catch (error) {
-          if (error.errMsg == undefined || error.errMsg == 'requestPayment:fail cancel') {
+          this.loaded();
+          if (error.message == undefined || error.errMsg == 'requestPayment:fail cancel') {
             await Tips.alert('支付取消');
           } else {
-            await Tips.error('支付失败');
-            console.error('支付失败：', error);
+            await Tips.confirm(error.message, {}, '支付失败');
           }
         }
-        this.loaded();
+
       },
       /**
        * 选择优惠券
