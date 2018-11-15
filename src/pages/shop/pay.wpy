@@ -418,8 +418,10 @@
           this.loaded();
         } catch (error) {
           this.loaded();
-          if (error.message == undefined || error.errMsg == 'requestPayment:fail cancel') {
+          if (error.errMsg == 'requestPayment:fail cancel') {
             await Tips.alert('支付取消');
+          } else if (error.message == null) {
+            await Tips.confirm('支付失败，请重试或联系客服');
           } else {
             await Tips.confirm(error.message, {}, '支付失败');
           }
