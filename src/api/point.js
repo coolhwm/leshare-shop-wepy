@@ -12,26 +12,22 @@ export default class point extends base {
     if (rule == null) {
       return;
     }
-    const priceLimits = [];
-    // 数值预处理
-    rule.isPerMax = rule.perMax > 0;
-    rule.perMax = rule.perMax || Number.MAX_SAFE_INTEGER;
 
-    rule.isDayMax = rule.dayMax > 0;
-    rule.dayMax = rule.dayMax || Number.MAX_SAFE_INTEGER;
-    const { percent, isPerMax, perMax, isDayMax, dayMax, dayUsed } = rule;
-    // 规则已生效
-    const dayUseable = Math.max((dayMax - dayUsed), 0);
-    priceLimits.push(`可抵${percent > 0 ? percent : 100}%`);
-    if (isPerMax && perMax < dayUseable) {
-      priceLimits.push(`单笔限抵￥${perMax}`);
-    } else if (isDayMax) {
-      priceLimits.push(`今日还可抵￥${dayUseable}`);
-    } else {
-      priceLimits.push(`无金额限制`);
+    const priceLimits = [];
+    const { limitType, limitValue, availableAmount, percent } = rule;
+    priceLimits.push(`抵${percent > 0 ? percent : 100}%`);
+    if (limitType == 'NONE') {
+      priceLimits.push('无金额限制');
+    } else if (limitType == 'RULE_PER_MAX') {
+      priceLimits.push(`单笔可用￥${availableAmount}`);
+    } else if (limitType == 'RULE_DAY_MAX') {
+      priceLimits.push(`日限￥${limitValue},可用￥${availableAmount}`);
+    } else if (limitType == 'MEMBER_DAY_MAX') {
+      priceLimits.push(`日限￥${limitValue},可用￥${availableAmount}`);
+    } else if (limitType == 'MEMBER_MONTH_MAX') {
+      priceLimits.push(`月限￥${limitValue},可用￥${availableAmount}`);
     }
     rule.priceTips = priceLimits.join(',');
-    rule.dayUseable = dayUseable;
 
     const timeLimits = [];
     // 规则尚未生效

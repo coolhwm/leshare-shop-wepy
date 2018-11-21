@@ -42,7 +42,7 @@
             </view>
             <view class="weui-cell__ft column">
               <text>{{pointText}}</text>
-              <text class="xxs muted">剩余￥{{member.point}}</text>
+              <text class="xxs muted">本店余额￥{{pointRule.leftAmount}}</text>
             </view>
           </view>
         </block>
@@ -283,18 +283,18 @@
       const pointRule = this.pointRule;
       if (pointRule) {
         this.pointText = '请输入';
-        const { dayUseable, perMax, percent, available } = pointRule;
+        const { availableAmount, leftAmount, percent, available } = pointRule;
         if (!available) {
           this.pointText = '未在活动时段';
-        } else if (dayUseable <= 0) {
-          this.pointText = '已达当日限额';
+        } else if (availableAmount <= 0) {
+          this.pointText = '已达限额';
         } else if (pointRule && dealPrice) {
           // 券后金额
           const payPrice = dealPrice - trade.couponPrice;
           // 比例抵扣
           const price = percent > 0 ? payPrice * (percent / 100) : payPrice;
           // 计算可用额度
-          const pointUsed = _.min([price, dayUseable, perMax, this.member.point]);
+          const pointUsed = _.min([price, availableAmount, leftAmount]);
           if (price > 0) {
             trade.pointUsed = Math.floor(pointUsed);
             this.pointText = `抵扣￥${trade.pointUsed}`;
