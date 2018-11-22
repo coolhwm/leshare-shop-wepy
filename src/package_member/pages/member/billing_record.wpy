@@ -46,7 +46,7 @@
       tab: {
         list: [
           {id: 'BALANCE', title: '储值余额'},
-          {id: 'POINT', title: '优惠余额'}
+          {id: 'POINT', title: '赠送金'}
         ],
         selectedId: 'BALANCE'
       }

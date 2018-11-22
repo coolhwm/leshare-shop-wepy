@@ -11,7 +11,7 @@
     </view>
     <view class="column-center" @tap="record('POINT')" wx:if="{{shop.supportMemberPoint}}">
       <text class="major xxl">￥{{member.point || 0}}</text>
-      <text>优惠余额</text>
+      <text>赠送金</text>
     </view>
     <view class="column-center" @tap="pay">
       <icon class="recharge normal" color="major"/>

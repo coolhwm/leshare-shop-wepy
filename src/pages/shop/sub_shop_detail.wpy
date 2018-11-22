@@ -70,7 +70,7 @@
       <view class="row-between sub-top-box">
         <view class="row">
           <icon class="sale" color="major"/>
-          <text class="ml10">优惠余额</text>
+          <text class="ml10">赠送金</text>
         </view>
         <view class="row" @tap="back">
           <text class="muted sm">查看余额</text>
@@ -78,7 +78,7 @@
         </view>
       </view>
       <view class="column ml20">
-        <text>• {{pointRule.available ? '当前可使用优惠余额抵扣' : '当前不在活动时段'}}</text>
+        <text>• {{pointRule.available ? '当前可使用赠送金抵扣' : '当前不在活动时段'}}</text>
         <text>• {{pointRule.priceTips || '无使用金额限制'}}</text>
         <text>• {{pointRule.timeTips || '无使用时间限制'}}</text>
       </view>
@@ -255,7 +255,7 @@
       this.$apply();
     };
     /**
-     * 初始化优惠余额使用规则（东方伟业）
+     * 初始化赠送金使用规则（东方伟业）
      */
     async initPointRule() {
       if (!this.shop.supportMemberPoint) {

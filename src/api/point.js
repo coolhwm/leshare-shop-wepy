@@ -12,32 +12,31 @@ export default class point extends base {
     if (rule == null) {
       return;
     }
-    const priceLimits = [];
-    // 数值预处理
-    rule.isPerMax = rule.perMax > 0;
-    rule.perMax = rule.perMax || Number.MAX_SAFE_INTEGER;
 
-    rule.isDayMax = rule.dayMax > 0;
-    rule.dayMax = rule.dayMax || Number.MAX_SAFE_INTEGER;
-    const { percent, isPerMax, perMax, isDayMax, dayMax, dayUsed } = rule;
-    // 规则已生效
-    const dayUseable = Math.max((dayMax - dayUsed), 0);
-    priceLimits.push(`可抵${percent > 0 ? percent : 100}%`);
-    if (isPerMax && perMax < dayUseable) {
-      priceLimits.push(`单笔限抵￥${perMax}`);
-    } else if (isDayMax) {
-      priceLimits.push(`今日还可抵￥${dayUseable}`);
-    } else {
-      priceLimits.push(`无金额限制`);
+    const priceLimits = [];
+    const { limitType, limitValue, availableAmount, percent } = rule;
+    priceLimits.push(`抵${percent > 0 ? percent : 100}%`);
+    if (limitType == 'NONE') {
+      priceLimits.push('无金额限制');
+    } else if (limitType == 'RULE_PER_MAX') {
+      priceLimits.push(`单笔可用￥${availableAmount}`);
+    } else if (limitType == 'RULE_DAY_MAX') {
+      priceLimits.push(`日限￥${limitValue},可用￥${availableAmount}`);
+    } else if (limitType == 'MEMBER_DAY_MAX') {
+      priceLimits.push(`日限￥${limitValue},可用￥${availableAmount}`);
+    } else if (limitType == 'MEMBER_MONTH_MAX') {
+      priceLimits.push(`月限￥${limitValue},可用￥${availableAmount}`);
     }
     rule.priceTips = priceLimits.join(',');
-    rule.dayUseable = dayUseable;
 
     const timeLimits = [];
     // 规则尚未生效
-    const { beginTime, date, week, time } = rule;
+    const { beginTime, endTime, date, week, time } = rule;
     if (beginTime) {
-      timeLimits.push(`${beginTime}开始`);
+      timeLimits.push(`${beginTime.substring(0, 11)}开始`);
+    }
+    if (endTime) {
+      timeLimits.push(`${endTime.substring(0, 11)}截止`);
     }
     if (date) {
       timeLimits.push(`每月${date}日`);
@@ -49,7 +48,7 @@ export default class point extends base {
       timeLimits.push(`每日${time}`);
     }
     if (timeLimits.length > 0) {
-      rule.timeTips = '仅限' + timeLimits.join(',') + '使用';
+      rule.timeTips = '限' + timeLimits.join(',') + '使用';
     }
     return rule;
   }

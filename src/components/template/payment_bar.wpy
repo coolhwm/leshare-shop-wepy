@@ -21,7 +21,7 @@
       <view class="item-box column-center">
         <view class="title-text row">
           <icon class="privilege xsmall" />
-          <text class="sm">优惠余额</text>
+          <text class="sm">赠送金</text>
         </view>
 
         <text class="price">￥{{member.point || 0}}</text>
