@@ -205,7 +205,7 @@ export default class shop extends base {
    * 处理基本信息
    */
   static _processInfo(data) {
-    data.type = this.type();
+    // data.type = this.type();
     return data;
   }
   /**

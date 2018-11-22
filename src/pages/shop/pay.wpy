@@ -145,7 +145,7 @@
     async onLoad (option) {
       await initWxAppSync();
       // 解析参数
-      this.subId = this.parseSubShopId(option);
+      this.subId = await this.parseSubShopId(option);
       // 初始化门店信息
       await this.initInfo();
       // 初始化支付环境
@@ -239,7 +239,7 @@
     /**
      * 解析子商户ID
      */
-    parseSubShopId(option) {
+    async parseSubShopId(option) {
       const {scene, subShopId} = option;
       // 传入参数场景
       if (subShopId) {
@@ -253,9 +253,14 @@
         }
       }
       // 平台默认场景
-      const { platformRule } = this.shop;
-      if (platformRule) {
+      const { platformRule, type } = this.shop;
+      if (platformRule && platformRule.defaultShop) {
         return platformRule.defaultShop;
+      }
+      if (type == 'platform') {
+        await Tips.modal('请扫描商家支付码');
+        this.$switch('/pages/home/template');
+        throw new Error('未识别子商户ID');
       }
     };
     /**
