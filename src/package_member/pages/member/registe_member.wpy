@@ -3,7 +3,7 @@
   <Loading :init.sync="init"/>
   <view class="mt20"></view>
   <view class="container " wx:if="{{init}}">
-    <form @submit="add">
+    <form @submit="add" wx:if="{{mode === 'registe'}}">
       <view class="weui-cells weui-cells-form registe-box">
         <!--自定义-->
         <block wx:for="{{extraParam}}" wx:for-item="item" wx:key="index" wx:if="{{extraParam != null}}">
@@ -91,6 +91,18 @@
         <button class="weui-btn" type="primary" form-type="submit">注册</button>
       </view>
     </form>
+    <view wx:elif="{{mode === 'scan'}}">
+      <view class="brand column-center">
+        <image class="logo" src="{{shop.avatar}}"/>
+        <text>{{shop.name}}</text>
+      </view>
+
+      <!--一键登录-->
+      <view class="weui-btn-area">
+        <button class="weui-btn" open-type="getPhoneNumber" bindgetphonenumber="webLogin" type="primary">授权登录管理平台</button>
+        <button class="weui-btn"  @tap="toCustomer" >取消</button>
+      </view>
+    </view>
   </view>
 
 </template>
@@ -107,26 +119,37 @@
   import Tips from '../../../utils/Tips';
   import WxUtils from '../../../utils/WxUtils';
   import Loading from '../../../components/common/loading';
+  import auth from '../../../api/auth';
 
   @connect({
-    card: store.get('card')
+    card: store.get('card'),
+    shop: store.get('shop')
   })
   export default class RegisteMember extends wepy.page {
     data = {
       registeInfo: {},
       init: false,
-      extraParam: null
+      extraParam: null,
+      mode: 'registe'
     };
 
-    async onLoad () {
+    async onLoad (param, {preload}) {
       await initWxAppSync();
-      if (this.card == null) {
-        await Tips.modal('该门店尚未开放会员注册!');
-        wepy.navigateBack();
+      if (param.scene) {
+        this.mode = 'scan'
+        this.qrCode = param.scene;
+        await auth.session();
+        this.loaded();
         return;
-      }
-      if (this.card.extraParam) {
-        this.extraParam = JSON.parse(this.card.extraParam);
+      } else {
+        if (this.card == null) {
+          await Tips.modal('该门店尚未开放会员注册!');
+          wepy.navigateBack();
+          return;
+        }
+        if (this.card.extraParam) {
+          this.extraParam = JSON.parse(this.card.extraParam);
+        }
       }
       this.loaded();
     };
@@ -211,6 +234,30 @@
         } catch (error) {
           this.tips(error.message);
           Tips.loaded();
+        }
+      },
+      toCustomer() {
+        WxUtils.backOrRedirect('/pages/customer/index_template');
+      },
+      /**
+       * PC端登录
+       */
+      async webLogin({detail}) {
+        // 授权检查
+        if (detail.errMsg == 'getPhoneNumber:fail user deny') {
+          await Tips.alert('请允许授权');
+          return;
+        }
+        // 一键登录
+        try {
+          await auth.checkQrCode(this.qrCode);
+          Tips.loaded();
+          await Tips.modal('授权登录成功');
+          this.mode = 'fast';
+        } catch (err) {
+          Tips.modal('登录失败，请重试');
+        } finally {
+          this.loaded();
         }
       }
     };
@@ -298,6 +345,20 @@
     padding: 20rpx;
     text{
       color: $color-muted;
+    }
+  }
+  .brand{
+    padding-top: 60rpx;
+    padding-bottom: 60rpx;
+
+    .logo{
+      width: 100px;
+      height: 100px;
+    }
+
+    text{
+      margin-top: 15rpx;
+      font-size: $text-form;
     }
   }
 </style>

@@ -7,7 +7,7 @@
         <icon wx:else class="check" color="gray" @tap="check({{index}})" />
       </view>
       <!--商品图片-->
-      <image class="cart-item-image" src="{{cart.goodsImage}}/small"  @tap="detail({{cart.goodsId}})" />
+      <image class="cart-item-image" src="{{cart.goodsImage}}"  @tap="detail({{cart.goodsId}})" />
 
       <!--商品说明-->
       <view class="cart-info-container">
