@@ -41,9 +41,9 @@
       </view>
     </view>
 
-    <view class="tips-box row-between" wx:if="{{coupon.suitLimit === 1}}">
-      <text>适用商品</text>
-      <text @tap="checkGoods">查看 ></text>
+    <view class="tips-box row-between" wx:if="{{coupon.suitLimit === 1}}" @tap="checkGoods">
+      <view>可兑换商品{{coupon.goodsIdList.length}}种商品</view>
+      <text >查看详情 ></text>
     </view>
 
     <view class="tips-box column" wx:if="{{coupon.desc}}">
