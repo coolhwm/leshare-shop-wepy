@@ -41,6 +41,11 @@
       </view>
     </view>
 
+    <view class="tips-box row-between" wx:if="{{coupon.suitLimit === 1}}">
+      <text>适用商品</text>
+      <text @tap="checkGoods">查看 ></text>
+    </view>
+
     <view class="tips-box column" wx:if="{{coupon.desc}}">
       <text>使用说明：</text>
       <text>{{coupon.desc}}</text>
@@ -79,19 +84,29 @@
       success: false,
       message: '',
       tips: '',
-      subShop: null
+      subShop: null,
+      couponId: null,
+      pageType: 'firstTime'
     };
     async onLoad (options, {preload}) {
       // 初始化全局存储
       await initWxApp();
-      this.coupon = preload.coupon;
-
-      const id = preload.coupon ? preload.coupon.id : preload.couponId;
-      if (preload.coupon) {
-        this.coupon = preload.coupon;
-      } else {
-        this.coupon = await coupon.detail(id)
+      this.couponId = preload.couponId;
+      this.coupon = await coupon.detail(this.couponId);
+      this.checkStatus();
+      this.subShop = this.coupon.subShop;
+      this.loaded();
+    };
+    onShow() {
+      if (this.pageType === 'again') {
+        this.checkStatus();
       }
+    }
+    onUnload () {
+      console.info(`[coupon] exit page, clear interval=${interval}`);
+      clearInterval(interval);
+    };
+    checkStatus() {
       if (this.coupon.status == 'USED') {
         this.message = '优惠券已核销';
         this.success = true;
@@ -101,7 +116,7 @@
       } else {
         interval = setInterval(async () => {
           const ownList = await coupon.own();
-          const target = ownList ? ownList.find(item => item.id == id) : null;
+          const target = ownList ? ownList.find(item => item.id == this.couponId) : null;
           if (target == null) {
             this.coupon.status = 'USED';
             this.message = '店家已核销';
@@ -119,13 +134,7 @@
         })
         console.info(`[coupon] check coupon status, start interval=${interval}`);
       }
-      this.subShop = this.coupon.subShop;
-      this.loaded();
-    };
-    onUnload () {
-      console.info(`[coupon] exit page, clear interval=${interval}`);
-      clearInterval(interval);
-    };
+    }
     methods = {
       async check() {
         await Tips.confirm('确认自助核销？该优惠券将被使用，操作后请将结果给店家展示');
@@ -160,6 +169,12 @@
       },
       order () {
         this.$navigate(`/pages/order/detail?orderId=${this.coupon.orderId}`)
+      },
+      checkGoods() {
+        this.pageType = 'again';
+        clearInterval(interval);
+        this.$preload('goodsIdList', this.coupon.goodsIdList);
+        this.$navigate(`/pages/coupon/usable_goods`);
       }
     };
     events = {};
