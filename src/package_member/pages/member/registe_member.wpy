@@ -255,9 +255,10 @@
           await Tips.modal('授权登录成功');
           this.mode = 'fast';
         } catch (err) {
-          Tips.modal('登录失败，请重试');
+          await Tips.modal('登录失败，请重试');
         } finally {
           this.loaded();
+          WxUtils.backOrRedirect('/pages/home/template');
         }
       }
     };
