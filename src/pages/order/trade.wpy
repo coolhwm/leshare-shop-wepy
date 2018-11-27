@@ -648,6 +648,10 @@
         this.trade.couponPrice = null;
       } else {
         this.clearSelectedBonus();
+        // 修改兑换券的价格等于订单的价格
+        if (coupon.type == 'EXCHANGE') {
+          coupon.price = Number(this.trade.finalPrice);
+        }
         this.selectedCoupon = coupon;
         this.trade.couponUsedId = coupon.id;
         this.trade.couponPrice = coupon.price.toFixed(2);
