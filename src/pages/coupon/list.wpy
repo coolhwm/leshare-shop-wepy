@@ -72,7 +72,7 @@
         // if (coupon.status != 'NEVER_USED') {
         //   return;
         // }
-        this.$preload('coupon', coupon);
+        this.$preload('couponId', coupon.id);
         this.$navigate('detail');
       },
       switchTab() {

@@ -159,7 +159,8 @@
         'pages/shop/sub_shop_menu',
         'pages/shop/sub_shop_search',
         'pages/reward/index',
-        'pages/reward/article'
+        'pages/reward/article',
+        'pages/coupon/usable_goods'
       ],
       subPackages: [
         {
