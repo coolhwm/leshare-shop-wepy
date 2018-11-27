@@ -1,5 +1,5 @@
 <template>
-  <view class="row-between usable-goods-item-box">
+  <view class="row-between usable-goods-item-box" @tap="checkGoods">
     <view class="row">
       <image class="goods-img" src="{{detail.goodsImg}}" mode="aspectFill"/>
       <view class="column ml20">
@@ -10,7 +10,7 @@
         <text class="lg">{{detail.goodsName}}</text>
       </view>
     </view>
-    <icon class="more" color="gray" @tap="checkGoods"/>
+    <icon class="more" color="gray"/>
   </view>
 </template>
 
