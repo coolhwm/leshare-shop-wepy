@@ -200,6 +200,14 @@ export default class shop extends base {
     return this.post(url);
   }
 
+  /***
+   * 查当前累积情况
+   */
+  static benifit() {
+    const url = `${this.baseUrl}/benefit/info`;
+    return this.get(url);
+  }
+
   // *** 数据处理方法
   /**
    * 处理基本信息
