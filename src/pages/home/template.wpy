@@ -92,6 +92,11 @@
         <PaymentBar :param.sync="item" />
       </block>
 
+      <!--累计栏-->
+      <block wx:if="{{item.type == 'GIFIT_BAR'}}">
+        <GifitBar :param.sync="item"/>
+      </block>
+
 
       <!--间隔-->
       <view class="h-gap" wx:if="{{item.border !== 'none'}}"></view>
@@ -159,6 +164,7 @@
   import ShopList from '../../components/template/shop_list';
   import SearchShopBar from '../../components/template/search_shop_bar';
   import PaymentBar from '../../components/template/payment_bar';
+  import GifitBar from '../../components/template/gifit_bar';
   import _ from 'underscore';
   import Popups from '../../components/shop/popups'
 
@@ -225,6 +231,8 @@
           }, () => {
             this.$invoke('ShopList', 'load', null);
           });
+        } else if (item.type == 'GIFIT_BAR') {
+          this.$invoke('GifitBar', 'load', null);
         }
       });
     }
@@ -366,7 +374,8 @@
       Popups: Popups,
       ShopList: ShopList,
       SearchShopBar: SearchShopBar,
-      PaymentBar: PaymentBar
+      PaymentBar: PaymentBar,
+      GifitBar: GifitBar
     };
     computed = {
     };
