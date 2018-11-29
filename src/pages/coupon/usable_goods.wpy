@@ -8,17 +8,14 @@
 
   </view>
 
-  <!--占位符-->
-  <Placeholder :show.sync="isPageEmpty" message="暂无适用商品"/>
 </template>
 
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
-  import Placeholder from '../../components/common/placeholder';
   import UsableGoodsItem from '../../components/coupons/usable_goods_item'
 
-  export default class CouponUse extends wepy.page {
+  export default class UsableGoods extends wepy.page {
     data = {
       init: false,
       goodsIdList: []
@@ -31,7 +28,6 @@
     };
     events = {};
     components = {
-      Placeholder: Placeholder,
       UsableGoodsItem: UsableGoodsItem
     };
     mixins = [base];

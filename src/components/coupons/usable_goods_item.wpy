@@ -17,7 +17,7 @@
 <script>
   import wepy from 'wepy';
 
-  export default class CouponPickItem extends wepy.component {
+  export default class UsableGoodsItem extends wepy.component {
     props = {
       detail: {}
     };
