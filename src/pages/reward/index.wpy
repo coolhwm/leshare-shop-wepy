@@ -264,13 +264,17 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .contariner{
+    overflow-x: hidden;
+    width: 750rpx;
+  }
   .top-box{
     background-color: #F8F8F8;
     height: 440rpx;
     border-bottom: $border;
   }
   .sign-box{
-    width: 750rpx;
+    width: 710rpx;
     overflow: hidden;
     background-image: url("https://img.leshare.shop/shop/22/reward_bg.png");
     background-size:100% 100%;

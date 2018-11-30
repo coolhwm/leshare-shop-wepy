@@ -492,7 +492,7 @@
           store.delayReflesh('coupon');
         }
         // 刷新会员信息
-        if (trade.bonusPrice > 0 || trade.paymentType == PAYMENT.OFFLINE) {
+        if (trade.bonusPrice > 0 || trade.paymentType == PAYMENT.OFcouponFLINE) {
           store.delayReflesh('member');
         }
         // 刷新列表
@@ -650,7 +650,7 @@
         this.clearSelectedBonus();
         // 修改兑换券的价格等于订单的价格
         if (coupon.type == 'EXCHANGE') {
-          coupon.price = Number(this.trade.finalPrice);
+          coupon.price = Number(this.trade.dealPrice);
         }
         this.selectedCoupon = coupon;
         this.trade.couponUsedId = coupon.id;

@@ -206,36 +206,11 @@
       // 渲染页面组件
       this.pageId = pageId;
       await this.renderTemplatePage();
-      // 调用子组件触发事件
-      this.invokeComponentsEvent();
       // 渲染导航栏
       this.renderNavigationBar();
       // 执行触发器
       this.runTriggers();
     };
-
-    /**
-     * 调用子组件触发事件
-     */
-    invokeComponentsEvent() {
-      if (this.components == null) {
-        return;
-      }
-      this.components.forEach(item => {
-        if (item.type == 'SHOP_LIST') {
-          // 拉起定位
-          wepy.getLocation().then(location => {
-            // 加载组件
-            this.$invoke('ShopList', 'load', location);
-            this.$invoke('SearchShopBar', 'setLocation', location);
-          }, () => {
-            this.$invoke('ShopList', 'load', null);
-          });
-        } else if (item.type == 'GIFIT_BAR') {
-          this.$invoke('GifitBar', 'load', null);
-        }
-      });
-    }
     /**
      * 渲染页面
      */
@@ -261,7 +236,20 @@
       this.param = page.param;
       this.loaded();
       console.info(`[template] render template page success`);
-      this.$broadcast('on-page-refresh');
+      this.components.forEach(item => {
+        if (item.type == 'SHOP_LIST') {
+          // 拉起定位
+          wepy.getLocation().then(location => {
+            // 加载组件
+            this.$invoke('ShopList', 'load', location);
+            this.$invoke('SearchShopBar', 'setLocation', location);
+          }, () => {
+            this.$invoke('ShopList', 'load', null);
+          });
+        } else if (item.type === 'GIFIT_BAR') {
+          this.$invoke('GifitBar', 'load', null);
+        }
+      });
     }
     /**
      * 渲染标题栏

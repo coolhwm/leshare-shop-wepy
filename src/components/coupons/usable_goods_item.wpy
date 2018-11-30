@@ -1,7 +1,7 @@
 <template>
   <view class="row-between usable-goods-item-box" @tap="checkGoods">
     <view class="row">
-      <image class="goods-img" src="{{detail.goodsImg}}" mode="aspectFill"/>
+      <image class="goods-img" src="{{detail.goodsImg}}/small" mode="aspectFill"/>
       <view class="column ml20">
         <view class="row">
           <icon class="shop xsmall mr5" color="gray"/>
