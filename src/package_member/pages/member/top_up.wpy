@@ -16,7 +16,7 @@
             <view class="column-center item-box" wx:else @tap="selected({{index}})">
               <text>{{item.baseFee}}元</text>
               <text class="muted xs">{{item.tips}}</text>
-              <icon class="vip-icon forvip" style="color: #9b9b9b" wx:if="{{item.isVip}}"/>
+              <icon class="vip-icon forvip"  wx:if="{{item.isVip}}"/>
             </view>
           </block>
         </view>

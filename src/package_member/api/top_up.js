@@ -12,7 +12,6 @@ export default class booking extends base {
       if (!data) {
         return [];
       }
-      data.sort((a, b) => a.baseFee - b.baseFee);
       data.forEach(rule => {
         const { giftPoint, giftFee, giftCoupon, coupons } = rule;
         const point = giftPoint || 0;
@@ -31,6 +30,11 @@ export default class booking extends base {
         if (tips.length > 0) {
           rule.tips = '赠' + tips.join('+');
         }
+        rule.priority = rule.baseFee;
+        if (rule.isVip) {
+          rule.priority -= 100000;
+        }
+        data.sort((a, b) => a.priority - b.priority);
       });
       return data;
     });
