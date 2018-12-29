@@ -160,6 +160,7 @@
         'pages/shop/sub_shop_search',
         'pages/reward/index',
         'pages/reward/article',
+        'pages/reward/eastwill',
         'pages/coupon/usable_goods'
       ],
       subPackages: [

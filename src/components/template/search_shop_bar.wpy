@@ -1,7 +1,7 @@
 <template>
   <view class="row search-shop-box">
     <view class="content">
-      <input @input="input" @confirm="search" confirm-type="搜索" maxlength="10" placeholder="搜索全城精选饮品甜品" />
+      <input @input="input" @confirm="search" confirm-type="搜索" maxlength="10" placeholder="搜索精选门店" />
     </view>
     <view class="search-btn" @tap="search">搜索</view>
   </view>

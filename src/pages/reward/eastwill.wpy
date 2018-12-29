@@ -33,14 +33,14 @@
             <image class="sign-bar" src="https://img.leshare.shop/shop/22/reward-sign-bar.png"></image>
           </view>
           <!--签到礼品提示-->
-          <text class="sign-tips mt10">连续签到7天有机会领免费饮品券</text>
+          <text class="sign-tips mt10">签到领积分，积分兑好礼</text>
         </view>
 
         <!--右侧按钮区域-->
         <view class="sign-btn-box" @tap="toSign" wx:if="{{member}}">
           <view class="sign-btn column-center">
             <text wx:if="{{signStatus}}">今日已签</text>
-            <text wx:else>签到领券</text>
+            <text wx:else>立即签到</text>
           </view>
         </view>
         <!--未注册的情况-->
@@ -52,92 +52,137 @@
       </view>
 
       <!--主功能推荐栏-->
-      <view class="row-around menu-box">
-        <image class="menu-image" src="https://img.leshare.shop/shop/22/reward_area_1.png" @tap="toShopList"></image>
-        <image class="menu-image" src="https://img.leshare.shop/shop/22/reward_area_2.png" @tap="toBonusGoodsList"></image>
-        <image class="menu-image" src="https://img.leshare.shop/shop/22/reward_area_4.png" @tap="toBargainList"></image>
-      </view>
+      <!--<view class="row-around menu-box">-->
+        <!--<image class="menu-image" src="https://img.leshare.shop/shop/22/reward_area_1.png" @tap="toShopList"></image>-->
+        <!--<image class="menu-image" src="https://img.leshare.shop/shop/22/reward_area_2.png" @tap="toBonusGoodsList"></image>-->
+        <!--<image class="menu-image" src="https://img.leshare.shop/shop/22/reward_area_4.png" @tap="toBargainList"></image>-->
+      <!--</view>-->
     </view>
 
     <!--菜单栏-->
     <view class="task-box">
       <view class="weui-cells weui-cells-show">
-        <view class="row weui-cell weui-cell_access" @tap="toFellow">
+
+        <view class="row weui-cell weui-cell_access" @tap="toActive">
           <view class="weui-cell__bd row">
             <icon class="like" style="color: #EE3333;" />
             <view class="column">
-              <text>关注公众号</text>
-              <text class="task-tips">每周推送免费饮品、甜品福利</text>
+              <text>双旦福利·惊喜来袭</text>
+              <text class="task-tips">多重优惠活动，让您乐翻天！</text>
             </view>
           </view>
           <view class="weui-cell__ft weui-cell__ft_in-access">
-            <text class="muted sm">+100积分</text>
+            <text class="muted sm">查看规则</text>
           </view>
         </view>
 
-        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active"  @tap="toFanGroup">
+
+        <view class="row weui-cell weui-cell_access" @tap="toShare">
           <view class="weui-cell__bd row">
-            <icon class="groups" style="color: #008000;" />
+            <icon class="member" style="color: #EE3333;" />
             <view class="column">
-              <text>关注粉丝群</text>
-              <text class="task-tips">获取更多专享福利与粉丝活动</text>
+              <text>转发领现金</text>
+              <text class="task-tips">30元购物津贴，送完为止</text>
             </view>
           </view>
           <view class="weui-cell__ft weui-cell__ft_in-access">
-            <text class="muted sm">+100积分</text>
-          </view>
-        </view>
-        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="toWeekGame">
-          <view class="weui-cell__bd row">
-            <icon class="game" style="color: #1296DB;" />
-            <view class="column">
-              <text>每周小游戏</text>
-              <text class="task-tips">玩游戏，每周得积分，兑好礼</text>
-            </view>
-          </view>
-          <view class="weui-cell__ft weui-cell__ft_in-access">
-            <text class="muted sm">+300积分</text>
+            <text class="muted sm">查看规则</text>
           </view>
         </view>
 
-        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="toInvate">
+
+        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active"  @tap="toTopup">
           <view class="weui-cell__bd row">
-            <icon class="share" style="color: #FF8855;" />
+            <icon class="money" style="color: #EE3333;" />
             <view class="column">
-              <text>邀请好友</text>
-              <text class="task-tips">优惠同享，积分获取无上限</text>
+              <text>首充再送礼</text>
+              <text class="task-tips">充值有赠送，时时有惊喜</text>
             </view>
           </view>
           <view class="weui-cell__ft weui-cell__ft_in-access">
-            <text class="muted sm">+100积分</text>
+            <text class="muted sm">立即充值</text>
+          </view>
+        </view>
+
+        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="toGift">
+          <view class="weui-cell__bd row">
+            <icon class="gift1" style="color: #EE3333;" />
+            <view class="column">
+              <text>圣诞老人送礼物</text>
+              <text class="task-tips">12月24日圣诞老人巡游并派发圣诞礼包</text>
+            </view>
+          </view>
+          <view class="weui-cell__ft weui-cell__ft_in-access">
+            <text class="muted sm">查看规则</text>
+          </view>
+        </view>
+
+        <view class="row weui-cell weui-cell_access" @tap="toSuper">
+          <view class="weui-cell__bd row">
+            <icon class="privilege" style="color: #EE3333;" />
+            <view class="column">
+              <text>全城锦鲤</text>
+              <text class="task-tips">寻找2018年最后一只好运锦鲤</text>
+            </view>
+          </view>
+          <view class="weui-cell__ft weui-cell__ft_in-access">
+            <text class="muted sm">查看规则</text>
           </view>
         </view>
 
         <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="toSign">
           <view class="weui-cell__bd row">
-            <icon class="rank" style="color: #008000;" />
+            <icon class="calendar" style="color: #EE3333;" />
             <view class="column">
-              <text>积分排行</text>
-              <text class="task-tips">每周第一名免费赠饮，前十赠积分</text>
+              <text>签到有礼</text>
+              <text class="task-tips">签到领积分，积分兑好礼</text>
             </view>
           </view>
           <view class="weui-cell__ft weui-cell__ft_in-access">
-            <text class="muted sm">免费赠饮</text>
+            <text class="muted sm">立即签到</text>
           </view>
         </view>
 
-        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="toBargainList">
+        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="toBonusGoodsList">
           <view class="weui-cell__bd row">
-            <icon class="bargain" style="color: #EE3333;" />
+            <icon class="rank" style="color: #EE3333;" />
             <view class="column">
-              <text>疯狂砍价</text>
-              <text class="task-tips">每天一款饮品低价抢购</text>
+              <text>积分商城</text>
+              <text class="task-tips">100积分可兑换停车卡</text>
             </view>
           </view>
           <view class="weui-cell__ft weui-cell__ft_in-access">
-            <text class="muted sm">限时抢购</text>
+            <text class="muted sm">立即兑换</text>
           </view>
         </view>
+
+        <!--<view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="toInvate">-->
+          <!--<view class="weui-cell__bd row">-->
+            <!--<icon class="share" style="color: #FF8855;" />-->
+            <!--<view class="column">-->
+              <!--<text>邀请好友</text>-->
+              <!--<text class="task-tips">优惠同享，积分获取无上限</text>-->
+            <!--</view>-->
+          <!--</view>-->
+          <!--<view class="weui-cell__ft weui-cell__ft_in-access">-->
+            <!--<text class="muted sm">+100积分</text>-->
+          <!--</view>-->
+        <!--</view>-->
+
+
+
+        <!--<view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="toBargainList">-->
+          <!--<view class="weui-cell__bd row">-->
+            <!--<icon class="bargain" style="color: #EE3333;" />-->
+            <!--<view class="column">-->
+              <!--<text>疯狂砍价</text>-->
+              <!--<text class="task-tips">每天一款饮品低价抢购</text>-->
+            <!--</view>-->
+          <!--</view>-->
+          <!--<view class="weui-cell__ft weui-cell__ft_in-access">-->
+            <!--<text class="muted sm">限时抢购</text>-->
+          <!--</view>-->
+        <!--</view>-->
 
       </view>
     </view>
@@ -216,21 +261,28 @@
           this.$switch('/pages/customer/index_template');
         }
       },
-      toFellow() {
-        const url = 'https://mp.weixin.qq.com/s/e61kwTL_uOV1DCIJjv5ZCg';
-        this.toArticle('关注公众号', url);
+      toShare() {
+        const url = 'https://mp.weixin.qq.com/s/h2zpQQNv8BmsmAiD69-BvQ';
+        this.toArticle('转发领现金', url);
       },
-      toFanGroup() {
-        const url = 'https://mp.weixin.qq.com/s/uZ87oZpbQfX8uAun-CaaAw';
-        this.toArticle('粉丝活动群', url);
+      toTopup() {
+        this.$navigate(`/package_member/pages/member/top_up`);
       },
-      toWeekGame() {
-        const url = 'https://mp.weixin.qq.com/s/7c6Sr1EYYdy5swYXZTBOeg';
-        this.toArticle('本周游戏', url);
+      toGift() {
+        const url = 'https://mp.weixin.qq.com/s/rl9r-LwISRka27rzxAlAgg';
+        this.toArticle('圣诞老人送礼物', url);
       },
-      toInvate() {
-        this.$navigate(`/package_member/pages/member/invite`);
+      toSuper() {
+        const url = 'https://mp.weixin.qq.com/s/wiAJSymE54YumcZnD6BJZQ';
+        this.toArticle('寻找2018年最后一只好运锦鲤', url);
       },
+      toActive() {
+        const url = 'https://mp.weixin.qq.com/s/7VwxnBhYPbbN1ESlVJ6uqg';
+        this.toArticle('双旦福利·惊喜来袭', url);
+      },
+
+
+
       toBonusDetail() {
         this.$navigate(`/package_member/pages/member/bonus_list`);
       },
@@ -266,7 +318,6 @@
   @import "../../styles/variable";
   .top-box{
     background-color: #F8F8F8;
-    height: 440rpx;
     border-bottom: $border;
   }
   .sign-box{
@@ -276,7 +327,6 @@
     background-size:100% 100%;
     height: 200rpx;
     padding: 20rpx;
-    padding-bottom: 60rpx;
     align-items: center;
   }
 
@@ -366,7 +416,7 @@
   }
 
   .task-box{
-    margin-top: -1rpx;
+    margin-top: rpx;
     icon{
       font-size: 24px;
       line-height: 24px;

@@ -26,6 +26,8 @@ export default class point extends base {
       priceLimits.push(`日限￥${limitValue},可用￥${availableAmount}`);
     } else if (limitType == 'MEMBER_MONTH_MAX') {
       priceLimits.push(`月限￥${limitValue},可用￥${availableAmount}`);
+    } else if (limitType == 'LOCK') {
+      priceLimits.push(`已冻结￥${limitValue}`);
     }
     rule.priceTips = priceLimits.join(',');
 

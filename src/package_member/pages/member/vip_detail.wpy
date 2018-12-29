@@ -133,8 +133,13 @@
           return '';
         }
         const lastLevel = rules[rules.length - 1].level;
-        // 判断最高级会员
-        if (currentLevel >= lastLevel) {
+        const currentDiscount = rules.find(item => item.level == currentLevel);
+        if (!currentDiscount.autoUpgrade) {
+          // 判断无法升级的会员级别
+          return '您已经是最高级别会员';
+        }
+        else if (currentLevel >= lastLevel) {
+          // 判断最高级会员
           return '您已经是最高级别会员';
         } else {
           const currentCost = this.member.totalCost;
