@@ -91,6 +91,7 @@
           <text class="muted mr20" wx:if="{{detail.limitBonus}}">▪ 不可用积分</text>
           <text class="muted mr20" wx:elif="{{detail.maxCostBonus > 0}}">▪ 最多用{{detail.maxCostBonus}}积分</text>
           <text class="muted mr20" wx:if="{{detail.limitCoupon}}">▪ 不可用优惠券</text>
+          <text class="muted mr20" wx:if="{{!detail.benefit}}">▪ 不参与满赠</text>
         </view>
 
         <!--评价向导-->

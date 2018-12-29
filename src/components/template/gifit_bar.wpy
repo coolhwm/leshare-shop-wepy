@@ -3,11 +3,8 @@
     <view class="column">
       <view class="gifit-title-box">
         <text class="title-box">全场消费满{{benifitInfo.bonusCount}}送1</text>
-        <!--<text class="ml10 sm">累计消费每满{{benifitInfo.bonusCount}}次送指定饮品1杯</text>-->
       </view>
       <view style="margin-top: 6rpx;">
-        <!--<icon class="timeout xsmall mr10" color="gray"/>-->
-        <!--<text class="muted sm">砍价、助力、赠送除外</text>-->
         <text class="sm muted">送指定饮品券，砍价、助力、赠送除外</text>
       </view>
     </view>
@@ -38,9 +35,6 @@
     components = {
     };
     mixins = [router];
-    events = {};
-    onLoad() {
-    }
   }
 </script>
 
