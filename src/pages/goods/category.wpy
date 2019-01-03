@@ -6,7 +6,7 @@
     <SearchBar :param.sync="searchParam"/>
 
     <!--主内容区域-->
-    <CategoryBox top="80rpx" bottom="0" :isCoupon.sync="isCoupon"/>
+    <CategoryBox top="80rpx" bottom="0" :isCoupon.sync="isCoupon" bussType="common"/>
 
     <!--滑出购物面板-->
     <block wx:if="{{buyPanelType == 'SLIDER'}}" >
@@ -25,9 +25,7 @@
 
 <script>
   import wepy from 'wepy';
-  import { connect } from 'wepy-redux';
-  import store from '../../store/utils';
-  import auth from '../../api/auth';
+  import { initWxAppSync } from '../../api/wx_auth';
   import base from '../../mixins/base';
   import PopupPanel from '../../components/goods/popup_buy_panel';
   import SilderPanel from '../../components/goods/slider_buy_panel';
@@ -37,8 +35,6 @@
   import SearchBar from '../../components/template/search_bar';
   import CategoryBox from '../../components/template/category_box';
 
-  @connect({
-  })
   export default class ShopIndex extends wepy.page {
     data = {
       init: false,
@@ -46,10 +42,7 @@
       buyPanelType: 'POPUP'
     };
     async onLoad () {
-      // 用户信息
-      await auth.user();
-      // 初始化Store
-      await store.init();
+      await initWxAppSync();
       this.loaded();
     };
     /**

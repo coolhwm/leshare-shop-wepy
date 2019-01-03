@@ -5,7 +5,7 @@
         <text class="title-box">拼团</text>
         <text class="muted ml20 xs">限量拼团，每日必逛</text>
       </view>
-      <view>
+      <view @tap="more({{param.data}})">
         <text class="sm muted">更多</text>
         <icon class="more" color="gray"/>
       </view>
@@ -14,8 +14,8 @@
       <scroll-view scroll-x class="tight-box" wx:if="{{param.layout == 'TIGHT'}}">
         <repeat for="{{param.data}}" key="index" index="index" item="item">
           <view class="column group-tight-box" @tap="detail({{item.ruleId}})">
-            <view class="content-top-box">
-              <image class="group-image" lazy-load src="{{item.goodsImage}}"></image>
+            <view class="content-top-box column">
+              <image class="group-image" lazy-load src="{{item.goodsImage}}/small" mode="aspectFill"></image>
               <text class="group-goods-name mb10 xs">{{item.goodsName}}</text>
               <view class="group-goods-price">￥{{item.goodsPrice}}</view>
             </view>
@@ -37,9 +37,16 @@
     }
     methods = {
       detail (ruleId) {
-        this.$root.$navigate(`/pages/group/goods_detail?ruleId=${ruleId}`)
+        this.$root.$navigate(`/package_group/pages/group/goods_detail?ruleId=${ruleId}`)
+      },
+      more () {
+        this.$root.$navigate(`/package_group/pages/group/group_more`)
       }
     };
+    watch = {
+      param (param) {
+      }
+    }
   }
 </script>
 
@@ -81,8 +88,10 @@
       border-bottom: $border;
     }
     .group-goods-name{
-      white-space:pre-wrap;
       width:$size;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .group-goods-price{
       color:#e64340;

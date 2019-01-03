@@ -7,19 +7,23 @@
     <ShopHeader />
 
     <!--功能区域-->
-    <ShopNav :mode.sync="mode"/>
+    <block>
+      <ShopNav :mode.sync="mode" @change.user="change" :tableNum.sync="tableNum"/>
+    </block>
 
     <!--主内容区域-->
-    <CategoryBox top="145px" bottom="55px"/>
+    <CategoryBox top="145px" bottom="55px" bussType="food"/>
 
     <!-- 购物车 -->
-    <block wx:if="{{version.isOrder}}">
-      <SliderCart @buy.user="buy" :mode.sync="mode"/>
+    <block>
+      <SliderCart @buy.user="buy" :mode.sync="mode" :tableNum.sync="tableNum"/>
     </block>
 
     <!--SKU选择器-->
     <SkuSelector/>
 
+    <!--桌号弹出框-->
+    <Notice />
   </view>
 </template>
 
@@ -27,7 +31,7 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
-  import auth from '../../api/auth';
+  import { initWxAppSync, checkUserInfo } from '../../api/wx_auth';
   import CategoryBox from '../../components/template/category_box';
   import base from '../../mixins/base';
   import router from '../../mixins/router';
@@ -37,25 +41,63 @@
   import SkuSelector from '../../components/goods/popup_buy_panel';
   import SliderCart from '../../components/shop/slider_cart';
   import Loading from '../../components/common/loading';
+  import Notice from '../../components/shop/notice';
+  import WxUtils from '../../utils/WxUtils';
+  import Event from '../../utils/Event';
 
   @connect({
     member: store.get('member'),
     card: store.get('card'),
-    version: store.get('version')
+    shop: store.get('shop')
   })
   export default class ShopIndex extends wepy.page {
     data = {
       init: false,
-      mode: 1
+      mode: 1,
+      tableNum: null
     };
-    async onLoad ({mode}) {
-      this.mode = mode;
-      // 用户信息
-      await auth.user();
-      // 初始化Store
-      await store.init();
+    async onLoad ({mode, scene}, {preload}) {
+      // 处理点餐模式
+      if (mode != null) {
+        this.mode = mode;
+      } else if (preload && preload.mode) {
+        this.mode = preload.mode;
+      }
+      // 处理扫描桌码点餐
+      const tableNum = WxUtils.parseQrScene(scene, 'table');
+      if (tableNum != null) {
+        this.tableNum = tableNum == '@' ? null : tableNum;
+        this.mode = 2;
+        this.showTableNumNotice(tableNum);
+      }
+      await initWxAppSync();
+      await checkUserInfo();
+      Event.listen(Event.FOOD_TYPE_UPDATE, this.switchMode.bind(this), this);
       this.loaded();
     };
+    /**
+     * 切换模式
+     */
+    switchMode(mode) {
+      if (this.shop.sellMode && this.shop.sellMode != 'BOTH') {
+        return;
+      }
+      this.mode = mode;
+      this.$apply();
+    }
+    /**
+     * 堂食点餐
+     */
+    showTableNumNotice(tableNum) {
+      const content = tableNum == '@' ? '当前为堂食点餐，在线下单支付后产品会送达餐桌'
+        : `您当前在${tableNum}号桌，在线下单支付后餐品会按桌位号送达。`;
+      const notice = {
+        title: '点餐提示',
+        btnText: '我知道了',
+        content: content
+      };
+      this.$invoke('Notice', 'open', notice);
+    }
     /**
      * 页面分享
      */
@@ -63,6 +105,9 @@
       return {};
     }
     methods = {
+      change (mode) {
+        this.switchMode(mode);
+      }
     };
     computed = {
     };
@@ -72,7 +117,8 @@
       SliderCart: SliderCart,
       SkuSelector: SkuSelector,
       CategoryBox: CategoryBox,
-      Loading: Loading
+      Loading: Loading,
+      Notice: Notice
     };
     mixins = [base, pagination, router];
     config = {

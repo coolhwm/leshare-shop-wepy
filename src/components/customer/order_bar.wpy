@@ -15,10 +15,15 @@
         <text>待付款</text>
         <view class="weui-badge" wx:if="{{count[1] > 0}}">{{count[1]}}</view>
       </view>
-      <view class="column-center" @tap="list(2)">
+      <!--<view class="column-center" @tap="list(2)">-->
+        <!--<icon class="delivery large" color="gray"/>-->
+        <!--<text>待发货</text>-->
+        <!--<view class="weui-badge" wx:if="{{count[2] > 0}}" >{{count[2]}}</view>-->
+      <!--</view>-->
+      <view class="column-center" @tap="list(9)">
         <icon class="delivery large" color="gray"/>
-        <text>待发货</text>
-        <view class="weui-badge" wx:if="{{count[2] > 0}}" >{{count[2]}}</view>
+        <text>已接单</text>
+        <view class="weui-badge" wx:if="{{count[9] > 0}}" >{{count[9]}}</view>
       </view>
       <view class="column-center" @tap="list(3)">
         <icon class="received large" color="gray"/>
@@ -41,33 +46,19 @@
 
 <script>
   import wepy from 'wepy';
-  import order from '../../api/order';
-  import Event from '../../utils/Event';
 
   export default class OrderBar extends wepy.component {
     props = {
+      count: {}
     };
-    data = {
-      count: null
-    };
-    async onLoad() {
-      Event.listen(Event.ORDER_LIST_UPDATE, this.load.bind(this), this);
-      await this.load();
-    }
-    async load() {
-      this.count = await order.count();
-      this.$apply();
-    }
+    data = {};
+    async onLoad() {}
     methods = {
       list(status) {
         this.$root.$navigate(`/pages/order/list?status=${status}`);
       }
     };
-    events = {
-      async refresh() {
-        await this.load();
-      }
-    };
+    events = {};
   }
 </script>
 

@@ -1,30 +1,64 @@
 <template>
+  <Loading :init.sync="init"/>
   <Tips/>
   <view class="container" wx:if="{{init}}">
 
     <!--待支付-->
     <view wx:if="{{mode === 'pay'}}" class="pay-box column-between">
       <view class="header-box column-between">
-        <image class="logo-image" src="{{shop.avatar}}/medium"/>
-        <text class="lg">{{shop.name}}</text>
+        <image class="logo-image" src="{{shopAvatar}}/small"/>
+        <text class="lg">{{shopName}}</text>
       </view>
 
       <view class="content-box">
         <text class="lg">付款金额</text>
+        <!--付款窗口-->
         <view class="row input-box">
           <text class="xxl mr10">￥</text>
-          <input focus type="digit" confirm-type="确认付款" bindinput="dealPriceInput" maxlength="12"/>
+          <input type="digit" confirm-type="确认付款" bindinput="inputDealPrice" bindfocus="onFocus" bindblur="onBlur" placeholder="请输入付款金额" maxlength="6"/>
         </view>
-        <view class="coupon-box row">
+
+        <!--支付方式-->
+        <view class="coupon-box row" @tap="changePaymentType">
+          <view class="weui-cell__bd">支付方式</view>
+          <view class="weui-cell__ft {{types.length > 1 ? 'weui-cell__ft_in-access' : ''}}">{{selectedType.text}}</view>
+        </view>
+
+        <!--优惠券窗口-->
+        <view class="coupon-box row" wx:if="{{useableCoupons.length > 0}}">
           <view class="weui-cell__bd">优惠券
-            <view class="label small primary pain" wx:if="{{coupons.length > 0}}">{{couponLabel}}</view>
+            <view class="label small primary pain">{{couponTag}}</view>
           </view>
-          <view wx:if="{{coupons.length > 0}}" class="weui-cell__ft {{coupons.length > 0 ? 'weui-cell__ft_in-access' : ''}}"  @tap="coupon">{{couponText}}</view>
-          <view wx:else class="weui-cell__ft" >{{couponText}}</view>
+          <view class="weui-cell__ft weui-cell__ft_in-access"  @tap="changeCoupon">{{couponTips}}</view>
         </view>
-        <view class="button-box">
-          <button class="weui-btn" type="primary" @tap="offline">立即付款</button>
-        </view>
+
+        <!--赠送金栏目-->
+        <block wx:if="{{shop.supportMemberPoint && pointRule}}">
+          <view class="coupon-box row">
+            <view class="weui-cell__bd column">
+              <text>赠送金</text>
+              <text class="xxs muted">{{pointRule.priceTips}}</text>
+              <text class="xxs muted" wx:if="{{pointRule.timeTips && !pointRule.available}}">{{pointRule.timeTips}}</text>
+            </view>
+            <view class="weui-cell__ft column">
+              <text>{{pointText}}</text>
+              <text class="xxs muted">本店余额￥{{pointRule.leftAmount}}</text>
+            </view>
+          </view>
+        </block>
+
+        <!--服务费栏目-->
+        <block wx:if="{{serviceRate > 0}}">
+          <view class="coupon-box row">
+            <view class="weui-cell__bd">服务费 ({{serviceRate}}%)</view>
+            <view class="weui-cell__ft">￥{{trade.serviceFee}}</view>
+          </view>
+        </block>
+
+        <!--付款按钮-->
+        <form class="button-box" report-submit="true" @submit="reportFormId">
+          <button class="weui-btn" type="primary" form-type="submit" @tap="offline">立即支付{{trade.finalPrice > 0 ? '￥' + trade.finalPrice : ''}}</button>
+        </form>
       </view>
     </view>
 
@@ -33,100 +67,387 @@
       <view class="header-box column-between">
         <icon class="confirm" style="font-size: 50px;height: 50px;"/>
         <text class="xxl pay-success">支付成功</text>
-        <text class="mb20">{{shop.name}}</text>
-        <text class="price-box">￥{{result.finalPrice}}</text>
+        <text class="mb20">{{shopName}}</text>
+        <view class="column-center">
+          <text class="price-box">￥{{result.dealPrice}}</text>
+          <text class="sm muted mt5" wx:if="{{result.serviceFee}}">另收取服务费￥{{result.serviceFee}}</text>
+          <text class="sm muted mt5" wx:if="{{result.pointUsed}}">优惠抵扣￥{{result.pointUsed}},实付￥{{result.finalPrice}}</text>
+        </view>
       </view>
       <view class="button-box">
         <button class="weui-btn" type="primary" @tap="finish">完成</button>
       </view>
     </view>
+
+    <ButtonWidget/>
+
   </view>
 
 </template>
 
 <script>
   import wepy from 'wepy';
-  import auth from '../../api/auth';
+  import { initWxAppSync } from '../../api/wx_auth';
   import base from '../../mixins/base';
   import input from '../../mixins/input';
   import order from '../../api/order'
+  import point from '../../api/point';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import Event from '../../utils/Event';
   import Tips from '../../utils/Tips';
+  import Loading from '../../components/common/loading';
   import FormTips from '../../components/weui/tips';
+  import WxUtils from '../../utils/WxUtils';
+  import shop from '../../api/shop'
+  import router from '../../mixins/router';
+  import ButtonWidget from '../../components/template/button_widget';
+  import _ from 'underscore';
 
   @connect({
     shop: store.get('shop'),
-    ownCoupons: store.get('ownCoupons')
+    ownCoupons: store.get('ownCoupons'),
+    member: store.get('member'),
+    card: store.get('card')
   })
-  export default class ShopIndex extends wepy.page {
+  export default class ShopPay extends wepy.page {
     data = {
       init: false,
-      dealPrice: 0,
-      couponText: '无可用',
+      sub: null,
+      subId: null,
+      shopName: null,
+      shopAvatar: null,
+      types: null,
+      supplyBalance: null,
+      balance: null,
+      selectedType: null,
       selectedCoupon: null,
+      useableCoupons: [],
+      couponTag: null,
+      couponTips: null,
+      serviceRate: 0,
+      pointText: '加载中...',
+      pointRule: null,
+      trade: {
+        orderType: 40,
+        paymentType: 1,
+        couponPrice: 0,
+        serviceFee: 0,
+        finalPrice: 0,
+        dealPrice: 0,
+        pointUsed: 0
+      },
+      typing: false,
       mode: 'pay',
-      result: null
+      result: null,
+      topUpRule: null
     };
-    async onLoad () {
-      // 登录检查
-      await auth.login();
-      // 用户信息
-      await store.init();
+    async onLoad (option) {
+      await initWxAppSync();
+      // 解析参数
+      this.subId = await this.parseSubShopId(option);
+      // 初始化门店信息
+      await this.initInfo();
+      // 初始化支付环境
+      await this.initPayment();
       this.loaded();
+      // 初始化赠送金使用规则
+      await this.initPointRule();
       Event.listen(Event.TRADE_COUPON_UPDATE, this.updateCoupon.bind(this), this);
     };
-    methods = {
-      dealPriceInput (e) {
-        this.dealPrice = e.detail.value;
-      },
-      async offline () {
-        if (!this.validate()) return;
-        if (this.dealPrice == 0) return;
-        const param = {
-          orderType: 40,
-          paymentType: 1,
-          dealPrice: this.dealPrice,
-          finalPrice: this.dealPrice
-        };
-        if (this.selectedCoupon) {
-          param.couponPrice = this.selectedCoupon.price;
-          param.couponUsedId = this.selectedCoupon.id;
-          param.finalPrice = (this.dealPrice * 1 - this.selectedCoupon.price * 1).toFixed(2);
+
+    /**
+     * 初始化支付环境
+     */
+    async initPayment() {
+      // 是否支持余额
+      this.supplyBalance = this.card && this.card.supplyBalance;
+      // 当前余额
+      this.balance = this.supplyBalance && this.member ? this.member.balance : 0;
+      // 客户服务费（庄饭碗）
+      if (this.sub && this.sub.serviceFee > 0) {
+        this.serviceRate = this.sub.serviceFee;
+      }
+      // 可选支付方式
+      this.types = await this.getPaymentTypes();
+      // 默认支付方式
+      this.selectedType = this.types[0];
+      // 初始化优惠券
+      this.updateDefaultCoupon();
+      // 初始化订单
+      this.updatePaymentTrade();
+    }
+    /**
+     * 初始化赠送金使用规则
+     */
+    async initPointRule() {
+      if (!this.shop.supportMemberPoint || !this.subId) {
+        return;
+      }
+      this.pointRule = await point.getShopPointRule(this.subId);
+      // 再次刷新
+      this.updatePaymentTrade();
+      this.$apply();
+    }
+
+    /**
+     * 获取支付方式
+     */
+    getPaymentTypes() {
+      const balance = this.balance;
+      // 处理支付方式
+      const WX_PAY = {
+        type: 'wxpay',
+        text: '微信支付'
+      };
+      const BALANCE_PAY = {
+        type: 'balance',
+        text: `余额支付(剩余￥${balance})`
+      };
+      const type = this.shop.payType;
+      if (type == 'BOTH') {
+        // 有余额则优先显示余额，没有则优先显示支付页面
+        if (balance > 0) {
+          return [BALANCE_PAY, WX_PAY];
+        } else {
+          return [WX_PAY, BALANCE_PAY];
         }
-        try {
-          // 创建订单
-          const trade = await order.offline(param);
-          this.result = trade;
-          // 调用后台支付接口
-          const payment = await order.prepayOrder(trade.orderId);
-          // 拉起支付页面
-          await order.wxpayOrder(payment);
-          await Tips.success('支付成功');
-          this.mode = 'success';
-        } catch (error) {
-          if (error.errMsg == 'requestPayment:fail cancel') {
-            await Tips.error('支付取消');
+      }
+      if (type == 'BALANCE') {
+        return [BALANCE_PAY];
+      }
+      if (type == 'WX_PAY') {
+        return [WX_PAY];
+      }
+    }
+    /**
+     * 获取当前支付的商家信息
+     */
+    async initInfo() {
+      let target = null;
+      if (this.subId) {
+        this.sub = await shop.subShopInfo(this.subId);
+        this.trade.subShopId = this.subId;
+        target = this.sub;
+      } else {
+        target = this.shop;
+      }
+      const { name, avatar } = target;
+      this.shopName = name;
+      this.shopAvatar = avatar;
+    }
+    /**
+     * 解析子商户ID
+     */
+    async parseSubShopId(option) {
+      const {scene, subShopId} = option;
+      // 传入参数场景
+      if (subShopId) {
+        return subShopId;
+      }
+      // 扫码场景
+      if (scene) {
+        const qrId = WxUtils.parseQrScene(scene, 'subShopId');
+        if (qrId) {
+          return qrId;
+        }
+      }
+      // 平台默认场景
+      const { platformRule, type } = this.shop;
+      if (platformRule && platformRule.defaultShop) {
+        return platformRule.defaultShop;
+      }
+      if (type == 'platform') {
+        await Tips.modal('请扫描商家支付码');
+        this.$switch('/pages/home/template');
+        throw new Error('未识别子商户ID');
+      }
+    };
+    /**
+     * 更新支付金额
+     */
+    updatePaymentTrade() {
+      // 服务费计算
+      const trade = this.trade;
+      const { dealPrice } = trade;
+      if (this.serviceRate > 0 && dealPrice) {
+        const serviceFee = dealPrice * (this.serviceRate / 100);
+        trade.serviceFee = serviceFee.toFixed(2) * 1;
+      } else {
+        trade.serviceFee = 0;
+      }
+      // 优惠券金额计算
+      const coupon = this.selectedCoupon;
+      if (coupon) {
+        trade.couponPrice = coupon.price;
+        trade.couponUsedId = coupon.id;
+      } else {
+        trade.couponPrice = 0;
+      }
+      // 抵扣金额计算
+      const pointRule = this.pointRule;
+      if (pointRule) {
+        this.pointText = '请输入';
+        const { availableAmount, leftAmount, percent, available } = pointRule;
+        if (!available) {
+          this.pointText = '未在活动时段';
+        } else if (availableAmount <= 0) {
+          this.pointText = '已达限额';
+        } else if (pointRule && dealPrice) {
+          // 券后金额
+          const payPrice = dealPrice - trade.couponPrice;
+          // 比例抵扣
+          const price = percent > 0 ? payPrice * (percent / 100) : payPrice;
+          // 计算可用额度
+          const pointUsed = _.min([price, availableAmount, leftAmount]);
+          if (price > 0) {
+            trade.pointUsed = Math.floor(pointUsed);
+            this.pointText = `抵扣￥${trade.pointUsed}`;
           } else {
-            await Tips.error('支付失败');
-            console.error('支付失败：', error);
+            this.pointText = `无法使用`;
           }
         }
+      }
+      // 最终金额计算（支付金额-优惠券-赠送金+客服服务费）
+      const finalPrice = dealPrice - trade.couponPrice - trade.pointUsed + trade.serviceFee;
+      if (finalPrice < 0) {
+        trade.finalPrice = 0;
+      } else {
+        trade.finalPrice = finalPrice.toFixed(2) * 1;
+      }
+    }
+    /**
+     * 更新默认优惠券
+     */
+    updateDefaultCoupon() {
+      // 筛选可以选择的优惠券
+      this.useableCoupons = this.ownCoupons
+        .filter(item => item.supportType != 1)  // 并不能使仅线上使用
+        .filter(item => item.type == 'CASH')    // 必须是现金券
+        .filter(item => item.limitPrice <= this.trade.dealPrice); // 金额满足要求
+
+      if (_.isEmpty(this.useableCoupons)) {
+        this.useableCoupons = [];
+      }
+      // 选出最大的一个作为默认值
+      let selected = null;
+      if (this.useableCoupons.length > 0) {
+        selected = _.max(this.useableCoupons, item => item.price);
+      }
+      // 选择这个优惠券
+      this.updateSelectedCoupon(selected);
+    }
+
+    /**
+     * 更新选定的优惠券
+     */
+    updateSelectedCoupon(selected) {
+      this.selectedCoupon = selected;
+      if (selected) {
+        this.couponTag = '已选择';
+        this.couponTips = `满${selected.limitPrice}减${selected.price}`;
+      } else {
+        this.couponTag = `${this.useableCoupons.length}张可用`;
+        this.couponTips = '未使用';
+      }
+    }
+    methods = {
+      onFocus() {
+        this.typing = true;
+      },
+      onBlur() {
+        this.typing = false;
+      },
+      /**
+       * 输入支付金额
+       */
+      inputDealPrice (e) {
+        this.trade.dealPrice = e.detail.value * 1;
+        this.updateDefaultCoupon();
+        this.updatePaymentTrade();
+      },
+      /**
+       * 修改在线支付的方式
+       */
+      async changePaymentType() {
+        const types = this.types;
+        if (types.length <= 1) {
+          return;
+        }
+        const typeTexts = types.map(item => item.text);
+        const { index } = await Tips.action(...typeTexts);
+        this.selectedType = types[index];
         this.$apply();
+      },
+      // 重构分界线
+      async offline () {
+        const { dealPrice, finalPrice } = this.trade;
+        if (!this.validate()) return;
+        if (dealPrice <= 0) {
+          await Tips.alert('请输入金额');
+          return;
+        }
+        // 数据校验
+        const { type } = this.selectedType;
+        // 设置支付方式
+        this.trade.onlinePayType = type;
+        if (finalPrice <= 0) {
+          // 实际支付0元的情况
+          await Tips.confirm(`确认支付给“${this.shopName}”？`);
+        } else if (type == 'balance') {
+          // 余额确认和校验
+          if (this.balance < finalPrice) {
+            await Tips.confirm('余额不足，是否前往充值？');
+            this.$navigate('/package_member/pages/member/top_up');
+            return;
+          } else {
+            await Tips.confirm(`确认使用余额付款￥${this.trade.finalPrice}给“${this.shopName}”？`);
+          }
+        }
+        try {
+          // 生成订单
+          Tips.loading('支付中');
+          const trade = await order.offline(this.trade);
+          this.result = trade;
+          // 微信支付发起请求
+          if (type == 'wxpay' && finalPrice > 0) {
+            // 调用后台支付接口
+            const payment = await order.prepayOrder(trade.orderId);
+            // 拉起微信支付页面
+            await order.wxpayOrder(payment);
+          }
+          await Tips.success('支付成功');
+          this.mode = 'success';
+          // 刷新会员信息
+          await store.refresh('member');
+          this.loaded();
+        } catch (error) {
+          this.loaded();
+          if (error.errMsg == 'requestPayment:fail cancel') {
+            await Tips.alert('支付取消');
+          } else if (error.message == null) {
+            await Tips.confirm('支付失败，请重试或联系客服');
+          } else {
+            await Tips.confirm(error.message, {}, '支付失败');
+          }
+        }
+
       },
       /**
        * 选择优惠券
        */
-      coupon () {
-        if (this.ownCoupons.length < 1) {
+      changeCoupon () {
+        if (this.useableCoupons.length < 1) {
           return;
         }
         const param = {
-          coupons: JSON.stringify(this.coupons)
+          coupons: JSON.stringify(this.useableCoupons)
         };
         this.$navigate('../coupon/use', param);
       },
+      /**
+       * 完成支付
+       */
       finish () {
         this.$switch('../home/template');
       }
@@ -135,63 +456,37 @@
      * 回调更新优惠券
      */
     updateCoupon(coupon) {
-      if (!coupon) {
-        this.selectedCoupon = null;
-      } else {
-        this.selectedCoupon = coupon;
-      }
+      this.updateSelectedCoupon(coupon);
+      this.updatePaymentTrade();
       this.$apply();
     }
     validate() {
       const rules = [
         {
-          value: this.dealPrice,
+          value: this.trade.dealPrice,
           method: 'money',
-          message: '请输入正确的价格'
+          message: '请输入正确的金额'
+        },
+        {
+          value: this.trade.dealPrice,
+          method: 'required',
+          message: '请输入付款金额'
         }
       ];
       return this.check(rules);
     }
     computed = {
-      couponText () {
-        if (!this.coupons || this.coupons.length <= 0) return '无可用';
-        return this.selectedCoupon ? `满${this.selectedCoupon.limitPrice}减${this.selectedCoupon.price}` : '未使用';
-      },
-      coupons () {
-        if (!this.ownCoupons && !this.dealPrice) return;
-        if (!this.ownCoupons) return;
-        return this.ownCoupons
-          .filter(item => item.supportType != 1)  // 并不能使仅线上使用
-          .filter(item => item.type == 'CASH')    // 必须是现金券
-          .filter(item => item.limitPrice < this.dealPrice); // 金额满足要求
-      },
-      couponLabel () {
-        if (!this.coupons || !this.dealPrice) return;
-        return this.selectedCoupon ? '已选择' : this.coupons.length + '张可用';
-      }
     };
     watch = {
-      coupons (news) {
-        if (!this.coupons) return;
-        if (news.length > 0) {
-          let selected = news[0];
-          news.forEach(item => {
-            selected = item.price > selected.price ? item : selected;
-          });
-          if (!selected) return;
-          this.selectedCoupon = selected;
-        } else {
-          this.selectedCoupon = null;
-        }
-        this.$apply();
-      }
     };
     components = {
-      Tips: FormTips
+      Loading: Loading,
+      Tips: FormTips,
+      ButtonWidget: ButtonWidget
     };
-    mixins = [base, input];
+    mixins = [base, input, router];
     config = {
-      navigationBarTitleText: '微信支付'
+      navigationBarTitleText: '在线支付'
     };
   }
 </script>
@@ -201,7 +496,6 @@
   .container{
     padding: 40rpx;
   }
-
   .pay-box{
     padding: 40rpx;
     background-color: #fff;
@@ -213,8 +507,8 @@
         border-radius: 50%;
       }
     }
-
     .content-box{
+      width: 100%;
       margin-top: 20rpx;
       .input-box, .coupon-box{
         border-bottom: $border;

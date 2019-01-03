@@ -1,0 +1,132 @@
+<template>
+  <view class="row bonus-goods-item">
+    <view>
+      <image class="goods-image"  lazy-load src="{{detail.imageUrl}}" ></image>
+    </view>
+
+    <view class="main-box column">
+      <!--标题-->
+      <view>
+        <text class="xl">{{detail.name}}</text>
+      </view>
+      <text class="xxs muted inline goods-subhead" wx:if="{{detail.subhead != null}}">{{detail.subhead}}</text>
+      <!--销量展示-->
+      <view class="row">
+        <view class="row" wx:if="{{detail.isSales || detail.isSales == null}}">
+          <text class="xs muted">已兑{{detail.salesVolume}}件</text>
+        </view>
+        <!--标签-->
+        <block wx:for="{{detail.tags}}" wx:key="index" wx:for-item="tag">
+          <text class="xxs tag-box ml10">{{tag.tag}}</text>
+        </block>
+      </view>
+
+      <!--价格-->
+      <view class="row-between">
+        <view class="price-box">
+          <icon class="recharge" color="major"/>
+          <text class="goods-price">{{detail.sellPrice}}积分</text>
+        </view>
+        <view class="btn-box" @tap="goods({{detail}})">立即兑换</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+
+  export default class BargainMoreItem extends wepy.component {
+    prop = {
+      detail: {}
+    };
+    data = {
+    };
+    async onLoad () {
+    };
+    methods = {
+      goods(detail) {
+        this.$emit('goods', detail.id)
+      }
+    };
+    computed = {
+    };
+    components = {
+    };
+    mixins = [base];
+    config = {
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  $img-width:180rpx;
+  .bonus-goods-item{
+    background-color: white;
+    margin: 10rpx 10rpx 0;
+    padding: 20rpx;
+    .goods-image {
+      height: 200rpx;
+      width: 200rpx;
+    }
+    .goods-row-border{
+      border-top: $border;
+    }
+
+    .main-box{
+      margin-left: 20rpx;
+      flex: 1;
+      .goods-subhead{
+        width: 480rpx;
+      }
+    }
+    .tag-box{
+      color: $color-primary-red;
+      border:1px solid $color-primary-red;
+      border-radius: 4rpx;
+      padding: 5rpx;
+      line-height: $text-xxs;
+    }
+    .price-box{
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      .goods-unit{
+        color: $color-major;
+        font-size: $text-sm;
+      }
+      .goods-price{
+        color: $color-major;
+        font-size: $text-xl;
+      }
+      .original-price{
+        color: $color-muted;
+        font-size: $text-sm;
+        margin-left: 10rpx;
+        text-decoration: line-through;
+      }
+      .service-box{
+        background-color: $color-primary;
+        color: white;
+        padding: 5rpx 10rpx;
+        border-radius: 10rpx;
+        line-height: 29px;
+      }
+      .tag-box{
+        border:1px solid $color-primary;
+        border-radius: 4rpx;
+        padding: 5rpx;
+        line-height: $text-xxs;
+      }
+    }
+    .btn-box{
+      background-color: $color-primary-red;
+      color: white;
+      padding: 8rpx 16rpx;
+      border-radius: 5rpx;
+      font-size: $text-sm;
+    }
+  }
+</style>

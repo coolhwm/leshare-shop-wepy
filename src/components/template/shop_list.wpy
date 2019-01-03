@@ -1,0 +1,126 @@
+<template>
+  <view>
+    <block wx:if="{{goodsList.length > 0 && param.showActiveBar}}">
+      <scroll-view scroll-x class="goods-scroll-list" wx:if="{{goodsList.length > 3}}">
+        <repeat for="{{goodsList}}" key="index" index="index" item="item">
+          <GoodsItem :goods.sync="item"/>
+        </repeat>
+      </scroll-view>
+
+      <view class="goods-row-list" wx:else >
+        <repeat for="{{goodsList}}" key="index" index="index" item="item">
+          <GoodsItem :goods.sync="item"/>
+        </repeat>
+      </view>
+    </block>
+
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <block wx:if="{{param.shopMode == 'HIDE_SHOP'}}">
+        <SimpleItem :item.sync="item" />
+      </block>
+      <block wx:elif="{{param.shopMode == 'POINT_SHOP'}}">
+        <PointItem :item.sync="item" />
+      </block>
+      <block wx:else>
+        <ShopItem :item.sync="item" />
+      </block>
+    </repeat>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+  </view>
+</template>
+
+<script>
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import wepy from 'wepy';
+  import shop from '../../api/shop';
+  import base from '../../mixins/base';
+  import pagination from '../../mixins/pagination';
+  import ShopItem from '../shop/sub_goods_item';
+  import PointItem from '../shop/sub_point_item';
+  import SimpleItem from '../shop/sub_simple_item';
+  import Loadmore from '../../components/weui/loadmore';
+  import GoodsItem from './goods/goods_active';
+  @connect({
+    orderCount: store.get('orderCount')
+  })
+  export default class ShopList extends wepy.component {
+    props = {
+      param: {}
+    };
+    data = {
+      page: {
+        list: [
+        ]
+      },
+      goodsList: null,
+      init: false,
+      location: null
+    };
+    params() {
+      const param = {
+        goods: 1
+      };
+      if (this.location) {
+        param.longitude = this.location.longitude;
+        param.latitude = this.location.latitude;
+      }
+      return param;
+    }
+    methods = {
+      async load(location) {
+        this.location = location;
+        // 门店列表
+        this.page = shop.subShopList();
+        this.page.count = 15;
+        // 翻页
+        await this.next();
+        // 筛选新客列表
+        this.goodsList = shop.grepActivityGoodsList(this.page.list);
+        this.page.count = 10;
+        this.$apply();
+      }
+    };
+    events = {
+      'on-reach-bottom': async () => {
+        await this.next();
+      }
+    };
+    computed = {
+      loading() {
+        return this.init ? this.page.loading : true;
+      }
+    };
+    mixins = [base, pagination];
+    components = {
+      SimpleItem: SimpleItem,
+      ShopItem: ShopItem,
+      Loadmore: Loadmore,
+      GoodsItem: GoodsItem,
+      PointItem: PointItem
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .goods-row-list{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    background-color: #FFFFFF;
+    width: 710rpx;
+    padding: 20rpx;
+    border-bottom: 1px solid #E9E9E9;
+  }
+  .goods-scroll-list{
+    background-color: #FFFFFF;
+    width: 710rpx;
+    white-space: nowrap;
+    height: 330rpx;
+    padding: 20rpx;
+    border-bottom: 1px solid #E9E9E9;
+  }
+</style>

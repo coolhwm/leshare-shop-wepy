@@ -1,0 +1,531 @@
+<template>
+  <Loading :init.sync="init"/>
+  <view class="sub-shop-detail-box" wx:if="{{init}}">
+    <!-- 轮播图 -->
+    <swiper class="goods-swiper" autoplay="true" interval="5000" @tap="previewDetailSwiper" wx:if="{{subShopInfo.images.length > 0}}">
+      <block wx:for="{{subShopInfo.images}}" wx:key="id">
+        <swiper-item>
+          <image src="{{item.url}}/w1080" mode="aspectFill"></image>
+        </swiper-item>
+      </block>
+    </swiper>
+    <view wx:else class="none-swiper-box"></view>
+
+    <image src="{{subShopInfo.avatar}}/tiny" class="{{subShopInfo.images.length > 0 ? 'shop-avatar-box' : 'none-swiper-avatar-box'}}"/>
+
+    <view class="column shop-top-box">
+      <view class="column-center top-box">
+        <view class="share-box">
+          <button open-type="share" plain class="column-center">
+            <icon class="share-round" color="gray"/>
+            <text class="muted sm">分享</text>
+          </button>
+        </view>
+        <text class="shop-name-box mb10">{{subShopInfo.name}}</text>
+        <view>
+          <block wx:for="{{subShopInfo.tags.NORMAL}}" wx:for-item="item" wx:for-index="index" wx:key="index">
+            <text class="tag-box muted xxs">{{item}}</text>
+          </block>
+        </view>
+        <view class="row mt10">
+          <block wx:for="{{subShopInfo.tags.TAG}}" wx:for-item="item" wx:for-index="index" wx:key="index">
+            <text class="mr10">{{item}}</text>
+          </block>
+          <text wx:if="{{subShopInfo.tags.TAG && subShopInfo.tags.BUSSINESS_AREA}}" class="mr10">|</text>
+          <block wx:for="{{subShopInfo.tags.BUSSINESS_AREA}}" wx:for-item="item" wx:for-index="index" wx:key="index">
+            <text class="mr10">{{item}}</text>
+          </block>
+        </view>
+      </view>
+      <view class="column-center mt20 mb10">
+        <view class="row">
+          <icon class="shop shop-icon-box"/>
+          <text class="shop-icon-box ml10">商家门店</text>
+        </view>
+      </view>
+      <view class="row-between">
+        <view class="column">
+          <text class="xxl">{{subShopInfo.name}}</text>
+          <text class="muted xxs">{{subShopInfo.address}}</text>
+        </view>
+        <view class="row">
+          <icon class="address-circle" style="font-size: 26px;line-height: 26px;" @tap.stop="location"/>
+          <icon class="call ml20" style="font-size: 26px;line-height: 26px;" @tap.stop="phone"/>
+        </view>
+      </view>
+    </view>
+
+
+    <view class="pay-box mt10 row-between" @tap="shopPay">
+      <view class="title-box row">
+        <icon class="pay" color="major"/>
+        <text class="ml10">在线付款</text>
+      </view>
+      <view class="pay-btn row-center">
+        <text>买单</text>
+      </view>
+    </view>
+
+    <view class="point-box mt10 column" @tap="memberBalance" wx:if="{{pointRule}}">
+      <view class="row-between sub-top-box">
+        <view class="row">
+          <icon class="sale" color="major"/>
+          <text class="ml10">赠送金</text>
+        </view>
+        <view class="row" @tap="back">
+          <text class="muted sm">查看余额</text>
+          <icon class="more" color="gray"/>
+        </view>
+      </view>
+      <view class="column ml20">
+        <text>• {{pointRule.available ? '当前可使用赠送金抵扣' : '当前不在活动时段'}}</text>
+        <text>• {{pointRule.priceTips || '无使用金额限制'}}</text>
+        <text>• {{pointRule.timeTips || '无使用时间限制'}}</text>
+      </view>
+    </view>
+
+
+
+    <view class="column shop-mini-program-box mt10" wx:if="{{subShopInfo.maCodeUrl}}">
+      <view class="row sub-top-box">
+        <icon class="mini-program" style="color: #43B045"/>
+        <text class="ml10">商家小程序</text>
+        <text wx:if="{{subShopInfo.useParentBonus > 0}}" class="qrcode-tag-box primary ml10 xs">商品可抵扣{{subShopInfo.useParentBonus}}积分</text>
+      </view>
+      <view class="row-between mini-program-content-box" @tap="checkMaCode">
+        <view class="column">
+          <text class="xs" style="margin-bottom: 6rpx;" wx:if="{{subShopInfo.useParentBonus > 0}}">每100一品品积分可抵扣1元，最多使用{{subShopInfo.useParentBonus}}积分</text>
+          <text class="xs" style="margin-bottom: 6rpx;" wx:else>进入商家小程序选购更多商品</text>
+          <text class="muted xs">点击并长按识别小程序码可直接进入商家小程序</text>
+        </view>
+        <icon class="more" color="gray"/>
+      </view>
+    </view>
+
+    <view class="column sale-box mt10" wx:if="{{goodsList.length > 0}}">
+      <view class="row sale-top-box">
+        <icon class="sale" style="color: #FF6200"/>
+        <text class="ml10">优惠信息</text>
+      </view>
+      <repeat for="{{goodsList}}" key="index" index="index" item="item">
+        <GoodsRow :goods.sync="item"/>
+      </repeat>
+    </view>
+
+    <!--<view class="column signboard-box mt10" wx:if="{{subShopGoodsList.length > 0}}">-->
+      <!--<view class="row-between sub-top-box">-->
+        <!--<view class="row">-->
+          <!--<icon class="signboard xsmall"/>-->
+          <!--<text class="ml10">商家招牌</text>-->
+        <!--</view>-->
+        <!--<view class="row" @tap="shopMore">-->
+          <!--<text class="muted sm">查看更多</text>-->
+          <!--<icon class="more" color="gray"/>-->
+        <!--</view>-->
+      <!--</view>-->
+      <!--<view class="mt10">-->
+        <!--<scroll-view scroll-x class="mini-box">-->
+          <!--<repeat for="{{subShopGoodsList}}" key="index" index="index" item="item">-->
+            <!--<GoodsMini :goods.sync="item" />-->
+          <!--</repeat>-->
+        <!--</scroll-view>-->
+      <!--</view>-->
+    <!--</view>-->
+
+    <view class="column signboard-box mt10" wx:if="{{detail.goodsDetails.length > 0}}">
+      <view class="row-between sub-top-box">
+        <view class="row">
+          <icon class="square-shop" style="color: #F8C6CF;"/>
+          <text class="ml10">商家详情</text>
+        </view>
+      </view>
+      <view class="mt10">
+        <!--详情区域-->
+        <DetailList :detail.sync="detail" :isShowTitle="isShowTitle"/>
+      </view>
+    </view>
+
+    <view class="column signboard-box mt10">
+      <view class="row-between sub-top-box">
+        <view class="row">
+          <icon class="signboard" style="color: #F8C6CF"/>
+          <text class="ml10">推荐店铺</text>
+        </view>
+        <view class="row" @tap="back">
+          <text class="muted sm">查看更多</text>
+          <icon class="more" color="gray"/>
+        </view>
+      </view>
+      <view class="mt10">
+        <view wx:for="{{recommendatioShopList}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="shop-box column">
+          <view class="row" style="align-items: flex-start;">
+            <image src="{{item.avatar}}/small" class="avatar-image-box mr10"/>
+            <view class="column">
+              <view class="column" @tap="shopDetail({{item}})">
+                <view>
+                  <text class="list-name-box">{{item.name}}</text>
+                  <block wx:for="{{item.tags.ACTIVITY}}" wx:for-item="item" wx:for-index="index" wx:key="index">
+                    <text class="list-tag-box white xxs ml10">{{item}}</text>
+                  </block>
+                </view>
+                <view class="row-between" style="width: 550rpx">
+                  <view class="column">
+                    <view class="row">
+                      <block wx:for="{{item.tags.TAG}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
+                        <text class="mr10 xs">{{tag}}</text>
+                      </block>
+                      <text wx:if="{{item.tags.TAG}}" class="xs mr10">|</text>
+                      <block wx:for="{{item.tags.BUSSINESS_AREA}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
+                        <text class="mr10 xs">{{tag}}</text>
+                      </block>
+                    </view>
+                    <text class="muted xs list-address-box">{{item.address}}</text>
+                  </view>
+                  <view>
+                    <view class="row">
+                      <text class="muted xs mr10">已售{{item.salesVolume}}件</text>
+                      <text class="muted xs mr10" wx:if="{{item.distance > 0}}">|</text>
+                      <text class="muted xs" wx:if="{{item.distance > 0}}">{{item.distanceDesc}}</text>
+                    </view>
+                    <view wx:if="{{item.tags.TAG}}" style="height: 38rpx;"></view>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <ButtonWidget :bottom.sync="bottom"/>
+
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import Loading from '../../components/common/loading';
+  import { initWxApp } from '../../api/wx_auth';
+  import shop from '../../api/shop';
+  import point from '../../api/point';
+  import GoodsRow from '../../components/template/goods/goods_row';
+  import Tips from '../../utils/Tips';
+  import GoodsMini from '../../components/goods/goods_mini_box';
+  import DetailList from '../../components/goods/detail_list';
+  import ButtonWidget from '../../components/template/button_widget';
+
+  @connect({
+    shop: store.get('shop')
+  })
+  export default class GoodsDetail extends wepy.page {
+    data = {
+      init: false,
+      subShopInfo: null,
+      subShopId: null,
+      goodsList: null,
+      subShopGoodsList: null,
+      recommendatioShopList: null,
+      detail: {
+        goodsDetails: []
+      },
+      isShowTitle: false,
+      bottom: '40rpx',
+      pointRule: null
+    };
+    async onLoad ({subShopId}) {
+      await initWxApp();
+      this.subShopId = subShopId;
+      const [subShopInfo, subShopDetail, goodsList] = await Promise.all([
+        shop.subShopInfo(this.subShopId),
+        shop.subShopDetail(this.subShopId),
+        shop.goodsList(this.subShopId),
+        // shop.subShopGoodsList(this.subShopId),
+      ]);
+      this.subShopInfo = subShopInfo;
+      this.detail.goodsDetails = subShopDetail;
+      this.goodsList = goodsList;
+      // this.subShopGoodsList = subShopGoodsList;
+      this.loaded();
+      this.initPointRule().then();
+      this.recommendatioShopList = await shop.RecommendationShopList();
+      this.$apply();
+    };
+    /**
+     * 初始化赠送金使用规则（东方伟业）
+     */
+    async initPointRule() {
+      if (!this.shop.supportMemberPoint) {
+        return;
+      }
+      this.pointRule = await point.getShopPointRule(this.subShopId);
+      this.$apply();
+    }
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {name} = this.subShopInfo;
+      const imageUrl = this.subShopInfo.images ? this.subShopInfo.images[0].url : this.subShopInfo.avatar
+      console.info(name, imageUrl);
+      return {
+        title: name,
+        imageUrl: imageUrl,
+        path: `/pages/shop/sub_shop_detail?subShopId=${this.subShopId}`
+      }
+    }
+    methods = {
+      /**
+       * 预览轮播图
+       */
+      previewDetailSwiper() {
+        const urls = this.subShopInfo.images.map(value => value.url);
+        wepy.previewImage({
+          urls: urls
+        });
+      },
+      checkMaCode() {
+        wepy.previewImage({
+          urls: [this.subShopInfo.maCodeUrl]
+        })
+      },
+      phone () {
+        if (this.shop) {
+          wepy.makePhoneCall({phoneNumber: this.subShopInfo.phone});
+        } else {
+          Tips.alert('该店铺没有电话');
+        }
+      },
+      location () {
+        const { longitude, latitude, name, describe } = this.subShopInfo;
+        wepy.openLocation({
+          latitude: Number(latitude),
+          longitude: Number(longitude),
+          name: name,
+          address: describe
+        });
+      },
+      back() {
+        wepy.navigateBack();
+      },
+      shopDetail(subShop) {
+        this.$navigate(`/pages/shop/sub_shop_detail?subShopId=${subShop.shopId}`)
+      },
+      shopPay() {
+        this.$navigate(`/pages/shop/pay?subShopId=${this.subShopId}`)
+      },
+      shopMore() {
+        this.$navigate(`/pages/shop/sub_shop_menu?shopName=${this.subShopInfo.name}&shopId=${this.subShopId}`)
+      },
+      memberBalance() {
+        this.$navigate('/package_member/pages/member/balance')
+      }
+    };
+    computed = {};
+    components = {
+      Loading: Loading,
+      GoodsRow: GoodsRow,
+      GoodsMini: GoodsMini,
+      DetailList: DetailList,
+      ButtonWidget: ButtonWidget
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '商家详情'
+    };
+  }
+</script>
+
+<style lang="scss" scoped>
+  @import "../../styles/variable";
+  .sub-shop-detail-box{
+    $swiper-height: 400rpx;
+    width: 750rpx;
+    overflow: hidden;
+    .goods-swiper{
+      height: $swiper-height;
+      width: 750rpx;
+
+      image{
+        width:100%;
+        height:$swiper-height;
+      }
+    }
+    .none-swiper-box{
+      width: 750rpx;
+      height: 100rpx;
+    }
+    $avatar-size: 90rpx;
+    .shop-avatar-box{
+      position: absolute;
+      width: $avatar-size;
+      height: $avatar-size;
+      border: $border;
+      border-radius: $avatar-size / 2;
+      top: $swiper-height - $avatar-size / 2;
+      left: 375rpx - $avatar-size / 2;
+    }
+    .none-swiper-avatar-box{
+      position: absolute;
+      width: $avatar-size;
+      height: $avatar-size;
+      border: $border;
+      border-radius: $avatar-size / 2;
+      top: 100rpx - $avatar-size / 2;
+      left: 375rpx - $avatar-size / 2;
+    }
+
+    .shop-top-box{
+      padding: $avatar-size / 2 + 20rpx 40rpx 40rpx;
+      background-color: white;
+      .top-box{
+        border-bottom: $border;
+        padding-bottom: 20rpx;
+      }
+      .tag-box{
+        border:1px solid $color-muted;
+        border-radius: 4rpx;
+        padding: 5rpx;
+        line-height: $text-xxs;
+        margin: 0 5rpx;
+      }
+      .share-box{
+        position: absolute;
+        border-left: $border;
+        right: 30rpx;
+      }
+    }
+    .sub-top-box{
+      border-bottom: $border;
+      padding-bottom: 14rpx;
+      padding-top: 10rpx;
+      margin-bottom: 10rpx;
+    }
+    .sale-top-box{
+      padding-bottom: 14rpx;
+      padding-top: 10rpx;
+    }
+    .shop-name-box{
+      font-size: 40rpx;
+      line-height: 40rpx;
+      font-weight: bold;
+      padding-bottom: 10rpx;
+    }
+    .shop-icon-box{
+      color: $color-normal;
+      font-weight: bold;
+      font-size: 30rpx;
+      line-height: 30rpx;
+    }
+    .shop-mini-program-box{
+      background-color: white;
+      padding: 10rpx;
+    }
+    .mini-program-content-box{
+      padding: 0 20rpx 10rpx;
+    }
+    .sale-box{
+      background-color: white;
+      padding: 10rpx;
+    }
+    .sale-goods-iamge-box{
+      width: 260rpx;
+      height: 260rpx;
+    }
+    .signboard-box{
+      background-color: white;
+      padding: 10rpx;
+      .detail-box{
+        margin-top: 0;
+        border-top: none;
+      }
+    }
+    .mini-box{
+      width: 750rpx;
+      height: 300rpx;
+      white-space: nowrap;
+    }
+    .goods-row-border{
+      padding-top: 20rpx;
+    }
+    .goods-mini-box{
+      border-top: none;
+      padding: 0 10rpx;
+    }
+
+
+    .list-name-box{
+      font-weight: bold;
+    }
+    .list-tag-box{
+      border-radius: 4rpx;
+      padding: 0 5rpx;
+      line-height: $text-xxs;
+      background-color: $color-primary;
+    }
+    .list-muted-tag-box{
+      border:1px solid $color-muted;
+      border-radius: 4rpx;
+      padding: 0 5rpx;
+      line-height: $text-xxs;
+    }
+    .address-box{
+      padding: 10rpx 20rpx;
+      border-bottom: $border;
+      background-color: white;
+      .btn-box{
+        padding: 0 6rpx;
+        color: lighten($color-danger, 10%);
+      }
+    }
+    .list-address-box{
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      width: 400rpx;
+    }
+    .shop-box{
+      padding: 20rpx;
+      background-color: white;
+    }
+    .shop-box + .shop-box{
+      border-top: $border;
+    }
+    .avatar-image-box{
+      width: 120rpx;
+      height: 120rpx;
+      border: $border;
+    }
+    .qrcode-tag-box{
+      border:1px solid $color-primary;
+      border-radius: 4rpx;
+      padding: 5rpx;
+      line-height: $text-xxs;
+    }
+  }
+  .pay-box{
+    background-color: white;
+    height: 80rpx;
+    padding: 10rpx;
+    .pay-btn{
+      align-items: center;
+      border-radius: 25rpx;
+      width: 160rpx;
+      height: 55rpx;
+      margin-right: 10rpx;
+      background: linear-gradient(to right, #eea849, #f46b45);
+      text {
+        color: #FFFFFF;
+      }
+    }
+  }
+
+  .point-box{
+    background-color: white;
+    padding: 10rpx;
+  }
+
+</style>

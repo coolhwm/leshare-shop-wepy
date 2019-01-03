@@ -1,0 +1,87 @@
+<template>
+  <Loading :init.sync="init"/>
+  <view class="container" wx:if="{{init}}">
+    <!--TAB 页-->
+    <ZanTab :tab.sync="tab" @change.user="switchTab" />
+
+    <!--列表展现-->
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <BookingItem :detail.sync="item"/>
+    </repeat>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+  </view>
+
+  <!--占位符-->
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关预约信息"/>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import pagination from '../../mixins/pagination.wpy';
+  import Placeholder from '../../components/common/placeholder';
+  import ZanTab from '../../components/zanui/tab';
+  import Loadmore from '../../components/weui/loadmore';
+  import Loading from '../../components/common/loading';
+  import booking from '../../api/booking';
+  import BookingItem from '../../components/booking/booking_list_item';
+  import Event from '../../utils/Event';
+
+  export default class BookingList extends wepy.page {
+    data = {
+      init: true,
+      page: {
+        list: [
+        ]
+      },
+      tab: {
+        list: [
+          {id: '0', title: '全部', status: ''},
+          {id: '1', title: '待处理', status: 'WAITING_PROCCESS'},
+          {id: '2', title: '处理中', status: 'PROCESSING'},
+          {id: '3', title: '已完成', status: 'FINISH'},
+          {id: '4', title: '已超时', status: 'TIMEOUT'},
+          {id: '5', title: '已取消', status: 'CANCEL'}
+        ],
+        selectedId: '0'
+      }
+    };
+    async onLoad ({status}) {
+      if (status != null && status != '' && status != 'null') {
+        this.tab.selectedId = status;
+      }
+      this.page = await booking.list();
+      await this.next();
+      Event.listen(Event.BOOKING_LIST_UPDATE, this.update.bind(this), this);
+    };
+    params() {
+      const status = this.tab.list.find(item => item.id === this.tab.selectedId);
+      return {status: status.status};
+    };
+    methods = {
+      switchTab() {
+        this.reload();
+      }
+    };
+    events = {};
+    components = {
+      Placeholder: Placeholder,
+      ZanTab: ZanTab,
+      Loadmore: Loadmore,
+      Loading: Loading,
+      BookingItem: BookingItem
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '我的预约',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+</style>

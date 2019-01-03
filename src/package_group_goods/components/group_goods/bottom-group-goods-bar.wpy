@@ -1,0 +1,67 @@
+<template>
+  <view class="tarde-action-bar row-end">
+    <view>
+      <text>合计 </text>
+      <text class="major mr20">￥{{price}}</text>
+    </view>
+    <form class="trade-confirm-button row-center" @tap="buy">
+      <button plain form-type="submit" >去下单</button>
+    </form>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class GroupBar extends wepy.component {
+    props = {
+      price: {}
+    };
+    data = {
+    };
+    methods = {
+      buy() {
+        this.$emit('buy')
+      }
+    };
+    computed = {
+    };
+    watch = {
+    };
+    mixins = [];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+
+  .tarde-action-bar{
+    position: fixed;
+    z-index: 10000;
+    bottom: 0;
+    height: 100rpx;
+    width: 100%;
+    background-color: #FFF;
+    border-top: $border;
+
+    text{
+      font-size: $text-xxl;
+    }
+
+    .trade-confirm-button{
+      height: 100%;
+      width: 280rpx;
+      line-height: 100rpx;
+      text-align: center;
+      background-color: $color-primary;
+      color: #FFF;
+      button{
+        color: #FFF;
+      }
+    }
+
+    .trade-confirm-disable{
+      background-color: #B0B0B0;
+    }
+  }
+</style>

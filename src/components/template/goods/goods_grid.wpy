@@ -5,25 +5,24 @@
     </view>
     <!--图片-->
     <view>
-      <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="routeToGoods({{goods.id}})"></image>
+      <image class="goods-image" lazy-load src="{{goods.imageUrl}}/small" @tap="routeToGoods({{goods.id}})"></image>
     </view>
     <view class="goods-title" @tap="routeToGoods({{goods.id}})">
       <text wx:if="{{goods.isGoodsName}}">{{goods.name}}</text>
     </view>
-
-    <view class="row-between" wx:if="{{goods.isSales || goods.isPrice || goods.isCart}}">
+    <view class="row-between" wx:if="{{goods.isSales || goods.isPrice}}">
       <view class="content-box column" wx:if="{{goods.isSales || goods.isPrice}}">
-        <text class="xs muted" wx:if="{{goods.isSales}}">已售{{goods.salesVolume}}件</text>
+        <view class="row sale-tag-box">
+          <text class="xs muted" wx:if="{{goods.isSales}}">已售{{goods.salesVolume}}件</text>
+          <block wx:for="{{goods.tags}}" wx:key="index" wx:index="index" wx:for-item="item">
+            <text class="xxs primary tag-box ml10">{{item}}</text>
+          </block>
+        </view>
         <view class="row" wx:if="{{goods.isPrice}}">
-          <text class="major lg" >￥{{goods.priceLable}}</text>
-          <text class="cancel ml10" wx:if="{{goods.discount}}">￥{{goods.originalPrice}}</text>
+          <text class="major lg" >￥{{goods.price}}</text>
+          <text class="cancel ml10" wx:if="{{goods.originalPrice}}">￥{{goods.originalPrice}}</text>
         </view>
       </view>
-      <!--加入购物车按钮-->
-      <block wx:if="{{goods.isCart}}">
-        <icon class="plus normal" wx:if="{{goods.totalStock > 0}}"  @tap="handlePlusCart({{goods}})" />
-        <text class="sm muted" wx:else>已售罄</text>
-      </block>
     </view>
   </view>
 </template>
@@ -36,6 +35,12 @@
       goods: {}
     };
     methods = {
+      service (id) {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${id}`)
+      },
+      digit (id) {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${id}`)
+      }
     };
     mixins = [router]
   }
@@ -75,7 +80,7 @@
       height: $size;
     }
     .goods-title{
-      height: 80rpx;
+      max-height: 80rpx;
       padding: 0 10rpx;
       text{
         word-break: break-all;
@@ -86,8 +91,25 @@
         overflow: hidden;
       }
     }
+    .tag-box{
+      border:1px solid $color-primary;
+      border-radius: 4rpx;
+      padding: 5rpx;
+      line-height: $text-xxs;
+    }
     .content-box{
       padding: 5rpx 10rpx;
+      overflow:hidden;
+      .sale-tag-box text{
+        white-space:nowrap;
+      }
+      .service-box{
+        background-color: $color-primary;
+        color: white;
+        padding: 5rpx 10rpx;
+        border-radius: 10rpx;
+        line-height: 29px;
+      }
     }
   }
 </style>

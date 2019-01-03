@@ -1,0 +1,60 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view class="column" wx:if="{{init}}">
+    <image src="http://img.leshare.shop/shop/other/bargain_bar.jpg" mode="aspectFill" style="width: 750rpx; height:200rpx;"/>
+
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <BargainItem :detail.sync="item"/>
+    </repeat>
+
+    <!--占位符-->
+    <Placeholder :show.sync="isPageEmpty" message="您还没有相关砍价商品" />
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import pagination from '../../mixins/pagination';
+  import Loading from '../../components/common/loading';
+  import BargainItem from '../../components/bargain/bargain_more_item'
+  import bargain from '../../api/bargain';
+  import Placeholder from '../../components/common/placeholder';
+
+  export default class BargainMoreList extends wepy.page {
+    data = {
+      init: false,
+      page: []
+    };
+    async onLoad () {
+      this.page = await bargain.bargainGoodsList();
+      await this.next();
+    };
+    onShareAppMessage () {
+      return {
+        title: '一品品疯狂砍价，超值底价等你来砍'
+      };
+    }
+    methods = {
+    };
+    computed = {
+    };
+    components = {
+      Loading: Loading,
+      BargainItem: BargainItem,
+      Placeholder: Placeholder
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '砍价商品',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+</style>

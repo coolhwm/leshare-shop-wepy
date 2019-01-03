@@ -1,0 +1,105 @@
+<template>
+  <!--商品基本信息展示-->
+  <view class="row-between goods-msg-box">
+    <view class="column name-box">
+      <view class="row mb20">
+        <view class="row assist-rule-box">
+          <text>需</text><text class="price-box primary">{{rule.leastAssist}}</text><text>人助力</text>
+        </view>
+        <view class="column ml20">
+          <text class="muted sellPrice-box sm">￥{{rule.goods.originalPrice}}</text>
+          <view class="price-rule-box">
+            <text class="xxs">{{rule.ruleTip}}</text>
+          </view>
+        </view>
+      </view>
+      <text class="goods-name-box mb20">{{rule.goods.name}}</text>
+      <view class="row-between rule-tip-box">
+        <text class="xs muted ">{{rule.joinCount}}人正在抢</text>
+        <text class="xs muted mr10">{{rule.assistCount}}人已参与</text>
+      </view>
+      <text class="xs primary mt10" wx:if="{{rule.remainder > 0}}">仅剩{{rule.remainder}}份</text>
+    </view>
+    <view class="share-box">
+      <button class="column-center" plain open-type="share">
+        <icon class="share small"/>
+        <text class="sm">分享</text>
+      </button>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import router from '../../mixins/router';
+  import countdown from '../../mixins/countdown';
+
+  export default class GoodsMsgBar extends wepy.component {
+    props = {
+      rule: {}
+    };
+    data = {
+    };
+    mixins = [router, countdown];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .assist-rule-box{
+    align-items: flex-end;
+  }
+  .goods-msg-box{
+    background: white;
+    padding: 20rpx;
+    .name-box{
+      width: 600rpx;
+    }
+    .price-box{
+      font-size: 80rpx;
+      line-height: 80rpx;
+    }
+    .sellPrice-box{
+      text-decoration: line-through;
+      line-height: $text-sm;
+    }
+    .price-rule-box{
+      text{
+        background: #FEE7EF;
+        color: #FB4578;
+        padding: 0 4rpx;
+      }
+    }
+    .goods-name-box{
+      font-size: 30rpx;
+      line-height: 30rpx;
+    }
+    .share-box {
+      width: 40px;
+      min-width: 40px;
+      padding-left: 5px;
+      border-left: $border;
+      button {
+        align-items: center;
+        padding: 0;
+        text {
+          line-height: 26 rpx;
+          margin-top: 15 rpx;
+        }
+      }
+    }
+  }
+  .goods-des-box{
+    background: white;
+    padding: 20rpx;
+    border-top:$border;
+    margin-bottom: 10rpx;
+    .row icon{
+      color: $color-primary;
+    }
+  }
+  .rule-tip-box{
+    line-height: $text-xs;
+  }
+</style>

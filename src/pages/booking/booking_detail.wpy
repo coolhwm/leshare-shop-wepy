@@ -1,0 +1,170 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view class="container column" wx:if="{{init}}">
+
+    <!--商品信息区域-->
+    <block>
+      <BookingGoodsInfoBar :goods.sync="goods"/>
+    </block>
+
+    <!--订单信息区域-->
+    <view class="row-between order-box" wx:if="{{detail.order}}">
+      <text>订单信息</text>
+      <view @tap="order">
+        <text class="muted sm">· 收件人</text>
+        <text class="muted sm ml10">· 收货地址 </text>
+        <text class="muted sm ml10">· 成团时间</text>
+        <icon class="more ml10" color="gray"/>
+      </view>
+    </view>
+
+    <!--预约信息区域-->
+    <form>
+      <view class="booking-box">
+        <view class="row-center top-box">
+          <icon class="booking"/>
+          <text class="primary xxl ml10">预约表</text>
+        </view>
+        <view class="content-box">
+          <view class="weui-cells weui-cells-form">
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">姓名</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="name" value="{{detail.name}}" disabled/>
+              </view>
+            </view>
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">手机</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="phone" value="{{detail.phone}}" disabled/>
+              </view>
+            </view>
+
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">日期</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="date" value="{{detail.date}}" disabled/>
+              </view>
+            </view>
+
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">时间</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="time" value="{{detail.time}}" disabled/>
+              </view>
+            </view>
+
+            <block wx:for="{{extraParam}}" wx:key="index" wx:for-item="item">
+              <view class="weui-cell weui-cell_input">
+                <view class="weui-cell__hd">
+                  <view class="weui-label">{{item.label}}</view>
+                </view>
+                <view class="weui-cell__bd">
+                  <input class="weui-input" name="{{item.name}}" value="{{item.value}}" disabled/>
+                </view>
+              </view>
+            </block>
+
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">备注</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="remark" value="{{detail.remark}}" disabled/>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="ml20 tips-box" wx:if="{{detail.goods.booking != null && detail.goods.booking.tip != null}}">
+        <text class="muted">{{detail.goods.booking.tip}}</text>
+      </view>
+    </form>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import Loading from '../../components/common/loading';
+  import booking from '../../api/booking';
+  import BookingGoodsInfoBar from '../../components/booking/booking_goods_info_bar'
+
+  export default class BookingDetail extends wepy.page {
+    data = {
+      init: false,
+      detail: {},
+      extraParam: null,
+      goods: {}
+    };
+    async onLoad ({bookingId}) {
+      this.detail = await booking.bookingDetail(bookingId);
+      const {extraParam, goods} = this.detail;
+      this.goods = goods;
+      if (extraParam != null && goods.booking != null) {
+        const param = JSON.parse(extraParam);
+        this.extraParam = JSON.parse(goods.booking.extraParam).map(item => {
+          for (let key in param) {
+            if (key === item.name) {
+              item.value = param[key];
+            }
+          }
+          return item;
+        });
+      }
+      this.loaded();
+    };
+    methods = {
+      order() {
+        this.$navigate(`/pages/order/detail?orderId=${this.detail.orderId}`);
+      }
+    };
+    computed = {
+    };
+    components = {
+      Loading: Loading,
+      BookingGoodsInfoBar: BookingGoodsInfoBar
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '预约详情'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .order-box{
+    background-color: white;
+    margin: 0 20rpx;
+    padding: 20rpx;
+    border-radius: 20rpx;
+  }
+  .booking-box{
+    background-color: white;
+    margin: 20rpx;
+    border-radius: 20rpx;
+    padding-bottom: 20rpx;
+    .top-box{
+      flex: 1;
+      border-top-left-radius: 20rpx;
+      border-top-right-radius: 20rpx;
+      padding: 20rpx;
+    }
+    .content-box{
+      padding: 0 20rpx;
+    }
+  }
+  .tips-box{
+    padding: 10rpx;
+  }
+</style>

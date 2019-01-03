@@ -1,0 +1,143 @@
+<template>
+  <Loading :init.sync="init"/>
+  <view wx:if="{{init}}">
+    <CouponItem :coupon.sync="coupon" :isDetail.sync="isDetail"/>
+
+    <!--归属门店-->
+    <view class="shop-box" wx:if="{{subShop != null}}">
+      <ShopInfoBar :subShop.sync="subShop"/>
+    </view>
+
+    <!--订单信息栏-->
+    <view class="row-between coupon-order-box"  @tap="order" wx:if="{{coupon.orderId > 0}}">
+      <view>
+        <icon class="order mr10" color="gray"/>
+        <text>订单信息</text>
+      </view>
+      <view>
+        <icon class="more ml10" color="gray"/>
+      </view>
+    </view>
+
+    <view class="success-box column-center"  wx:if="{{success}}">
+      <text  style="font-size: 27px">{{message}}</text>
+      <text class="mt10 xs">{{tips}}</text>
+    </view>
+
+    <view class="tips-box column" wx:if="{{coupon.desc}}">
+      <text>使用说明：</text>
+      <text>{{coupon.desc}}</text>
+    </view>
+
+    <BottomBox :coupon.sync="coupon"/>
+
+    <ButtonWidget/>
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import { initWxAppSync, checkUserInfo } from '../../api/wx_auth';
+  import base from '../../mixins/base';
+  import input from '../../mixins/input';
+  import coupon from '../../api/coupon';
+  import CouponItem from '../../components/coupons/display_item';
+  import ShopInfoBar from '../../components/goods/shop_info_bar';
+  import BottomBox from '../../components/coupons/coupon_bottom_box';
+  import Loading from '../../components/common/loading';
+  import ButtonWidget from '../../components/template/button_widget';
+  import WxUtils from '../../utils/WxUtils';
+  import Tips from '../../utils/Tips';
+
+  @connect({
+    member: store.get('member'),
+    user: store.get('user')
+  })
+  export default class CouponDetail extends wepy.page {
+    data = {
+      init: false,
+      coupon: null,
+      success: false,
+      message: '',
+      tips: '',
+      subShop: null,
+      isDetail: true
+    };
+    async onLoad (param) {
+      await initWxAppSync();
+      await checkUserInfo();
+      const couponId = this.getCouponId(param);
+      if (couponId == null) {
+        Tips.modal('您来晚了一步，优惠券已经领完了');
+        wepy.navigateBack();
+        return;
+      }
+      this.coupon = await coupon.couponDetail(couponId);
+      this.couponId = couponId;
+      this.coupon.status = 'NEVER_USED';
+      this.subShop = this.coupon.subShop;
+      this.loaded();
+    };
+    getCouponId(param) {
+      if (param && param.couponId) {
+        return param.couponId;
+      } else if (param.scene) {
+        return WxUtils.parseQrScene(param.scene, 'couponId');
+      } else {
+        return null;
+      }
+    }
+    methods = {};
+    events = {};
+    components = {
+      CouponItem: CouponItem,
+      ShopInfoBar: ShopInfoBar,
+      BottomBox: BottomBox,
+      Loading: Loading,
+      ButtonWidget: ButtonWidget
+
+    };
+    mixins = [base, input];
+    config = {
+      navigationBarTitleText: '领取优惠券'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .tips-box{
+    margin: 20rpx;
+    padding: 20rpx;
+    background-color: white;
+    border: $border;
+    text{
+      font-size: $text-sm;
+      color: $color-muted;
+    }
+  }
+  .success-box{
+    background-color: white;
+    padding: 20rpx;
+    margin: 20rpx;
+    height: 100px;
+    border: $border;
+    text {
+      color: $color-muted;
+    }
+  }
+  .shop-box{
+    margin: 20rpx;
+    border-left: $border;
+    border-right: $border;
+  }
+  .coupon-order-box{
+    margin: 20rpx;
+    background-color: white;
+    padding: 20rpx;
+    border: $border;
+  }
+</style>

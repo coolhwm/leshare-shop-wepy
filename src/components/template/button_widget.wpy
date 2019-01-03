@@ -1,8 +1,9 @@
 <template>
-  <view class="column share-box" style="bottom: {{param.bottom}}">
+  <view class="column share-box" style="bottom:{{bottom ? bottom : param.bottom}}">
     <block wx:for="{{param.buttons}}" wx:key="action" wx:for-index="index" wx:for-item="button">
-      <button plain hover-class="none"  @tap="routeByAction({{button}})" open-type="{{button.openType}}">
-        <icon class="{{button.iconClass}}" color="gray"/>
+      <button plain hover-class="none"  @tap="routeByAction({{button}})" open-type="{{button.openType}}" class="column-center">
+        <icon class="{{button.iconClass}} xsmall"/>
+        <text class="primary" style="line-height: 16rpx; font-size: 16rpx;">{{button.title}}</text>
       </button>
     </block>
   </view>
@@ -14,13 +15,34 @@
 
   export default class ButtonWidget extends wepy.component {
     props = {
-      param: {}
+      bottom: {
+      },
+      param: {
+        default: {
+          bottom: '100rpx',
+          buttons: [
+            {
+              iconClass: 'home',
+              action: 'PAGE_SWITCH',
+              targetId: '/pages/home/template',
+              title: '首页'
+            },
+            {
+              iconClass: 'service',
+              action: 'CONTACT',
+              openType: 'contact',
+              targetId: null,
+              title: '客服'
+            }
+          ]
+        }
+      }
     };
     mixins = [router];
   }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
   @import "../../styles/variable";
 
   .share-box {
@@ -35,10 +57,11 @@
       justify-content: center;
       align-items: center;
       margin-top: 10rpx;
-      width: 80rpx;
-      height: 80rpx;
+      width: 74rpx;
+      height: 74rpx;
       border: $border;
       border-radius: 50%;
+      padding: 0;
     }
   }
 </style>

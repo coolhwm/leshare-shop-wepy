@@ -1,14 +1,27 @@
+//******候选主题色******/
+$color-primary-red: #F3514F;
+$color-primary-deepred: #A22025;
+$color-primary-blue: #1296db;
+$color-primary-yellow: #FEC324;
+// $color-primary-pink: #ECC2C9;
+$color-primary-pink: #F8C6CF;
+$color-primary-green: #43B045;
+$color-primary-darkgreen: #3a6826;
+$color-primary-black: #2B2B2B;
+$color-primary-gray: #57585A;
+$color-primary-brown: #905537;
+$color-primary-purple: #A069D1;
+
 //******字体颜色变量******/
 $color-major: #FF6200;
-$color-primary: #F3514F;
-// $color-primary: #1296db;
-// $color-primary: #FEC324;
+$color-primary: $color-primary-red;
 $color-primary-darken: darken($color-primary, 5%);
 $color-muted: #A3A3A3;
 $color-weak: #626E7A;
 $color-normal: #262626;
 $color-danger: #e33;
 $color-warn: #f85;
+
 //******字体大小变量******/
 $text-xxl: 34rpx;
 $text-xl: 32rpx;
@@ -18,12 +31,14 @@ $text-sm: 26rpx;
 $text-xs: 24rpx;
 $text-xxs: 22rpx;
 $text-form: 17px;
+
 //******边框样式******/
 $color-border: #EDEDED;
 $color-line: #EEEEEE;
 $border: 1px solid $color-border;
 $border-line: 1px solid $color-line;
 $border-dot: 1px dotted #EFF0F2;
+
 //******背景样式******/
 $color-bg-body: #F5F5F5;
 $color-bg-item: #FAFAFA;

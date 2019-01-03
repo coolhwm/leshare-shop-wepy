@@ -1,0 +1,295 @@
+<template>
+  <Loading :init.sync="init"/>
+  <CoverPanel :display.sync="display" zIndex="99" @tap.user="close"/>
+  <view class="container" wx:if="{{init}}">
+
+    <view class="sub-shop-top-box">
+      <!--tab栏-->
+      <view class="row">
+        <block wx:for="{{tabs.list}}" wx:for-item="tab" wx:for-index="index" wx:key="index">
+          <view @tap="selectTab({{tab}})" class="tab-box row-center">
+            <text class="{{tab.id === tabs.selectedId ? 'primary' : ''}}">{{tab.title}}</text>
+            <icon class="{{tab.id === tabs.selectedId ? 'tab-up' : 'tab-down tab-icon-box'}} xsmall"/>
+          </view>
+        </block>
+      </view>
+
+      <!--tab划出内容栏-->
+      <view class="tabs-box" wx:if="{{display}}">
+        <view wx:if="{{tabs.selectedId}}" class="row sub-shop-tab-box">
+          <text class="{{selectTabTitle === '全部分类' ? 'select-tab-box' : ''}} tabs-item-box" wx:if="{{tabs.selectedId === 'TAG'}}"  @tap="clearSelect('全部分类')">全部分类</text>
+          <text class="{{selectTabTitle === '全部商圈' ? 'select-tab-box' : ''}} tabs-item-box" wx:if="{{tabs.selectedId === 'BUSSINESS_AREA'}}"  @tap="clearSelect('全部商圈')">全部商圈</text>
+          <text class="{{selectTabTitle === '智能排序' ? 'select-tab-box' : ''}} tabs-item-box" wx:if="{{tabs.selectedId === 'SORT'}}"  @tap="clearSelect('智能排序')">智能排序</text>
+          <block wx:for="{{selectTabList}}" wx:for-item="tag" wx:for-index="index" wx:key="index">
+            <text @tap="select({{tag}})" class="tabs-item-box {{selectTabTitle === tag ? 'select-tab-box' : ''}}">{{tag}}</text>
+          </block>
+        </view>
+      </view>
+    </view>
+
+    <!--列表展现-->
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <block wx:if="{{itemType == 'POINT'}}">
+        <ShopPointItem :item.sync="item" />
+      </block>
+      <block wx:else>
+        <ShopGoodsItem :item.sync="item" />
+      </block>
+
+    </repeat>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+
+    <!--提示框-->
+    <Notice @close.user="close" @tap.user="getLocation"/>
+  </view>
+
+  <!--占位符-->
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关商户信息"/>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import shop from '../../api/shop';
+  import base from '../../mixins/base';
+  import pagination from '../../mixins/pagination';
+  import Placeholder from '../../components/common/placeholder';
+  import Loading from '../../components/common/loading';
+  import Loadmore from '../../components/weui/loadmore';
+  import Tab from '../../components/zanui/tab';
+  import _ from 'underscore';
+  import CoverPanel from '../../components/common/cover_panel';
+  import Notice from '../../components/shop/notice';
+  import Tips from '../../utils/Tips';
+  import ShopGoodsItem from '../../components/shop/sub_goods_item';
+  import ShopPointItem from '../../components/shop/sub_point_item';
+
+  export default class SubShopList extends wepy.page {
+    data = {
+      init: true,
+      page: {
+        list: [
+        ]
+      },
+      tabs: {
+        list: [
+          {id: 'TAG', title: '全部分类', isTag: false},
+          {id: 'BUSSINESS_AREA', title: '全部商圈', isTag: false},
+          {id: 'SORT', title: '智能排序', isTag: false}
+        ],
+        selectedId: null
+      },
+      itemType: 'GOODS',
+      tagList: {
+        SORT: ['离我最近', '销量最高']
+      },
+      selectTabList: [],
+      tag: null,
+      tags: [],
+      location: null,
+      display: false,
+      area: null,
+      isLocation: false,
+      address: null,
+      by: null,
+      bussArea: null,
+      showGoods: 1
+    };
+    async onLoad () {
+      try {
+        Tips.loading('定位中');
+        this.location = await wepy.getLocation();
+      } finally {
+        const tags = await shop.subShopTag();
+        this.tagList = _.extend(this.tagList, tags);
+        await this.updateList();
+      }
+    };
+    async onShow() {
+      if (this.isLocation) {
+        this.location = await wepy.getLocation();
+        this.isLocation = false;
+        await this.updateList();
+      }
+    };
+    params() {
+      let param = {
+        goods: this.showGoods
+      };
+      if (this.area) param.area = this.area;
+      if (this.tag) param.tag = this.tag;
+      if (this.bussArea) param.bussArea = this.bussArea;
+      if (this.location) {
+        param.longitude = this.location.longitude;
+        param.latitude = this.location.latitude;
+      }
+      if (this.by === 'distance') {
+        param.by = this.by;
+        param.sort = 'asc';
+      } else if (this.by === 'sales_volume') {
+        param.by = this.by;
+        param.sort = 'desc';
+      }
+      return param;
+    }
+    // 商铺列表刷新
+    async updateList() {
+      this.page = await shop.subShopList();
+      await this.next();
+    }
+    methods = {
+      // 选取tab
+      selectTab(tab) {
+        this.tabs.selectedId = tab.id;
+        this.selectTabList = this.tagList[tab.id];
+        this.display = true;
+      },
+      // 清空选择的参数
+      async clearSelect(tag) {
+        const oldTag = this.tabs.list.find(item => item.id === this.tabs.selectedId);
+        oldTag.isTag = false;
+        this.tags = _.without(this.tags, oldTag.title);
+        if (this.tags.length > 0) {
+          this.tag = this.tags.join(',');
+        } else {
+          this.tag = null;
+        }
+        this.tabs.list.find(item => item.id === this.tabs.selectedId).title = tag;
+        if (tag === '全城') {
+          this.area = null;
+        } else if (tag === '智能排序') {
+          this.by = null;
+        } else if (tag === '全部商圈') {
+          this.bussArea = null;
+        }
+        this.display = false;
+        this.tabs.selectedId = null;
+        await Tips.loading();
+        await this.updateList();
+        await Tips.loaded();
+      },
+      // 选择标签
+      async select(tag) {
+        if (tag === '离我最近' && !this.location) {
+          try {
+            this.location = await wepy.getLocation();
+          } catch (e) {
+            const notice = {
+              title: '提示',
+              btnText: '确定',
+              content: `您尚未定位，无法找到距离最近的商铺，您确定开启定位？`,
+              isDouble: true
+            };
+            this.$invoke('Notice', 'open', notice);
+          }
+        } else {
+          const newTag = this.tabs.list.find(item => item.id === this.tabs.selectedId);
+          newTag.title = tag;
+          newTag.isTag = true;
+          if (this.tabs.selectedId === 'AREA') {
+            this.area = tag;
+          } else if (this.tabs.selectedId === 'BUSSINESS_AREA') {
+            this.bussArea = tag;
+          } else if (this.tabs.selectedId === 'SORT') {
+            if (tag === '离我最近') {
+              this.by = 'distance';
+            } else if (tag === '销量最高') {
+              this.by = 'sales_volume';
+            }
+          } else {
+            this.tags = this.tabs.list
+              .filter(item => item.id !== 'AREA' && item.id !== 'SORT' && item.id !== 'BUSSINESS_AREA' && item.isTag === true)
+              .map(item => item.title);
+            this.tag = this.tags.join(',');
+          }
+        }
+        this.display = false;
+        this.tabs.selectedId = null;
+        await Tips.loading();
+        await this.updateList();
+        await Tips.loaded();
+      },
+      close() {
+        this.display = false;
+        this.tabs.selectedId = null;
+      },
+      // 重新授权获取坐标
+      async getLocation() {
+        this.isLocation = true;
+      }
+    };
+    computed = {
+      // 选中标签
+      selectTabTitle() {
+        if (!this.tabs.selectedId) return;
+        return this.tabs.list.find(item => item.id === this.tabs.selectedId).title;
+      }
+    };
+    events = {};
+    components = {
+      Placeholder: Placeholder,
+      Loading: Loading,
+      Loadmore: Loadmore,
+      tab: Tab,
+      CoverPanel: CoverPanel,
+      Notice: Notice,
+      ShopPointItem: ShopPointItem,
+      ShopGoodsItem: ShopGoodsItem
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '好店推荐',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .mt5{
+    margin-top: 5rpx;
+  }
+  .container{
+    width: 750rpx;
+    overflow: hidden;
+  }
+  .sub-shop-top-box{
+    position: relative;
+    z-index: 1000;
+    background-color: white;
+    border-bottom: $border;
+  }
+  .location-address-box{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .tab-icon-box{
+    color: $color-normal;
+  }
+  .sub-shop-tab-box{
+    flex-wrap: wrap;
+  }
+  .tabs-box{
+    position: relative;
+    background-color: white;
+    width: 710rpx;
+    padding: 20rpx;
+  }
+  .tab-box{
+    width: 33%;
+    height: 80rpx;
+  }
+  .tabs-item-box{
+    padding: 14rpx 30rpx;
+    border-radius: 10rpx;
+    background-color: #F7F7F7;
+    margin: 10rpx;
+    font-size: $text-xs;
+  }
+  .select-tab-box{
+    background-color: lighten($color-primary, 10%);
+    color: white;
+  }
+</style>

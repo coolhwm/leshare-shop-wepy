@@ -1,24 +1,38 @@
 <template>
-  <view class="nav-list-box">
+  <form class="nav-list-box" report-submit="true" @submit="reportFormId">
     <view class="list-item-box" wx:for="{{param.data}}" wx:key="cellIndex" wx:for-item="cell" wx:for-index="cellIndex">
       <view class="column cell-box weui-cells weui-cells-show">
         <block wx:for="{{cell}}" wx:key="itemIndex" wx:for-index="itemIndex" wx:for-item="item">
-          <button plain class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="routeByAction({{item}})" open-type="{{item.openType}}">
+          <button plain  form-type="submit"  class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="routeByAction({{item}})" open-type="{{item.openType}}">
             <view class="weui-cell__bd">
               <icon class="{{item.iconClass}} mr20" style="color: {{item.iconColor}}; font-size: {{item.iconSize}}; line-height: {{item.iconSize}};" />
               <text>{{item.title}}</text>
             </view>
-            <view class="weui-cell__ft weui-cell__ft_in-access">{{item.explain}}</view>
+            <view class="weui-cell__ft weui-cell__ft_in-access">
+              <text class="muted sm" wx:if="{{item.action == 'COUPON_OWN'}}">{{ownCoupons.length}}张</text>
+              <text class="muted sm" wx:elif="{{member && item.action == 'MEMBER_BONUS'}}">{{member.bonus}}积分</text>
+              <text class="muted sm" wx:elif="{{item.action == 'COUPON_PICK' && pickCoupons.length > 0}}">{{pickCoupons.length}}张</text>
+              <text class="muted sm" wx:elif="{{member && item.action == 'MEMBER_DETAIL'}}">{{member.discountRule.levelName}}</text>
+              <text class="muted sm" wx:else>{{item.explain}}</text>
+            </view>
           </button>
         </block>
       </view>
     </view>
-  </view>
+  </form>
 </template>
 
 <script>
   import wepy from 'wepy'
   import router from '../../mixins/router';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+
+  @connect({
+    ownCoupons: store.get('ownCoupons'),
+    member: store.get('member'),
+    pickCoupons: store.get('pickCoupons')
+  })
 
   export default class NavList extends wepy.component {
     props = {

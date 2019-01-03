@@ -2,11 +2,25 @@ import Tips from './Tips';
 import wepy from 'wepy';
 
 export default class WxUtils {
-  static tabUrls = ['/pages/home/template', '/pages/goods/category', '/pages/goods/cart', '/pages/customer/index', '/pages/customer/index_template'];
+  static tabUrls = ['/pages/home/template', '/pages/goods/category', '/pages/goods/cart', '/pages/customer/index_template', '/pages/customer/index_template'];
   static mapUrls = {
     '/pages/shop/index': '/pages/home/template',
     '/pages/home/home': '/pages/home/template'
   };
+  static parseQrScene(scene, key) {
+    if (scene == null || key == null) return null;
+    const paramStr = decodeURIComponent(scene);
+    const paramMap = paramStr.split('=');
+    if (paramMap == null || paramMap.length != 2) {
+      console.warn('[scene]parse scene error：', scene);
+      return null;
+    }
+    if (paramMap[0] != key) {
+      console.warn('[scene]can not find scene key', scene);
+      return null;
+    }
+    return paramMap[1];
+  }
 
   static isTab (url) {
     const type = wepy.$instance.globalData.shopType;
@@ -26,7 +40,9 @@ export default class WxUtils {
    */
   static backOrRedirect(url) {
     url = this.mapUrl(url);
+    console.info(url);
     if (this.isTab(url)) {
+      console.info('switch');
       wx.switchTab({
         url: url
       })
@@ -95,22 +111,6 @@ export default class WxUtils {
       return wx.canIUse(str);
     } else {
       return false;
-    }
-  }
-  /**
-   * 检查SDK版本
-   */
-  static isSDKExipred() {
-    const {SDKVersion} = wx.getSystemInfoSync();
-    console.info(`[version]sdk ${SDKVersion}`);
-    return SDKVersion == null || SDKVersion < '1.2.0'
-  }
-  /**
-   * 检查SDK版本
-   */
-  static checkSDK() {
-    if (this.isSDKExipred()) {
-      Tips.modal('您的微信版本太低，为确保正常使用，请尽快升级');
     }
   }
 }

@@ -6,29 +6,50 @@
     <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" @tap="previewDetailSwiper">
       <block wx:for="{{rule.goods.images}}" wx:key="index">
         <swiper-item>
-          <image src="{{item.url}}/preview" mode="aspectFill" style="width: 750rpx; height:480rpx;"></image>
+          <image src="{{item.url}}/w1080" mode="aspectFill" style="width: 750rpx; height:480rpx;"></image>
         </swiper-item>
       </block>
     </swiper>
 
     <!--砍价倒计时栏-->
-    <TimeOutBar :endTime.sync="endTime" :callback="callback" describe="邀请好友帮砍 低价购" title="砍价" />
+    <TimeOutBar :rule.sync="rule" :callback="callback" describe="邀请好友帮砍 低价购" title="砍价" />
 
     <!--商品基本信息展示及服务信息-->
     <GoodsMsgBar :rule.sync="rule"/>
+
+    <!--归属门店区域-->
+    <view class="mb10">
+      <ShopInfoBar :subShop.sync="subShop"/>
+    </view>
 
     <!--砍价玩法栏-->
     <BargainRuleBar/>
 
     <!--评论预览-->
-    <CommentPreview :goodsId.sync="goodsId"/>
+    <!--<CommentPreview :goodsId.sync="goodsId"/>-->
+
+    <!--广告栏-->
+    <view class="ad-banner" wx:if="{{adUnitId}}">
+      <ad unit-id="{{adUnitId}}"></ad>
+    </view>
+
 
     <!--商品详情-->
-    <DetailList :detail.sync="detail" />
+    <DetailList :detail.sync="goodsDetail" />
 
     <!--滑出购物面板-->
     <block >
       <SilderPanel />
+    </block>
+
+    <!--更多虚拟商品-->
+    <block wx:if="{{list}}">
+      <view class="detail-title row-center mt10">
+        <text class="primary lg">── 更多推荐 ──</text>
+      </view>
+      <repeat for="{{list}}" key="index" index="index" item="item">
+        <BargainItem :detail.sync="item"/>
+      </repeat>
     </block>
 
     <!--底栏-->
@@ -37,7 +58,8 @@
 </template>
 <script>
   import wepy from 'wepy';
-  import auth from '../../api/auth';
+  import { initWxApp } from '../../api/wx_auth';
+  import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import base from '../../mixins/base';
   import Loading from '../../components/common/loading';
@@ -48,23 +70,30 @@
   import SilderPanel from '../../components/goods/slider_buy_panel';
   import bargain from '../../api/bargain';
   import DetailList from '../../components/goods/detail_list';
-  import GoodsMsgBar from '../../components/bargain/goods_msg_bar'
+  import GoodsMsgBar from '../../components/bargain/goods_msg_bar';
+  import ShopInfoBar from '../../components/goods/shop_info_bar';
+  import BargainItem from '../../components/bargain/bargain_more_item'
 
+  @connect({
+    shop: store.get('shop')
+  })
   export default class BargainGoodsDetail extends wepy.page {
     data = {
       init: false,
       buyPanelType: 'POPUP',
-      endTime: '',
       goodsId: '',
       groupTime: '',
-      ruleId: 43,
+      ruleId: '',
       rule: {},
-      detail: {}
+      goodsDetail: {},
+      subShop: {},
+      list: [],
+      adUnitId: null
     };
-    async onLoad () {
-      await auth.login();
-      await store.init();
-      await this.update();
+    async onLoad ({ruleId, scene}) {
+      await initWxApp();
+      this.ruleId = ruleId || scene;
+      await this.update(this.ruleId);
     };
     onUnload() {
       this.$invoke('TimeOutBar', 'clear');
@@ -73,10 +102,13 @@
       await this.update();
       wepy.stopPullDownRefresh();
     }
-    async update () {
-      this.rule = await bargain.rule(this.ruleId);
-      this.detail = this.rule.goods;
-      this.endTime = this.rule.endTime;
+    async update (ruleId) {
+      this.ruleId = ruleId;
+      const [rule, list] = await Promise.all([bargain.rule(this.ruleId), bargain.recommendList()]);
+      this.rule = rule;
+      this.list = list;
+      this.goodsDetail = this.rule.goods;
+      this.subShop = this.goodsDetail.relShop != null ? this.goodsDetail.relShop : this.shop;
       this.goodsId = this.rule.goods.id;
       this.loaded();
     }
@@ -85,11 +117,11 @@
      */
     onShareAppMessage () {
       const {name, imageUrl} = this.rule.goods;
-      const shareName = `${name} 底价低至${this.rule.floorPrice}元，快邀请好友帮你砍一刀吧~`;
+      const shareName = `${name} 底价低至${this.rule.floorPrice}元，赶快发起砍价吧~`;
       return {
         title: shareName,
         imageUrl: imageUrl,
-        path: `/pages/group/goods_detail?groupId=${this.ruleId}`
+        path: `/pages/bargain/goods_detail?ruleId=${this.ruleId}`
       };
     }
     methods = {
@@ -117,7 +149,9 @@
       SilderPanel: SilderPanel,
       Loading: Loading,
       DetailList: DetailList,
-      GoodsMsgBar: GoodsMsgBar
+      GoodsMsgBar: GoodsMsgBar,
+      ShopInfoBar: ShopInfoBar,
+      BargainItem: BargainItem
     };
     mixins = [base];
     config = {
@@ -132,5 +166,13 @@
   .goods-swiper{
     width: 750rpx;
     height:480rpx;
+  }
+  .detail-title{
+    height: 90rpx;
+    border-bottom: $border;
+    background-color: #FFF;
+  }
+  .ad-banner{
+    margin-top: 10rpx;
   }
 </style>

@@ -1,0 +1,144 @@
+<template>
+  <view class="container column" wx:if="{{init}}">
+    <view class="balance-box column-between">
+      <view class="column-center">
+        <view class="icon-box column">
+          <icon class="balance icon-balance-box"/>
+        </view>
+        <view class="balance-main column-center">
+          <view class="num-box column-center">
+            <text class="xl">储值金额</text>
+            <view class="money-box" wx:if="{{member == null}}">￥0.00</view>
+            <view class="money-box" wx:else>￥{{member.balance}}</view>
+          </view>
+          <view class="num-box column-center mt20" wx:if="{{shop.supportMemberPoint}}">
+            <text class="lg">优惠金额</text>
+            <view class="point-box" wx:if="{{member == null}}">￥0.00</view>
+            <view class="point-box" wx:else>￥{{member.point}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="column-center button-box">
+        <!--<button plain class="payment-box" @tap="pay">去支付</button>-->
+        <button plain class="payment-box" @tap="wait" wx:if="{{card.supplyBalance == 0}}">充值</button>
+        <button plain class="payment-box" @tap="addVip" wx:elif="{{member == null}}">充值</button>
+        <button plain class="payment-box" @tap="topUp" wx:else>充值</button>
+        <button plain class="mt20" @tap="wait" wx:if="{{member == null || card.supplyBalance == 0}}">查看账单</button>
+        <button plain class="mt20" @tap="check" wx:else>查看账单</button>
+
+
+        <!--<text class="muted mt20" @tap="wait" wx:if="{{member == null || card.supplyBalance == 0}}">查看账单记录</text>-->
+        <!--<text class="muted mt20" @tap="check" wx:else>查看账单记录</text>-->
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../../mixins/base';
+  import store from '../../../store/utils';
+  import { connect } from 'wepy-redux';
+  import Tips from '../../../utils/Tips';
+
+  @connect({
+    member: store.get('member'),
+    card: store.get('card'),
+    shop: store.get('shop')
+  })
+
+  export default class Comment extends wepy.page {
+    data = {
+      init: false
+    };
+    onLoad () {
+      this.init = true
+    }
+    params() {
+    }
+    components = {
+    };
+    methods = {
+      pay () {
+        this.$navigate('/pages/shop/pay');
+      },
+      topUp () {
+        this.$navigate('/package_member/pages/member/top_up')
+      },
+      check () {
+        this.$navigate('/package_member/pages/member/billing_record')
+      },
+      wait() {
+        Tips.success('敬请期待');
+      },
+      async addVip () {
+        await Tips.modal('请先绑定手机');
+        wepy.navigateBack();
+      }
+    };
+    mixins = [base];
+    config = {
+      navigationBarTextStyle: 'white',
+      navigationBarTitleText: '我的储值'
+    };
+  }
+</script>
+
+<style lang="scss" scoped>
+  @import "../../../styles/variable";
+
+  .container {
+    height: 100%;
+    background: #fff;
+  }
+  .line-gap{
+    height: 120rpx;
+    width: 1px;
+    background-color: $color-border;
+    margin: 0 60rpx;
+  }
+  .balance-main{
+    margin-top: 20rpx;
+    width: 700rpx;
+
+    .num-box{
+      width: 350rpx;
+    }
+  }
+  .balance-box{
+    padding: 110rpx 0;
+    flex: 1;
+    .icon-box{
+      margin-bottom: 30rpx;
+      align-items: center;
+      width: 80px;
+      height: 80px;
+      border: 10px solid #F9C907;
+      border-radius: 50%;
+      background-color: #F9DE69;
+    }
+    .icon-balance-box{
+      color: #F9C907;
+      font-size: 50px;
+    }
+    .money-box{
+      font-size: 40px;
+    }
+    .point-box {
+      font-size: 26px;
+    }
+    button{
+      width: 500rpx;
+      border: $border;
+      border-radius: 50px;
+    }
+    .payment-box{
+      background-color: $color-primary;
+      color: #fff;
+    }
+  }
+  .button-box{
+    margin-bottom: 80rpx;
+  }
+
+</style>

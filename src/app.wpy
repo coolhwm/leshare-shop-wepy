@@ -2,51 +2,24 @@
 <style lang="scss" src="./styles/icons.scss"></style>
 <style lang="scss" src="./styles/base.scss"></style>
 <script>
+
   import wepy from 'wepy';
-  import WxUtils from './utils/WxUtils';
   import 'wepy-async-function';
   import { setStore } from 'wepy-redux'
-  import configStore from './store'
+  import configStore from './store';
   const store = configStore();
   setStore(store);
   export default class extends wepy.app {
     globalData = {
       auth: {},
       scene: null,
-      'shopType': '1',
-      'shopName': '连江日用品专营店',
-      'appCode': 'owVHb1gHrvktni80kjMlFMzSDJDWY0xR',
-      'baseUrl': 'https://www.easy-mock.com/mock/5ab7c9627a7afd3099d16b4c/customer',
-      version: 'v3.2.3',
-      'componentsParams': {},
-      'pageParams': {
-        'pages/goods/category': {
-          'buyPanelType': 'POPUP',
-          'isCoupon': false
-        },
-        'pages/goods/detail': {
-          'buyPanelType': 'SLIDER',
-          'cartType': 'BAR',
-          'isCoupon': true,
-          'isComment': true,
-          'isContact': true,
-          'isShare': true,
-          'isSales': true
-        },
-        'pages/goods/search': {
-          'hotKeywords': [
-            '抽纸',
-            '卷纸',
-            '面巾纸',
-            '卫生巾',
-            '湿纸巾',
-            '维达',
-            '维达',
-            '波斯猫',
-            '妙洁'
-          ]
-        }
-      }
+      appCode: null,
+      shopType: null,
+      pageParams: null,
+      componentsParams: null,
+      baseUrl: null,
+      launchPath: null,
+      version: 'v3.2.3'
     };
     constructor () {
       super();
@@ -68,6 +41,15 @@
           return p.data;
         }
       });
+      this.intercept('downloadFile', {
+        config (p) {
+          p.header = this.createAuthHeader();
+          return p;
+        },
+        success (p) {
+          return p;
+        }
+      });
     }
     /**
      * 构造权限头部
@@ -81,8 +63,6 @@
       return header;
     }
     onLaunch(param) {
-      // 校验SDK
-      WxUtils.checkSDK();
       // 同步开放平台EXT数据
       const ext = wepy.getExtConfigSync();
       console.info('[ext] init ext data', ext);
@@ -95,12 +75,28 @@
       this.syncStoreConfig('login_code');
       this.syncStoreConfig('third_session');
       this.syncStoreConfig('user');
+      // 设置启动参数
+      this.setLaunchParam(param);
+      console.info('[auth]onLaunch end');
+    }
+    setLaunchParam(param) {
+      if (!param) {
+        return;
+      }
       // 获取保存场景值
-      if (param && param.scene) {
+      if (param.scene) {
         console.info('[scene]onLaunch scene', param.scene);
         wepy.$instance.globalData.scene = param.scene;
-        console.info('[auth]onLaunch end');
       }
+      let path = param.path;
+      const query = [];
+      for (let key in param.query) {
+        query.push(`${key}=${param.query[key]}`);
+      }
+      if (query.length > 0) {
+        path = `${path}?${query.join(',')}`;
+      }
+      wepy.$instance.globalData.launchPath = path;
     }
     syncStoreConfig(key) {
       try {
@@ -116,12 +112,10 @@
     config = {
       pages: [
         'pages/home/template',
-        'pages/home/home',
+        'pages/home/template_nav',
         'pages/home/login',
         'pages/shop/index',
         'pages/goods/cart',
-        'pages/goods/favorite',
-        'pages/goods/history',
         'pages/goods/detail',
         'pages/goods/comment_list',
         'pages/goods/search',
@@ -137,69 +131,102 @@
         'pages/order/detail',
         'pages/order/refund_edit',
         'pages/order/refund_detail',
-        'pages/coupon/active',
         'pages/coupon/list',
         'pages/coupon/detail',
         'pages/coupon/pick',
+        'pages/coupon/pick_detail',
         'pages/customer/index_template',
-        'pages/customer/index',
-        'pages/customer/registe_member',
-        'pages/customer/vip_detail',
         'pages/customer/address_list',
-        'pages/customer/bonus_list',
-        'pages/customer/vip_info',
         'pages/customer/sign_in',
         'pages/coupon/use',
-        'pages/shop/pay',
         'pages/shop/about_us',
-        'pages/customer/comment_list',
-        'pages/group/index',
-        'pages/group/goods_detail',
-        'pages/group/list',
-        'pages/group/group_detail',
-        'pages/group/group_info_list',
-        'pages/customer/balance',
-        'pages/distribution/index',
         'pages/bargain/goods_detail',
         'pages/bargain/bargain_detail',
-        'pages/bargain/list'
+        'pages/bargain/list',
+        'pages/booking/order',
+        'pages/bargain/bargain_more',
+        'pages/booking/list',
+        'pages/booking/booking_detail',
+        'pages/shop/pay',
+        'pages/customer/info',
+        'pages/order/bonusTrade',
+        'pages/goods/bonus_goods_list',
+        'pages/assist/goods_detail',
+        'pages/assist/assist_detail',
+        'pages/assist/list',
+        'pages/shop/sub_shop_list',
+        'pages/shop/sub_shop_detail',
+        'pages/shop/sub_shop_menu',
+        'pages/shop/sub_shop_search',
+        'pages/reward/index',
+        'pages/reward/article',
+        'pages/reward/eastwill',
+        'pages/coupon/usable_goods'
       ],
-      'window': {
-        'backgroundTextStyle': 'dark',
-        'backgroundColor': '#F5F5F5',
-        'navigationBarBackgroundColor': '#F3514F'
-      },
-      'tabBar': {
-        'color': '#666666',
-        'selectedColor': '#F3514F',
-        'borderStyle': 'white',
-        'backgroundColor': '#FAFAFA',
-        'list': [
-          {
-            'iconPath': 'images/tab/home.png',
-            'selectedIconPath': 'images/tab/red/home-active.png',
-            'pagePath': 'pages/home/template',
-            'text': '首页'
-          },
-          {
-            'iconPath': 'images/tab/order.png',
-            'selectedIconPath': 'images/tab/red/order-active.png',
-            'pagePath': 'pages/goods/category',
-            'text': '分类'
-          },
-          {
-            'iconPath': 'images/tab/cart.png',
-            'selectedIconPath': 'images/tab/red/cart-active.png',
-            'pagePath': 'pages/goods/cart',
-            'text': '购物车'
-          },
-          {
-            'iconPath': 'images/tab/user.png',
-            'selectedIconPath': 'images/tab/red/user-active.png',
-            'pagePath': 'pages/customer/index_template',
-            'text': '我的'
-          }
-        ]
+      subPackages: [
+        {
+          // 分销中心
+          root: 'package_agent',
+          pages: [
+            'pages/agent/apply',
+            'pages/agent/cash',
+            'pages/agent/clientele',
+            'pages/agent/config',
+            'pages/agent/groups',
+            'pages/agent/index',
+            'pages/agent/order_detail',
+            'pages/agent/recharge',
+            'pages/agent/singular'
+          ]
+        },
+        {
+          // 组合购
+          root: 'package_group_goods',
+          pages: [
+            'pages/group_goods/list',
+            'pages/group_goods/detail'
+          ]
+        },
+        {
+          // 拼团
+          root: 'package_group',
+          pages: [
+            'pages/group/group_more',
+            'pages/group/goods_detail',
+            'pages/group/list',
+            'pages/group/group_detail',
+            'pages/group/group_info_list'
+          ]
+        },
+        {
+          // 会员相关
+          root: 'package_member',
+          pages: [
+            'pages/member/invite',
+            'pages/member/super_poster',
+            'pages/member/vip_detail',
+            'pages/member/vip_info',
+            'pages/member/bonus_list',
+            'pages/member/billing_record',
+            'pages/member/balance',
+            'pages/member/top_up',
+            'pages/member/registe_member'
+          ]
+        },
+        {
+          // 用户相关
+          root: 'package_customer',
+          pages: [
+            'pages/customer/comment_list',
+            'pages/customer/favorite',
+            'pages/customer/history'
+          ]
+        }
+      ],
+      window: {
+        backgroundTextStyle: 'dark',
+        backgroundColor: '#F5F5F5',
+        navigationBarBackgroundColor: '#1296db'
       }
     };
   }

@@ -16,12 +16,10 @@
   })
   export default class CustomerAvatar extends wepy.component {
     props = {
-      order: {}
     };
-    data = {};
     methods = {};
     events = {};
-    onLoad() {
+    async onLoad() {
     }
   }
 </script>

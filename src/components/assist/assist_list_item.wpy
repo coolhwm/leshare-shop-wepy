@@ -1,0 +1,118 @@
+<template>
+  <view class="order-item-container column">
+    <!--顶栏/基本信息-->
+    <view class="order-header-container colunm">
+      <view class="row-between">
+        <view class="user-info-container">
+          <text class="sm">{{detail.createTime}}</text>
+        </view>
+        <text class="sm primary">{{detail.statusText}}</text>
+      </view>
+    </view>
+
+    <!--商品区域-->
+    <view class="row-between bargain-goods-box" @tap="assistDetail({{detail.activityId}})">
+      <view class="row">
+        <image src="{{detail.imageUrl}}/small" style="width: 150rpx;height: 150rpx;"/>
+        <view class="column ml20 info-box">
+          <text class="sm">{{detail.ruleName}}</text>
+          <text class="muted mt20 sm">原价:￥{{detail.originalPrice}}</text>
+        </view>
+      </view>
+      <view class="column" style="align-items: flex-end;">
+        <text class="primary lg" wx:if="{{detail.leftJoin > 0}}">还需{{detail.leftJoin}}人助力</text>
+        <text class="primary lg" wx:else>已获得商品</text>
+      </view>
+    </view>
+
+    <!--操作栏-->
+    <view class="group-bottom-box row">
+      <view class="group-btn-box" @tap="action({{detail.action.funcName}}, {{detail}})">{{detail.action.name}}</view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import router from '../../mixins/router';
+  import Tips from '../../utils/Tips';
+
+  export default class AssistItem extends wepy.component {
+    props = {
+      detail: {},
+      action: {
+        default: true
+      }
+    };
+    data = {};
+    onLoad () {
+    }
+    help (detail) {
+      this.$root.$navigate(`/pages/assist/assist_detail?assistId=${detail.activityId}`)
+    }
+    ruleDetail(detail) {
+      this.$root.$navigate(`/pages/assist/goods_detail?ruleId=${detail.ruleId}`)
+    }
+    methods = {
+      assistDetail(activityId) {
+        this.$root.$navigate(`/pages/assist/assist_detail?assistId=${activityId}`)
+      },
+      action(funcName, detail) {
+        console.info('[action]' + funcName);
+        if (this[funcName]) {
+          const func = this[funcName].bind(this);
+          func(detail);
+        } else {
+          Tips.error('未知错误');
+        }
+      }
+    };
+    components = {
+    };
+    watch = {
+    };
+    mixins = [router];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .order-item-container {
+    border-top: $border;
+    border-bottom: $border;
+    background-color: #FFF;
+    margin-bottom: 10rpx;
+  }
+
+  /*顶栏*/
+  .order-header-container {
+    padding: 10rpx 25rpx 10rpx 20rpx;
+  }
+
+  /*底栏*/
+  .order-footer-container {
+    padding-left: 25rpx;
+    padding-right: 20rpx;
+    height: 70rpx;
+  }
+
+  .bargain-goods-box{
+    padding: 10rpx 20rpx;
+    background-color: $color-bg-item;
+    .info-box{
+      width: 300rpx;
+    }
+  }
+
+  .group-bottom-box{
+    flex-direction: row-reverse;
+    border-top: 1px solid #FAFAFA;
+    .group-btn-box{
+      color: white;
+      background-color: $color-primary;
+      padding: 6rpx 20rpx;
+      margin: 14rpx;
+      border-radius: 5rpx;
+    }
+  }
+</style>

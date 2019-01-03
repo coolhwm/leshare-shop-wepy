@@ -1,0 +1,72 @@
+<template>
+  <view class="row search-shop-box">
+    <view class="content">
+      <input @input="input" @confirm="search" confirm-type="搜索" maxlength="10" placeholder="搜索精选门店" />
+    </view>
+    <view class="search-btn" @tap="search">搜索</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base_com';
+  import Tips from '../../utils/Tips';
+  export default class SearchBar extends wepy.component {
+    props = {
+      param: {}
+    };
+    data = {
+      keyword: null,
+      loaction: null,
+    };
+    methods = {
+      input(e) {
+        this.keyword = e.detail.value;
+      },
+      search() {
+        if (this.location == null) {
+          Tips.modal('定位中，请稍候');
+          return;
+        }
+        if (this.keyword == null || this.keyword == '') {
+          Tips.modal('请输入搜索内容');
+          return;
+        }
+        this.$root.$preload('location', this.location);
+        this.$root.$navigate(`/pages/shop/sub_shop_search?keyword=${this.keyword}`);
+      },
+      setLocation(location) {
+        this.location = location;
+      }
+    };
+    mixins = [base];
+    onLoad() {
+    }
+  }
+</script>
+<style lang="scss">
+  @import "../../styles/variable";
+  .search-shop-box{
+    align-items: center;
+    height: 80rpx;
+    padding: 0 20rpx;
+    background-color: white;
+    .search-btn{
+      border-radius: 3px;
+      border: $color-primary-gray solid 1px;
+      padding: 6rpx 10rpx;
+      margin-left: 10rpx;
+    }
+    .content{
+      flex: 1;
+      background-color: white;
+      border-radius: 3px;
+      border: $color-primary-gray solid 1px;
+      padding: 6rpx 20rpx;
+      text{
+        color: $color-muted;
+        font-size: $text-sm;
+      }
+    }
+  }
+</style>

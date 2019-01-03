@@ -1,9 +1,68 @@
 <template>
   <view class="buy-bar-placeholder">
   </view>
-  <view class="row buy-bar-box">
+  <!--服务商品-->
+  <view class="row buy-bar-box" wx:if="{{goods.type === 'service'}}">
+    <view class="column-center  btn-fav">
+      <button plain class="column-center" open-type="contact">
+        <icon class="service" color="gray"/>
+        <text>客服</text>
+      </button>
+    </view>
+    <view class="column-center btn-goto-cart" @tap="home">
+      <icon class="home" color="gray"/>
+      <text>首页</text>
+    </view>
+    <view class="column-center btn-service" @tap="service({{goods.id}})">
+      <text class="white">立即预约</text>
+    </view>
+  </view>
+  <!--积分能兑换-->
+  <view class="row buy-bar-box" wx:elif="{{goods.paymentType === 'bonus'}}">
+    <view class="column-center  btn-fav">
+      <button plain class="column-center" open-type="contact">
+        <icon class="service" color="gray"/>
+        <text>客服</text>
+      </button>
+    </view>
+    <view class="column-center btn-goto-cart" @tap="home">
+      <icon class="home" color="gray"/>
+      <text>首页</text>
+    </view>
+    <view class="column-center btn-service" @tap="handleDigit({{goods}})" wx:if="{{goods.type === 'digit'}}">
+      <text class="white xl">立即兑换</text>
+    </view>
+    <view class="column-center btn-service" @tap="handleBonus({{goods}})" wx:if="{{goods.paymentType === 'bonus' &&goods.type !== 'digit' }}">
+      <text class="white xl">立即兑换</text>
+    </view>
+  </view>
+  <!--虚拟商品/一品品-->
+  <view  class="row buy-bar-box" wx:elif="{{goods.type === 'digit'}}">
+    <view class="column-center  btn-fav">
+      <button plain class="column-center" open-type="contact">
+        <icon class="service" color="gray"/>
+        <text>客服</text>
+      </button>
+    </view>
+    <view class="column-center btn-goto-cart" @tap="home">
+      <icon class="home" color="gray"/>
+      <text>首页</text>
+    </view>
+    <!--<button class="column-center btn-service" @tap="handleDigit({{goods}})" wx:if="{{goods.type === 'digit'}}" style="border-radius: 0" plain>-->
+      <!--<text class="white xl">立即购买</text>-->
+    <!--</button>-->
+
+    <button class="column-center btn-digit" style="border-radius: 0" plain  open-type="getPhoneNumber"  bindgetphonenumber="regist" wx:if="{{member == null}}">
+      <text style="line-height: 42rpx;">立即购买</text>
+    </button>
+    <button class="column-center btn-digit" style="border-radius: 0" plain @tap="handleDigit({{goods}})" wx:else>
+      <text style="line-height: 42rpx;">立即购买</text>
+    </button>
+  </view>
+  <!--普通商品-->
+  <view class="row buy-bar-box" wx:else>
     <view class="column-center  btn-fav" @tap="fav">
-      <icon class="like{{!isFav ? '' : '-fill'}}" style="color: {{!isFav ? 'gray' : 'red'}}" />
+      <icon class="like{{!isFav ? '' : '-fill'}}" style="color: {{!isFav ? 'gray' : 'red'}}"/>
       <text>收藏</text>
     </view>
     <view class="column-center btn-goto-cart" @tap="cart">
@@ -27,8 +86,10 @@
   import router from '../../mixins/router';
   import wepy from 'wepy';
   import Tips from '../../utils/Tips';
+  import { handleGetPhoneNumber } from '../../api/wx_auth';
 
   @connect({
+    member: store.get('member'),
     cart: store.get('cart')
   })
   export default class BuyBar extends wepy.component {
@@ -41,6 +102,10 @@
       isFav: false
     };
     methods = {
+      async regist({detail}) {
+        await handleGetPhoneNumber(detail);
+        this.digit(this.goods);
+      },
       async fav() {
         if (this.isFav) {
           await Tips.confirm('确认取消收藏?');
@@ -54,6 +119,12 @@
       },
       cart() {
         this.$parent.$switch('/pages/goods/cart');
+      },
+      service (id) {
+        this.$root.$navigate(`/pages/booking/order?goodsId=${id}`);
+      },
+      home () {
+        this.$root.$switch(`/pages/home/template`)
       }
     };
     watch = {
@@ -79,7 +150,7 @@
     height: 105rpx;
     width: 100%;
     background-color: white;
-    border: $border;
+    border-top: $border;
     .btn-goto-cart{
       border-left: $border;
       position: relative;
@@ -87,6 +158,9 @@
     .btn-fav, .btn-goto-cart{
       width: $btn-sm-width;
       text{font-size: $text-xs}
+      button{
+        line-height: normal;
+      }
     }
     .btn-cart, .btn-buy{
       height: 100%;
@@ -99,6 +173,20 @@
     }
     .btn-buy{
       background-color: darken($color-primary, 3%);
+    }
+    .btn-service{
+      background-color: darken($color-primary, 3%);
+      width: 750rpx - $btn-sm-width * 2;
+      height: 100%;
+    }
+    .btn-digit{
+      background-color: darken($color-primary, 3%);
+      width: 750rpx - $btn-sm-width * 2;
+      height: 100%;
+      text {
+        font-size: $text-xxl;
+        color: white;
+      }
     }
   }
   .buy-bar-placeholder{

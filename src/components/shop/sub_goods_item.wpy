@@ -1,0 +1,295 @@
+<template>
+  <view class="sub-goods-box">
+
+    <!--商户信息区域-->
+    <view class="shop-box" @tap="shopDetail({{item}})">
+      <!--LOGO-->
+      <image src="{{item.avatar}}/small" class="logo"/>
+
+      <!--右侧主体区域-->
+      <view class="main-box">
+        <view class="row">
+          <text class="shop-name">{{item.name}}</text>
+          <icon class="recommend small" color="primary" wx:if="{{item.isActivity}}"/>
+        </view>
+
+
+        <!--评分/销售量/距离-->
+        <view class="row-between mt5">
+          <!--评价/销售量-->
+          <view class="row">
+            <view class="shop-grade row">
+              <icon class="star-fill" /><text >4.9</text>
+            </view>
+            <text class="text-muted">已售{{item.salesVolume}}件</text>
+          </view>
+          <!--距离-->
+          <text class="text-muted">{{item.distanceDesc}}</text>
+        </view>
+
+        <!--标签-->
+        <view class="row-between mt5">
+          <!--商圈/分类标签-->
+          <text class="xs">{{item.tagText}}</text>
+          <!--商家活动标签-->
+          <view class="small-tag">{{item.activityTag}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!--商品信息区域-->
+    <repeat for="{{item.goodsList}}" index="goodsIndex" item="goods" key="goodsIndex" >
+
+
+      <view class="goods-item-box row" @tap="assistDetail({{goods}})" wx:if="{{goods.goodsType == 'ASSIST'}}">
+        <!--助力商品-->
+        <view class="column price-box">
+          <!--销售价/兑换积分-->
+          <view class="row">
+            <text class="major lg">免费</text>
+          </view>
+          <!--原价-->
+          <text class="muted xs">原价:￥{{goods.originalPrice}}</text>
+        </view>
+        <view class="column info-box mt5">
+          <!--商品名称-->
+          <view class="row-between">
+            <view class="row">
+              <icon class="qiang goods-icon small"  style="color: #1296db;"/>
+              <text class="inline">{{goods.simpleName}}</text>
+            </view>
+            <text class="ml10 xxs" style="color: #1296db;">[助力领奖]</text>
+          </view>
+          <view class="row">
+            <text class="muted xs">已领{{goods.rule.successCount}}件</text>
+            <!--积分规则-->
+            <view class="row bouns-text" wx:if="{{goods.bounsText}}">
+              <icon class="assist xsmall"/>
+              <text class="xxs">{{goods.rule.requireCount}}人助力免费得</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="goods-item-box row" @tap="bargainDetail({{goods}})" wx:elif="{{goods.goodsType == 'BARGAIN'}}">
+        <!--砍价商品-->
+        <view class="column price-box">
+          <!--销售价/兑换积分-->
+          <view class="row">
+            <text class="major" style="font-size: 20rpx;margin-top: 8rpx;">最低</text>
+            <text class="major xl">￥{{goods.rule.price}}</text>
+          </view>
+          <!--原价-->
+          <text class="muted xs">原价:￥{{goods.rule.originPrice}}</text>
+        </view>
+        <view class="column info-box mt5">
+          <!--商品名称-->
+          <view class="row-between">
+            <view class="row">
+              <icon class="qiang goods-icon small" color="primary"/>
+              <text class="inline">{{goods.simpleName}}</text>
+            </view>
+            <text class="ml10 xxs primary">[疯狂砍价]</text>
+          </view>
+          <view class="row">
+            <text class="muted xs">已砍{{goods.rule.successCount}}件</text>
+            <!--积分规则-->
+            <view class="row bouns-text" wx:if="{{goods.bounsText}}">
+              <icon class="share xsmall"/>
+              <text class="xxs">好友帮砍</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="goods-item-box row" @tap="groupDetail({{goods}})" wx:elif="{{goods.goodsType == 'GROUP'}}">
+        <!--拼团商品-->
+        <view class="column price-box">
+          <!--销售价/兑换积分-->
+          <view class="row">
+            <text class="major xl">￥{{goods.rule.price}}</text>
+          </view>
+          <!--原价-->
+          <text class="muted xs">原价:￥{{goods.rule.originPrice}}</text>
+        </view>
+        <view class="column info-box mt5">
+          <!--商品名称-->
+          <view class="row-between">
+            <view class="row">
+              <icon class="pin goods-icon small" style="color: #43B045;"/>
+              <text class="inline">{{goods.simpleName}}</text>
+            </view>
+            <text class="ml10 xxs" style="color: #43B045;">[限时拼团]</text>
+          </view>
+          <view class="row">
+            <text class="muted xs">已拼{{goods.rule.successCount}}件</text>
+            <!--积分规则-->
+            <view class="row bouns-text" wx:if="{{goods.bounsText}}">
+              <icon class="groups xsmall"/>
+              <text class="xxs">{{goods.rule.requireCount}}人成团</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!--普通商品-->
+      <view class="goods-item-box row" @tap="goodsDetail({{goods}})" wx:else>
+        <view class="column price-box">
+          <!--销售价/兑换积分-->
+          <text class="major xl" wx:if="{{goods.goodsType === 'BONUS'}}">{{goods.price}}积分</text>
+          <text class="major xl" wx:else>￥{{goods.price}}</text>
+          <!--原价-->
+          <text class="muted xs">原价:￥{{goods.originalPrice}}</text>
+        </view>
+        <view class="column info-box mt5">
+          <!--商品名称-->
+          <view class="row-between">
+            <view class="row">
+              <!--装饰图-->
+              <icon class="gift goods-icon small" style="color:#9266f9;" wx:if="{{goods.goodsType === 'NEW_CUSTOMER'}}"/>
+              <icon class="duihuan goods-icon small" style="color:#70bc46;" wx:elif="{{goods.goodsType === 'BONUS'}}"/>
+              <icon class="recommend-round goods-icon small" style="color:#FE9D01;" wx:elif="{{goods.goodsType === 'RECOMMEND'}}"/>
+              <icon class="square-coupon goods-icon small" color="major" wx:else/>
+              <text class="inline">{{goods.simpleName}}</text>
+            </view>
+            <text class="ml10 xxs" style="color:#9266f9;" wx:if="{{goods.goodsType === 'NEW_CUSTOMER'}}">[新客专享]</text>
+            <text class="ml10 xxs" style="color:#70bc46;" wx:elif="{{goods.goodsType === 'BONUS'}}">[免费兑换]</text>
+            <text class="ml10 xxs" style="color:#FE9D01;" wx:elif="{{goods.goodsType === 'RECOMMEND'}}">[招牌推荐]</text>
+          </view>
+          <view class="row">
+            <text class="muted xs">已售{{goods.salesVolume}}件</text>
+            <!--积分规则-->
+            <view class="row bouns-text" wx:if="{{goods.bounsText}}">
+              <icon class="bouns xsmall"/>
+              <text class="xxs">{{goods.bounsText}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </repeat>
+  </view>
+
+</template>
+<script>
+  import wepy from 'wepy';
+  export default class SubGoodsItem extends wepy.component {
+    props = {
+      item: {}
+    };
+    data = {};
+    methods = {
+      shopDetail(subShop) {
+        this.$root.$navigate(`/pages/shop/sub_shop_detail?subShopId=${subShop.shopId}`);
+      },
+      goodsDetail(goods) {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${goods.id}`);
+      },
+      bargainDetail(goods) {
+        this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${goods.rule.ruleId}`);
+      },
+      assistDetail(goods) {
+        this.$root.$navigate(`/pages/assist/goods_detail?ruleId=${goods.rule.ruleId}`);
+      },
+      groupDetail(goods) {
+        this.$root.$navigate(`/package_group/pages/group/goods_detail?ruleId=${goods.rule.ruleId}`);
+      }
+    };
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss" scoped>
+  @import "../../styles/variable";
+  .mt5 {
+    margin-top: 5rpx;
+  }
+  .text-muted{
+    color: $color-muted;
+    font-size: $text-xs;
+  }
+  .sub-goods-box{
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 0 20rpx;
+    margin-bottom: 10rpx;
+  }
+  .small-tag{
+    border: #f49897 solid 1px;
+    border-radius: 3rpx;
+    padding: 0 5rpx;
+    font-size: $text-xxs;
+    color: $color-primary-red;
+  }
+  .mini-tag {
+    border: $color-major solid 1px;
+    border-radius: 3rpx;
+    padding: 0 5rpx;
+    font-size: 20rpx;
+    color: $color-major;
+  }
+  /*店铺信息区域*/
+  .shop-box {
+    display: flex;
+    flex-direction: row;
+    padding: 20rpx 0;
+    .logo{
+      border: 1px solid #E9E9E9;
+      border-radius: 5px;
+      width: 150rpx;
+      height: 150rpx;
+      min-height: 150rpx;
+      min-width: 150rpx;
+    }
+    .main-box{
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      margin-left: 20rpx;
+    }
+    .shop-name{
+      font-size: $text-xl;
+      font-weight: bold;
+    }
+    .shop-grade{
+      icon{
+        font-size: $text-lg;
+        margin-right: 5rpx;
+      }
+      text{
+        font-size: $text-xs;
+        color: $color-major;
+      }
+      margin-right: 15rpx;
+    }
+  }
+  /*商品区域*/
+  .goods-item-box{
+    padding: 12rpx 0;
+    border-top: 1rpx solid #EFEFEF;
+
+    .price-box{
+      align-items: flex-end;
+      width: 150rpx;
+      min-width: 150rpx;
+    }
+    .goods-icon{
+      margin-right: 5rpx;
+    }
+    .info-box{
+      flex: 1;
+      max-width: 550rpx;
+      margin-left: 20rpx;
+    }
+    .bouns-text{
+      icon, text {
+        color: $color-muted;
+      }
+      margin-left: 20rpx;
+    }
+  }
+
+
+</style>

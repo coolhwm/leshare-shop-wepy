@@ -7,7 +7,13 @@ const TYPE = {
   TAKEAWAY: 20,
   FORHERE: 30,
   PACK: 33,
-  OFFLINE: 40
+  OFFLINE: 40,
+  GROUP: 50,
+  BOOKING: 60,
+  BARGAIN: 70,
+  BALANCE: 80,
+  DIGIT: 90,
+  GROUPGOODS: 100
 };
 /**
  * 支付方式
@@ -145,6 +151,11 @@ const ACTION = {
     primary: false,
     name: '再来一单',
     func: 'again'
+  },
+  QRCODE: {
+    primary: false,
+    name: '查看兑换码',
+    func: 'qrCode'
   }
 };
 /**
@@ -184,8 +195,25 @@ const STATUS_ACTIONS = {
   // 拼团
   '50-1-1': [ACTION.CLOSE, ACTION.PAY],
   '50-1-3': [ACTION.RECEIVE],
-  '50-1-4': [ACTION.COMMENT]
-};
+  '50-1-4': [ACTION.COMMENT],
+  // 预约
+  '60-1-1': [ACTION.CLOSE, ACTION.PAY],
+  '60-1-3': [ACTION.RECEIVE],
+  '60-1-4': [ACTION.COMMENT],
+  // 砍价
+  '70-1-1': [ACTION.CLOSE, ACTION.PAY],
+  '70-1-3': [ACTION.RECEIVE],
+  '70-1-4': [ACTION.COMMENT],
+  // 充值
+  '80-1-1': [ACTION.CLOSE, ACTION.PAY],
+  // 虚拟
+  '90-1-1': [ACTION.CLOSE, ACTION.PAY],
+  '90-1-5': [ACTION.UNREFUND],
+  '90-1-6': [ACTION.QRCODE, ACTION.REFUND],
+  // 组合购
+  '100-1-1': [ACTION.CLOSE, ACTION.PAY],
+  '100-1-6': [ACTION.QRCODE]
+}
 
 /**  内部方法 **/
 const statusDict = (type, status, index) => {

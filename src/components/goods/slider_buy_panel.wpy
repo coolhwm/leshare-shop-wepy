@@ -7,13 +7,20 @@
     <!--信息面板-->
     <view class="buy-panel-info-container">
       <!--商品图-->
-      <image class="buy-panel-icon" src="{{sku.isReady ? sku.detail.imageUrl : goods.imageUrl}}" />
+      <image class="buy-panel-icon" src="{{sku.isReady && sku.detail.imageUrl ? sku.detail.imageUrl : goods.imageUrl}}" />
       <!--文字 -->
       <view class="buy-panel-title-price">
         <text class="buy-panel-title">{{goods.name}}</text>
-        <view class="panel-price-box row">
-          <text class="buy-panel-price">￥{{sku.isReady ? sku.detail.price : goods.priceLable}}</text>
-          <text class="cancel ml10" wx:if="{{goods.discount}}">￥{{goods.originalPrice}}</text>
+        <view class="panel-price-box row" wx:if="{{goods.paymentType === 'bonus'}}">
+          <text class="buy-panel-price" wx:if="{{goods.ruleGoodsPrice}}">{{goods.ruleGoodsPrice}}积分</text>
+          <text class="buy-panel-price" wx:else>{{sku.isReady ? sku.detail.price : goods.priceLable}}积分</text>
+          <text class="cancel ml10" wx:if="{{goods.originalPrice && goods.originalPrice > 0}}">{{goods.originalPrice}}元</text>
+          <DiscountBadge :goods.sync="goods" />
+        </view>
+        <view class="panel-price-box row" wx:else>
+          <text class="buy-panel-price" wx:if="{{goods.ruleGoodsPrice}}">￥{{goods.ruleGoodsPrice}}</text>
+          <text class="buy-panel-price" wx:else>￥{{sku.isReady ? sku.detail.price : goods.priceLable}}</text>
+          <text class="cancel ml10" wx:if="{{goods.originalPrice && goods.originalPrice > 0}}">￥{{goods.originalPrice}}</text>
           <DiscountBadge :goods.sync="goods" />
         </view>
       </view>
@@ -24,15 +31,31 @@
     </view>
 
     <!--SKU展示 -->
-    <view class="buy-panel-sku-container" wx:if="{{sku.exists}}">
+    <view class="buy-panel-sku-container {{goods.skuProperties.length > 0 ? 'no-border-bottom' : ''}}" wx:if="{{goods.goodsSkuInfo != null}}">
       <view wx:for="{{sku.labels}}" wx:for-item="label" wx:key="key">
         <view class="buy-panel-sku-title">
           <text class="buy-panel-sku-title-text">{{label.key}}：</text>
         </view>
         <view class="buy-panel-sku-list">
           <block wx:for-item="skuValue" wx:for="{{label.value}}" wx:key="*this" >
-            <view class="label{{sku.disabledSkuValues[skuValue] ? 'disabled' : '' }} {{sku.selected[label.key] == skuValue ? 'primary' : ''}}"
-                  @tap="select({{label.key}}, {{skuValue}})">{{skuValue}}</view>
+            <view class="label {{sku.disabledSkuValues[skuValue] ? 'disabled' : '' }} {{sku.selected[label.key] == skuValue ? 'primary' : ''}}"
+                  @tap="selectSkU({{label.key}}, {{skuValue}})">{{skuValue}}</view>
+          </block>
+        </view>
+      </view>
+    </view>
+
+    <!-- PRO展示 -->
+    <view class="buy-panel-sku-container" wx:if="{{goods.skuProperties.length > 0}}">
+      <view wx:for="{{properties}}" wx:for-item="property" wx:key="index" wx:for-index="index">
+        <view class="buy-panel-sku-title">
+          <text class="weak sm mr10">{{property.propertyKey}}：</text>
+        </view>
+        <view class="buy-panel-sku-list">
+          <block  wx:for-item="propertyValue"  wx:for="{{property.property}}" wx:key="proIndex" wx:for-index="proIndex">
+            <view class="sku-item label {{proSelected[index] == propertyValue ? 'primary' : ''}}" @tap="selectPro({{propertyValue}}, {{index}})">
+              {{propertyValue}}
+            </view>
           </block>
         </view>
       </view>
@@ -51,7 +74,7 @@
     </view>
 
     <block wx:if="{{status.open}}">
-      <view class="buy-panel-next {{sku.next ? '' : 'buy-panel-empty'}}" @tap="confirm({{action}})">
+      <view class="buy-panel-next {{sku.next && goods.skuProperties.length == proSelected.length ? '' : 'buy-panel-empty'}}" @tap="confirm({{action}})">
         <text>{{buttonText}}</text>
       </view>
     </block>
@@ -67,6 +90,8 @@
 
 <script>
   import wepy from 'wepy';
+  import base from '../../mixins/base_com';
+  import { checkUserInfoWithError } from '../../api/wx_auth';
   import order from '../../api/order';
   import bargain from '../../api/bargain'
   import { connect } from 'wepy-redux';
@@ -77,16 +102,21 @@
   import Event from '../../utils/Event';
   import Cart from '../../utils/Cart';
   import DiscountBadge from './discount_badge';
+  import router from '../../mixins/router'
 
   @connect({
-    status: store.get('status')
+    orderCount: store.get('orderCount'),
+    status: store.get('status'),
+    member: store.get('member')
   })
   export default class GoodsPanel extends wepy.component {
     data = {
-      goods: {},
+      goods: null,
       source: null,
       action: 'cart',
-      display: false
+      display: false,
+      proSelected: [],
+      orderType: null
     };
     skuManager = null;
     cartManager = Cart.create();
@@ -113,14 +143,19 @@
       this.goods = null;
       this.action = 'cart';
       this.display = false;
+      this.proSelected = [];
     }
     methods = {
       // 选择SKU
-      select(key, value) {
+      selectSkU(key, value) {
         if (this.sku.disabledSkuValues[value]) {
           return;
         }
         this.skuManager.select(key, value);
+      },
+      // 选择PRO
+      selectPro (pro, index) {
+        this.proSelected[index] = pro;
       },
       // 关闭SKU
       close() {
@@ -132,25 +167,44 @@
       },
       // 确认选择
       async confirm(type) {
+        console.info('[slider_panel] type=', type, this.goods);
+        await checkUserInfoWithError();
         if (!this.sku.next) {
           return;
         }
         // 增加到购物车
         const {skuText, num} = this.sku;
+        const selText = {
+          skuSelected: skuText,
+          proSelected: this.proSelected.length > 0 ? this.proSelected.toString() : null
+        };
         if (type === 'cart') {
+          // 购物车购买
           Tips.success('已加入购物车');
           // 关闭面板
           this.display = false;
           this.$apply();
-          this.cartManager.plus(this.goods, skuText, num);
+          this.cartManager.plus(this.goods, selText, num);
         } else if (type === 'begin' || type === 'help') {
-          const result = await bargain.GoodsBargain(this.goods.ruleId, this.goods.id, this.sku.skuText);
-          await Tips.success('砍价成功');
-          const isBegin = true;
-          this.$root.$navigate(`../bargain/bargain_detail?bargainId=${result.id}&&isBegin=${isBegin}`);
+          // 拼团和砍价
+          try {
+            Tips.loading();
+            const result = await bargain.GoodsBargain(this.goods.ruleId, this.goods.id, this.sku.skuText);
+            await Tips.success('砍价成功');
+            const isBegin = true;
+            this.$root.$redirect(`../bargain/bargain_detail?bargainId=${result.id}&&isBegin=${isBegin}`);
+          } catch (err) {
+            await Tips.modal(err.message);
+            wepy.navigateBack();
+          }
         } else {
-          const cart = this.cartManager.createCart(this.goods, skuText, num);
-          const trade = order.createCartTrade([cart], {orderType: 10});
+          // 普通购买
+          if (this.goods.limitType == 'NEW_CUSTOMER' && this.orderCount > 0) {
+            Tips.modal('该商品仅限新用户首单购买');
+            return;
+          }
+          const cart = this.cartManager.createCart(this.goods, selText, num);
+          const trade = order.createCartTrade([cart], {orderType: this.orderType || 10});
           if (type === 'join' || type === 'group') {
             const {groupId, ruleId} = this.goods;
             Object.assign(trade, {ruleId, groupId});
@@ -159,7 +213,18 @@
             // 直接购买
             this.$root.$preload('params', {trade, type});
           }
-          this.$root.$navigate(`../order/trade`);
+          this.display = false;
+          this.$apply();
+          if (this.goods.paymentType === 'common') {
+            this.$root.$navigate(`/pages/order/trade`);
+          } else {
+            if (this.member.bonus >= this.goods.priceLable) {
+              this.$root.$navigate(`/pages/order/bonusTrade`);
+            } else {
+              await Tips.modal('积分不足');
+              wepy.navigateBack();
+            }
+          }
         }
         this.clear();
       }
@@ -175,7 +240,9 @@
           return '已售罄';
         } else if (this.action === 'cart') {
           return '加入购物车'
-        } else if (this.action === 'buy' || this.action === 'bargain') {
+        } else if (this.goods.paymentType === 'bonus') {
+          return '立即兑换';
+        } else if (this.action === 'buy' || this.action === 'bargain' || this.action === 'digit') {
           return '立即购买';
         } else if (this.action === 'group') {
           return '一键开团';
@@ -186,8 +253,15 @@
         }
       },
       quantity() {
+        if (this.goods == null) return;
         if (this.sku == null) {
           return null;
+        } else if (this.action === 'begin' || this.goods.type === 'digit' || this.goods.paymentType === 'bonus') {
+          return {
+            num: this.sku.num,
+            min: 1,
+            max: 1
+          }
         } else {
           return {
             num: this.sku.num,
@@ -195,12 +269,21 @@
             max: this.sku.stock
           }
         }
+      },
+      properties () {
+        if (this.goods == null) return;
+        if (this.goods.skuProperties.length <= 0) return;
+        this.goods.skuProperties.forEach(item => {
+          item.property = item.propertyValue.split(',');
+        });
+        return this.goods.skuProperties;
       }
     };
     components = {
       ZanQuantity: ZanQuantity,
       DiscountBadge: DiscountBadge
     };
+    mixins = [router, base];
     events = {
       clear() {
         console.info('[SilderPanel] clear');
@@ -302,6 +385,10 @@
     margin-left: 30rpx;
     padding-top: 25rpx;
     border-bottom: 1px solid #E2E2E2;
+  }
+
+  .no-border-bottom{
+    border-bottom: none;
   }
 
   /*SKU列表*/

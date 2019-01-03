@@ -26,26 +26,66 @@
     </block>
 
     <!--地址展现-->
-    <block wx:if="{{order.orderType == '20' || order.orderType == '10'}}">
+    <block wx:if="{{(order.orderType == '20' || order.orderType == '10') && order.onlinePayType !== 'bonus'}}">
       <Address :address.sync="address" />
     </block>
-    <block wx:if="{{order.orderType == '30' || order.orderType == '33'}}">
+    <block wx:if="{{(order.orderType == '30' || order.orderType == '33') && order.onlinePayType !== 'bonus'}}">
       <InShopStatus :order.sync="order" />
     </block>
+
+    <!--归属门店-->
+    <view class="mb10 mt10">
+      <ShopInfoBar :subShop.sync="subShop"/>
+    </view>
 
     <!--订单项目-->
     <OrderItem :order.sync="order" action="0"></OrderItem>
 
+    <!--使用虚拟产品栏-->
+    <view class="row-between digit-coupon-box mt10" wx:if="{{order.isDigit && order.digitResult.result && order.digitType === 'coupon'}}"  @tap="checkQrCode">
+      <view class="row" style="min-width: 250rpx;">
+        <icon class="qrcode" color="gray"/>
+        <text class="ml10">查看二维码</text>
+      </view>
+      <view>
+        <icon class="more ml10" color="gray"/>
+      </view>
+    </view>
+    <!---账号类-->
+    <view class="weui-cells weui-cells-form mt10 mb10" wx:if="{{order.isDigit && order.digitResult.result && order.digitType === 'account'}}">
+      <view class="weui-cell" @tap="copy({{order.digitResult.result.account}})">
+        <view class="weui-cell__bd">兑换账号 <text class="xs muted">(点击复制)</text> </view>
+        <view class="weui-cell__ft"><text>{{order.digitResult.result.account}}</text></view>
+      </view>
+      <view class="weui-cell"  @tap="copy({{order.digitResult.result.password}})">
+        <view class="weui-cell__bd">兑换密码 <text class="xs muted">(点击复制)</text></view>
+        <view class="weui-cell__ft"><text>{{order.digitResult.result.password}}</text></view>
+      </view>
+    </view>
+
     <!--订单详情-->
     <view class="weui-cells weui-cells-show mt10">
-      <view class="weui-cell">
-        <view class="weui-cell__bd">支付方式</view>
-        <view class="weui-cell__ft">{{order.paymentText}}</view>
+      <view wx:if="{{order.onlinePayType === 'bonus'}}">
+        <view class="weui-cell">
+          <view class="weui-cell__bd">支付类型</view>
+          <view class="weui-cell__ft">积分支付</view>
+        </view>
       </view>
-      <view class="weui-cell" wx:if="{{order.orderType == '20' || order.orderType == '10'}}">
-        <view class="weui-cell__bd">配送方式</view>
-        <view class="weui-cell__ft">{{order.deliveryText}}</view>
+      <view wx:else>
+        <view class="weui-cell">
+          <view class="weui-cell__bd">支付类型</view>
+          <view class="weui-cell__ft">{{order.paymentText}}</view>
+        </view>
+        <view class="weui-cell">
+          <view class="weui-cell__bd">支付方法</view>
+          <view class="weui-cell__ft">{{order.onlinePayType == 'balance' ? '余额支付' : '微信支付'}}</view>
+        </view>
+        <view class="weui-cell" wx:if="{{order.orderType == '20' || order.orderType == '10'}}">
+          <view class="weui-cell__bd">配送方式</view>
+          <view class="weui-cell__ft">{{order.deliveryText}}</view>
+        </view>
       </view>
+
       <view class="weui-cell">
         <view class="weui-cell__bd">买家留言</view>
         <view class="weui-cell__ft">{{order.message ? order.message : '无'}}</view>
@@ -53,14 +93,34 @@
     </view>
 
     <!--信息汇总-->
-    <view class="panel summary-box mb20">
+    <view class="panel summary-box mb20"  wx:if="{{order.onlinePayType === 'bonus'}}">
+      <view class="price-box row-between">
+        <text>商品金额</text>
+        <text class="major">{{order.bonus}}积分</text>
+      </view>
+
+      <view class="price-hr"></view>
+      <view class="final-box">
+        <text class="lg">实付款：</text>
+        <text class="lg major">{{order.bonus}}积分</text>
+      </view>
+    </view>
+    <view class="panel summary-box mb20" wx:else>
       <view class="price-box row-between">
         <text>商品金额</text>
         <text class="major">￥{{order.dealPrice}}</text>
       </view>
-      <view class="price-box row-between">
-        <text>运费</text>
+      <view class="price-box row-between" wx:if="{{order.postFee > 0}}">
+        <text>配送费</text>
         <text class="major">+￥{{order.postFee}}</text>
+      </view>
+      <view class="price-box row-between" wx:if="{{order.foodBoxFee > 0}}">
+        <text>餐盒费</text>
+        <text class="major">+￥{{order.foodBoxFee}}</text>
+      </view>
+      <view class="price-box row-between" wx:if="{{order.serviceFee > 0}}">
+        <text>服务费</text>
+        <text class="major">+￥{{order.serviceFee}}</text>
       </view>
       <view class="price-box row-between" wx:if="{{order.couponPrice > 0}}">
         <text>优惠券</text>
@@ -69,6 +129,10 @@
       <view class="price-box row-between" wx:if="{{order.bonusPrice > 0}}">
         <text>积分抵扣</text>
         <text class="major">-￥{{order.bonusPrice}}</text>
+      </view>
+      <view class="price-box row-between" wx:if="{{order.pointUsed > 0}}">
+        <text>赠送金抵扣</text>
+        <text class="major">-￥{{order.pointUsed}}</text>
       </view>
       <view class="price-box row-between" wx:if="{{order.reduceFee > 0}}">
         <view class="row">
@@ -100,9 +164,11 @@
 </template>
 
 <script>
-  import wepy from 'wepy'
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import { initWxAppSync, checkUserInfo } from '../../api/wx_auth';
   import base from '../../mixins/base';
-  import auth from '../../api/auth';
   import order from '../../api/order';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
@@ -111,6 +177,11 @@
   import OrderItem from '../../components/order/order_item';
   import InShopStatus from '../../components/order/inshop_status';
   import Loading from '../../components/common/loading';
+  import ShopInfoBar from '../../components/goods/shop_info_bar';
+
+  @connect({
+    shop: store.get('shop')
+  })
   export default class OrderDetail extends wepy.page {
     data = {
       order: {
@@ -119,11 +190,12 @@
       },
       express: {},
       address: {},
-      init: false
+      init: false,
+      subShop: {}
     };
     async onLoad ({orderId}) {
-      const result = await auth.user({block: true, redirect: true});
-      if (!result) return;
+      await initWxAppSync();
+      await checkUserInfo();
       // 订单信息
       this.order = await order.getInfo(orderId);
       // 收货地址
@@ -132,6 +204,7 @@
         simpleAddress: this.order.address,
         phone: this.order.receivePhone
       };
+      this.subShop = this.order.subShop != null ? this.order.subShop : this.shop;
       this.loaded();
     };
     /**
@@ -235,7 +308,7 @@
       await order.cancelRefundOrder(orderId, refundUuid);
       await Tips.success('取消成功');
       Event.emit(Event.ORDER_LIST_UPDATE);
-      Route.backOrRedirect('/pages/customer/index');
+      Route.backOrRedirect('/pages/customer/index_template');
     }
     /**
      * 退款详情
@@ -244,7 +317,23 @@
       const refundStr = JSON.stringify(curRefund);
       this.$navigate(`/pages/order/refund_detail?refund=${refundStr}`);
     }
+    /**
+     * 查看二维码
+     */
+    qrCode(order) {
+      if (order.couponCustomerInfo == null) {
+        Tips.modal('兑换码请查看订单详情，点击复制');
+        return;
+      }
+      const couponId = order.couponCustomerInfo.id;
+      this.$root.$preload('couponId', couponId);
+      this.$root.$navigate(`/pages/coupon/detail`)
+    }
     methods = {
+      async copy(content) {
+        await wepy.setClipboardData({data: content});
+        Tips.success('复制成功');
+      },
       action(funcName, order) {
         console.info('[action]' + funcName);
         if (this[funcName]) {
@@ -256,6 +345,11 @@
       },
       sender() {
         wepy.makePhoneCall({phoneNumber: this.order.orderExpress.telPhone});
+      },
+      checkQrCode () {
+        const couponId = this.order.couponCustomerInfo.id;
+        this.$root.$preload('couponId', couponId);
+        this.$root.$navigate(`/pages/coupon/detail`)
       }
     };
     computed = {
@@ -274,6 +368,7 @@
       Address: Address,
       OrderItem: OrderItem,
       InShopStatus: InShopStatus,
+      ShopInfoBar: ShopInfoBar,
       Loading: Loading
     };
 
@@ -354,6 +449,28 @@
     bottom: 0;
     border-top: $border;
     padding-right: 10rpx;
+  }
+
+  // 虚拟商品使用
+  .digit-coupon-box{
+    background-color: white;
+    margin-bottom: 10rpx;
+    padding: 20rpx 30rpx;
+    border-top: $border;
+    border-bottom: $border;
+  }
+  .digit-account-box{
+    background-color: white;
+    margin-bottom: 10rpx;
+    padding: 10rpx 30rpx;
+    border-top: $border;
+    border-bottom: $border;
+    .account-box{
+      padding: 10rpx 0;
+    }
+    .account-box + .account-box{
+      border-top: $border;
+    }
   }
 
 

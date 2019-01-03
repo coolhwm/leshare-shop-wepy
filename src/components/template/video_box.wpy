@@ -1,0 +1,19 @@
+<template>
+  <view>
+    <video src="{{param.url}}"  style="height: {{param.height}}; width: 750rpx;" poster="{{param.poster}}"></video>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class VideoBox extends wepy.component {
+    props = {
+      param: {}
+    };
+  }
+</script>
+
+<style lang="scss">
+
+</style>

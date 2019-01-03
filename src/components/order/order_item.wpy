@@ -3,11 +3,13 @@
     <!--顶栏/基本信息-->
     <view class="order-header-container colunm">
       <view class="row-between">
-        <view class="user-info-container row">
+        <view class="user-info-container row" @tap="shopDetail({{order}})">
           <icon class="shop" color="gray" />
-          <text class="sm ml10">{{shopName}}</text>
+          <text class="sm ml10" wx:if="{{order.subShopName != null}}">{{order.subShopName}}</text>
+          <text class="sm ml10" wx:elif="{{order.subShop != null}}">{{order.subShop.name}}</text>
+          <text class="sm ml10" wx:else>{{shopName}}</text>
         </view>
-        <text class="sm primary" wx:if="{{order.statusText}}">{{order.statusText}}{{order.paymentType == 0 ? '(线下支付)' : ''}}</text>
+        <text class="sm primary" wx:if="{{order.statusText}}">{{order.statusText}}{{order.paymentType == 0 ? '(线下支付)' : ''}}{{order.tableNum ? '(' + order.tableNum + '桌)': ''}}</text>
       </view>
       <view class="order-info-container row-between">
         <text>{{order.orderTime}}</text>
@@ -19,7 +21,7 @@
     <view class="order-goods-list-container" @tap="detail({{order.orderId}})">
       <repeat for="{{order.orderGoodsInfos}}" key="goodsId" index="index" item="item">
         <view class="{{!order.orderId || index == 0 || expand[order.orderId] ? '' : 'order-goods-fold'}}">
-          <OrderGoods :goods="item"></OrderGoods>
+          <OrderGoods :goods="item"/>
           <view class="hr" />
         </view>
       </repeat>
@@ -31,11 +33,16 @@
 
 
     <!--汇总信息-->
-    <view class="order-footer-container row-end">
+    <view class="order-footer-container row-end" wx:if="{{order.onlinePayType === 'bonus'}}">
+      <text class="mr20">共{{order.orderGoodsInfos.length}}件商品</text>
+      <text>合计:</text>
+      <text class="major xl mr20">{{order.orderGoodsInfos[0].goodsPrice}}积分</text>
+    </view>
+    <view class="order-footer-container row-end" wx:else>
       <text class="mr20">共{{order.orderGoodsInfos.length}}件商品</text>
       <text>合计:</text>
       <text class="major xl mr20">￥{{order.finalPrice}}</text>
-      <text>(含运费￥{{order.postFee}})</text>
+      <text wx:if="{{order.postFee > 0}}">(含运费￥{{order.postFee}})</text>
     </view>
 
     <!--操作栏-->
@@ -44,6 +51,7 @@
         <view class="small label primary ml20" wx:if="{{order.orderType == 30}}">堂食</view>
         <view class="small label primary ml20" wx:if="{{order.orderType == 33}}">打包</view>
         <view class="small label primary ml20" wx:if="{{order.orderType == 50}}">拼团</view>
+        <view class="small label primary ml20" wx:if="{{order.orderType == 60}}">预约</view>
         <view class="small label primary ml20" wx:if="{{order.orderType == 70}}">砍价</view>
       </view>
       <view class="row">
@@ -57,6 +65,7 @@
 </template>
 <script>
   import wepy from 'wepy';
+  import store from '../../store/utils';
   import order from '../../api/order';
   import Tips from '../../utils/Tips';
   import Event from '../../utils/Event';
@@ -97,13 +106,16 @@
     /**
      * 订单支付
      */
-    async pay({orderId}) {
+    async pay(trade) {
       try {
         Tips.loading();
-        const payment = await order.prepayOrder(orderId);
+        const payment = await order.prepayOrder(trade.orderId);
         Tips.loaded();
         await order.wxpayOrder(payment);
         await Tips.success('支付成功');
+        if (trade.couponUsedId || trade.orderGoodsInfos[0].goodsType === 'digit') {
+          store.delayReflesh('coupon');
+        }
       } catch (e) {
         console.warn(e);
         await Tips.success('支付取消');
@@ -153,6 +165,18 @@
       this.$root.$preload('data', scores);
       this.$root.$navigate(`/pages/goods/comment_edit?orderId=${order.orderId}`);
     }
+    /**
+     * 查看二维码
+     */
+    qrCode(order) {
+      if (order.couponCustomerInfo == null) {
+        this.$root.$navigate(`/pages/order/detail?orderId=${order.orderId}`);
+        return;
+      }
+      const couponId = order.couponCustomerInfo.id;
+      this.$root.$preload('couponId', couponId);
+      this.$root.$navigate(`/pages/coupon/detail`)
+    }
     methods = {
       action(funcName, order) {
         console.info('[action]' + funcName);
@@ -178,6 +202,9 @@
           return;
         }
         this.$root.$navigate(`/pages/order/detail?orderId=${orderId}`);
+      },
+      shopDetail(order) {
+        this.$root.$navigate(`/pages/shop/sub_shop_detail?subShopId=${order.subShopId}`)
       }
     };
     components = {

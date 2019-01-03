@@ -1,5 +1,6 @@
 import base from './base';
 import Page from '../utils/Page';
+import Lang from '../utils/Lang';
 
 /**
  * 商品服务类
@@ -19,7 +20,28 @@ export default class goods extends base {
    * 新的分页方法
    */
   static list (discount) {
+    let url = `${this.baseUrl}/goods/list?is_new=1`;
+    return new Page(url, item => {
+      // this._processGoodsDiscount(item, discount);
+      // this._processGoodsData(item);
+    });
+  }
+
+  /**
+   * 新的分页方法
+   */
+  static listFood (discount) {
     let url = `${this.baseUrl}/goods/list`;
+    return new Page(url, item => {
+      this._processGoodsDiscount(item, discount);
+      this._processGoodsData(item);
+    });
+  }
+  /**
+   * 积分商品分页方法
+   */
+  static listBonus (discount, bussType) {
+    let url = `${this.baseUrl}/goods/list?buss_type=${bussType}`;
     return new Page(url, item => {
       this._processGoodsDiscount(item, discount);
       this._processGoodsData(item);
@@ -37,8 +59,11 @@ export default class goods extends base {
   /**
    * 查询商品目录
    */
-  static categories (pid = 0) {
-    const url = `${this.baseUrl}/goods/inner_category`;
+  static categories (subShopId) {
+    let url = `${this.baseUrl}/goods/inner_category`;
+    if (subShopId) {
+      url += `?sub_shop_id=${subShopId}`;
+    }
     return this.get(url).then(data => this._createGoodsCategories(data));
   }
 
@@ -52,6 +77,23 @@ export default class goods extends base {
       return this._processGoodsDetail(data)
     });
   }
+  /**
+   * 按商铺ID查询商品目录
+   */
+  static subShopCategory (subShopId) {
+    const url = `${this.baseUrl}/goods/inner_category?sub_shop_id=${subShopId}`;
+    return this.get(url).then(data => this._createGoodsCategories(data));
+  }
+  /***
+   * 归属门店店铺商品列表
+   */
+  static subShopGoodsList(discount) {
+    const url = `${this.baseUrl}/goods/sub_shop/list`;
+    return new Page(url, item => {
+      this._processGoodsDiscount(item, discount);
+      this._processGoodsData(item);
+    });
+  }
 
   /** ********************* 数据处理方法 ***********************/
 
@@ -61,7 +103,8 @@ export default class goods extends base {
       list.push(...data.map(item => {
         return {
           id: item.id,
-          title: item.name
+          title: item.name,
+          bussType: item.bussType
         };
       }));
     }
@@ -116,12 +159,12 @@ export default class goods extends base {
         }
         // 设置原价和当前价格
         detail.originalPrice = price;
-        detail.price = (price * rate).toFixed(2);
+        detail.price = Lang._fixedPrice(price * rate);
       });
     } else {
       // 单规格数据处理
       goods.originalPrice = goods.sellPrice;
-      goods.sellPrice = (goods.sellPrice * rate).toFixed(2);
+      goods.sellPrice = Lang._fixedPrice(goods.sellPrice * rate);
     }
     // 折扣文本展现
     goods.discountRate = discount.rate / 10 + '折';
@@ -184,7 +227,6 @@ export default class goods extends base {
     if (!skuInfo) {
       return;
     }
-
     const skuLabels = [];
     for (let i = 1; i <= 3; i++) {
       const skuKey = skuInfo[`prop${i}`];
@@ -208,7 +250,7 @@ export default class goods extends base {
    */
   static _processGoodsData (item) {
     // 结构赋值
-    const {name, sellPrice, originalPrice} = item;
+    const {name, sellPrice, originalPrice, subhead} = item;
 
     // 长名字处理
     if (name.length > 12) {
@@ -222,6 +264,11 @@ export default class goods extends base {
     // 销售价处理
     if (originalPrice == null || originalPrice == 0) {
       item.originalPrice = sellPrice;
+    }
+
+    // 描述处理
+    if (subhead != null) {
+      item.subhead = subhead.replace(/\s/g, '');
     }
 
     // 处理图片

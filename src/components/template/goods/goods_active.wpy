@@ -1,0 +1,85 @@
+<template>
+  <view class="goods-item column-center" @tap="goods({{goods}})">
+    <view class="goods-image-box">
+      <view class="goods-tag">{{goods.typeText}}</view>
+      <image src="{{goods.imageUrl}}/small" class="goods-image"/>
+    </view>
+    <view class="row-center goods-price-box">
+      <text class="goods-unit" wx:if="{{goods.goodsType === 'NEW_CUSTOMER'}}">首单￥</text>
+      <text class="goods-unit" wx:elif="{{goods.goodsType === 'BARGAIN'}}">最低￥</text>
+      <text class="goods-unit" wx:elif="{{goods.goodsType === 'GROUP'}}">成团￥</text>
+      <text class="goods-unit" wx:elif="{{goods.goodsType === 'BONUS'}}">积分</text>
+      <text class="major xxl" wx:if="{{goods.goodsType != 'ASSIST'}}">{{goods.price}}</text>
+      <text class="major lg" wx:if="{{goods.goodsType === 'ASSIST'}}">免费领</text>
+
+    </view>
+    <text class="inline sm">{{goods.name}}</text>
+    <text class="xxs muted">{{goods.areaTag}}</text>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import router from '../../../mixins/router';
+  import DiscountBadge from '../../../components/goods/discount_badge';
+  export default class GoodRowItem extends wepy.component {
+    props = {
+      goods: {}
+    };
+    methods = {
+      goods (goods) {
+        if (goods.goodsType == 'BARGAIN') {
+          this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${goods.ruleId}`);
+        } else if (goods.goodsType == 'GROUP') {
+          this.$root.$navigate(`/package_group/pages/group/goods_detail?ruleId=${goods.ruleId}`);
+        } else if (goods.goodsType == 'ASSIST') {
+          this.$root.$navigate(`/pages/assist/goods_detail?ruleId=${goods.ruleId}`);
+        } else {
+          this.$root.$navigate(`/pages/goods/detail?goodsId=${goods.id}`)
+        }
+      }
+    };
+    components = {
+    };
+  }
+</script>
+
+<style lang="scss" scoped>
+  @import "../../../styles/variable";
+  .goods-unit {
+    color: $color-major;
+    font-size: $text-xxs;
+    margin-top: 5rpx;
+  }
+  .goods-item{
+    position: relative;
+    display: inline-flex;
+    width: 220rpx;
+    max-width: 220rpx;
+  }
+  .goods-image-box{
+    position: relative;
+    width: 200rpx;
+    height: 200rpx;
+    min-height: 200rpx;
+    min-width: 200rpx;
+    border: 1px solid #E9E9E9;
+  }
+  .goods-image {
+    width: 200rpx;
+    height: 200rpx;
+    min-height: 200rpx;
+    min-width: 200rpx;
+  }
+  .goods-tag{
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 2rpx 8rpx;
+    background-color: $color-primary;
+    color: #FFFFFF;
+    font-size: $text-xxs;
+  }
+  .goods-price-box{
+  }
+</style>

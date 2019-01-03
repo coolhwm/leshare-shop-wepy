@@ -1,11 +1,11 @@
-<template>
+<template xmlns:wx="http://java.sun.com/JSP/Page">
   <view class="column goods-tight-box">
     <view class="tight-discount-box row" wx:if="{{goods.discount}}">
       <icon class="vip xsmall" color="white" />
       <text>{{goods.discountRate}}</text>
     </view>
     <!--图片-->
-    <image class="goods-image" lazy-load src="{{goods.imageUrl}}" @tap="routeToGoods({{goods.id}})"></image>
+    <image class="goods-image" lazy-load src="{{goods.imageUrl}}/small" @tap="routeToGoods({{goods.id}})"></image>
     <view class="content-box column" wx:if="{{goods.isName || goods.isPrice}}">
       <!--文字-->
       <text class="inline" wx:if="{{goods.isGoodsName}}" @tap="routeToGoods({{goods.id}})">{{goods.name}}</text>
@@ -14,16 +14,10 @@
       <text class="xs muted" wx:if="{{goods.isSales}}">已售{{goods.salesVolume}}件</text>
 
       <!--购物车与价格标签-->
-      <view class="row-between" wx:if="{{goods.isPrice || goods.isCart}}">
+      <view class="row-between" wx:if="{{goods.isPrice}}">
         <view class="row">
-          <text class=" lg major" >￥{{goods.priceLable}}</text>
+          <text class=" lg major" >￥{{goods.price}}</text>
         </view>
-        <!--加入购物车按钮-->
-        <block wx:if="{{goods.isCart || goods.isCart == null}}">
-          <icon class="plus"  @tap="handlePlusCart({{goods}})" wx:if="{{goods.totalStock > 0}}"/>
-          <text class="xxs muted" wx:else>已售罄</text>
-        </block>
-
       </view>
     </view>
   </view>
@@ -38,6 +32,12 @@
       goods: {}
     };
     methods = {
+      service (id, type) {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${id}&type=${type}`)
+      },
+      digit (id) {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${id}`)
+      }
     };
     mixins = [router]
   }
@@ -77,6 +77,13 @@
 
     .content-box{
       padding: 5rpx;
+    }
+    .service-box{
+      background-color: $color-primary;
+      color: white;
+      padding: 5rpx 10rpx;
+      border-radius: 10rpx;
+      line-height: 29px;
     }
   }
 </style>

@@ -1,0 +1,71 @@
+<template>
+  <Loading :init.sync="init"/>
+  <view class="container">
+    <image bindload="onImageLoad" class="poster-image" mode="widthFix" src="{{url}}" wx:if="{{url}}"></image>
+  </view>
+  <!--操作栏-->
+  <ActionBar @tap.user="save" okText="保存到相册" cancelText="返回"/>
+
+  <ButtonWidget/>
+</template>
+<script>
+  import wepy from 'wepy';
+  import base from '../../../mixins/base';
+  import invite from '../../api/invite';
+  import { connect } from 'wepy-redux';
+  import store from '../../../store/utils';
+  import Loading from '../../../components/common/loading';
+  import ActionBar from '../../../components/common/action_bar';
+  import Tips from '../../../utils/Tips';
+  import ButtonWidget from '../../../components/template/button_widget';
+  @connect({
+    member: store.get('member')
+  })
+  export default class SuperPoster extends wepy.page {
+    data = {
+      init: false,
+      url: null
+    };
+    async onLoad () {
+      this.url = await invite.poster();
+      if (this.url == '') {
+        await Tips.modal('尚未开放邀请');
+        wepy.navigateBack();
+        return;
+      }
+      this.$apply();
+    };
+    methods = {
+      onImageLoad() {
+        this.loaded();
+      },
+      async save() {
+        if (!this.init) {
+          Tips.alert('请等待');
+          return;
+        }
+        await Tips.modal('邀请图需要保存到相册后再发送给微信好友，长按识别关注公众号即可获得积分！');
+        try {
+          await wepy.saveImageToPhotosAlbum({filePath: this.url});
+          Tips.success('保存成功');
+        } catch (e) {
+          console.error(e);
+          await Tips.modal('邀请图需要保存到相册，请在弹出页面中开启授权');
+          wepy.openSetting({});
+        }
+      }
+    };
+    mixins = [base];
+    components = {
+      ActionBar: ActionBar,
+      Loading: Loading,
+      ButtonWidget: ButtonWidget
+    }
+  }
+</script>
+<style lang="scss">
+  @import "../../../styles/variable";
+  .poster-image{
+    width: 100%;
+  }
+</style>

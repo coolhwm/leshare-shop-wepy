@@ -1,0 +1,31 @@
+<template>
+  <web-view src="{{url}}"></web-view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+
+  export default class Article extends wepy.page {
+    data = {
+      url: null
+    };
+    onLoad (options, {preload}) {
+      const {url, title} = preload.params;
+      this.url = url;
+      wepy.setNavigationBarTitle({
+        title: title
+      });
+    };
+    methods = {};
+    components = {};
+    computed = {};
+    mixins = [base];
+    config = {
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+</style>

@@ -1,0 +1,78 @@
+<template>
+  <view class="row group-goods-box">
+    <image class="img-box mr20" src="{{item.goods.imageUrl}}"/>
+    <view class="column content-box">
+      <view class="goods-name">
+        <text class="lg">{{item.goods.name}}</text>
+      </view>
+      <view class="row-between">
+        <text class="primary xxl">￥{{item.price}}</text>
+        <text class="muted sm origin">￥{{item.goods.sellPrice	}}</text>
+      </view>
+      <view class="row-between">
+        <text class="muted sm">{{item.limitCustomer}}人团/已成团{{item.totalCount}}件</text>
+        <view class="btn-box" @tap="group({{item.id}})">去拼团<icon class="more ml10 xsmall" color="white"/></view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../../mixins/base';
+
+  export default class GroupMoreItem extends wepy.component {
+    prop = {
+      item: {}
+    };
+    data = {
+    };
+    async onLoad () {
+    };
+    methods = {
+      group (id) {
+        this.$root.$navigate(`/package_group/pages/group/goods_detail?ruleId=${id}`)
+      }
+    };
+    computed = {
+    };
+    components = {
+    };
+    mixins = [base];
+    config = {
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+  $img-width:180rpx;
+  .group-goods-box{
+    background-color: white;
+    margin: 10rpx 10rpx 0;
+    padding: 20rpx;
+    .img-box{
+      width: $img-width;
+      height: $img-width;
+    }
+    .goods-name{
+      // 总宽 - 图宽 - box左右margin - box左右padding - 图右外边距
+      max-width: 750rpx - $img-width - 20rpx - 40rpx - 20rpx;
+    }
+    .content-box{
+      height: $img-width;
+      justify-content: space-between;
+      flex: 1;
+    }
+    .origin{
+      text-decoration: line-through;
+    }
+    .btn-box{
+      background-color: $color-primary;
+      color: white;
+      padding: 8rpx 16rpx;
+      border-radius: 5rpx;
+      font-size: $text-sm;
+    }
+  }
+</style>

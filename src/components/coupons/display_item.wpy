@@ -1,12 +1,13 @@
 <template>
-  <view class="coupon-item-box row {{coupon.status == 'NEVER_USED' ? '' : 'coupon-item-disable'}}"  @tap.stop="select({{coupon}})">
+  <view class="{{coupon.status == 'NEVER_USED' ? '' : 'coupon-item-disable'}} coupon-item-box row "  @tap.stop="select({{coupon}})">
     <!--左侧区域-->
     <view class="coupon-main-box column-center" wx:if="{{coupon.type == 'CASH'}}">
       <view class="coupon-value-box">
         <text class="white">￥</text>
         <text class="white coupon-value">{{coupon.price}}</text>
       </view>
-      <text class="white">满{{coupon.limitPrice}}元可用</text>
+      <text class="white" wx:if="{{coupon.limitPrice > 0}}">满{{coupon.limitPrice}}元可用</text>
+      <text class="white nm mt10" wx:if="{{coupon.limitPrice == 0}}">无门槛</text>
     </view>
     <!--左侧区域-->
     <view class="coupon-main-box column-center" wx:if="{{coupon.type == 'EXCHANGE'}}">
@@ -26,11 +27,12 @@
           <view class="label primary small {{coupon.status == 'NEVER_USED' ? '' : 'disabled'}}" wx:if="{{coupon.supportType == 2}}">线下</view>
           <text class="coupon-title-text">{{coupon.name}}</text>
         </view>
-        <text class="muted sm">{{coupon.beginTime}}-{{coupon.dueTime}}</text>
+        <text class="muted sm" wx:if="{{isDetail && coupon.expiredType == 'FIX_TERM'}}">{{'使用有效期' + coupon.fixedTerm + '天'}} {{ coupon.fixedBeginTerm > 0 ? ',' + coupon.fixedBeginTerm + '天后生效' : ''}}</text>
+        <text class="muted sm" wx:else>{{coupon.beginTime}}-{{coupon.dueTime}}</text>
       </view>
 
       <!--分隔符-->
-      <view>
+      <view wx:if="{{!isDetail}}">
         <view class="coupon-desc-gap"></view>
         <view class="row-between coupon-detail-box">
           <text class="xs" wx:if="{{coupon.usedTime}}">使用时间：{{coupon.usedTime}}</text>
@@ -52,7 +54,10 @@
 
   export default class CouponItem extends wepy.component {
     props = {
-      coupon: {}
+      coupon: {},
+      isDetail: {
+        default: false
+      }
     };
     data = {};
     methods = {
@@ -79,7 +84,7 @@
     .coupon-main-box{
       width: 36%;
       height: 100%;
-      background: linear-gradient(to right, #2F80ED, #1296db);
+      background: linear-gradient(to right, lighten($color-primary, 5%), $color-primary-darken);
       .coupon-value{
         font-size: 75rpx;
       }
@@ -98,35 +103,40 @@
         margin-top: 5rpx;
         border-top: 1px dotted #EFF0F2;
       }
+      .coupon-title-box{
+        margin-right: 50rpx;
+      }
     }
     .coupon-new-icon{
       position: absolute;
       top: 0;
       right: 0;
     }
-
-    /*已使用/已过期情况调整*/
-    .coupon-item-disable{
-      overflow: hidden;
-      .coupon-main-box{
-        background: #C2C2C2;
-        text{
-          color: #FFF;
-        }
-      }
-      .coupon-title-text{
-        color: #A7A7A7;
-      }
-      .coupon-detail-box text{
-        color: #A7A7A7;
+  }
+  /*已使用/已过期情况调整*/
+  .coupon-item-disable{
+    overflow: hidden;
+    .coupon-main-box{
+      background: #C2C2C2;
+      text{
+        color: #FFF;
       }
     }
-    .coupon-used-icon{
-      height: 64px;
-      width: 64px;
-      position: absolute;
-      top: 2px;
-      right: -8px;
+    .coupon-title-box {
+      margin-right: 50 rpx;
     }
+    .coupon-title-text{
+      color: #A7A7A7;
+    }
+    .coupon-detail-box text{
+      color: #A7A7A7;
+    }
+  }
+  .coupon-used-icon{
+    height: 64px;
+    width: 64px;
+    position: absolute;
+    top: 2px;
+    right: -8px;
   }
 </style>

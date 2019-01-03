@@ -1,0 +1,107 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view wx:if="{{init}}">
+    <!--<image src="https://img.leshare.shop/bouns_bar.jpg" mode="aspectFill" style="width: 750rpx; height:200rpx;"/>-->
+
+    <view class="top-bonus-box row-between">
+      <view class="row">
+        <!--<image class="image-box mr10" src="{{user.avatarUrl}}"></image>-->
+        <!--<text>{{member.name}}</text>-->
+        <icon class="tab-down" color="white"/>
+        <text class="major">积分商品免费兑换</text>
+      </view>
+      <view class="row" @tap="toBonusDetail">
+        <text>当前积分：</text>
+        <icon class="bouns" color="white"/>
+        <text class="xxl mr10">{{member.bonus}}</text>
+      </view>
+
+    </view>
+
+    <view class="column">
+      <repeat for="{{page.list}}" key="index" index="index" item="item">
+        <BonusGoodsItem :detail.sync="item" @goods.user="goods"></BonusGoodsItem>
+      </repeat>
+    </view>
+
+    <!--占位符-->
+    <Placeholder :show.sync="isPageEmpty" message="您还没有相关积分商品" top="400rpx"/>
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import pagination from '../../mixins/pagination';
+  import Loading from '../../components/common/loading';
+  import goods from '../../api/goods';
+  import { connect } from 'wepy-redux';
+  import { initWxAppSync, checkUserMember } from '../../api/wx_auth';
+  import store from '../../store/utils';
+  import Placeholder from '../../components/common/placeholder';
+  import BonusGoodsItem from '../../components/goods/bonus-goods-item'
+
+  @connect({
+    member: store.get('member'),
+    user: store.get('user'),
+    discount: store.get('discount')
+  })
+  export default class BonusGoodsList extends wepy.page {
+    data = {
+      init: false,
+      page: [],
+      bussType: 'bonus'
+    };
+    async onLoad () {
+      // 登录检查
+      await initWxAppSync();
+      // await checkUserMember();
+      this.page = await goods.listBonus(this.discount, this.bussType);
+      await this.next();
+    };
+    methods = {
+      async goods(id) {
+        await checkUserMember();
+        this.$navigate(`/pages/goods/detail?goodsId=${id}`)
+      },
+      toBonusDetail() {
+        this.$navigate(`/package_member/pages/member/bonus_list`);
+      },
+    };
+    computed = {
+    };
+    components = {
+      Loading: Loading,
+      Placeholder: Placeholder,
+      BonusGoodsItem: BonusGoodsItem
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '积分商城',
+      navigationBarBackgroundColor: '#FF8929',
+      navigationBarTextStyle: 'white',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .top-bonus-box {
+    background-color: #FF8929;
+    align-items: center;
+    padding: 10rpx 20rpx;
+    // margin-top: -10rpx;
+    text{
+      color: #FFFFFF;
+    }
+    .image-box{
+      width: 60rpx;
+      height: 60rpx;
+      border: $border;
+      border-radius: 30rpx;
+    }
+  }
+</style>

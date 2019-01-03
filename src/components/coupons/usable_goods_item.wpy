@@ -1,0 +1,50 @@
+<template>
+  <view class="row-between usable-goods-item-box" @tap="checkGoods">
+    <view class="row">
+      <image class="goods-img" src="{{detail.goodsImg}}/small" mode="aspectFill"/>
+      <view class="column ml20">
+        <view class="row">
+          <icon class="shop xsmall mr5" color="gray"/>
+          <text class="muted">{{detail.subShopName}}</text>
+        </view>
+        <text class="lg">{{detail.goodsName}}</text>
+      </view>
+    </view>
+    <icon class="more" color="gray"/>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  export default class UsableGoodsItem extends wepy.component {
+    props = {
+      detail: {}
+    };
+    data = {};
+    methods = {
+      checkGoods() {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${this.detail.goodsId}`);
+      }
+    };
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .usable-goods-item-box{
+    background: #fff;
+    margin-bottom: 20rpx;
+    padding: 20rpx;
+    border: $border;
+
+    .goods-img{
+      width: 80rpx;
+      height: 80rpx;
+    }
+  }
+
+</style>

@@ -90,7 +90,7 @@
         await order.refundOrder(refund.orderId, refund);
         await Tips.success('退款申请成功');
         Event.emit(Event.ORDER_LIST_UPDATE);
-        Route.backOrRedirect('/pages/customer/index');
+        Route.backOrRedirect('/pages/customer/index_template');
       }
     };
     validate() {
@@ -118,7 +118,7 @@
     };
     mixins = [base, input];
     config = {
-      navigationBarTitleText: '编辑配送员信息'
+      navigationBarTitleText: '退款申请'
     };
   }
 </script>

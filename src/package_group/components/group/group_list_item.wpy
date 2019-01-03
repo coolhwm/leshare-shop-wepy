@@ -1,0 +1,94 @@
+<template>
+  <view class="order-item-container column">
+    <!--顶栏/基本信息-->
+    <view class="order-header-container colunm">
+      <view class="row-between">
+        <view class="user-info-container">
+          <text class="sm ml10">{{group.groupTime}}</text>
+        </view>
+
+        <text class="sm primary">{{group.statusText}}</text>
+      </view>
+    </view>
+
+    <!--商品区域-->
+    <view class="row-between group-goods-box" @tap="group({{group.status}}, {{group.groupId}})">
+      <view class="row">
+        <image src="{{group.goodsImageUrl}}/small" style="width: 150rpx;height: 150rpx;"/>
+        <view class="column ml20 info-box">
+          <text class="sm">{{group.goodsName}}</text>
+          <text class="muted mt20 sm">原价：￥{{group.ruleSellPrice}}</text>
+        </view>
+      </view>
+      <view class="column" style="align-items: flex-end;">
+        <text class="primary lg">现价：￥{{group.rulePrice}}</text>
+        <text class="muted xs mt20" wx:if="{{group.leftCount > 0}}">还差{{group.leftCount}}人成团 [{{group.ruleLimitCustomer}}人团]</text>
+        <text class="muted xs mt20" wx:else>[{{group.ruleLimitCustomer}}人团]</text>
+      </view>
+    </view>
+    
+    <!--操作栏-->
+    <view class="group-bottom-box row">
+      <view wx:if="{{group.status === 'PROCESSING'}}" class="group-btn-box" @tap="group({{group.status}}, {{group.groupId}})">邀请参团</view>
+      <view wx:else class="group-btn-box" @tap="agent({{group.ruleId}})">再拼一团</view>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  export default class GroupItem extends wepy.component {
+    props = {
+      group: {}
+    };
+    data = {};
+    onLoad () {}
+    methods = {
+      /**
+       * 跳转拼团详情
+       */
+      group (status, groupId) {
+        this.$root.$navigate(`/package_group/pages/group/group_detail?groupId=${groupId}`);
+      },
+      agent(id) {
+        this.$root.$navigate(`/package_group/pages/group/goods_detail?ruleId=${id}`);
+      }
+    };
+    components = {};
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+
+  .order-item-container {
+    border-top: $border;
+    border-bottom: $border;
+    background-color: #FFF;
+    margin-bottom: 10rpx;
+  }
+
+  /*顶栏*/
+  .order-header-container {
+    padding: 10rpx 25rpx 10rpx 20rpx;
+  }
+
+  .group-bottom-box{
+    flex-direction: row-reverse;
+    border-top: 1px solid #FAFAFA;
+    .group-btn-box{
+      color: white;
+      background-color: $color-primary;
+      padding: 10rpx 20rpx;
+      margin: 14rpx;
+      border-radius: 5rpx;
+    }
+  }
+
+  .group-goods-box{
+    padding: 10rpx 20rpx;
+    background-color: $color-bg-item;
+    .info-box{
+      width: 300rpx;
+    }
+  }
+</style>

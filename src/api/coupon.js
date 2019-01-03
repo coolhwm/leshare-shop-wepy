@@ -13,6 +13,14 @@ export default class coupon extends base {
     return new Page(url, this._processCouponItem.bind(this));
   }
 
+  /***
+   * 优惠券详情
+   */
+  static couponDetail(couponId) {
+    const url = `${this.baseUrl}/coupons/${couponId}`;
+    return this.get(url).then(data => this._processPickItem(data));
+  }
+
   /**
    * 获取可领取、已领取的优惠券
    */
@@ -98,6 +106,15 @@ export default class coupon extends base {
     return this.post(url, visit);
   }
   /**
+   * 根据id查询卡券详情
+   */
+  static detail(id) {
+    const url = `${this.baseUrl}/coupons/info/${id}`;
+    return this.get(url).then(data => {
+      return this._processCouponItem(data)
+    });
+  }
+  /**
    * 处理可以领取的优惠券
    */
   static _processPickItem (coupon) {
@@ -114,14 +131,22 @@ export default class coupon extends base {
       return null;
     }
     const coupon = data.coupon;
-
+    coupon.orderId = root.orderId;
+    coupon.imgUrl = root.imgUrl;
     coupon.status = root.status;
     coupon.id = root.id;
     coupon.couponId = root.couponId;
     coupon.acceptTime = root.acceptTime;
     coupon.usedTime = root.usedTime;
-    coupon.beginTime = this._convertTimestapeToDay(coupon.beginTime);
-    coupon.dueTime = this._convertTimestapeToDay(coupon.dueTime);
+    if (coupon.expiredType === 'FIX_TERM') {
+      coupon.isUse = (new Date(data.beginTime.replace(/-/g, '/')) - new Date()) <= 0;
+      coupon.beginTime = this._convertTimestapeToDay(data.beginTime);
+      coupon.dueTime = this._convertTimestapeToDay(data.dueTime);
+    } else {
+      coupon.isUse = (new Date(data.beginTime.replace(/-/g, '/')) - new Date()) <= 0;
+      coupon.beginTime = this._convertTimestapeToDay(coupon.beginTime);
+      coupon.dueTime = this._convertTimestapeToDay(coupon.dueTime);
+    }
     this._processCouponDisplayFlag(coupon);
     return coupon;
   }
@@ -153,6 +178,9 @@ export default class coupon extends base {
    * 处理时间格式
    */
   static _convertTimestapeToDay (timestape) {
+    if (timestape == null) {
+      return;
+    }
     let temp = timestape;
     if (timestape.indexOf(' ') != -1) {
       temp = timestape.substring(0, timestape.indexOf(' '));

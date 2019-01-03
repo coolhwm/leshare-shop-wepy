@@ -1,0 +1,151 @@
+<template>
+  <view class="sub-goods-box">
+
+    <!--商户信息区域-->
+    <view class="shop-box" @tap="shopDetail({{item}})">
+      <!--LOGO-->
+      <image src="{{item.avatar}}/small" class="logo"/>
+
+      <!--右侧主体区域-->
+      <view class="main-box">
+        <view class="row-between">
+          <view class="row">
+            <text class="shop-name">{{item.name}}</text>
+            <icon class="recommend small" wx:if="{{item.point.available}}"/>
+          </view>
+        </view>
+
+        <!--评分/销售量/距离-->
+        <view class="row-between mt5">
+          <!--评价/销售量-->
+          <!--<view class="row">-->
+            <!--<view class="shop-grade row">-->
+              <!--<icon class="star-fill" /><text >4.9</text>-->
+            <!--</view>-->
+            <!--<text class="text-muted">已售{{item.salesVolume}}件</text>-->
+          <!--</view>-->
+          <!--商圈/分类标签-->
+          <text class="text-muted">{{item.tagText}}</text>
+
+          <!--距离-->
+          <text class="text-muted">{{item.distanceDesc}}</text>
+        </view>
+
+        <!--标签-->
+        <view class="row-between mt10">
+          <text class="point-limit-text xxs" wx:if="{{item.point}}">{{item.point.limitTips}},{{item.point.useTips}}</text>
+          <text class="point-limit-text xxs" wx:else>暂无活动，敬请期待</text>
+
+          <!--商家活动标签-->
+          <view>
+            <view class="plain-tag"  wx:if="{{!item.point}}">暂无活动</view>
+            <view class="small-tag" wx:elif="{{item.point.available}}">{{item.point.useTips}}</view>
+            <view class="plain-tag" wx:else>活动未开始</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+</template>
+<script>
+  import wepy from 'wepy';
+  export default class SubPointItem extends wepy.component {
+    props = {
+      item: {},
+      param: {}
+    };
+    data = {};
+    methods = {
+      shopDetail(subShop) {
+        this.$root.$navigate(`/pages/shop/sub_shop_detail?subShopId=${subShop.shopId}`);
+      },
+    };
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss" scoped>
+  @import "../../styles/variable";
+  .mt5 {
+    margin-top: 5rpx;
+  }
+  .text-muted{
+    color: $color-muted;
+    font-size: $text-xs;
+  }
+  .sub-goods-box{
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 0 20rpx;
+    margin-bottom: 10rpx;
+  }
+  .point-limit-box{
+    align-items: flex-start;
+  }
+  .point-limit-text{
+    max-width: 390rpx;
+  }
+  .small-tag{
+    border: #f49897 solid 1px;
+    border-radius: 3rpx;
+    padding: 0 5rpx;
+    font-size: $text-xxs;
+    color: $color-primary-red;
+  }
+  .plain-tag{
+    border: $color-muted solid 1px;
+    border-radius: 3rpx;
+    padding: 0 5rpx;
+    font-size: $text-xxs;
+    color: $color-muted;
+  }
+  .mini-tag {
+    border: $color-major solid 1px;
+    border-radius: 3rpx;
+    padding: 0 5rpx;
+    font-size: 20rpx;
+    color: $color-major;
+  }
+  /*店铺信息区域*/
+  .shop-box {
+    display: flex;
+    flex-direction: row;
+    padding: 20rpx 0;
+    .logo{
+      border: 1px solid #E9E9E9;
+      border-radius: 5px;
+      width: 150rpx;
+      height: 150rpx;
+      min-height: 150rpx;
+      min-width: 150rpx;
+    }
+    .main-box{
+      .recommend{
+        color: $color-primary-red;
+      }
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      margin-left: 20rpx;
+    }
+    .shop-name{
+      font-size: $text-xl;
+      font-weight: bold;
+    }
+    .shop-grade{
+      icon{
+        font-size: $text-lg;
+        margin-right: 5rpx;
+      }
+      text{
+        font-size: $text-xs;
+        color: $color-major;
+      }
+      margin-right: 15rpx;
+    }
+  }
+</style>

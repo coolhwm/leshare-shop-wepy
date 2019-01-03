@@ -1,0 +1,107 @@
+<template>
+  <view class="order-item-container column">
+    <!--顶栏/基本信息-->
+    <view class="order-header-container colunm">
+      <view class="row-between">
+        <view class="user-info-container">
+          <text class="sm ml10">预约时间：{{detail.serviceTime}}</text>
+        </view>
+        <text class="sm primary">{{detail.statusText}}</text>
+      </view>
+    </view>
+
+    <!--商品区域-->
+    <view class="row bargain-goods-box" @tap="detail({{detail.id}})">
+      <image class="mr20" src="{{detail.goods.imageUrl}}" style="width: 150rpx;height: 150rpx;"/>
+      <view class="column">
+        <text>{{detail.goods.name}}</text>
+        <text class="muted mt20">￥{{detail.goods.sellPrice}}</text>
+      </view>
+    </view>
+
+    <!--操作栏-->
+    <view class="booking-bottom-box row mb10 mt10">
+      <button class="eui-btn mini-btn mr10" size="mini" wx:if="{{detail.status === 'WAITING_PROCCESS' && (detail.order.status == 2 || detail.order == null)}}" @tap="cancel({{detail.id}})">取消预约</button>
+      <view class="row" wx:elif="{{detail.status === 'WAITING_PROCCESS' && detail.order.status == 1}}">
+        <button class="eui-btn mini-btn mr10" size="mini" @tap="cancel({{detail.id}})">取消预约</button>
+        <button class="weui-btn mini-btn mr10" size="mini" type="primary" @tap="pay({{detail.order.orderId}})">立即支付</button>
+      </view>
+      <button wx:if="{{detail.status === 'CANCEL'}}" size="mini" class="weui-btn mini-btn mr10" @tap="booking({{detail.goodsId}})">重新预约</button>
+    </view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import booking from '../../api/booking';
+  import Tips from '../../utils/Tips';
+  import Event from '../../utils/Event';
+  import order from '../../api/order'
+
+  export default class BookingItem extends wepy.component {
+    props = {
+      detail: {}
+    };
+    data = {
+    };
+    methods = {
+      async cancel (id) {
+        await Tips.confirm('确定取消？');
+        await booking.cancel(id);
+        await Tips.success('取消成功');
+        Event.emit(Event.BOOKING_LIST_UPDATE);
+      },
+      /**
+       * 订单支付
+       */
+      async pay(orderId) {
+        try {
+          Tips.loading();
+          const payment = await order.prepayOrder(orderId);
+          Tips.loaded();
+          await order.wxpayOrder(payment);
+          await Tips.success('支付成功');
+        } catch (e) {
+          console.warn(e);
+          await Tips.success('支付取消');
+        }
+        Event.emit(Event.BOOKING_LIST_UPDATE);
+      },
+      booking (id) {
+        this.$root.$navigate(`/pages/goods/detail?goodsId=${id}`)
+      },
+      detail (id) {
+        this.$root.$navigate(`/pages/booking/booking_detail?bookingId=${id}`)
+      }
+    };
+    components = {
+    };
+    watch = {
+    };
+    mixins = [];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .order-item-container {
+    border-top: $border;
+    border-bottom: $border;
+    background-color: #FFF;
+    margin-bottom: 10rpx;
+  }
+
+  /*顶栏*/
+  .order-header-container {
+    padding: 10rpx 25rpx 10rpx 20rpx;
+  }
+
+  .bargain-goods-box{
+    padding: 10rpx 20rpx;
+    background-color: $color-bg-item;
+  }
+
+  .booking-bottom-box{
+    flex-direction: row-reverse;
+  }
+</style>

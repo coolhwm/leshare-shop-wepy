@@ -1,0 +1,159 @@
+<template>
+  <Loading :init.sync="init"/>
+  <view class="template-box" wx:if="{{init}}">
+    <repeat for="{{components}}" key="index" index="index" item="item">
+
+      <!--轮播图-->
+      <block wx:if="{{item.type == 'SWIPER'}}">
+        <SwiperBar :param.sync="item" />
+      </block>
+
+      <!--图片橱窗-->
+      <block wx:if="{{item.type == 'IMAGE_BOX'}}">
+        <ImageBox :param.sync="item" />
+      </block>
+
+      <!--热区橱窗-->
+      <block wx:if="{{item.type == 'HOT_AREA_BOX'}}">
+        <HotAreaBox :param.sync="item" />
+      </block>
+
+    </repeat>
+  </view>
+</template>
+
+<script>
+  import store from '../../store/utils';
+  import { connect } from 'wepy-redux';
+  import { initWxAppSync } from '../../api/wx_auth';
+  import config from '../../api/config';
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import Loading from '../../components/common/loading';
+  import SwiperBar from '../../components/template/swiper_bar';
+  import ImageBox from '../../components/template/image_box';
+  import HotAreaBox from '../../components/template/hot_area_box';
+  import _ from 'underscore';
+
+  @connect({
+    homePageId: store.get('homePageId'),
+    shop: store.get('shop'),
+    campaign: store.get('campaign')
+  })
+  export default class IndexTemplate extends wepy.page {
+    data = {
+      pageId: null,
+      init: false,
+      components: null,
+      plugins: null,
+      triggers: [],
+      param: null,
+      sence: null
+    };
+    async onLoad ({pageId, sence}) {
+      // 登录检查
+      await initWxAppSync(true);
+      this.sence = sence;
+      if (pageId) {
+        console.info(`[template] load template page id=${pageId}`);
+        this.pageId = pageId;
+      } else if (this.homePageId) {
+        console.info(`[template] load home page`);
+        this.pageId = this.homePageId;
+      }
+      if (_.isNull(this.pageId)) {
+        console.warn(`[template] page_id is ${this.pageId}, render fail`);
+        return;
+      }
+      const page = await await config.layout(this.pageId);
+      this.renderTemplatePage(page);
+      console.info(`[template] render template page success`);
+      this.loaded();
+      // 渲染导航栏
+      this.renderNavigationBar();
+    };
+    /**
+     * 渲染页面
+     */
+    renderTemplatePage(page) {
+      this.components = page.components;
+      this.plugins = page.plugins;
+      this.triggers = page.triggers;
+      this.param = page.param;
+    }
+    /**
+     * 渲染标题栏
+     */
+    renderNavigationBar() {
+      if (_.isEmpty(this.param.navigation)) {
+        return;
+      }
+      const {titleText, backgroundColor, textStyle} = this.param.navigation;
+      console.info(`[template] title=${titleText}, backgroundColor=${backgroundColor}, textStyle=${textStyle}`);
+      if (titleText) {
+        wepy.setNavigationBarTitle({
+          title: titleText
+        });
+      }
+      if (backgroundColor && textStyle) {
+        wepy.setNavigationBarColor({
+          backgroundColor: backgroundColor,
+          frontColor: textStyle
+        });
+      }
+    }
+    /**
+     * 运行触发器
+     */
+    runTriggers() {
+      this.triggers.forEach(trigger => {
+        const methodName = trigger.method;
+        // 执行动态方法
+        if (methodName && typeof this[methodName] === 'function') {
+          const triggerMethod = this[methodName].bind(this);
+          triggerMethod();
+        }
+      });
+    }
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      if (this.param.share == null) {
+        const {name, avatar} = this.shop;
+        return {
+          title: `${name} 欢迎光临`,
+          imageUrl: `${avatar}/5x4`
+        };
+      } else {
+        return this.param.share;
+      }
+    }
+    methods = {
+    };
+    components = {
+      Loading: Loading,
+      SwiperBar: SwiperBar,
+      ImageBox: ImageBox,
+      HotAreaBox: HotAreaBox
+    };
+    computed = {
+    };
+    mixins = [base];
+    config = {
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .template-box{
+    width: 100%;
+    overflow-x: hidden;
+    .h-gap {
+      width: 100%;
+      height: 1px;
+      background-color: $color-border;
+    }
+  }
+</style>

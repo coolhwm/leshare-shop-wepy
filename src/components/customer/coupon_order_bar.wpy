@@ -1,0 +1,90 @@
+<template>
+  <!--订单信息-->
+  <view class="column coupon-order-box">
+    <view class="row-around state-box">
+      <view class="column-center item-box" @tap="list(1)">
+        <icon class="payment normal" color="gray"/>
+        <text class="sm">待付款</text>
+        <view class="weui-badge" wx:if="{{count[1] > 0}}">{{count[1]}}</view>
+      </view>
+      <view class="column-center item-box" @tap="coupon">
+        <icon class="available normal" color="gray"/>
+        <text class="sm">可使用</text>
+        <view class="weui-badge" wx:if="{{ownCoupons.length > 0}}">{{ownCoupons.length}}</view>
+      </view>
+      <view class="column-center item-box" @tap="list(5)">
+        <icon class="refund normal" color="gray"/>
+        <text class="sm">退货/退款</text>
+        <view class="weui-badge" wx:if="{{count[5] > 0}}">{{count[5]}}</view>
+      </view>
+      <view class="row-center my-order-box item-box" @tap="list(0)">
+        <view class="column-center">
+          <icon class="order normal" color="gray"/>
+          <text class="sm">我的订单</text>
+        </view>
+        <icon class="more order-more" color="gray" />
+      </view>
+
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+
+  @connect({
+    ownCoupons: store.get('ownCoupons')
+  })
+  export default class OrderBar extends wepy.component {
+    props = {
+      count: {}
+    };
+    data = {};
+    async onLoad() {}
+    methods = {
+      list(status) {
+        this.$root.$navigate(`/pages/order/list?status=${status}`);
+      },
+      coupon() {
+        this.$root.$navigate(`/pages/coupon/list`)
+      }
+    };
+    events = {};
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .coupon-order-box{
+    background-color: #FFFFFF;
+    border-bottom: $border;
+    padding: 10rpx 0;
+    .state-box{
+      position: relative;
+      padding: 10rpx 0;
+      .column-center{
+        position: relative;
+      }
+      .weui-badge{
+        position: absolute;
+        top: 0;
+        right: 20px;
+      }
+    }
+  }
+  .my-order-box{
+    align-items: flex-end;
+    border-left: $border;
+    padding: 0 20rpx;
+  }
+  .order-more{
+    line-height: 28rpx;
+    font-size: 34rpx;
+  }
+  .item-box{
+    width: 24.9%;
+  }
+
+</style>

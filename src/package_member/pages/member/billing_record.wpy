@@ -1,0 +1,115 @@
+<template>
+  <view class="record-box">
+    <!--TAB 页-->
+    <block wx:if="{{shop.supportMemberPoint}}">
+      <ZanTab :tab.sync="tab" @change.user="switchTab" />
+    </block>
+
+    <block wx:for="{{page.list}}" wx:index="index" wx:for-item="detail" wx:key="index">
+      <view class="row-between detail-box" @tap="detail({{detail.orderId}})">
+        <view class="column">
+          <view class="row">
+            <text class="desc-box lg">{{detail.typeDesc}}</text>
+            <text wx:if="{{detail.subShopName}}" class="ml10 muted xs">{{detail.subShopName}}</text>
+          </view>
+          <text class="muted xs">{{detail.createTime}}</text>
+        </view>
+        <view class="price-box column">
+          <text class="xxs muted" wx:if="{{detail.orderId}}">查看订单></text>
+          <text class="money-box {{detail.costMoney > '0' ? 'add-money' : ''}}">{{detail.costMoney}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!--占位符-->
+  <Placeholder :show.sync="isPageEmpty" message="您还没有余额消费记录"/>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../../store/utils';
+  import { checkUserMember } from '../../../api/wx_auth';
+  import base from '../../../mixins/base';
+  import topUp from '../../api/top_up';
+  import ZanTab from '../../../components/zanui/tab';
+  import pagination from '../../../mixins/pagination';
+  import Placeholder from '../../../components/common/placeholder';
+
+  @connect({
+    shop: store.get('shop')
+  })
+  export default class BillingRecord extends wepy.page {
+    data = {
+      page: [],
+      tab: {
+        list: [
+          {id: 'BALANCE', title: '储值余额'},
+          {id: 'POINT', title: '赠送金'}
+        ],
+        selectedId: 'BALANCE'
+      }
+    };
+    async onLoad ({accountType}) {
+      if (accountType) {
+        this.tab.selectedId = accountType;
+      }
+      await checkUserMember();
+      await this.initAccountPage();
+    }
+    async initAccountPage() {
+      const value = this.tab.selectedId;
+      if (value == 'BALANCE') {
+        this.page = await topUp.listBalanceDetails();
+        await this.next();
+      } else if (value == 'POINT') {
+        this.page = await topUp.listPointDetails();
+        await this.next();
+      }
+    }
+    methods = {
+      detail(id) {
+        if (id == null) {
+          return;
+        }
+        this.$navigate(`/pages/order/detail?orderId=${id}`);
+      },
+      async switchTab() {
+        await this.initAccountPage()
+      }
+    };
+    components = {
+      ZanTab: ZanTab,
+      Placeholder: Placeholder
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '余额明细',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+  .record-box{
+    background-color: white;
+    .price-box{
+      align-items: flex-end;
+    }
+    .detail-box{
+      border-bottom: $border;
+      padding: 20rpx 30rpx;
+    }
+    .desc-box{
+      font-weight: bold;
+    }
+    .money-box{
+      font-size: 40rpx;
+    }
+    .add-money{
+      color: limegreen;
+    }
+  }
+</style>

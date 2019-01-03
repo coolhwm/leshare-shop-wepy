@@ -1,0 +1,67 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view class="container column" wx:if="{{init}}">
+
+    <!--主内容区域-->
+    <MenuBox bussType="food" heightText="160rpx" :shopId.sync="shopId"/>
+
+
+    <view class="menu-button-box row-center column-center">
+      <text class="xxl white" @tap="maCode">前往商家小程序</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import MenuBox from '../../components/shop/menu_box';
+  import Loading from '../../components/common/loading';
+  import shop from '../../api/shop'
+  export default class ShopIndex extends wepy.page {
+    data = {
+      init: false,
+      shopId: null
+    };
+    async onLoad ({shopName, shopId}) {
+      this.shopId = shopId
+      wepy.setNavigationBarTitle({
+        title: `${shopName}菜单`
+      });
+      this.init = true
+    };
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      return {};
+    }
+    methods = {
+      async maCode() {
+        const info = await shop.subShopInfo(this.shopId)
+        wepy.previewImage({
+          urls: [info.maCodeUrl]
+        });
+      }
+    };
+    computed = {};
+    components = {
+      MenuBox: MenuBox,
+      Loading: Loading
+    };
+    mixins = [];
+    config = {};
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .menu-button-box{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 750rpx;
+    height: 100rpx;
+    background-color: $color-primary;
+  }
+</style>

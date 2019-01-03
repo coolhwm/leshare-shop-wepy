@@ -67,7 +67,7 @@
 <script>
   import wepy from 'wepy';
   import order from '../../api/order';
-  import auth from '../../api/auth';
+  import { checkUserInfoWithError } from '../../api/wx_auth';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import SilderPanel from '../../components/common/slider_panel';
@@ -86,7 +86,8 @@
     props = {
       mode: {
         default: 1
-      }
+      },
+      tableNum: {}
     };
     data = {
       buyStatus: 0,
@@ -99,10 +100,18 @@
     methods = {
       plus(cart) {
         const goods = {id: cart.goodsId};
-        this.cartManager.plus(goods, cart.goodsSku);
+        const sel = {
+          skuSelected: cart.goodsSku,
+          proSelected: cart.skuProperty
+        };
+        this.cartManager.plus(goods, sel);
       },
       minus(cart) {
-        this.cartManager.minus(cart.goodsId, cart.goodsSku);
+        const sel = {
+          skuSelected: cart.goodsSku,
+          proSelected: cart.skuProperty
+        };
+        this.cartManager.minus(cart.goodsId, sel);
       },
       cart() {
         if (!this.status || !this.status.open) {
@@ -131,8 +140,7 @@
           // this.$emit('buy', param);
 
           // 权限校验
-          const result = await auth.user({block: true, redirect: false});
-          if (!result) return;
+          await checkUserInfoWithError();
           // 订单类型
           if (this.mode == 2) {
             // 堂食点餐
@@ -140,6 +148,10 @@
           } else {
             // 外卖订单
             param.orderType = 20;
+          }
+          // 是否有餐桌号
+          if (this.tableNum != null) {
+            param.tableNum = this.tableNum
           }
           // 跳转订单
           const trade = order.createCartTrade(this.carts, param);

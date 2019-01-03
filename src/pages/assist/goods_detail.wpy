@@ -1,0 +1,156 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <!--轮播展示图-->
+  <view class="container column" wx:if="{{init}}">
+    <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" @tap="previewDetailSwiper">
+      <block wx:for="{{rule.goods.images}}" wx:for-index="index" wx:key="index">
+        <swiper-item>
+          <image src="{{item.url}}/w1080" mode="aspectFill" style="width: 750rpx; height:480rpx;"></image>
+        </swiper-item>
+      </block>
+    </swiper>
+
+    <!--砍价倒计时栏-->
+    <TimeOutBar :rule.sync="rule" :callback="callback" describe="邀请好友助力 免费领" title="助力" />
+
+    <!--商品基本信息展示及服务信息-->
+    <GoodsMsgBar :rule.sync="rule"/>
+
+    <!--归属门店区域-->
+    <view class="mb10 mt10">
+      <ShopInfoBar :subShop.sync="subShop"/>
+    </view>
+
+    <!--砍价玩法栏-->
+    <BargainRuleBar title="助力玩法" ruleTip="（数量有限，送完即止）" firstBottom="发起助力" secondBottom="帮忙助力" thirdTop="人数达标" thirdBottom="获取商品"/>
+
+    <!--&lt;!&ndash;评论预览&ndash;&gt;-->
+    <!--<CommentPreview :goodsId.sync="goodsId"/>-->
+
+    <!--广告栏-->
+    <view class="ad-banner" wx:if="{{adUnitId}}">
+      <ad unit-id="{{adUnitId}}"></ad>
+    </view>
+
+    <!--商品详情-->
+    <DetailList :detail.sync="goodsDetail" />
+
+    <!--底栏-->
+    <AssistBar :rule.sync="rule" />
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import { initWxAppSync } from '../../api/wx_auth'
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import base from '../../mixins/base';
+  import Loading from '../../components/common/loading';
+  import AssistBar from '../../components/assist/bottom_assist_bar';
+  import TimeOutBar from '../../components/group/timeout_bar';
+  import CommentPreview from '../../components/goods/comment_preview';
+  import BargainRuleBar from '../../components/bargain/bargain_rule_bar';
+  import assist from '../../api/assist';
+  import DetailList from '../../components/goods/detail_list';
+  import GoodsMsgBar from '../../components/assist/goods_msg_bar';
+  import ShopInfoBar from '../../components/goods/shop_info_bar';
+
+  @connect({
+    shop: store.get('shop')
+  })
+  export default class AssistGoodsDetail extends wepy.page {
+    data = {
+      init: false,
+      buyPanelType: 'POPUP',
+      goodsId: '',
+      groupTime: '',
+      ruleId: 1,
+      rule: {},
+      goodsDetail: {},
+      subShop: {},
+      list: [],
+      adUnitId: null
+    };
+    async onLoad ({ruleId, scene}) {
+      await initWxAppSync();
+      this.ruleId = ruleId || scene;
+      await this.update(this.ruleId);
+    };
+    onUnload() {
+      this.$invoke('TimeOutBar', 'clear');
+    };
+    async onPullDownRefresh () {
+      await this.update(this.ruleId);
+      wepy.stopPullDownRefresh();
+    }
+    async update (ruleId) {
+      this.ruleId = ruleId;
+      this.rule = await assist.rule(this.ruleId);
+      this.goodsDetail = this.rule.goods;
+      this.subShop = this.goodsDetail.relShop != null ? this.goodsDetail.relShop : this.shop;
+      this.goodsId = this.rule.goods.id;
+      this.loaded();
+    }
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {name, imageUrl} = this.rule.goods;
+      const shareName = `邀请好友为你助力，免费领${name}`;
+      return {
+        title: shareName,
+        imageUrl: imageUrl,
+        path: `/pages/assist/goods_detail?ruleId=${this.ruleId}`
+      };
+    }
+    methods = {
+      /**
+       * 预览轮播图
+       */
+      previewDetailSwiper() {
+        const urls = this.rule.goods.images.map(value => value.url);
+        wepy.previewImage({
+          urls: urls
+        });
+      }
+    };
+    computed = {
+      detail() {
+        if (this.rules == null) return;
+        return this.rule.goods;
+      }
+    };
+    components = {
+      AssistBar: AssistBar,
+      TimeOutBar: TimeOutBar,
+      CommentPreview: CommentPreview,
+      BargainRuleBar: BargainRuleBar,
+      Loading: Loading,
+      DetailList: DetailList,
+      GoodsMsgBar: GoodsMsgBar,
+      ShopInfoBar: ShopInfoBar
+    };
+    mixins = [base];
+    config = {
+      enablePullDownRefresh: true,
+      navigationBarTitleText: '商品详情'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .goods-swiper{
+    width: 750rpx;
+    height:480rpx;
+  }
+  .detail-title{
+    height: 90rpx;
+    border-bottom: $border;
+    background-color: #FFF;
+  }
+  .ad-banner{
+    margin-top: 10rpx;
+  }
+</style>

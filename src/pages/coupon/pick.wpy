@@ -13,15 +13,12 @@
 <script>
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
-  import coupon from '../../api/coupon';
+  import { initWxAppSync, checkUserInfo } from '../../api/wx_auth';
   import base from '../../mixins/base';
   import store from '../../store/utils';
-  import auth from '../../api/auth';
   import ShopHeader from '../../components/shop/header';
-  import ShopNav from '../../components/shop/nav';
   import Placeholder from '../../components/common/placeholder';
   import CouponItem from '../../components/coupons/pick_item';
-  import Tips from '../../utils/Tips';
 
   @connect({
     pickCoupons: store.get('pickCoupons')
@@ -32,31 +29,14 @@
       isEmpty: true
     };
     async onLoad () {
-      // 权限校验
-      const result = await auth.user({block: true, redirect: true});
-      if (!result) return;
-      await store.init();
+      await initWxAppSync();
+      await checkUserInfo();
       this.loaded();
     };
     async onPullDownRefresh () {
       await store.refresh('coupon');
       wepy.stopPullDownRefresh();
     }
-    methods = {
-      async pick(couponId) {
-        try {
-          Tips.loading();
-          await coupon.pick(couponId);
-          await store.refresh('coupon');
-          await Tips.success('领取成功');
-        } catch (e) {
-          if (e.serverCode == '50001') {
-            await Tips.alert('已经领过了');
-          }
-          this.loaded();
-        }
-      }
-    };
     computed = {
       isEmpty () {
         if (this.pickCoupons == null) return;
@@ -66,8 +46,6 @@
     components = {
       Placeholder: Placeholder,
       CouponItem: CouponItem,
-      HomeNav: ShopNav,
-      CouponNav: ShopNav,
       ShopHeader: ShopHeader
     };
     mixins = [base];

@@ -1,0 +1,237 @@
+<template>
+  <Loading :init.sync="init"/>
+  <view wx:if="{{init}}">
+    <image src="http://img.leshare.shop/shop/other/top_up.jpg" mode="aspectFill" style="width: 750rpx; height:340rpx;"/>
+
+    <view class="top-up-box column">
+      <view class="row-center">
+        <view class="row" style="flex: 1;flex-wrap: wrap;">
+          <block wx:for="{{rules}}" wx:key="index" wx:index="index" wx:for-item="item">
+            <view wx:if="{{item.isSelected}}" class="sel-item-box column-center" @tap="selected({{index}})">
+              <text>{{item.baseFee}}元</text>
+              <text class="muted xs">{{item.tips}}</text>
+              <icon class="top-up-selected icon-box"/>
+              <icon class="vip-icon forvip" wx:if="{{item.isVip}}"/>
+            </view>
+            <view class="column-center item-box" wx:else @tap="selected({{index}})">
+              <text>{{item.baseFee}}元</text>
+              <text class="muted xs">{{item.tips}}</text>
+              <icon class="vip-icon forvip"  wx:if="{{item.isVip}}"/>
+            </view>
+          </block>
+        </view>
+      </view>
+      <view class="input-box" wx:if="{{card.customTopup}}">
+        <input class="weui-input" name="money" placeholder="请输入您要充值的金额" type="digit" bindinput="bindMoney" value="{{money}}"/>
+      </view>
+    </view>
+
+    <button class="btn-box" @tap="topUp">立即充值</button>
+
+    <view class="rule-box column" >
+      <text class="muted sm">充值须知：</text>
+      <text class="muted sm">• 会员可对账户进行充值</text>
+      <text class="muted sm">• 实际支付的充值本金会构成您的账户余额，充值本金不可提现、转移、转增、充值余额无有效期</text>
+    </view>
+
+    <Notice />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { initWxAppSync, checkUserMember } from '../../../api/wx_auth';
+  import { connect } from 'wepy-redux';
+  import store from '../../../store/utils';
+  import base from '../../../mixins/base';
+  import topUp from '../../api/top_up';
+  import Tips from '../../../utils/Tips';
+  import order from '../../../api/order';
+  import Loading from '../../../components/common/loading';
+  import Notice from '../../../components/shop/notice';
+
+  @connect({
+    card: store.get('card'),
+    member: store.get('member')
+  })
+  export default class TopUp extends wepy.page {
+    data = {
+      init: false,
+      rules: null,
+      rule: null,
+      money: null
+    };
+    async onLoad () {
+      await initWxAppSync();
+      await checkUserMember();
+      this.rules = await topUp.getTopUp();
+      if (this.card == null || this.card.supplyBalance != 1) {
+        console.info('[top_up]rule info is empty');
+        await Tips.modal('尚未开放充值');
+        wepy.navigateBack();
+        return;
+      }
+      this.loaded();
+    };
+    async upDateMember () {
+      await store.refresh('member');
+      this.loaded();
+    }
+    open () {
+      const map = new Map();
+      const contents = [];
+      const rule = this.rule;
+      if (rule.suitFirst) {
+        contents.push(`首次充值专享`);
+      }
+      if (rule.memberLevel) {
+        const level = this.member.discountRule;
+        if (level && level.levelName) {
+          contents.push(`${level.levelName}专享`);
+        } else {
+          contents.push(`会员专享`);
+        }
+      }
+      if (rule.giftFee) {
+        contents.push(`送${rule.giftFee}元储值余额`);
+      }
+      if (rule.giftPoint) {
+        contents.push(`送${rule.giftPoint}元赠送金`);
+      }
+      if (rule.couponNum > 0) {
+        rule.coupons.forEach(item => {
+          const couponName = item.name;
+          if (!map.has(couponName)) {
+            map.set(couponName, 0)
+          }
+          const count = map.get(couponName);
+          map.set(couponName, count + 1);
+        });
+        map.forEach((value, key) => {
+          contents.push(`送${key}  x${value}张`);
+        });
+      }
+      const content = contents.length > 0 ? contents.join('\n') : `可得${rule.baseFee}元储值余额`;
+      const title = `充值${rule.baseFee}元`;
+      this.$invoke('Notice', 'open', { title, content });
+    }
+    methods = {
+      selected (idx) {
+        this.rules.forEach((item, index) => {
+          item.isSelected = index === idx
+        });
+        this.rule = this.rules[idx];
+        this.money = null;
+        this.open()
+      },
+      bindMoney (e) {
+        this.rules.forEach(item => {
+          item.isSelected = false;
+        });
+        this.rule = null;
+        this.money = e.detail.value;
+      },
+      async topUp () {
+        if (this.rule == null && this.money == null) {
+          await Tips.alert('请选择金额');
+          return;
+        }
+        const param = {
+          finalPrice: this.rule == null ? this.money * 1 : this.rule.baseFee,
+          dealPrice: this.rule == null ? this.money * 1 : this.rule.baseFee * 1 + this.rule.giftFee * 1,
+          paymentType: 1,
+          topupId: this.rule.id
+        };
+        const trade = await topUp.topUp(param);
+        if (trade == null) {
+          Tips.alert('下单失败');
+          return;
+        }
+        // 发起支付
+        const isPay = await this.requestWxPayment(trade);
+        if (isPay) {
+          await Tips.success('支付成功');
+          this.$switch('/pages/customer/index_template');
+          await this.upDateMember();
+        } else {
+          await Tips.alert('支付取消');
+        }
+      }
+    };
+    /**
+     * 请求发起支付
+     */
+    async requestWxPayment(trade) {
+      // 微信支付
+      try {
+        const payment = await order.prepayOrder(trade.orderId);
+        await order.wxpayOrder(payment);
+        return true;
+      } catch (e) {
+        console.error(e);
+        return false;
+      }
+    }
+    computed = {
+    };
+    components = {
+      Loading: Loading,
+      Notice: Notice
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '会员账户充值'
+    };
+  }
+</script>
+
+<style lang="scss" scoped>
+  @import "../../../styles/variable";
+  .top-up-box{
+    background-color: white;
+    padding: 20rpx;
+    margin-top: -13rpx;
+    .item-box, .sel-item-box{
+      position: relative;
+      height: 70rpx;
+      margin: 20rpx;
+      padding: 20rpx;
+      width: 260rpx;
+      border: $border;
+      border-radius: 10rpx;
+      overflow: hidden;
+    }
+    .sel-item-box{
+      height: 70rpx;
+      position: relative;
+      border: 1px solid $color-primary;
+    }
+    .icon-box{
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      padding: 0;
+    }
+  }
+  .vip-icon{
+    position: absolute;
+    font-size: 60rpx;
+    top: 8rpx;
+    right: -3rpx;
+  }
+  .btn-box{
+    background-color: $color-primary;
+    margin: 35rpx 30rpx;
+    color: white;
+  }
+  .rule-box{
+    background-color: white;
+    padding: 30rpx;
+  }
+  .input-box{
+    border:$border;
+    border-radius: 10rpx;
+    padding: 10rpx;
+    margin: 10rpx 20rpx;
+  }
+</style>

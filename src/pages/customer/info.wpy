@@ -1,0 +1,93 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view class="container column" wx:if="{{init}}">
+
+    <!--会员头像-->
+    <CustomerAvatar />
+
+    <!--会员信息区域-->
+    <form>
+      <view class="info-box">
+        <view class="content-box">
+          <view class="weui-cells weui-cells-form">
+            <view class="weui-cell weui-cell_input">
+              <view class="weui-cell__hd">
+                <view class="weui-label">手机</view>
+              </view>
+              <view class="weui-cell__bd">
+                <input class="weui-input" name="phone" value="{{member.phone}}" disabled/>
+              </view>
+            </view>
+            <block wx:for="{{extraParam}}" wx:key="index" wx:for-item="item">
+              <view class="weui-cell weui-cell_input">
+                <view class="weui-cell__hd">
+                  <view class="weui-label">{{item.label}}</view>
+                </view>
+                <view class="weui-cell__bd">
+                  <input class="weui-input" name="{{item.name}}" value="{{item.value}}" disabled/>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+      </view>
+    </form>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import Loading from '../../components/common/loading';
+  import CustomerAvatar from '../../components/customer/avatar';
+  import store from '../../store/utils';
+  import { connect } from 'wepy-redux';
+  import { initWxAppSync, checkUserMember } from '../../api/wx_auth';
+
+  @connect({
+    member: store.get('member'),
+    card: store.get('card')
+  })
+  export default class CustomerInfo extends wepy.page {
+    data = {
+      init: false,
+      extraParam: null
+    };
+    async onLoad () {
+      // 初始化全局存储
+      await initWxAppSync();
+      await checkUserMember();
+      this.extraParam = JSON.parse(this.card.extraParam);
+      const param = JSON.parse(this.member.extraParam);
+      this.extraParam.forEach(item => {
+        item.value = param[item.name];
+      });
+      this.loaded();
+    };
+    methods = {};
+    computed = {
+    };
+    components = {
+      Loading: Loading,
+      CustomerAvatar: CustomerAvatar
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '我的资料'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .info-box{
+    background-color: white;
+    margin: 20rpx;
+    border-radius: 20rpx;
+    padding: 20rpx 0;
+    .content-box{
+      padding: 0 20rpx;
+    }
+  }
+</style>

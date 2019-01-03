@@ -1,7 +1,8 @@
-const prod = process.env.NODE_ENV === 'production';
+// const prod = process.env.NODE_ENV === 'production';
+const prod = true;
 module.exports = {
   wpyExt: '.wpy',
-  cliLogs: true,
+  cliLogs: false,
   build: {
     web: {
     }
@@ -9,7 +10,7 @@ module.exports = {
   eslint: true,
   compilers: {
     sass: {
-      outputStyle: 'compact'
+      outputStyle: 'compressed'
     },
     babel: {
       sourceMap: false,

@@ -1,0 +1,50 @@
+<template>
+  <view class="row booking-goods-box">
+    <image class="goods-img" src="{{goods.imageUrl}}"/>
+    <view class="column goods-box ml20">
+      <view class="column">
+        <text class="xl">{{goods.name}}</text>
+        <text class="muted sm" wx:if="{{goods.subhead != null}}">{{goods.subhead}}</text>
+      </view>
+      <view class="row goods-price-box" wx:if="{{goods.sellPrice != 0}}">
+        <text class="xl danger ml20">￥{{goods.sellPrice}}</text>
+        <text class="muted original-price">￥{{goods.originalPrice}}</text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  export default class BookingGoodsInfoBar extends wepy.component {
+    props = {
+      goods: {}
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  $img-width: 200rpx;
+  .booking-goods-box{
+    background-color: white;
+    margin: 20rpx;
+    padding: 30rpx;
+    border-radius: 20rpx;
+    .goods-img{
+      min-width: $img-width;
+      width: $img-width;
+      height: $img-width;
+    }
+    .goods-box{
+      height: $img-width;
+      justify-content: space-between;
+    }
+    .goods-price-box{
+      flex-direction: row-reverse;
+    }
+    .original-price{
+      text-decoration: line-through;
+    }
+  }
+</style>

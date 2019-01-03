@@ -1,0 +1,85 @@
+<template>
+  <!--订单信息-->
+  <view class="column order-box">
+    <view>
+      <view class="weui-cells weui-cells-show">
+        <view url="" class="weui-cell weui-cell_access" @tap="list(0)">
+          <view class="weui-cell__bd">我的预约</view>
+          <view class="weui-cell__ft weui-cell__ft_in-access">查看全部预约</view>
+        </view>
+      </view>
+    </view>
+    <view class="row-around state-box">
+      <view class="column-center" @tap="list(1)">
+        <icon class="status-1 large" color="gray"/>
+        <text>待处理</text>
+        <view class="weui-badge" wx:if="{{count[0] > 0}}">{{count[0]}}</view>
+      </view>
+      <view class="column-center" @tap="list(2)">
+        <icon class="status-2 large" color="gray"/>
+        <text>处理中</text>
+        <view class="weui-badge" wx:if="{{count[1] > 0}}" >{{count[1]}}</view>
+      </view>
+      <view class="column-center" @tap="list(3)">
+        <icon class="status-6 large" color="gray"/>
+        <text>已完成</text>
+        <view class="weui-badge" wx:if="{{count[4] > 0}}">{{count[4]}}</view>
+      </view>
+      <view class="column-center" @tap="list(4)">
+        <icon class="timeout large" color="gray"/>
+        <text>已超时</text>
+        <view class="weui-badge" wx:if="{{count[2] > 0}}">{{count[2]}}</view>
+      </view>
+      <view class="column-center" @tap="list(5)">
+        <icon class="status-7 large" color="gray"/>
+        <text>已取消</text>
+        <view class="weui-badge" wx:if="{{count[3] > 0}}">{{count[3]}}</view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import Event from '../../utils/Event';
+
+  export default class BookingBar extends wepy.component {
+    props = {
+      count: {}
+    };
+    data = {
+    };
+    async onLoad() {
+      Event.listen(Event.ORDER_LIST_UPDATE, this.load.bind(this), this);
+      await this.load();
+    }
+    async load() {
+    }
+    methods = {
+      list(status) {
+        this.$root.$navigate(`/pages/booking/list?status=${status}`);
+      }
+    };
+    events = {};
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .order-box{
+    background-color: #FFFFFF;
+    border-bottom: $border;
+    .state-box{
+      position: relative;
+      padding: 10rpx 0;
+      .column-center{
+        position: relative;
+      }
+      .weui-badge{
+        position: absolute;
+        top: 0;
+        right: -5px;
+      }
+    }
+  }
+</style>

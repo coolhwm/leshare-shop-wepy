@@ -5,11 +5,17 @@
       <!-- 主体区域-->
       <view @tap="routeToGoods({{goods.id}})">
         <view class="goods-name row-between">
-          <text>{{goods.name}}</text>
+          <text class="inline">{{goods.name}}</text>
         </view>
         <view class="row">
-          <view>
-            <text class="xs muted">已售{{goods.salesVolume}}件</text>
+          <view class="column goods-subhead">
+            <text class="xxs muted inline"  wx:if="{{goods.subhead != null}}">{{goods.subhead}}</text>
+            <view class="row sale-tag-box">
+              <text class="xxs muted">已售{{goods.salesVolume}}件</text>
+              <block wx:for="{{goods.tags}}" wx:key="index" wx:index="index" wx:for-item="item">
+                <text wx:if="{{item.show}}" class="xxs primary tag-box ml10">{{item.tag}}</text>
+              </block>
+            </view>
           </view>
           <!--折扣信息-->
           <view class="discount-box row" wx:if="{{goods.discount}}">
@@ -29,7 +35,7 @@
         </view>
 
         <!--数量选择器-->
-        <block wx:if="{{quantity}}">
+        <block>
           <view class="quantity row">
             <block wx:if="{{goods.num > 0}}">
               <icon class="minus" @tap.stop="handleMinusCart({{goods.id}})"/>
@@ -52,9 +58,6 @@
   export default class GoodsItem extends wepy.component {
     props = {
       goods: {
-      },
-      quantity: {
-        default: true
       }
     };
     components = {
@@ -77,27 +80,37 @@
 <style lang="scss">
   @import "../../styles/variable";
   .goods-item{
-    padding: 10px 15px 10px 0;
+    padding: 20rpx 20rpx 20rpx 0;
     border-bottom: $border;
     .goods-image{
-      width: 70px;
-      height: 70px;
+      width: 140rpx;
+      height: 140rpx;
     }
     .goods-main{
-      margin-left: 10px;
+      margin-left: 20rpx;
       flex: 1;
       justify-content: flex-start;
-      min-height: 70px;
-      .goods-name{
-        max-width: 380rpx;
+      min-height: 140rpx;
+      .goods-name,.goods-subhead{
+        max-width: 370rpx;
+        overflow:hidden;
       }
       .goods-sku-badge{
         background-color: $color-primary;
         color: #FFF;
         border-radius: 5px;
-        padding: 2px 5px;
+        padding: 4rpx 10rpx;
         font-size: $text-xxs;
         width: 72rpx;
+      }
+      .sale-tag-box text{
+        white-space:nowrap;
+      }
+      .tag-box{
+        border:1px solid $color-primary;
+        border-radius: 4rpx;
+        padding: 5rpx;
+        line-height: $text-xxs;
       }
     }
 
@@ -122,15 +135,15 @@
 
     .discount-box{
       border: 1px solid $color-major;
-      height: 15px;
-      margin-left: 7px;
+      height: 30rpx;
+      margin-left: 14rpx;
       text {
         font-size: $text-xxs;
       }
       view{
         display: flex;
         align-items: center;
-        height: 15px;
+        height: 30rpx;
         padding: 0 3px;
       }
       .discount-rate{
@@ -150,7 +163,7 @@
   .quantity{
     .number{
       font-size: $text-sm;
-      min-width: 25px;
+      min-width: 50rpx;
       text-align: center;
     }
   }

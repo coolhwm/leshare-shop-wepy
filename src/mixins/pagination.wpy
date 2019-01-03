@@ -23,6 +23,10 @@
         if (this.page.reachBottom) {
           return;
         }
+        if (!this.page.next) {
+          console.warn('[page] this.page.next is null');
+          return;
+        }
         this.isPageLoading = true;
         const param = this.params ? this.params() : {};
         await this.page.next(param);

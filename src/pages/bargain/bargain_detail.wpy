@@ -6,15 +6,32 @@
     <GoodsDetail :bargain.sync="detail"/>
 
     <!--砍价信息-->
-    <BargainInfoBar :bargain.sync="detail" @help.user="help"/>
+    <BargainInfoBar :detail.sync="detail" @help.user="help"/>
 
     <!--砍价玩法栏-->
     <BargainRuleBar/>
 
+    <!--广告栏-->
+    <view class="ad-banner" wx:if="{{adUnitId}}">
+      <ad unit-id="{{adUnitId}}"></ad>
+    </view>
+
+    <!--更多虚拟商品-->
+    <block wx:if="{{list && list.length > 0}}">
+      <view class="detail-title row-center mt10">
+        <text class="primary lg">── 更多推荐 ──</text>
+      </view>
+      <repeat for="{{list}}" key="index" index="index" item="item">
+        <BargainItem :detail.sync="item"/>
+      </repeat>
+    </block>
+
     <!--底栏-->
-    <block wx:if="{{detail.isHead}}">
+    <block wx:if="{{detail.isHead && detail.status !== 'TIMEOUT'}}">
       <DetailBottom :detail.sync="detail"/>
     </block>
+
+    <ButtonWidget/>
 
     <!--提示框-->
     <Notice/>
@@ -23,6 +40,7 @@
 </template>
 <script>
   import wepy from 'wepy';
+  import { initWxAppSync } from '../../api/wx_auth';
   import base from '../../mixins/base'
   import bargain from '../../api/bargain'
   import BargainGoodsDetail from '../../components/bargain/bargain_goods_detail';
@@ -30,22 +48,23 @@
   import BargainInfoBar from '../../components/bargain/bargain_info_bar';
   import BargainRuleBar from '../../components/bargain/bargain_rule_bar';
   import DetailBottom from '../../components/bargain/bottom_bargain_detail';
-  import auth from '../../api/auth';
   import Notice from '../../components/shop/notice';
   import Event from '../../utils/Event';
-
+  import ButtonWidget from '../../components/template/button_widget';
+  import BargainItem from '../../components/bargain/bargain_more_item'
   export default class BargainDetail extends wepy.page {
     data = {
       bargainId: null,
       init: false,
       detail: null,
       rule: null,
-      createTime: null
+      createTime: null,
+      list: [],
+      adUnitId: null
     };
-    async onLoad ({bargainId, isBegin}) {
-      this.bargainId = bargainId;
-      // 用户信息
-      await auth.user();
+    async onLoad ({bargainId, isBegin, scene}) {
+      this.bargainId = bargainId || scene;
+      await initWxAppSync();
       await this.update(bargainId);
       if (isBegin) {
         const notice = {
@@ -58,10 +77,22 @@
       Event.listen(Event.BARGAIN_DETAIL_UPDATE, this.update.bind(this), this);
     };
     async update () {
-      this.detail = await bargain.bargain(this.bargainId);
+      const [detail, list] = await Promise.all([bargain.bargain(this.bargainId), bargain.recommendList()]);
+      this.detail = detail;
+      this.list = list;
       this.rule = this.detail.rule;
       this.loaded();
     }
+    onShow() {
+      if (this.init) {
+        this.$invoke('BargainInfoBar', 'start', {
+          timestamp: this.detail.createTime, status: 'groupTime'
+        });
+      }
+    };
+    onHide() {
+      this.$invoke('BargainInfoBar', 'clear');
+    };
     onUnload() {
       this.$invoke('BargainInfoBar', 'clear');
     };
@@ -74,7 +105,7 @@
      */
     onShareAppMessage () {
       const {name, imageUrl} = this.rule.goods;
-      const shareName = `${name}，快帮您的好友砍一刀吧！`;
+      const shareName = `${name}，最低仅需${this.rule.floorPrice}元，快帮您的好友砍一刀吧！`;
       return {
         title: shareName,
         imageUrl: imageUrl,
@@ -99,7 +130,9 @@
       BargainInfoBar: BargainInfoBar,
       BargainRuleBar: BargainRuleBar,
       DetailBottom: DetailBottom,
-      Notice: Notice
+      Notice: Notice,
+      ButtonWidget: ButtonWidget,
+      BargainItem: BargainItem
     };
     mixins = [base];
     config = {
@@ -111,4 +144,12 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+  .detail-title{
+    height: 90rpx;
+    border-bottom: $border;
+    background-color: #FFF;
+  }
+  .ad-banner{
+    margin-top: 10rpx;
+  }
 </style>

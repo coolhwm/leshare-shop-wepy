@@ -12,7 +12,7 @@
 
       <!--会员卡-->
       <block wx:if="{{item.type == 'VIP_CARD'}}">
-        <VipCard />
+        <VipCard :param.sync="item"/>
       </block>
 
       <!--余额充值-->
@@ -30,9 +30,24 @@
         <NavGrid :param.sync="item" />
       </block>
 
+      <!--预约订单栏-->
+      <block wx:if="{{item.type == 'BOOKING_BAR'}}">
+        <BookingBar :param.sync="item" :count.sync="count"/>
+      </block>
+
       <!--订单栏-->
       <block wx:if="{{item.type == 'ORDER_BAR'}}">
-        <OrderBar :param.sync="item" />
+        <OrderBar :param.sync="item" :count.sync="count"/>
+      </block>
+
+      <!--卡券订单栏-->
+      <block wx:if="{{item.type == 'COUPON_ORDER_BAR'}}">
+        <CouponOrderBar :param.sync="item" :count.sync="count"/>
+      </block>
+
+      <!--卡券订单栏-->
+      <block wx:if="{{item.type == 'PAY_ORDER_BAR'}}">
+        <PayOrderBar :param.sync="item" :count.sync="count"/>
       </block>
 
       <!--版权栏-->
@@ -45,6 +60,11 @@
         <Separator :param.sync="item" />
       </block>
 
+      <!--广告窗口-->
+      <block wx:if="{{item.type == 'AD_BANNER'}}">
+        <ad unit-id="{{item.unitId}}"></ad>
+      </block>
+
     </repeat>
 
     <!--插件-->
@@ -54,8 +74,8 @@
 </template>
 
 <script>
-  import auth from '../../api/auth';
   import store from '../../store/utils';
+  import { initWxAppSync, checkUserInfo } from '../../api/wx_auth';
   import { connect } from 'wepy-redux';
   import config from '../../api/config';
   import wepy from 'wepy';
@@ -65,10 +85,16 @@
   import NavList from '../../components/customer/nav_list';
   import NavGrid from '../../components/customer/nav_grid';
   import OrderBar from '../../components/customer/order_bar';
+  import BookingBar from '../../components/customer/booking_bar';
   import Separator from '../../components/template/separator';
   import VipCard from '../../components/customer/vip_card';
   import BalanceBar from '../../components/customer/balance_bar';
   import Copyright from '../../components/common/copyright';
+  import order from '../../api/order';
+  import booking from '../../api/booking';
+  import Event from '../../utils/Event';
+  import CouponOrderBar from '../../components/customer/coupon_order_bar';
+  import PayOrderBar from '../../components/customer/pay_order_bar';
 
   @connect({
     shop: store.get('shop'),
@@ -79,25 +105,60 @@
       init: false,
       components: null,
       plugins: null,
-      triggers: []
+      triggers: [],
+      count: null
     };
     async onLoad () {
-      const result = await auth.user({block: true, redirect: true});
-      if (!result) return;
-      await store.init();
+      await initWxAppSync();
+      await checkUserInfo();
+      if (this.customPageId == 0) {
+        console.warn('[customer] customer page_id=3, render fail');
+        return;
+      }
       const page = await config.layout(this.customPageId);
       if (page) {
         this.components = page.components;
         this.plugins = page.plugins;
         this.triggers = page.triggers;
       }
+      Event.listen(Event.ORDER_LIST_UPDATE, this.loadOrderCount.bind(this), this);
+      Event.listen(Event.MEMBER_CARD_UPDATE, this.loadMember.bind(this), this);
       this.loaded();
+      // 异步加载数据，检查授权权限
+      this.loadOrderCount().then();
     };
+    /***
+     * 订单栏刷新
+     */
+    async loadOrderCount () {
+      let orderBarType = '';
+      this.components.forEach(item => {
+        if (item.type == 'BOOKING_BAR') {
+          orderBarType = 'BOOKING_BAR';
+        } else {
+          orderBarType = 'ORDER_BAR';
+        }
+      });
+      if (orderBarType == 'BOOKING_BAR') {
+        this.count = await booking.count();
+      } else {
+        this.count = await order.count();
+      }
+      this.loaded();
+    }
+    /**
+     * 更新会员信息
+     */
+    async loadMember() {
+      await store.refresh('member');
+      this.loaded();
+    }
     /**
      * 下拉刷新
      */
     async onPullDownRefresh() {
-      await store.refresh('member');
+      await store.refresh('member', 'coupon');
+      await this.loadOrderCount();
       this.$broadcast('refresh');
       this.loaded();
       wepy.stopPullDownRefresh();
@@ -123,7 +184,10 @@
       VipCard: VipCard,
       NavGrid: NavGrid,
       BalanceBar: BalanceBar,
-      Copyright: Copyright
+      Copyright: Copyright,
+      BookingBar: BookingBar,
+      CouponOrderBar: CouponOrderBar,
+      PayOrderBar: PayOrderBar
     };
     computed = {
     };

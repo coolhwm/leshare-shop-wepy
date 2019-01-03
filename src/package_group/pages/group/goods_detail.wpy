@@ -1,0 +1,177 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <!--轮播展示图-->
+  <view class="container column" wx:if="{{init}}">
+    <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" @tap="previewDetailSwiper">
+      <block wx:for="{{rules.goods.images}}" wx:key="index">
+        <swiper-item>
+          <image src="{{item.url}}/w1080" mode="aspectFill" style="width: 100%"></image>
+        </swiper-item>
+      </block>
+    </swiper>
+
+    <!--拼团倒计时栏-->
+    <TimeOutBar :rule.sync="rules" :callback="callback" />
+
+    <!--商品基本信息展示及服务信息-->
+    <GoodsMsgBar :rule.sync="rules"/>
+
+    <!--归属门店区域-->
+    <view class="mb10">
+      <ShopInfoBar :subShop.sync="subShop"/>
+    </view>
+
+    <!--拼团栏-->
+    <GroupInfoBar :processing.sync="processing" :info.sync="info"/>
+
+    <!--评论预览-->
+    <CommentPreview :goodsId.sync="goodsId"/>
+
+    <!--商品详情-->
+    <DetailList :detail.sync="detail" />
+
+    <!--滑出购物面板-->
+    <block >
+      <SilderPanel />
+    </block>
+
+    <!--更多拼团商品-->
+    <block wx:if="{{list}}">
+      <view class="detail-title row-center mt10">
+        <text class="primary lg">── 更多推荐 ──</text>
+      </view>
+      <repeat for="{{list}}" key="index" index="index" item="item">
+        <GroupItem :item.sync="item"/>
+      </repeat>
+    </block>
+
+    <!--底栏-->
+    <GroupBar :rule.sync="rules" />
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import { initWxAppSync } from '../../../api/wx_auth';
+  import store from '../../../store/utils';
+  import base from '../../../mixins/base';
+  import Loading from '../../../components/common/loading';
+  import GroupBar from '../../components/group/bottom_group_bar';
+  import TimeOutBar from '../../../components/group/timeout_bar';
+  import CommentPreview from '../../../components/goods/comment_preview';
+  import GroupInfoBar from '../../components/group/group_info_bar';
+  import SilderPanel from '../../../components/goods/slider_buy_panel';
+  import group from '../../api/group';
+  import DetailList from '../../../components/goods/detail_list';
+  import GoodsMsgBar from '../../components/group/goods_msg_bar';
+  import ShopInfoBar from '../../../components/goods/shop_info_bar';
+  import GroupItem from '../../components/group/group_more_item';
+
+  @connect({
+    shop: store.get('shop')
+  })
+  export default class GroupGoodsDetail extends wepy.page {
+    data = {
+      init: false,
+      time: null,
+      goodsId: '',
+      groupTime: '',
+      ruleId: '',
+      rules: {},
+      processing: {},
+      list: []
+    };
+    async onLoad ({ruleId, scene}) {
+      this.ruleId = ruleId || scene;
+      await initWxAppSync();
+      await this.update(this.ruleId);
+    };
+    onUnload() {
+      this.$invoke('TimeOutBar', 'clear');
+    };
+    async onPullDownRefresh () {
+      await this.update();
+      wepy.stopPullDownRefresh();
+    }
+    async update (ruleId) {
+      const [rules, processing, list] = await Promise.all([group.rules(ruleId), group.processing(ruleId), group.recommendList()]);
+      this.list = list;
+      this.rules = rules;
+      this.processing = processing;
+      this.time = {
+        endTime: this.rules.endTime,
+        beginTime: this.rules.beginTime
+      };
+      this.goodsId = this.rules.goodsId;
+      this.groupTime = this.processing.map(item => {
+        return item.groupTime
+      });
+      this.loaded();
+    }
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {name, imageUrl} = this.rules.goods;
+      const shareName = `${name}，仅需${this.rules.price}元，${this.rules.limitCustomer}人即可成团，快来一起开团吧！`;
+      return {
+        title: shareName,
+        imageUrl: imageUrl,
+        path: `/package_group/pages/group/goods_detail?ruleId=${this.ruleId}`
+      };
+    }
+    methods = {
+      /**
+       * 预览轮播图
+       */
+      previewDetailSwiper() {
+        const urls = this.rules.goods.images.map(value => value.url);
+        wepy.previewImage({
+          urls: urls
+        });
+      }
+    };
+    computed = {
+      subShop() {
+        if (this.rules && this.rules.goods) {
+          return this.rules.goods.relShop != null ? this.rules.goods.relShop : this.shop;
+        }
+      },
+      detail() {
+        if (this.rules == null) return;
+        return this.rules.goods;
+      }
+    };
+    components = {
+      GroupBar: GroupBar,
+      TimeOutBar: TimeOutBar,
+      CommentPreview: CommentPreview,
+      GroupInfoBar: GroupInfoBar,
+      SilderPanel: SilderPanel,
+      Loading: Loading,
+      DetailList: DetailList,
+      GoodsMsgBar: GoodsMsgBar,
+      ShopInfoBar: ShopInfoBar,
+      GroupItem: GroupItem
+    };
+    mixins = [base];
+    config = {
+      enablePullDownRefresh: true,
+      navigationBarTitleText: '商品详情'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+  .goods-swiper{
+    width: 750rpx;
+    height:480rpx;
+  }
+  .detail-title{
+    height: 90rpx;
+    border-bottom: $border;
+    background-color: #FFF;
+  }
+</style>

@@ -2,28 +2,50 @@
   <CoverPanel :display.sync="display" zIndex="1000000" @tap.user="close"/>
   <!--弹出窗口-->
   <view class="wrap" wx:if="{{display}}" >
-    <view class="modal-panel column">
+    <view class="modal-panel column" >
       <!--标题区域-->
-      <view class="sku-title column-center">
+      <view class="sku-title row-center">
         <text class="xxl">{{goods.name}}</text>
         <icon class="close normal" color="gray" @tap="close" />
       </view>
-
-      <!--规格区域-->
-      <view class="sku-list-box column">
-        <view class="row">
-          <text class="weak sm mr10">规格:</text>
-          <DisplayBadge :goods.sync="goods" />
-        </view>
-        <view class="sku-item-box row">
-          <block  wx:for-item="skuValue"  wx:for="{{sku}}" wx:key="index">
-            <view class="sku-item label {{selected == skuValue.sku ? 'primary' : ''}} {{skuValue.max ? 'disabled' : ''}}" @tap="select({{skuValue}})">
-              {{skuValue.sku}}
+      <!--内容区域-->
+      <view class="content-box {{goods.goodsSkuInfo != null && goods.skuProperties.length > 0 || goods.skuProperties.length > 1 ? '' : 'sm-scroll-box'}}">
+        <scroll-view class="scroll-box column {{goods.goodsSkuInfo != null && goods.skuProperties.length > 0 || goods.skuProperties.length > 1 ? '' : 'sm-scroll-box'}}" scroll-y>
+          <!--规格区域-->
+          <view class="sku-list-box column"  wx:if="{{goods.goodsSkuInfo != null}}">
+            <view class="row">
+              <text class="weak sm mr10">{{skuKey}}:</text>
+              <DisplayBadge :goods.sync="goods" />
             </view>
-          </block>
-        </view>
-      </view>
+            <view class="sku-item-box row">
+              <block  wx:for-item="skuValue"  wx:for="{{sku}}" wx:key="index">
+                <view class="sku-item label {{skuSelected == skuValue.sku ? 'primary' : ''}} {{skuValue.max ? 'disabled' : ''}}" @tap="selectSkU({{skuValue}})">
+                  {{skuValue.sku}}
+                </view>
+              </block>
+            </view>
+          </view>
 
+          <!--多属性区域-->
+          <block wx:if="{{goods.skuProperties.length > 0}}">
+            <block wx:for="{{properties}}" wx:for-item="property" wx:key="index" wx:for-index="index">
+              <view class="sku-list-box column">
+                <view class="row">
+                  <text class="weak sm mr10">{{property.propertyKey}}：</text>
+                  <DisplayBadge :goods.sync="goods" />
+                </view>
+                <view class="sku-item-box row">
+                  <block  wx:for-item="propertyValue"  wx:for="{{property.property}}" wx:key="proIndex" wx:for-index="proIndex">
+                    <view class="sku-item label {{proSelected[index] == propertyValue ? 'primary' : ''}}" @tap="selectPro({{propertyValue}}, {{index}})">
+                      {{propertyValue}}
+                    </view>
+                  </block>
+                </view>
+              </view>
+            </block>
+          </block>
+        </scroll-view>
+      </view>
       <!--操作区域-->
       <view class="sku-btn-box row-between">
         <view>
@@ -50,7 +72,9 @@
     };
     data = {
       goods: null,
-      selected: null,
+      skuSelected: null,
+      proSelected: [],
+      proKey: null,
       price: null,
       originalPrice: null,
       display: false,
@@ -75,9 +99,13 @@
       // 初始化商品对象
       this.goods = goods;
       const hasSku = goods.goodsSkuInfo && (goodsSku == null || goodsSku == '');
+      const hasProperty = goods.skuProperties.length > 0;
       if (hasSku) {
         // 有SKU，且没有选择SKU的情况，展现面板
         this.display = true;
+      } else if (hasProperty) {
+        this.display = true;
+        console.info('hasProperty')
       } else {
         // 没有SKU，直接加入购物车
         if (goods.isTips || goods.isTips == null) {
@@ -102,18 +130,21 @@
         Tips.alert('请在购物车操作');
         return;
       }
+
       // 处理多规格商品，但是购物车只有一个的情况
       const cartGoods = cartGoodsList[0];
-      if (goodsSku == null && cartGoods.goodsSku != null) {
-        goodsSku = cartGoods.goodsSku
-      }
+      const selText = {
+        skuSelected: cartGoods.goodsSku,
+        proSelected: cartGoods.skuProperty
+      };
       // 购物车对象
-      this.cartManager.minus(goodsId, goodsSku);
+      this.cartManager.minus(goodsId, selText);
       this.$apply();
     }
     clear () {
       skuData = null;
-      this.selected = null;
+      this.skuSelected = null;
+      this.proSelected = [];
       this.originalPrice = null;
       this.price = null;
       this.goods = null;
@@ -123,27 +154,43 @@
       close() {
         this.clear();
       },
-      select(sku) {
+      // 选择SKU
+      selectSkU(sku) {
         const skuValue = sku.sku;
         if (sku.max) {
           return;
         }
-        skuData.select('规格', skuValue);
-        this.selected = skuValue;
+        skuData.select(this.skuKey, skuValue);
+        this.skuSelected = skuValue;
         this.price = skuData.detail.price;
         this.originalPrice = skuData.detail.originalPrice;
         this.$apply();
       },
+      selectPro (pro, index) {
+        this.proSelected[index] = pro;
+      },
       async confirm() {
-        if (this.selected == null) {
-          Tips.alert('请选择');
-          return;
+        if (this.goods.goodsSkuInfo != null) {
+          if (this.skuSelected == null) {
+            Tips.alert('请选择');
+            return;
+          }
+        }
+        if (this.goods.skuProperties.length > 0) {
+          if (this.proSelected.length < this.goods.skuProperties.length) {
+            Tips.alert('请选择');
+            return;
+          }
         }
         if (this.goods.isTips || this.goods.isTips == null) {
           Tips.success('已加入购物车');
         }
         this.$root.$apply();
-        this.cartManager.plus(this.goods, this.selected);
+        const selected = {
+          skuSelected: this.skuSelected,
+          proSelected: this.proSelected.length > 0 ? this.proSelected.toString() : null
+        };
+        this.cartManager.plus(this.goods, selected);
         // 清理残留数据
         this.clear();
       }
@@ -174,6 +221,21 @@
           }
         });
         return stocks;
+      },
+      skuKey() {
+        if (skuData != null && skuData.labels != null && skuData.labels.length > 0) {
+          return skuData.labels[0].key;
+        }
+      },
+      properties () {
+        if (this.goods == null || this.carts == null) {
+          return;
+        }
+        if (this.goods.skuProperties.length <= 0) return;
+        this.goods.skuProperties.forEach(item => {
+          item.property = item.propertyValue.split(',');
+        });
+        return this.goods.skuProperties;
       }
     };
     components = {
@@ -188,27 +250,32 @@
   .wrap{
     position: fixed;
     width: 750rpx;
-    height: 100%;
+    max-height: 100%;
     top:0;
+    left: 0;
     z-index: 1000001;
     .modal-panel{
       position: fixed;
-      min-height: 50px;
       border-radius: 3px;
       width: 650rpx;
+      max-height: 600rpx;
       top: 30%;
       left: 50rpx;
       background-color: #fFF;
       z-index: 1000002;
     }
+    .scroll-box,.content-box{
+      height: 360rpx;
+    }
+    .sm-scroll-box{
+      height: 200rpx;
+    }
   }
-
   .sku-title{
-    height: 120rpx;
+    min-height: 80rpx;
     padding: 10rpx 30rpx;
     max-width: 550rpx;
     text{text-align: center}
-
     .close{
       position: absolute;
       top: 20rpx;

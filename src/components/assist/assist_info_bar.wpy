@@ -1,0 +1,217 @@
+<template>
+  <view class="column assist-info-box">
+    <view class="row info-top-box">
+      <image class="top-avatar-box" src="{{assist.avatar}}" />
+      <view class="row-between" style="flex: 1;">
+        <text class="mr20 xl">{{assist.nickName}}</text>
+        <text class="primary xxl" wx:if="{{assist.remainder > 0 && assist.status !== 'SUCCESS'}}">仅剩{{assist.remainder}}份</text>
+      </view>
+    </view>
+    <view class="column-center" wx:if="{{assist.status == 'TIMEOUT'}}">
+      <text class="xxl primary">该活动已结束</text>
+    </view>
+    <view class="column-center" wx:elif="{{assist.limitCount <= assist.successCount}}">
+      <text class="xxl primary">来迟了，奖品已被领光</text>
+    </view>
+    <view class="column-center" wx:elif="{{assist.status !== 'TIMEOUT' && assist.status !== 'SUCCESS'}}">
+      <button wx:if="{{assist.isHead}}" class="btn-box" open-type="share">分享助力</button>
+    </view>
+    <view class="column-center" wx:if="{{!assist.isHead && (assist.status !== 'TIMEOUT' && !assist.isTimeOut && assist.limitCount > assist.successCount)}}">
+      <view wx:if="{{assist.isHelp}}" class="btn-box" @tap="want({{assist}})">我也要</view>
+      <view wx:elif="{{assist.assist}}" class="muted column-center">
+        <text>{{assist.assistRuleTip}}</text>
+        <view class="btn-box" @tap="want({{assist}})">我也要</view>
+      </view>
+      <form report-submit="true" @submit="reportFormId" wx:else>
+        <button class="btn-box" open-type="getPhoneNumber" bindgetphonenumber="regist" form-type="submit" wx:if="{{member == null}}">
+          为TA助力
+        </button>
+        <button wx:else class="btn-box" @tap="help()" form-type="submit">为TA助力</button>
+      </form>
+    </view>
+    <view class="column-center mt20">
+      <view class="row" wx:if="{{assist.leftJoin > 0}}">
+        <text class="muted">──────</text><text class="muted ml10 mr10">还需{{assist.leftJoin}}人助力</text><text class="muted">──────</text>
+      </view>
+      <view wx:else>
+        <text class="muted">──────</text><text class="muted ml10 mr10">已助力成功</text><text class="muted">──────</text>
+      </view>
+      <view class="row details-box mt10">
+        <block wx:for="{{assist.details}}" wx:for-item="detail" wx:key="index">
+          <image class="details-avatar-box" src="{{detail.customerAvatar}}" wx:if="{{detail.customerAvatar}}"></image>
+          <icon wx:elif="{{detail.customerId}}" class="customer space-box" color="gray"/>
+          <icon wx:else class="space-circle space-box" color="gray"/>
+        </block>
+      </view>
+    </view>
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import { checkUserInfoWithError, handleGetPhoneNumber } from '../../api/wx_auth';
+  import countdown from '../../mixins/countdown';
+  import assist from '../../api/assist';
+  import router from '../../mixins/router';
+  import Tips from '../../utils/Tips';
+
+  @connect({
+    member: store.get('member')
+  })
+  export default class AssistInfoBar extends wepy.component {
+    props = {
+      assist: {}
+    };
+    data = {
+    } ;
+    async onLoad () {
+      await store.wait();
+    }
+    async doHelp () {
+      await checkUserInfoWithError();
+      const data = {
+        id: this.assist.id,
+        ruleId: this.assist.ruleId
+      };
+      try {
+        await Tips.loading();
+        await assist.assistActivity(data);
+        Tips.loaded();
+        this.$emit('help', this.assist.id);
+      } catch (err) {
+        await Tips.loaded();
+        await Tips.modal(err.message);
+        this.$emit('upDate', this.assist.id);
+      }
+    }
+
+    methods = {
+      async regist({detail}) {
+        await handleGetPhoneNumber(detail);
+        await this.doHelp();
+      },
+      async help () {
+        await this.doHelp();
+      },
+      async want (assist) {
+        this.$root.$navigate(`/pages/assist/goods_detail?ruleId=${assist.ruleId}`);
+      }
+    };
+    computed = {};
+    components = {};
+    watch = {};
+    mixins = [countdown, router];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .assist-info-box {
+    background-color: white;
+    padding: 20rpx;
+    margin-bottom: 10rpx;
+  }
+
+  .top-avatar-box{
+    width: 80rpx;
+    min-width: 80rpx;
+    height: 80rpx;
+    border-radius: 40rpx;
+    margin-right: 20rpx;
+  }
+
+  /*中部进度条*/
+  .back-box {
+    position: relative;
+    display: flex;
+    margin: 0 10rpx;
+  }
+
+  .back {
+    width: 100%;
+    height: 30rpx;
+    background-color: #e6e6e6;
+    border-radius: 15rpx;
+  }
+
+  .process-box {
+    position: absolute;
+    left:0;
+    bottom:0;
+  }
+
+  .process {
+    width: 100%;
+    height: 30rpx;
+    background-color: $color-primary;
+    border-radius: 15rpx;
+  }
+
+  .msg-box {
+    position: relative;
+    min-width: 44px;
+  }
+
+  .price-box {
+    top: 8px;
+    left: 8px;
+  }
+
+  .info-btn-box{
+    border-bottom: $border;
+    padding: 20rpx;
+  }
+
+  .btn-box{
+    background-color: $color-primary;
+    color:white;
+    padding: 10rpx 0;
+    width: 500rpx;
+    border-radius: 5rpx;
+    margin: 20rpx 0;
+    text-align: center;
+    font-size: 34rpx;
+    line-height: 55rpx;
+  }
+  .btn-end-box{
+    background-color: $color-muted;
+    color:white;
+    padding: 10rpx 0;
+    width: 500rpx;
+    border-radius: 5rpx;
+    margin: 20rpx 0;
+    text-align: center;
+    font-size: 34rpx;
+  }
+
+  .help-text{
+    max-width: 600rpx;
+  }
+
+  .title-text{
+    color: $color-muted;
+    margin-left: 25rpx;
+    font-size: $text-xl;
+  }
+
+  .details-box{
+    width: 520rpx;
+    flex-wrap: wrap;
+    image{
+      width: 80rpx;
+      height: 80rpx;
+      border: $border;
+      border-radius: 40rpx;
+      margin: 10rpx;
+    }
+    .space-box{
+      font-size: 76rpx;
+      line-height: 76rpx;
+      margin: 10rpx;
+    }
+  }
+</style>

@@ -1,0 +1,334 @@
+<template xmlns:wx="http://java.sun.com/JSP/Page">
+  <Tips/>
+  <Loading :init.sync="init"/>
+  <view class="container" wx:if="{{init}}">
+    <!--订单项目-->
+    <OrderItem :order.sync="trade" action="0" />
+
+    <!--订单详情-->
+    <view class="weui-cells weui-cells-show">
+
+      <!--支付类型-->
+      <view class="weui-cell weui-cell_access" @tap="paymentType">
+        <view class="weui-cell__bd">支付方式</view>
+        <view class="weui-cell__ft">{{trade.onlinePayText}}</view>
+      </view>
+
+      <block>
+        <view class="weui-cell weui-cell_access">
+          <view class="weui-cell__bd">剩余积分</view>
+          <view class="weui-cell__ft">{{member.bonus}}分</view>
+        </view>
+      </block>
+    </view>
+
+    <!--备注信息-->
+    <view class="remark-box weui-cells weui-cells-show">
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__hd">
+          <view class="weui-label">订单备注</view>
+        </view>
+        <view class="weui-cell__bd">
+          <input class="weui-input" id="message" @input="input" value="{{trade.message}}" placeholder="请输入订单备注"/>
+        </view>
+        <view class="weui-cell__ft">
+        </view>
+      </view>
+    </view>
+
+    <!--操作底栏-->
+    <view class="tarde-action-bar row-end">
+      <view>
+        <text>待支付</text>
+        <text class="major mr20">{{trade.bonus}}积分</text>
+      </view>
+      <form class="trade-confirm-button row-center" report-submit @submit="confirm">
+        <button plain form-type="submit">立即兑换</button>
+      </form>
+    </view>
+    <view class="tarde-action-bar-placeholder">
+    </view>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+  import store from '../../store/utils'
+  import base from '../../mixins/base'
+  import { checkUserInfo } from '../../api/wx_auth'
+  import order from '../../api/order'
+  import { PAYMENT, TYPE } from '../../api/order_const'
+  import shop from '../../api/shop'
+  import FormTips from '../../components/weui/tips'
+  import OrderItem from '../../components/order/order_item'
+  import Tips from '../../utils/Tips'
+  import Event from '../../utils/Event'
+  import Loading from '../../components/common/loading'
+  import Cart from '../../utils/Cart'
+  import digit from '../../api/digit'
+
+  @connect({
+    shop: store.get('shop'),
+    reduce: store.get('reduce'),
+    member: store.get('member'),
+    card: store.get('card')
+  })
+  export default class BonusTrade extends wepy.page {
+    data = {
+      init: false,
+      trade: {
+        orderGoodsInfos: []
+      },
+      isSubmit: false,
+      selectedAddress: null,
+      confirmText: '',
+      goodsList: null,
+      selectedBonus: null,
+      type: '' // buy/group/join/bargain
+    }
+    cartManager = Cart.create()
+
+    async onLoad(params, { preload }) {
+      await checkUserInfo()
+      // 订单数据
+      this.trade = preload.params.trade
+      this.type = preload.params.type
+      this.goodsList = this.trade.orderGoodsInfos
+      this.trade.onlinePayType = 'bonus'
+      this.trade.onlinePayText = '积分支付'
+      this.trade.bonus = this.trade.finalPrice * 1
+      this.trade.dealPrice = 0
+      this.trade.finalPrice = 0
+      this.loaded()
+    };
+
+    async upDateMember() {
+      await store.refresh('member')
+    };
+
+    methods = {
+      input({ detail }) {
+        this.trade.message = detail.value
+      },
+      /**
+       * 确定下单
+       */
+      async confirm({ detail }) {
+        if (this.isSubmit) {
+          await Tips.confirm('订单已生成，是否跳转到订单列表？');
+          this.$switch('/pages/customer/index_template');
+          return;
+        }
+        // 数据准备
+        if (this.trade.orderType === TYPE.TAKEAWAY) {
+          this.trade.deliveryType = 'CITY'
+        }
+        // 表单ID
+        this.trade.formId = detail.formId
+
+        // 处理余额支付校验
+        if (this.member.bonus < this.trade.bonus) {
+          await Tips.alert('积分不足！')
+          return
+        }
+        this.isSubmit = true;
+        Tips.loading('正在下单')
+        // 检查店铺状态
+        const isOpen = await this.checkShopStatus()
+        if (!isOpen) { return }
+        // 创建订单
+        const trade = await this.requestCreateOrder(this.trade)
+        console.info(trade)
+        // 检查是否下单成功
+        if (trade == null && (this.type !== 'join' && this.type !== 'group')) {
+          await Tips.alert('下单失败')
+          return
+        } else if (trade === 'offShelves') {
+          // 缺货的清单
+          await Tips.modal('部分商品已下架，请重新选购')
+          Event.emit(Event.GOODS_CATEGORY_RELOAD)
+          wepy.navigateBack()
+          return
+        } else if (trade === 'priceChange') {
+          // 缺货的清单
+          await Tips.modal('部分商品价格发生变化，请重新选购')
+          Event.emit(Event.GOODS_CATEGORY_RELOAD)
+          store.delayReflesh('member')
+          wepy.navigateBack()
+          return
+        }
+        let isPay = false
+        if (trade.onlinePayType === 'balance') {
+          await Tips.success('支付成功')
+          isPay = true
+        } else {
+          if (trade.paymentType == PAYMENT.OFFLINE) {
+            // 检查是否为离线订单
+            await Tips.success('下单成功')
+          } else if (trade.finalPrice == 0) {
+            // 检查是否为0元订单
+            await Tips.success('下单成功')
+          } else {
+            // 发起支付
+            isPay = await this.requestWxPayment(trade)
+            if (isPay) {
+              await Tips.success('支付成功')
+            } else {
+              await Tips.alert('支付取消')
+            }
+          }
+        }
+        // 清空购物车
+        this.cartManager.clear()
+        // 刷新会员信息
+        store.delayReflesh('member')
+        // 刷新列表
+        Event.emit(Event.ORDER_LIST_UPDATE)
+        if (isPay && (this.type === 'join' || this.type === 'group')) {
+          this.$redirect('/pages/group/list')
+        } else if (isPay && (this.type === 'bargain')) {
+          this.$redirect('/pages/bargain/list')
+        } else {
+          this.$switch('/pages/customer/index_template')
+        }
+      }
+    }
+
+    /**
+     * 请求创建订单
+     */
+    async requestCreateOrder(trade) {
+      try {
+        // 积分订单
+        if (this.trade.orderGoodsInfos[0].goodsType === 'digit') {
+          return await digit.order(trade);
+        } else {
+          return await order.createBonusOrder(trade)
+        }
+      } catch (e) {
+        console.info(e)
+        if (e.serverCode == 20005) {
+          // 处理缺货的的情况
+          const msg = JSON.parse(e.message)
+          const nodeList = msg.map(value => {
+            return {
+              value: value,
+              num: value.indexOf(',')
+            }
+          })
+          const data = nodeList.map(item => {
+            return {
+              id: item.value.substring(0, item.num),
+              sku: item.value.substring(item.num + 1)
+            }
+          })
+          data.forEach(item => {
+            this.cartManager.removeGoods(item.id, item.sku)
+          })
+          return 'offShelves'
+        }
+        // 处理商品价格不一致的情况
+        if (e.serverCode == 20007) {
+          this.cartManager.clear()
+          return 'priceChange'
+        }
+        return null
+      }
+    }
+    /**
+     * 检查店铺状态
+     */
+    async checkShopStatus() {
+      // 检查店铺状态
+      const status = await shop.isStatusOpen()
+      Tips.loaded()
+      if (!status) {
+        await Tips.modal('店铺已休息')
+        wepy.navigateBack()
+      }
+      return status
+    }
+    /**
+     * 清理积分信息
+     */
+    clearSelectedBonus() {
+      this.selectedBonus = null
+      this.trade.bonusPrice = 0
+      this.trade.bonus = 0
+    }
+
+    computed = {}
+    components = {
+      Tips: FormTips,
+      OrderItem: OrderItem,
+      Loading: Loading
+    }
+    mixins = [base]
+    config = {
+      navigationBarTitleText: '订单详情'
+    }
+  }
+</script>
+
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .remark-box {
+    margin-bottom: 10rpx;
+  }
+
+  //汇总栏
+  .summary-box {
+    padding: 10px 15px;
+
+    .final-box {
+      float: right;
+      width: 100%;
+      padding-top: 10rpx;
+      border-top: $border;
+      text-align: right;
+    }
+
+    .price-box {
+      padding: 5rpx 0;
+    }
+  }
+
+  /*购买栏*/
+  .tarde-action-bar {
+    position: fixed;
+    z-index: 10000;
+    bottom: 0;
+    height: 100rpx;
+    width: 100%;
+    background-color: #FFF;
+    border-top: $border;
+
+    text {
+      font-size: $text-xxl;
+    }
+
+    /*操作底栏*/
+    .trade-confirm-button {
+      height: 100%;
+      width: 280rpx;
+      line-height: 100rpx;
+      text-align: center;
+      background-color: $color-primary;
+      color: #FFF;
+      button {
+        color: #FFF;
+      }
+    }
+
+  }
+
+  .tarde-action-bar-placeholder {
+    width: 100%;
+    height: 100rpx;
+  }
+
+</style>

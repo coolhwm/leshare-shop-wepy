@@ -1,0 +1,64 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view wx:if="{{init}}">
+
+    <view class="column">
+      <!--列表展现-->
+      <repeat for="{{page.list}}" key="index" index="index" item="item">
+        <DetailItem :detail.sync="item"/>
+      </repeat>
+    </view>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+
+  </view>
+
+  <!--占位符-->
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关佣金信息"/>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from '../../../mixins/base';
+  import pagination from '../../../mixins/pagination.wpy';
+  import Placeholder from '../../../components/common/placeholder';
+  import Loadmore from '../../../components/weui/loadmore';
+  import Loading from '../../../components/common/loading';
+  import DetailItem from '../../components/agent/detail_item'
+  import agent from '../../api/agent';
+
+  export default class Recharge extends wepy.page {
+    data = {
+      init: false,
+      page: {}
+    };
+    async onLoad () {
+      this.page = await agent.agentDetail();
+      await this.next();
+    };
+    methods = {
+      switchTab() {
+        this.reload();
+      }
+    };
+    computed = {};
+    components = {
+      Placeholder: Placeholder,
+      Loadmore: Loadmore,
+      Loading: Loading,
+      DetailItem: DetailItem
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '分销佣金',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+
+</style>

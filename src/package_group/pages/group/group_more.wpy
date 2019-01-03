@@ -1,0 +1,55 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view class="column" wx:if="{{init}}">
+    <image src="http://img.leshare.shop/shop/other/group_bar.jpg" mode="aspectFill" style="width: 750rpx; height:200rpx;"/>
+
+    <repeat for="{{page.list}}" key="index" index="index" item="item">
+      <block>
+        <GroupItem :item.sync="item"/>
+      </block>
+    </repeat>
+
+    <!--占位符-->
+    <Placeholder :show.sync="isPageEmpty" message="您还没有相关拼团商品" />
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../../mixins/base';
+  import pagination from '../../../mixins/pagination';
+  import Loading from '../../../components/common/loading';
+  import GroupItem from '../../components/group/group_more_item';
+  import group from '../../api/group';
+  import Placeholder from '../../../components/common/placeholder';
+
+  export default class ShopIndex extends wepy.page {
+    data = {
+      init: false,
+      page: []
+    };
+    async onLoad () {
+      this.page = await group.groupGoodsList();
+      await this.next();
+    };
+    methods = {
+    };
+    computed = {
+    };
+    components = {
+      Loading: Loading,
+      GroupItem: GroupItem,
+      Placeholder: Placeholder
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '拼团商品'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+
+</style>

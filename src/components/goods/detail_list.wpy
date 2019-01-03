@@ -1,16 +1,31 @@
 <template>
   <view class="detail-box" wx:if="{{detail.goodsDetails.length > 0}}">
     <!--详情标题-->
-    <view class="detail-title row-center">
+    <view class="detail-title row-center" wx:if="{{isShowTitle}}">
       <text class="primary lg">── 商品详情 ──</text>
     </view>
     <!--详情类列表区域/遍历详情-->
     <view class="detail-list column">
       <block wx:for="{{detail.goodsDetails}}" wx:key="id">
         <!--文本-->
-        <text class="mb20 lg" wx:if="{{item.type == 1}}">{{item.content}}</text>
+        <text class="mb20 lg short-text-box" wx:if="{{item.type == 1}}">{{item.content}}</text>
         <!--图片-->
-        <image src="{{item.content}}" lazy-load mode="widthFix" wx:if="{{item.type == 2}}" @tap="previewDetailImages({{item.content}})"/>
+        <image src="{{item.content}}/w1080" lazy-load mode="widthFix" wx:if="{{item.type == 2}}" @tap="previewDetailImages({{item.content}})"/>
+        <!--列表-->
+        <view class="long-text-box" wx:if="{{item.type == 3}}">
+          <view class="title-box">
+            <text class="xl">{{goodsDetail.title}}</text>
+          </view>
+          <block wx:for="{{goodsDetail.list}}" wx:key="index" wx:for-item="item">
+            <view class="row-between mb10">
+              <view class="row">
+                <text wx:if="{{item.content != null}}">• {{item.content}}</text>
+                <text wx:if="{{item.remark != null}}" class="muted sm ml10">({{item.remark}})</text>
+              </view>
+              <text wx:if="{{item.append != null}}">{{item.append}}</text>
+            </view>
+          </block>
+        </view>
       </block>
     </view>
   </view>
@@ -20,7 +35,13 @@
   import wepy from 'wepy';
   export default class OrderGoods extends wepy.component {
     props = {
-      detail: {}
+      detail: {},
+      isShowTitle: {
+        default: true
+      }
+    };
+    data = {
+      goodsDetail: null
     };
     methods = {
       /**
@@ -35,6 +56,14 @@
       }
     };
     onLoad() {
+    }
+    watch = {
+      detail (detail) {
+        if (detail.goodsDetails.find(item => item.type == 3) != null) {
+          this.goodsDetail = JSON.parse(detail.goodsDetails.find(item => item.type == 3).content);
+        }
+        this.$apply()
+      }
     }
   }
 </script>
@@ -54,8 +83,14 @@
       image{
         width: 100%;
       }
-      text{
+      .short-text-box{
         padding: 20rpx;
+      }
+      .long-text-box{
+        padding: 20rpx 30rpx;
+        .title-box{
+          margin: 20rpx 0;
+        }
       }
     }
   }

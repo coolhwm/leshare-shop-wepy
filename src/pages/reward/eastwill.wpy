@@ -1,0 +1,430 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view class="contariner" wx:if="{{init}}">
+    <view class="top-box">
+      <!--签到栏-->
+      <view class="row sign-box">
+        <!--背景图片-->
+        <view class="sign-icon-box column-center">
+          <image src="https://img.leshare.shop/shop/22/reward-sign-gift.png"></image>
+        </view>
+
+        <!--中央主区域-->
+        <view class="column main-box">
+          <!--积分提示-->
+          <view class="row title-box" @tap="toBonusDetail" wx:if="{{member}}">
+            <text class="xs">当前积分：</text>
+            <text class="xxl">{{member.bonus}}</text>
+          </view>
+          <!--未注册提示-->
+          <view class="title-box" wx:else>
+            <text class="xxl">注册会员享福利</text>
+          </view>
+
+          <!--签到进度栏目-->
+          <view class="sign-bar-box" @tap="toSign">
+            <image class="sign-gift-icon" src="https://img.leshare.shop/shop/22/reward-gift-icon.png"></image>
+            <view class="sign-done-box">
+              <block wx:for="{{signOfDays}}" wx:key="*this">
+                <image class="sign-done-icon" src="https://img.leshare.shop/shop/22/reward-sign-done.png"></image>
+              </block>
+            </view>
+            <image class="sign-bar" src="https://img.leshare.shop/shop/22/reward-sign-bar.png"></image>
+          </view>
+          <!--签到礼品提示-->
+          <text class="sign-tips mt10">签到领积分，积分兑好礼</text>
+        </view>
+
+        <!--右侧按钮区域-->
+        <view class="sign-btn-box" @tap="toSign" wx:if="{{member}}">
+          <view class="sign-btn column-center">
+            <text wx:if="{{signStatus}}">今日已签</text>
+            <text wx:else>立即签到</text>
+          </view>
+        </view>
+        <!--未注册的情况-->
+        <view class="sign-btn-box" wx:else>
+          <button class="sign-btn column-center" plain open-type="getPhoneNumber"  bindgetphonenumber="regist">
+            <text>立即注册</text>
+          </button>
+        </view>
+      </view>
+
+      <!--主功能推荐栏-->
+      <!--<view class="row-around menu-box">-->
+        <!--<image class="menu-image" src="https://img.leshare.shop/shop/22/reward_area_1.png" @tap="toShopList"></image>-->
+        <!--<image class="menu-image" src="https://img.leshare.shop/shop/22/reward_area_2.png" @tap="toBonusGoodsList"></image>-->
+        <!--<image class="menu-image" src="https://img.leshare.shop/shop/22/reward_area_4.png" @tap="toBargainList"></image>-->
+      <!--</view>-->
+    </view>
+
+    <!--菜单栏-->
+    <view class="task-box">
+      <view class="weui-cells weui-cells-show">
+
+        <view class="row weui-cell weui-cell_access" @tap="toActive">
+          <view class="weui-cell__bd row">
+            <icon class="like" style="color: #EE3333;" />
+            <view class="column">
+              <text>双旦福利·惊喜来袭</text>
+              <text class="task-tips">多重优惠活动，让您乐翻天！</text>
+            </view>
+          </view>
+          <view class="weui-cell__ft weui-cell__ft_in-access">
+            <text class="muted sm">查看规则</text>
+          </view>
+        </view>
+
+
+        <view class="row weui-cell weui-cell_access" @tap="toShare">
+          <view class="weui-cell__bd row">
+            <icon class="member" style="color: #EE3333;" />
+            <view class="column">
+              <text>转发领现金</text>
+              <text class="task-tips">30元购物津贴，送完为止</text>
+            </view>
+          </view>
+          <view class="weui-cell__ft weui-cell__ft_in-access">
+            <text class="muted sm">查看规则</text>
+          </view>
+        </view>
+
+
+        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active"  @tap="toTopup">
+          <view class="weui-cell__bd row">
+            <icon class="money" style="color: #EE3333;" />
+            <view class="column">
+              <text>首充再送礼</text>
+              <text class="task-tips">充值有赠送，时时有惊喜</text>
+            </view>
+          </view>
+          <view class="weui-cell__ft weui-cell__ft_in-access">
+            <text class="muted sm">立即充值</text>
+          </view>
+        </view>
+
+        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="toGift">
+          <view class="weui-cell__bd row">
+            <icon class="gift1" style="color: #EE3333;" />
+            <view class="column">
+              <text>圣诞老人送礼物</text>
+              <text class="task-tips">12月24日圣诞老人巡游并派发圣诞礼包</text>
+            </view>
+          </view>
+          <view class="weui-cell__ft weui-cell__ft_in-access">
+            <text class="muted sm">查看规则</text>
+          </view>
+        </view>
+
+        <view class="row weui-cell weui-cell_access" @tap="toSuper">
+          <view class="weui-cell__bd row">
+            <icon class="privilege" style="color: #EE3333;" />
+            <view class="column">
+              <text>全城锦鲤</text>
+              <text class="task-tips">寻找2018年最后一只好运锦鲤</text>
+            </view>
+          </view>
+          <view class="weui-cell__ft weui-cell__ft_in-access">
+            <text class="muted sm">查看规则</text>
+          </view>
+        </view>
+
+        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="toSign">
+          <view class="weui-cell__bd row">
+            <icon class="calendar" style="color: #EE3333;" />
+            <view class="column">
+              <text>签到有礼</text>
+              <text class="task-tips">签到领积分，积分兑好礼</text>
+            </view>
+          </view>
+          <view class="weui-cell__ft weui-cell__ft_in-access">
+            <text class="muted sm">立即签到</text>
+          </view>
+        </view>
+
+        <view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="toBonusGoodsList">
+          <view class="weui-cell__bd row">
+            <icon class="rank" style="color: #EE3333;" />
+            <view class="column">
+              <text>积分商城</text>
+              <text class="task-tips">100积分可兑换停车卡</text>
+            </view>
+          </view>
+          <view class="weui-cell__ft weui-cell__ft_in-access">
+            <text class="muted sm">立即兑换</text>
+          </view>
+        </view>
+
+        <!--<view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="toInvate">-->
+          <!--<view class="weui-cell__bd row">-->
+            <!--<icon class="share" style="color: #FF8855;" />-->
+            <!--<view class="column">-->
+              <!--<text>邀请好友</text>-->
+              <!--<text class="task-tips">优惠同享，积分获取无上限</text>-->
+            <!--</view>-->
+          <!--</view>-->
+          <!--<view class="weui-cell__ft weui-cell__ft_in-access">-->
+            <!--<text class="muted sm">+100积分</text>-->
+          <!--</view>-->
+        <!--</view>-->
+
+
+
+        <!--<view class="row weui-cell weui-cell_access" hover-class="weui-cell_active" @tap="toBargainList">-->
+          <!--<view class="weui-cell__bd row">-->
+            <!--<icon class="bargain" style="color: #EE3333;" />-->
+            <!--<view class="column">-->
+              <!--<text>疯狂砍价</text>-->
+              <!--<text class="task-tips">每天一款饮品低价抢购</text>-->
+            <!--</view>-->
+          <!--</view>-->
+          <!--<view class="weui-cell__ft weui-cell__ft_in-access">-->
+            <!--<text class="muted sm">限时抢购</text>-->
+          <!--</view>-->
+        <!--</view>-->
+
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { initWxAppSync } from '../../api/wx_auth';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import base from '../../mixins/base';
+  import shop from '../../api/shop';
+  import Loading from '../../components/common/loading';
+  import Tips from '../../utils/Tips';
+  import Event from '../../utils/Event';
+  import { handleGetPhoneNumber } from '../../api/wx_auth';
+
+  @connect({
+    member: store.get('member')
+  })
+  export default class RewardCenter extends wepy.page {
+    data = {
+      init: false,
+      signOfDays: [],
+      signStatus: false
+    };
+    async onLoad () {
+      await initWxAppSync();
+      await this.loadSignData();
+      this.loaded();
+      Event.listen(Event.SIGN_UPDATE, this.loadSignData.bind(this), this)
+    };
+
+    /**
+     * 加载签到相关数组
+     */
+    async loadSignData() {
+      if (this.member == null) {
+        return;
+      }
+      const sign = await shop.signList(this.member.memberId);
+      if (sign == null) {
+        return;
+      }
+      const { today, continuationTimes } = sign;
+      // 今日是否已经签到
+      this.signStatus = today;
+      // 连续签到天数
+      this.signOfDays = [];
+      for (let i = 0; i < continuationTimes; i++) {
+        this.signOfDays.push(true);
+        if (this.signOfDays.length >= 7) {
+          break;
+        }
+      }
+    }
+    async onPullDownRefresh () {
+      await this.loadSignData();
+      this.loaded();
+      wepy.stopPullDownRefresh();
+    }
+    toArticle(title, url) {
+      this.$preload('params', {
+        title, url
+      });
+      this.$navigate('/pages/reward/article');
+    };
+    methods = {
+      async regist({detail}) {
+        const success = await handleGetPhoneNumber(detail);
+        if (success) {
+          Tips.success('注册成功');
+        } else {
+          await Tips.modal('注册失败，请至“我的”页面重试');
+          this.$switch('/pages/customer/index_template');
+        }
+      },
+      toShare() {
+        const url = 'https://mp.weixin.qq.com/s/h2zpQQNv8BmsmAiD69-BvQ';
+        this.toArticle('转发领现金', url);
+      },
+      toTopup() {
+        this.$navigate(`/package_member/pages/member/top_up`);
+      },
+      toGift() {
+        const url = 'https://mp.weixin.qq.com/s/rl9r-LwISRka27rzxAlAgg';
+        this.toArticle('圣诞老人送礼物', url);
+      },
+      toSuper() {
+        const url = 'https://mp.weixin.qq.com/s/wiAJSymE54YumcZnD6BJZQ';
+        this.toArticle('寻找2018年最后一只好运锦鲤', url);
+      },
+      toActive() {
+        const url = 'https://mp.weixin.qq.com/s/7VwxnBhYPbbN1ESlVJ6uqg';
+        this.toArticle('双旦福利·惊喜来袭', url);
+      },
+
+
+
+      toBonusDetail() {
+        this.$navigate(`/package_member/pages/member/bonus_list`);
+      },
+      toBargainList() {
+        this.$navigate(`/pages/bargain/bargain_more`);
+      },
+      toBonusGoodsList() {
+        this.$navigate(`/pages/goods/bonus_goods_list`);
+      },
+      toShopList() {
+        this.$switch(`/pages/shop/sub_shop_list`);
+      },
+      toSign() {
+        this.$navigate(`/pages/customer/sign_in`);
+      },
+      follow() {
+        this.$navigate(`/pages/reward/follow`);
+      }
+    };
+    computed = {};
+    components = {
+      Loading: Loading
+    };
+    mixins = [base];
+    config = {
+      enablePullDownRefresh: true,
+      navigationBarTitleText: '福利中心'
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .top-box{
+    background-color: #F8F8F8;
+    border-bottom: $border;
+  }
+  .sign-box{
+    width: 750rpx;
+    overflow: hidden;
+    background-image: url("https://img.leshare.shop/shop/22/reward_bg.png");
+    background-size:100% 100%;
+    height: 200rpx;
+    padding: 20rpx;
+    align-items: center;
+  }
+
+  .sign-icon-box{
+    height: 90rpx;
+    width: 90rpx;
+    min-height: 90rpx;
+    min-width: 90rpx;
+    border: 2px solid rgba(255,255,255,.4);
+    border-radius: 50%;
+    background-color: #D71F36;
+    image{
+      height: 50rpx;
+      width: 50rpx;
+      min-height: 50rpx;
+      min-width: 50rpx;
+    }
+  }
+  .main-box {
+    margin-left: 10rpx;
+    .sign-tips {
+      font-size: $text-xxs;
+      margin-left: 20rpx;
+      color: #FFFFFF;
+    }
+  }
+  .title-box{
+    margin-left: 20rpx;
+    text{
+      color: #FFFFFF;
+    }
+  }
+  .sign-bar-box{
+    position: relative;
+    height: 60rpx;
+    margin-top: 5rpx;
+    .sign-bar{
+      height: 74rpx;
+      width: 404rpx;
+    }
+    .sign-done-box{
+      position: absolute;
+      top: 5rpx;
+      left: 14rpx;
+    }
+    .sign-done-icon{
+      margin-right: 5rpx;
+      height: 50rpx;
+      width: 50rpx;
+    }
+    .sign-gift-icon{
+      position: absolute;
+      top: -60rpx;
+      right: -4rpx;
+      height: 96rpx;
+      width: 86rpx;
+    }
+  }
+  .sign-btn-box{
+    background: url("https://img.leshare.shop/shop/22/reward-sign-btn.png") no-repeat;
+    background-size: cover;
+    width: 200rpx;
+    height: 100rpx;
+    .sign-btn {
+      width: 200rpx;
+      height: 100rpx;
+      border: 0;
+      background: transparent;
+      padding: 0;
+      align-items: center;
+      text{
+        color: #f15353;
+        font-size: $text-lg;
+        font-weight: bold;
+        margin-left: 10rpx;
+      }
+    }
+  }
+  .menu-box{
+    top: -50rpx;
+    position: relative;
+    padding: 0 10rpx;
+    .menu-image{
+      width: 230rpx;
+      height: 197rpx;
+    }
+  }
+
+  .task-box{
+    margin-top: rpx;
+    icon{
+      font-size: 24px;
+      line-height: 24px;
+      margin-right: 20rpx;
+    }
+    .task-tips{
+      font-size: 22rpx;
+      color: $color-muted;
+    }
+  }
+</style>

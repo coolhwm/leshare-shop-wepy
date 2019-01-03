@@ -13,7 +13,10 @@
       <view class="cart-info-container">
         <text class="goods-title-text">{{cart.goodsName}}</text>
         <view class="row">
-          <text class="goods-sku-text">{{cart.goodsSku}}</text>
+          <view class="column">
+            <text class="goods-sku-text sm" wx:if="{{cart.goodsSku != null}}">{{cart.goodsSku}}</text>
+            <text class="goods-sku-text sm" wx:if="{{cart.skuProperty != null}}">{{cart.skuProperty}}</text>
+          </view>
           <repeat for="{{[cart]}}" key="i" index="i" item="item">
             <DiscountBadge :goods.sync="item"/>
           </repeat>

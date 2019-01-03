@@ -1,0 +1,110 @@
+<template>
+  <Loading :init.sync="init"/>
+  <view class="group-goods-detail-box">
+    <repeat for="{{detail.groupDetails}}" key="index" index="index" item="item">
+      <GroupDetailsItem :detail.sync="item" @changeGoods.user="changeGoods"/>
+    </repeat>
+
+    <GroupGoodsBar :price.sync="finalPrice" @buy.user="buy"/>
+  </view>
+
+
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Loading from '../../../components/common/loading';
+  import base from '../../../mixins/base';
+  import groupGoods from '../../api/group_goods';
+  import GroupDetailsItem from '../../components/group_goods/group_details_item';
+  import GroupGoodsBar from '../../components/group_goods/bottom-group-goods-bar';
+  import order from '../../../api/order';
+  import Cart from '../../../utils/Cart';
+
+  export default class GroupGoodsDetail extends wepy.page {
+    data = {
+      init: false,
+      id: null,
+      detail: null
+    };
+    cartManager = Cart.create();
+    async onLoad({id}) {
+      this.id = id;
+      this.detail = await groupGoods.detail(this.id);
+      this.loaded();
+    };
+    methods = {
+      // 切换商品
+      changeGoods(detail) {
+        this.detail.goodsList.forEach((item, index) => {
+          if (item.groupIndex === detail.groupIndex) {
+            this.detail.goodsList.splice(index, 1);
+            this.detail.goodsList.push(detail);
+          }
+        })
+      },
+      buy() {
+        const param = {
+          orderType: null
+        };
+        const selText = {
+          skuSelected: '',
+          proSelected: ''
+        };
+        const goodsList = this.detail.goodsList.map(item => this.cartManager.createCart(item.goods, selText));
+        goodsList.forEach(item => {
+          item.goodsNum = 1
+        });
+        // const repeatId = null
+        for (let i = 0; i < goodsList.length; i++) {
+          const isRepeat = goodsList.filter(item => item.goodsId === goodsList[i].goodsId).length > 1;
+          if (isRepeat) {
+            goodsList.forEach(item => {
+              if (item.goodsId === goodsList[i].goodsId) item.goodsNum += 1;
+            });
+            goodsList.splice(i, 1);
+          }
+        }
+        const trade = order.createCartTrade(goodsList, param);
+        console.info(trade);
+        trade.dealPrice = this.finalPrice;
+        trade.finalPrice = this.finalPrice;
+        trade.ruleId = this.id;
+        this.$preload('params', {trade, type: 'groupGoods'});
+        this.$navigate(`/pages/order/trade`);
+      }
+    };
+    computed = {
+      // 计算总价
+      finalPrice() {
+        if (this.detail == null) return;
+        if (this.detail.goodsList.length < 1) return this.detail.price.toFixed(2);
+        const prices = this.detail.goodsList.map(item => {
+          return item.diffPrice
+        });
+        let originalPrice = this.detail.price * 1;
+        prices.forEach(item => {
+          originalPrice += item
+        });
+        return originalPrice.toFixed(2)
+      }
+    };
+    components = {
+      Loading: Loading,
+      GroupDetailsItem: GroupDetailsItem,
+      GroupGoodsBar: GroupGoodsBar
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '组合详情'
+    };
+  }
+</script>
+
+<style lang="scss" scoped>
+  @import "../../../styles/variable";
+  .group-goods-detail-box{
+    background-color: white;
+    height: 100%;
+  }
+</style>

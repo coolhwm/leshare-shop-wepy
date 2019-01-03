@@ -1,0 +1,75 @@
+<template>
+  <view class="row bargain_more_item">
+    <image class="img-box mr20" src="{{detail.goods.imageUrl}}"/>
+    <view class="column content-box">
+      <text class="lg">{{detail.goods.name}}</text>
+      <view class="row-between">
+        <view class="row">
+          <text class="xxs muted">最低砍至</text>
+          <text class="primary xxl">￥{{detail.floorPrice}}</text>
+        </view>
+        <text class="muted sm origin">￥{{detail.goodsPrice}}</text>
+      </view>
+      <view class="row-between">
+        <text class="muted sm">已砍成{{detail.successCount ? detail.successCount : '0'}}件</text>
+        <view class="btn-box" @tap="bargain({{detail.id}})">去砍价<icon class="more ml10 xsmall" color="white"/></view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+
+  export default class BargainMoreItem extends wepy.component {
+    prop = {
+      detail: {}
+    };
+    data = {
+    };
+    async onLoad () {
+    };
+    methods = {
+      bargain (id) {
+        this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${id}`)
+      }
+    };
+    computed = {
+    };
+    components = {
+    };
+    mixins = [base];
+    config = {
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  $img-width:180rpx;
+  .bargain_more_item{
+    background-color: white;
+    margin: 10rpx 10rpx 0;
+    padding: 20rpx;
+    .img-box{
+      width: $img-width;
+      height: $img-width;
+    }
+    .content-box{
+      height: $img-width;
+      justify-content: space-between;
+      flex: 1;
+    }
+    .origin{
+      text-decoration: line-through;
+    }
+    .btn-box{
+      background-color: $color-primary;
+      color: white;
+      padding: 8rpx 16rpx;
+      border-radius: 5rpx;
+      font-size: $text-sm;
+    }
+  }
+</style>

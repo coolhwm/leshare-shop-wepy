@@ -4,7 +4,16 @@
       <view class="title mr20 ">{{title}}</view>
       <view class="describe-box">{{describe}}</view>
     </view>
-    <view class="column-center time-box" wx:if="{{content.day}}">
+    <view class="column-center time-box" wx:if="{{rule.status === 'OFF'}}">
+      <text class="white">活动已关闭</text>
+    </view>
+    <view class="column-center time-box" wx:elif="{{rule.isBegin}}">
+      <text class="white">活动未开始</text>
+    </view>
+    <view class="column-center time-box" wx:elif="{{rule.isTimeOut || rule.limitCount <= rule.successCount}}">
+      <text class="white">活动已结束</text>
+    </view>
+    <view class="column-center time-box" wx:else>
       <text class="danger xxs">距结束仅剩</text>
       <view class="row">
         <view class="time-num-box">{{content.day}}</view>
@@ -26,9 +35,7 @@
 
   export default class TimeOutBar extends wepy.component {
     props = {
-      endTime: {
-        default: ''
-      },
+      rule: {},
       endText: {
         default: '已结束'
       },
@@ -39,12 +46,15 @@
         default: '拼团'
       }
     };
-    data = {};
+    data = {
+      isTimeOut: false,
+      isBegin: false
+    };
     methods = {
     };
     watch = {
-      endTime(endTime) {
-        this.countdowm(endTime.replace(/-/g, '/'), 'endTime');
+      rule(rule) {
+        this.countdowm(rule.endTime.replace(/-/g, '/'), 'endTime');
       }
     };
     mixins = [countdown];
@@ -86,10 +96,6 @@
         font-size: $text-xxs;
         line-height: $text-xxs;
       }
-    }
-    .end-box{
-      font-size: 40rpx;
-      margin-top: 10rpx;
     }
   }
 </style>

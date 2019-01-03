@@ -1,19 +1,19 @@
 <template>
   <!-- 会员卡注册区域 -->
-  <view class="vip-box column-between" wx:if="{{member == null}}">
+  <view class="vip-box column-between" style="background-image: url('{{card.backgroundPicUrl}}');background-repeat:no-repeat; background-size:100% 100%;" wx:if="{{member == null}}">
     <view class="column-center">
       <image class="avatar"  src="{{avatarUrl}}"/>
-      <text>{{nickName}}</text>
-
+      <text class="user-name" style="color: {{card.color}}">{{nickName}}</text>
     </view>
-    <view class="column-center">
-      <text class="registe-btn" @tap="regist">会员注册</text>
-      <text class="xxs mt10">立即注册会员可享受积分与折扣特权</text>
-    </view>
+    <form class="column-center"  report-submit="true" @submit="reportFormId">
+      <button  class="registe-btn" wx:if="{{card.extraParam != null && card.extraParam != '' && card.extraParam != '[]'}}" form-type="submit" @tap="complexRegist" style="color: {{card.color}}">绑定手机</button>
+      <button  class="registe-btn" open-type="getPhoneNumber" bindgetphonenumber="regist" wx:else style="color: {{card.color}}" form-type="submit">绑定手机</button>
+      <text class="xxs mt10" style="color: {{card.color}}">立即绑定手机可享受积分与折扣特权</text>
+    </form>
   </view>
 
   <!-- 会员卡区域 -->
-  <view class="vip-box column-between flex-start" @tap="detail" wx:if="{{member != null}}">
+  <view class="vip-box column-between flex-start" style="background-image: url('{{card.backgroundPicUrl}}');background-repeat:no-repeat; background-size:100% 100%;" @tap="detail" wx:if="{{member != null}}">
 
     <view class="row-between" style="width: 100%">
       <view class="row">
@@ -22,19 +22,19 @@
 
         <!--用户信息-->
         <view class="info-box column">
-          <text class="user-name">{{nickName}}</text>
-          <text class="sm">{{levelName}}</text>
+          <text class="user-name" style="color: {{card.color}}">{{nickName}}</text>
+          <text class="sm" style="color: {{card.color}}">{{levelName}}</text>
           <view class="cost-box row">
-            <text class="sm">累计消费: {{member.totalCost}}元</text>
-            <text class="ml20 sm" wx:if="{{card.supplyBonus == 1}}">积分: {{member.bonus}}</text>
+            <text class="sm" style="color: {{card.color}}">累计消费: {{member.totalCost}}元</text>
+            <text class="ml20 sm" wx:if="{{card.supplyBonus == 1}}" style="color: {{card.color}}">积分: {{member.bonus}}</text>
           </view>
 
         </view>
       </view>
-      <icon class="qrcode xxlarge" color="white" @tap.stop="info"/>
+      <icon class="qrcode xxlarge" color="white" style="color: {{card.color}}"  @tap.stop="info"/>
     </view>
     <view class="footer-box row-between" style="width: 100%">
-      <text class="xxl">{{numberText}}</text>
+      <text class="xxl" style="color: {{card.color}}">{{numberText}}</text>
       <view class="desc-box column">
         <text class="sm" wx:if="{{parsentText}}">{{parsentText}}</text>
         <text class="sm" wx:if="{{discountText}}">{{discountText}}</text>
@@ -46,9 +46,13 @@
 
 <script>
   import wepy from 'wepy';
+  import { saveWxUserPhone, checkUserInfoWithError } from '../../api/wx_auth';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
   import base from '../../mixins/base'
+  import Event from '../../utils/Event';
+  import Tips from '../../utils/Tips';
+  import router from '../../mixins/router';
 
   @connect({
     member: store.get('member'),
@@ -57,20 +61,43 @@
   })
   export default class VipCard extends wepy.component {
     props = {
+      param: {},
       isDetail: {
         default: 'true'
       }
     };
     methods = {
-      regist () {
-        this.$root.$navigate('/pages/customer/registe_member');
+      async regist ({detail}) {
+        await checkUserInfoWithError();
+        if (detail.errMsg == 'getPhoneNumber:fail user deny') {
+          await Tips.alert('请允许授权');
+          return;
+        }
+        try {
+          Tips.loading();
+          const result = await saveWxUserPhone(detail);
+          if (result) {
+            await Tips.success('注册成功');
+            Event.emit(Event.MEMBER_CARD_UPDATE);
+          } else {
+            this.$root.$navigate('/package_member/pages/member/registe_member');
+          }
+          Tips.loaded();
+        } catch (e) {
+          console.info('注册失败', e);
+          Tips.loaded();
+          this.$root.$navigate('/package_member/pages/member/registe_member');
+        }
+      },
+      complexRegist() {
+        this.$root.$navigate('/package_member/pages/member/registe_member');
       },
       detail() {
         if (this.isDetail == 'false') return;
-        this.$root.$navigate('/pages/customer/vip_detail');
+        this.$root.$navigate('/package_member/pages/member/vip_detail');
       },
       info() {
-        this.$root.$navigate('/pages/customer/vip_info');
+        this.$root.$navigate('/package_member/pages/member/vip_info');
       }
     };
     computed = {
@@ -131,7 +158,7 @@
         }
       }
     };
-    mixins = [base]
+    mixins = [base, router]
   }
 </script>
 
@@ -141,11 +168,22 @@
     align-items: flex-start;
   }
   .registe-btn {
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: white;
+    width: 200rpx;
+    font-size: $text-nm;
     border: 1px solid white;
     border-radius: 10px;
     padding: 5px 15px;
+    line-height: 22px;
   }
   .avatar{
+    overflow: hidden;
+    display: block;
     width: 120rpx;
     height: 120rpx;
     border-radius: 50%;
@@ -166,10 +204,11 @@
     }
     .info-box {
       margin-left: 30rpx;
-
-      .user-name{
-        font-size: 36rpx;
-      }
+    }
+    .user-name{
+      max-width: 300rpx;
+      color: white;
+      font-size: 32rpx;
     }
     .cost-box{
       margin-top: 10rpx;

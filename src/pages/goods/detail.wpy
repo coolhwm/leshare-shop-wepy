@@ -12,7 +12,7 @@
       <swiper class="goods-swiper" indicator-dots="true" autoplay="true" interval="5000" @tap="previewDetailSwiper">
         <block wx:for="{{detail.images}}" wx:key="id">
           <swiper-item>
-            <image src="{{item.url}}/preview" mode="aspectFill"></image>
+            <image src="{{item.url}}/w1080" mode="aspectFill"></image>
           </swiper-item>
         </block>
       </swiper>
@@ -22,9 +22,14 @@
 
         <!--基本信息-->
         <view class="row-between">
-          <view>
-            <view class="small label primary" wx:if="{{detail.isRecommend == 1}}">推荐</view>
+          <view class="goods-content">
+            <view class="small label primary" wx:if="{{detail.limitType == 'NEW_CUSTOMER'}}">新客专享</view>
+            <view class="small label primary" wx:elif="{{detail.paymentType === 'bonus'}}">免费兑换</view>
+            <view class="small label primary" wx:elif="{{detail.isRecommend == 1}}">推荐</view>
             <text class="name">{{detail.name}}</text>
+            <view class="goods-subhead" wx:if="{{detail.subhead != null}}">
+              <text class="xxs muted">{{detail.subhead}}</text>
+            </view>
           </view>
           <view class="share-box">
             <button open-type="share" plain class="column-center"  wx:if="{{isShare}}">
@@ -35,20 +40,28 @@
         </view>
 
         <view class="row mt10">
-          <text class="sm muted mr10" wx:if="{{isSales}}">已售{{detail.salesVolume}}件</text>
+          <text class="sm muted mr10" wx:if="{{isSales && detail.paymentType === 'bonus'}}">已兑{{detail.salesVolume}}件</text>
+          <text class="sm muted mr10" wx:elif="{{isSales}}">已售{{detail.salesVolume}}件</text>
+          <block wx:for="{{detail.tags}}" wx:key="index" wx:index="index" wx:for-item="item">
+            <text wx:if="{{item.show}}" class="xxs primary tag-box ml10">{{item.tag}}</text>
+          </block>
           <DiscountBadge :goods.sync="detail"/>
         </view>
 
         <!--价格区域-->
         <view class="price row-between mt10">
-          <view class="row">
+          <view class="row" wx:if="{{detail.paymentType === 'bonus'}}">
+            <text class="major xxl">{{detail.priceLable}}积分</text>
+            <text class="cancel ml10" wx:if="{{detail.originalPrice}}">{{detail.originalPrice}}元</text>
+          </view>
+          <view class="row" wx:else>
             <text class="major xxl">￥{{detail.priceLable}}</text>
-            <text class="cancel ml10" wx:if="{{detail.discount}}">￥{{detail.originalPrice}}</text>
+            <text class="cancel ml10" wx:if="{{detail.originalPrice}}">￥{{detail.originalPrice}}</text>
           </view>
 
           <!--数量选择器-->
           <view class="quantity row mr20">
-            <view class="quantity-cart-btn" @tap.stop="handlePlusCart({{detail}})" wx:if="{{version.isOrder && cartType=='BUTTON'}}">
+            <view class="quantity-cart-btn" @tap.stop="handlePlusCart({{detail}})" wx:if="{{cartType=='BUTTON'}}">
               加入购物车
             </view>
           </view>
@@ -72,12 +85,31 @@
           <icon class="more" color="gray"/>
         </view>
 
-        <!--评价向导-->
-        <view class="comment-box row-between" @tap="comments" wx:if="{{isComment}}">
-          <text class="muted">{{commentText}}</text>
-          <icon class="more" color="gray"/>
+        <!--限制条件-->
+        <view class="limit-box row" wx:if="{{detail.limitType == 'NEW_CUSTOMER' || detail.limitBonus || detail.limitCoupon || detail.maxCostBonus > 0}}">
+          <text class="muted mr20" wx:if="{{detail.limitType == 'NEW_CUSTOMER'}}">▪ 新客首单专享</text>
+          <text class="muted mr20" wx:if="{{detail.limitBonus}}">▪ 不可用积分</text>
+          <text class="muted mr20" wx:elif="{{detail.maxCostBonus > 0}}">▪ 最多用{{detail.maxCostBonus}}积分</text>
+          <text class="muted mr20" wx:if="{{detail.limitCoupon}}">▪ 不可用优惠券</text>
+          <text class="muted mr20" wx:if="{{!detail.benefit}}">▪ 不参与满赠</text>
         </view>
+
+        <!--评价向导-->
+        <!--<view class="comment-box row-between" @tap="comments" wx:if="{{isComment}}">-->
+          <!--<text class="muted">{{commentText}}</text>-->
+          <!--<icon class="more" color="gray"/>-->
+        <!--</view>-->
       </view>
+
+      <!--归属门店区域-->
+      <view class="mt20">
+        <ShopInfoBar :subShop.sync="subShop" :isSubShop.sync="isSubShop"/>
+      </view>
+
+      <!--广告栏-->
+      <!--<view class="ad-banner" wx:if="{{adUnitId}}">-->
+        <!--<ad unit-id="{{adUnitId}}"></ad>-->
+      <!--</view>-->
 
       <!--详情区域-->
       <DetailList :detail.sync="detail" />
@@ -124,13 +156,16 @@
     <block wx:if="{{isContact}}">
       <ContactWidget />
     </block>
+
+    <!--分享方式-->
+    <SharePanal/>
   </view>
 
 </template>
 
 <script>
   import wepy from 'wepy';
-  import auth from '../../api/auth';
+  import { initWxAppSync } from '../../api/wx_auth';
   import goods from '../../api/goods';
   import comment from '../../api/comment';
   import base from '../../mixins/base';
@@ -152,11 +187,15 @@
   import CouponPickPanel from '../../components/coupons/pick_panel';
   import CartWidget from '../../components/template/cart_widget';
   import DetailList from '../../components/goods/detail_list';
+  import ShopInfoBar from '../../components/goods/shop_info_bar';
+  import SharePanal from '../../components/common/share_panal';
+  import Tips from '../../utils/Tips';
 
   @connect({
     pickCoupons: store.get('pickCoupons'),
-    version: store.get('version'),
-    discount: store.get('discount')
+    discount: store.get('discount'),
+    shop: store.get('shop'),
+    status: store.get('status')
   })
   export default class GoodsDetail extends wepy.page {
     data = {
@@ -176,16 +215,31 @@
       isComment: true,
       isSales: true,
       isContact: true,
-      isShare: true
+      isShare: true,
+      subShop: {},
+      isSubShop: false,
+      adUnitId: null
     };
-    async onLoad ({goodsId}) {
-      await auth.login();
-      await store.init();
-      this.goodsId = goodsId;
-      this.detail = await goods.getInfo(goodsId, this.discount);
-      this.count = await comment.count(goodsId);
+    async onLoad ({goodsId, type, scene}) {
+      await initWxAppSync();
+      this.goodsId = goodsId || scene;
+      const [detail, count] = await Promise.all([
+        goods.getInfo(this.goodsId, this.discount),
+        comment.count(this.goodsId)
+      ]);
+      this.detail = detail;
+      if (this.detail == null || this.detail.status == 1) {
+        await Tips.modal('该商品已下架，去逛逛别的商品吧');
+        Event.emit(Event.GOODS_CATEGORY_RELOAD);
+        wepy.navigateBack();
+        return;
+      }
+      this.count = count;
+      if (type != null) this.detail.type = type;
       this.page = comment.page();
       this.tab = this.createTab();
+      this.isSubShop = this.detail.relShop != null;
+      this.subShop = this.isSubShop ? this.detail.relShop : this.shop;
       this.loaded();
     };
     onUnload() {
@@ -216,14 +270,25 @@
      * 页面分享
      */
     onShareAppMessage () {
-      const {id, name, imageUrl} = this.detail;
+      const {id, name, imageUrl, priceLable} = this.detail;
       return {
-        title: name,
+        title: `${name} 仅需${priceLable}元`,
         imageUrl: imageUrl,
         path: `/pages/goods/detail?goodsId=${id}`
       };
     }
     methods = {
+      /**
+       * 显示sheet
+       */
+      shareGoods () {
+        const canvasParams = {
+          detail: this.detail,
+          canvasTemplateId: 0,
+          canvasName: 'goodsShare'
+        };
+        this.$invoke('SharePanal', 'show', canvasParams);
+      },
       /**
        * 打开领取优惠券面板
        */
@@ -305,7 +370,9 @@
       BuyBar: BuyBar,
       CouponPickPanel: CouponPickPanel,
       CartWidget: CartWidget,
-      DetailList: DetailList
+      DetailList: DetailList,
+      ShopInfoBar: ShopInfoBar,
+      SharePanal: SharePanal
     };
     mixins = [base, pagination, router];
     config = {
@@ -322,6 +389,10 @@
     padding-bottom: 0rpx;
     border-bottom: $border;
     border-top: $border;
+    .goods-content,.goods-subhead{
+      max-width: 300px;
+      word-wrap:break-word;
+    }
     .name{
       font-size: $text-xxl;
       font-weight: bold;
@@ -329,6 +400,12 @@
     .price{
       height: 32px;
       padding-bottom: 10rpx;
+    }
+    .tag-box{
+      border:1px solid $color-primary;
+      border-radius: 4rpx;
+      padding: 5rpx;
+      line-height: $text-xxs;
     }
   }
   .coupons-box{
@@ -350,6 +427,14 @@
     padding-top: 20rpx;
     padding-bottom: 20rpx;
     border-top: $border;
+  }
+  .limit-box{
+    padding-top: 15rpx;
+    padding-bottom: 15rpx;
+    border-top: $border;
+    text {
+      font-size: $text-xs;
+    }
   }
   .share-box{
     width: 40px;
@@ -388,4 +473,25 @@
     text-align: center;
   }
 
+  .detail-box{
+    margin-top: 20rpx;
+    background-color: #FFF;
+    border-top: $border;
+    .detail-title{
+      height: 90rpx;
+      border-bottom: $border;
+    }
+    .detail-list{
+      padding-bottom: 20rpx;
+      image{
+        width: 100%;
+      }
+      text{
+        padding: 20rpx;
+      }
+    }
+  }
+  .ad-banner{
+    margin-top: 20rpx;
+  }
 </style>

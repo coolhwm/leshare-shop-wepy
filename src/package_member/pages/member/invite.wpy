@@ -1,0 +1,194 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view wx:if="{{init}}">
+    <!--头部汇总-->
+    <view class="column content-box" @tap="invite">
+      <view class="row-around title-box">
+        <view class="column-center">
+          <text class="white xs">本月邀请</text>
+          <view class="row number-box mb10">
+            <text class="white bonus-month-text">{{number.MONTH}}</text>
+          </view>
+        </view>
+        <view class="hr"></view>
+        <view class="column-center">
+          <text class="white mb10">已成功邀请</text>
+          <view class="row number-box mb10">
+            <text class="white bonus-text">{{number.TOTAL}}</text>
+          </view>
+        </view>
+        <view class="hr"></view>
+        <view class="column-center">
+          <text class="white xs">本周邀请</text>
+          <view class="row number-box mb10">
+            <text class="white bonus-week-text">{{number.WEEK}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!--<view class="column-center bonus-box">-->
+        <!--<text class="white mb10">已成功邀请</text>-->
+        <!--<view class="row number-box mb10">-->
+          <!--<text class="white bonus-text">{{number}}</text>-->
+          <!--<text class="white sm mt10">人</text>-->
+        <!--</view>-->
+      <!--</view>-->
+
+      <!--邀请规则区域-->
+      <view class="column rule-box">
+        <text class="muted">活动规则：</text>
+        <block wx:for="{{rules}}" wx:key="index" wx:for-item="item">
+          <text class="muted">{{item.rule}}</text>
+        </block>
+      </view>
+
+      <!--邀请列表区域-->
+      <view class="column">
+        <block wx:for="{{page.list}}" wx:key="index" wx:for-item="item">
+          <view class="row-between item-box">
+            <view class="customer-box row">
+              <image class="avatar-box" src="{{item.inviteeCustomer.avatarUrl}}"/>
+              <text class="ml20">{{item.inviteeCustomer.nickName}}</text>
+            </view>
+            <view class="column time-bonus-box">
+              <text class="muted sm">{{item.inviteeCustomer.createTime}}</text>
+              <text class="primary">+{{item.bonus}}</text>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+
+    <!--操作栏-->
+    <ActionBar @tap.user="invite" okText="我的邀请码" cancelText="返回"/>
+  </view>
+
+  <ButtonWidget/>
+
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux';
+  import { initWxAppSync, checkUserMember } from '../../../api/wx_auth';
+  import store from '../../../store/utils';
+  import base from '../../../mixins/base';
+  import pagination from '../../../mixins/pagination.wpy';
+  import Placeholder from '../../../components/common/placeholder';
+  import Loadmore from '../../../components/weui/loadmore';
+  import Loading from '../../../components/common/loading';
+  import invite from '../../api/invite';
+  import ActionBar from '../../../components/common/action_bar';
+  import ButtonWidget from '../../../components/template/button_widget';
+
+  @connect({
+    card: store.get('card'),
+    member: store.get('member')
+  })
+  export default class Invite extends wepy.page {
+    data = {
+      init: false,
+      page: {},
+      number: 0
+    };
+    async onLoad () {
+      await initWxAppSync();
+      await checkUserMember();
+      this.page = await invite.page();
+      this.number = await invite.count();
+      await this.next();
+    }
+    methods = {
+      async invite() {
+        await checkUserMember();
+        this.$navigate('/package_member/pages/member/super_poster');
+      }
+    };
+    computed = {
+      rules () {
+        if (this.card == null) return;
+        return [
+          {
+            rule: `1. 通过邀请码邀请好友关注公众号即可获得${this.card.bonusRule ? this.card.bonusRule.inviteBonus : 0}积分；`
+          },
+          {
+            rule: '2. 每100积分在商城内可以直接抵扣1元现金；'
+          },
+          {
+            rule: '3. 多款商品免费兑换，产品有限，兑完为止；'
+          },
+          {
+            rule: '4. 本活动最终解释权归一品品所有。'
+          }
+        ]
+      }
+    };
+    components = {
+      ActionBar: ActionBar,
+      Placeholder: Placeholder,
+      Loadmore: Loadmore,
+      Loading: Loading,
+      ButtonWidget: ButtonWidget
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '我的邀请',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+  .title-box{
+    background-color: $color-primary;
+    padding: 30rpx;
+    border-radius: 30rpx;
+    margin: 10rpx 10rpx 0;
+    .bonus-text{
+      font-size: 33px;
+      line-height: 30px;
+    }
+    .number-box{
+      align-items: flex-end;
+      padding: 10rpx;
+    }
+  }
+  .item-box{
+    padding: 18rpx;
+    margin: 10rpx 10rpx 0;
+    border-radius: 30rpx;
+    background-color: white;
+  }
+  .customer-box{
+    align-items: center;
+    .avatar-box{
+      width: 80rpx;
+      height: 80rpx;
+      border: $border;
+      border-radius: 40rpx;
+    }
+  }
+  .time-bonus-box{
+    align-items: flex-end;
+  }
+  .rule-box{
+    border: 1px dashed $color-muted;
+    border-radius: 30rpx;
+    margin: 10rpx 10rpx 0;
+    padding: 20rpx;
+  }
+  .bonus-month-text, .bonus-week-text{
+    font-size: 20px;
+    line-height: 20px;
+  }
+  .hr{
+    height: 144rpx;
+    width: 1px;
+    background-color: #FFF;
+  }
+</style>

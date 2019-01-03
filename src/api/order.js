@@ -2,6 +2,7 @@ import base from './base';
 import Page from '../utils/Page';
 import {TYPE, ACTION, orderUtils as utils} from './order_const';
 import WxUtils from '../utils/WxUtils';
+import Lang from '../utils/Lang';
 
 /**
  * 订单服务类
@@ -11,7 +12,7 @@ export default class order extends base {
    * 返回分页对象
    */
   static page () {
-    const url = `${this.baseUrl}/orders`;
+    const url = `${this.baseUrl}/orders/list`;
     return new Page(url, this._processOrderListItem.bind(this));
   }
 
@@ -64,6 +65,13 @@ export default class order extends base {
   static createOrder (trade, address) {
     const url = `${this.baseUrl}/orders`;
     this._processOrderAddress(trade, address);
+    return this.post(url, trade);
+  }
+  /**
+   * 创建积分订单
+   */
+  static createBonusOrder (trade) {
+    const url = `${this.baseUrl}/orders`;
     return this.post(url, trade);
   }
 
@@ -126,14 +134,21 @@ export default class order extends base {
         goodsName: goods.goodsName,
         imageUrl: goods.goodsImage,
         goodsPrice: goods.goodsPrice,
+        goodsFoodBoxFee: goods.goodsFoodBoxFee,
         count: goods.goodsNum,
         innerCid: goods.innerCid,
         skuText: goods.skuText,
         goodsSku: goods.goodsSku,
+        skuProperty: goods.skuProperty,
         goodsSellPrice: goods.originalPrice,
         discount: goods.discount,
         discountRate: goods.discountRate,
-        discountText: goods.discountText
+        discountText: goods.discountText,
+        goodsType: goods.goodsType,
+        limitCoupon: goods.limitCoupon,
+        maxCostBonus: goods.maxCostBonus,
+        limitBonus: goods.limitBonus,
+        paymentType: goods.paymentType
       };
       orderGoodsInfos.push(info);
       price += goods.goodsPrice * goods.goodsNum;
@@ -159,9 +174,15 @@ export default class order extends base {
       postFee: (0).toFixed(2),
       paymentType: '1',
       paymentText: '在线支付',
+      onlinePayType: 'wxpay',
+      onlinePayText: '微信支付',
       orderGoodsInfos: orderGoodsInfos,
       shopName: this.shopName
     };
+    // 餐桌号
+    if (param.tableNum) {
+      trade.tableNum = param.tableNum
+    }
     // 初始化订单类型标志位
     this._processTypeFlag(trade);
     // 堂食打包初始化出餐时间
@@ -331,19 +352,30 @@ export default class order extends base {
     this._processTypeFlag(detail);
     // 处理离线支付
     this._processOfflinePayment(detail);
+    // 商品是否为虚拟商品与虚拟类型
+    this._processIsDigit(detail);
     return detail;
   }
 
   static _processOfflinePayment(order) {
     const orderType = order.orderType;
-    if (orderType != TYPE.OFFLINE) return;
-    order.orderGoodsInfos = [{
-      imageUrl: 'http://img.leshare.shop/shop/other/wechat_pay.png',
-      goodsName: `微信支付 ${order.finalPrice}元`,
-      goodsPrice: order.finalPrice,
+    if (order.orderGoodsInfos && order.orderGoodsInfos.length > 0) return;
+    const goods = {
+      imageUrl: 'http://img.leshare.shop/shop/other/wxpay.png',
+      goodsPrice: order.dealPrice,
       count: 1
-    }];
-    return order;
+    };
+    if (order.finalPrice == 0) {
+      goods.goodsName = `在线支付 ${order.dealPrice}元`;
+    } else if (orderType === TYPE.BALANCE) {
+      goods.goodsName = `余额充值 ${order.dealPrice}元`;
+    } else if (orderType === TYPE.OFFLINE && order.onlinePayType === 'balance') {
+      goods.goodsName = `余额支付 ${order.dealPrice}元`;
+      goods.imageUrl = 'http://img.leshare.shop/shop/other/topup.png';
+    }  else {
+      goods.goodsName = `微信支付 ${order.dealPrice}元`;
+    }
+    order.orderGoodsInfos = [goods];
   }
 
   /**
@@ -369,19 +401,14 @@ export default class order extends base {
    * 处理订单状态
    */
   static _processOrderPrice (order) {
-    order.postFee = this._fixedPrice(order.postFee);
-    order.dealPrice = this._fixedPrice(order.dealPrice);
-    order.finalPrice = this._fixedPrice(order.finalPrice);
-    order.couponPrice = this._fixedPrice(order.couponPrice);
-    order.reduceFee = this._fixedPrice(order.reduceFee);
-    order.bonusPrice = this._fixedPrice(order.bonusPrice);
-  }
-
-  static _fixedPrice (price) {
-    if (price == null || isNaN(Number(price))) {
-      return null;
-    }
-    return price.toFixed(2);
+    order.postFee = Lang._fixedPrice(order.postFee);
+    order.dealPrice = Lang._fixedPrice(order.dealPrice);
+    order.finalPrice = Lang._fixedPrice(order.finalPrice);
+    order.couponPrice = Lang._fixedPrice(order.couponPrice);
+    order.pointUsed = Lang._fixedPrice(order.pointUsed);
+    order.reduceFee = Lang._fixedPrice(order.reduceFee);
+    order.bonusPrice = Lang._fixedPrice(order.bonusPrice);
+    order.foodBoxFee = Lang._fixedPrice(order.foodBoxFee);
   }
 
   /**
@@ -458,5 +485,24 @@ export default class order extends base {
       skuText = goodsSku.replace(/:/g, ',');
     }
     return skuText;
+  }
+
+  /**
+   * 商品是否为虚拟商品
+   */
+  static _processIsDigit(detail) {
+    const goodsList = detail.orderGoodsInfos;
+    if (goodsList == null || goodsList.length < 1) {
+      detail.isDigit = false;
+      return;
+    } else if (goodsList[0].goods == null) {
+      detail.isDigit = false;
+      return;
+    } else {
+      detail.isDigit = detail.orderType == '90' || goodsList[0].goods.type == 'digit';
+    }
+    if (detail.isDigit && goodsList[0].digitGoodsExchange) {
+      detail.digitType = goodsList[0].digitGoodsExchange.digitType;
+    }
   }
 }

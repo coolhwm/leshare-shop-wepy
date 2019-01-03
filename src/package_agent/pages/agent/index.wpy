@@ -1,0 +1,233 @@
+<template>
+  <view wx:if="{{init}}">
+    <view class="column information-box" >
+      <view class="row-between top-box">
+        <view class="row">
+          <image class="mr20" src="{{detail.customer.avatarUrl}}" style="width: 60px;height:60px;"/>
+          <view class="column">
+            <text class="xxl">{{detail.name}}</text>
+            <text class="sm">上级代理：{{detail.parentAgentName}}</text>
+          </view>
+        </view>
+        <view class="column" @tap="inviteCode">
+          <icon class="qrcode xxlarge" color="white"/>
+          <text class="xs">推广二维码</text>
+        </view>
+
+      </view>
+
+      <view class="column money-box">
+        <view class="row-between">
+          <view class="row">
+            <text class="xxl">可提现佣金：</text>
+            <text class="xxl">{{detail.balance}}元</text>
+          </view>
+          <button @tap="open({{detail.id}})">提现申请</button>
+        </view>
+        <view class="row mt20">
+          <text class="xxl">已提现佣金：</text>
+          <text class="xxl">{{detail.cash}}元</text>
+        </view>
+      </view>
+    </view>
+    <view class="column content-box">
+      <view class="row-between row-box" wx:for="{{list}}" wx:for-index="columnIndex" wx:for-item="column" wx:key="columnIndex">
+        <view class="column-center column-box" wx:for="{{column}}" wx:for-index="rowIndex" wx:for-item="row" wx:key="rowIndex" @tap="action({{row.icon}}, {{detail.id}})">
+          <icon class="{{row.icon}}" style="color: {{row.color}};font-size: 25px;line-height: 25px;" />
+          <text class="lg mb10">{{row.title}}</text>
+          <view class="row number-box">
+            <text class="lg" style="color: #FF4544">{{row.num}}</text><text class="lg">{{row.unit}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="tips-box column">
+      <text>• 通过您的“推广二维码”进入商城的用户，系统将自动识别成为您的专属顾客；</text>
+      <text>• 专属顾客在小程序中购买符合提成规则的商品，您都可以获得对应比例的佣金；</text>
+      <text>• 您可以通过提现申请将佣金提现，提现需要管理员进行审核，请耐心等待；</text>
+    </view>
+  </view>
+
+  <Cash @cash.user="cash"/>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../../store/utils';
+  import base from '../../../mixins/base';
+  import tips from '../../../utils/Tips';
+  import Copyright from '../../../components/common/copyright';
+  import Cash from '../../components/agent/cash'
+  import agent from '../../api/agent'
+
+  @connect({
+    shop: store.get('shop')
+  })
+  export default class Agent extends wepy.page {
+    data = {
+      init: false,
+      reference: '分销员1',
+      list: [
+        [
+          {
+            icon: 'recharge',
+            title: '分销佣金',
+            color: '#DABC69',
+            num: 0,
+            unit: '元'
+          },
+          {
+            icon: 'singular',
+            title: '分销订单',
+            color: '#37B1D7',
+            num: 0,
+            unit: '单'
+          },
+          {
+            icon: 'cash',
+            title: '提现明细',
+            color: '#FF4544',
+            num: 0,
+            unit: '元'
+          }
+        ],
+        [
+          {
+            icon: 'groups',
+            title: '我的下线',
+            color: '#F59150',
+            num: 0,
+            unit: '个'
+          },
+          {
+            icon: 'clientele',
+            title: '我的客户',
+            color: '#8DD38A',
+            num: 0,
+            unit: '个'
+          },
+          {
+            icon: 'config',
+            title: '提成规则',
+            color: '#DABC69',
+            num: ''
+          }
+        ]
+      ],
+      check: true,
+      detail: null,
+      agentId: 0
+    };
+    async onLoad () {
+      await this.load();
+    };
+    async load() {
+      this.detail = await agent.agentInfo();
+      const {recharge, cash, balance} = this.detail;
+      this.detail.recharge = recharge.toFixed(2);
+      this.detail.cash = cash.toFixed(2);
+      this.detail.balance = balance.toFixed(2);
+      this.list.forEach(listItem => {
+        listItem.forEach(item => {
+          for (let key in this.detail) {
+            if (key === item.icon) {
+              item.num = this.detail[key]
+            }
+          }
+        })
+      });
+      this.loaded();
+    }
+    async onPullDownRefresh () {
+      await this.load();
+    }
+    methods = {
+      inviteCode() {
+        wepy.previewImage({
+          urls: [this.detail.codeUrl]
+        });
+      },
+      tips() {
+        tips.success('敬请期待');
+      },
+      close() {
+        this.check = false;
+      },
+      action(name, id) {
+        this.$navigate(`/package_agent/pages/agent/${name}`, {id: id})
+      },
+      open (id) {
+        this.$invoke('Cash', 'open', {id: id});
+      },
+      cash() {
+        this.load()
+      }
+    };
+    components = {
+      Copyright: Copyright,
+      Cash: Cash
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '分销中心',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTextStyle: 'black',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+  .information-box{
+    background-color: #FF4544;
+    padding: 30rpx;
+    text{
+      color: #EDEDED;
+    }
+    .top-box{
+      border-bottom: $border;
+      padding-bottom: 30rpx;
+      image{
+        width: 100rpx;
+        height: 100rpx;
+        border-radius: 50%;
+      }
+    }
+    .money-box{
+      padding-top: 20rpx;
+      button{
+        font-size: 14px;
+        padding: 0 20rpx;
+        background-color: #FF4544;
+        color: #EDEDED;
+        border: $border;
+      }
+    }
+  }
+  .content-box{
+    background-color: #fff;
+    .row-box + .row-box{
+      border-top: $border;
+    }
+    .column-box{
+      width: 33.3%;
+      height: 220rpx;
+    }
+    .column-box + .column-box{
+      border-left: $border;
+    }
+    .number-box{
+      height: 20px;
+    }
+  }
+  .tips-box{
+    padding: 25rpx;
+    text {
+      color: $color-muted;
+      font-size: $text-sm;
+    }
+
+  }
+</style>

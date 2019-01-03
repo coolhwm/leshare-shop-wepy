@@ -1,0 +1,99 @@
+<template>
+  <Loading :init.sync="init"/>
+
+  <view wx:if="{{init}}">
+
+    <view class="column">
+      <view wx:if="{{rule.isGlobalRate == 1}}" class="row-between rate-box">
+        <text>默认规则</text>
+        <view class="column">
+          <text class="sm">代理佣金：{{rule.agentRate}}</text>
+          <text class="sm">上级佣金：{{rule.parentRate}}</text>
+        </view>
+      </view>
+      <block wx:for="{{page.list}}" wx:key="index" wx:for-item="item">
+        <view class="row-between rate-box">
+          <view class="row">
+            <image class="goods-image" mode="aspectFill" src="{{item.goods.imageUrl}}"/>
+            <view class="column ml10">
+              <view class="name-box">
+                <text class="sm">{{item.goods.name}}</text>
+              </view>
+              <view>
+                <text class="sm major">￥{{item.goods.sellPrice}}</text>
+              </view>
+            </view>
+          </view>
+          <view class="column">
+            <text class="sm">代理佣金：{{item.agentRate}}</text>
+            <text class="sm">上级佣金：{{item.parentAgentRate}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <!-- 加载提示 -->
+    <Loadmore :page.sync="page"/>
+
+  </view>
+
+  <!--占位符-->
+  <block wx:if="{{rule.isGlobalRate == 0 && isPageEmpty}}">
+    <Placeholder :show.sync="isPageEmpty" message="您还没有相关分销商品规则信息"/>
+  </block>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import base from '../../../mixins/base';
+  import pagination from '../../../mixins/pagination.wpy';
+  import Placeholder from '../../../components/common/placeholder';
+  import Loadmore from '../../../components/weui/loadmore';
+  import Loading from '../../../components/common/loading';
+  import agent from '../../api/agent';
+
+  export default class Singular extends wepy.page {
+    data = {
+      init: false,
+      page: {},
+      rule: {}
+    };
+    async onLoad () {
+      this.page = await agent.config();
+      this.rule = await agent.rule();
+      await this.next();
+    }
+    async onPullDownRefresh() {
+      this.rule = await agent.rule();
+      await this.reload();
+    }
+    methods = {};
+    computed = {};
+    components = {
+      Placeholder: Placeholder,
+      Loadmore: Loadmore,
+      Loading: Loading
+    };
+    mixins = [base, pagination];
+    config = {
+      navigationBarTitleText: '分销商品规则',
+      enablePullDownRefresh: true
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../../styles/variable";
+  .rate-box{
+    padding: 20rpx;
+    border-bottom: $border;
+    background-color: #fff;
+    .name-box{
+      width: 360rpx;
+    }
+    .goods-image{
+      width: 80rpx;
+      height: 80rpx;
+    }
+  }
+</style>

@@ -1,4 +1,5 @@
 import wepy from 'wepy';
+import Tips from '../utils/Tips'
 
 // HTTP工具类
 export default class http {
@@ -11,7 +12,7 @@ export default class http {
     if (loading) {
       // Tips.loading();
     }
-    console.info(`[http]request url=${url}`)
+    console.info(`[http]request url=${url}`);
     const res = await wepy.request(param);
     if (this.isSuccess(res)) {
       return res.data.data;
@@ -46,9 +47,20 @@ export default class http {
       error.message = serverData.message;
       error.serverData = serverData;
     }
+    // 权限问题跳转
+    if (error.statusCode == 403) {
+      if (error.serverCode == '80003') {
+        console.warn('微信thrid_session认证失败');
+      } else {
+        Tips.modal('微信登录状态失效，请重新访问').then(() => {
+          wepy.reLaunch({
+            url: '/pages/home/template?reLaunch=1'
+          })
+        });
+      }
+    }
     return error;
   }
-
   static get (url, data, loading = true) {
     return this.request('GET', url, data, loading);
   }

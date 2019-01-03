@@ -1,0 +1,57 @@
+<template>
+  <view class="row-between gifit-bar">
+    <view class="column">
+      <view class="gifit-title-box">
+        <text class="title-box">全场消费满{{benifitInfo.bonusCount}}送1</text>
+      </view>
+      <view style="margin-top: 6rpx;">
+        <text class="sm muted">送指定饮品券，砍价、助力、赠送除外</text>
+      </view>
+    </view>
+    <view class="column-center">
+      <text>已累计消费</text>
+      <text class="xxl major">{{benifitInfo.info.continuation || 0}}次</text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import router from '../../mixins/router';
+  import shop from '../../api/shop';
+
+  export default class PaymentBar extends wepy.component {
+    props = {
+    };
+    data = {
+      benifitInfo: null
+    };
+    methods = {
+      async load() {
+        this.benifitInfo = await shop.benifit();
+        this.$apply();
+      }
+    };
+    components = {
+    };
+    mixins = [router];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .gifit-bar{
+    padding: 20rpx;
+    background-color: #fff;
+    .gifit-title-box{
+      align-items: flex-end;
+    }
+    .title-box{
+      color:$color-major;
+      font-weight: bold;
+      font-style: oblique;
+      font-size:40rpx;
+      line-height: 50rpx;
+    }
+  }
+</style>

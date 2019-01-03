@@ -1,0 +1,40 @@
+<template>
+  <view class="row-between item-box">
+    <view class="row-center">
+      <icon wx:if="{{item.rank === 1}}" class="first mr10" style="color: #F7E061"/>
+      <icon wx:elif="{{item.rank === 2}}" class="srecod mr10" style="color: #D8E3EB"/>
+      <icon wx:elif="{{item.rank === 3}}" class="third mr10" style="color: #EFCB91"/>
+      <text wx:else class="mr10 row-center column-center" style="width: 24px;">{{item.rank}}</text>
+      <image class="avator" src="{{item.avator}}"></image>
+      <text class="ml10" wx:if="{{item.name}}">{{item.name}}</text>
+      <text class="ml10" wx:else>微信用户</text>
+    </view>
+    <text class="major">{{item.bonus}}</text>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class BonusItem extends wepy.component {
+    props = {
+      item: {},
+      index: {}
+    };
+  }
+</script>
+<style lang="scss">
+  @import "../../styles/variable";
+  .item-box {
+    background-color: white;
+    border: $border;
+    margin: 10rpx 10rpx 0 10rpx;
+    border-radius: 10px;
+    padding: 10rpx 30rpx;
+  }
+  .avator {
+    width: 50rpx;
+    height: 50rpx;
+    border-radius: 25rpx;
+    border: $border;
+  }
+</style>

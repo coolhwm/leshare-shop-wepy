@@ -1,0 +1,114 @@
+<template>
+  <view class="customer-box" wx:if="{{display}}">
+    <view class="bg-box"></view>
+    <view class="column customer-content" style="top: {{content.length > 4 ? '20%' : content.length > 2 ? '25%' : '30%'}}">
+      <view class="customer-top-box">
+        <text class="xxl white">{{title}}</text>
+      </view>
+      <scroll-view scroll-y style="height: 500rpx" wx:if="{{content.length > 4}}">
+        <block wx:for="{{content}}" wx:key="index" wx:for-item="item">
+          <view class="row-between item-box">
+            <view class="row">
+              <image class="img-box" src="{{item.customer.avatarUrl}}"/>
+              <text class="ml10">{{item.customer.nickName}}</text>
+            </view>
+            <text wx:if="{{type === 'bargain'}}">￥{{item.reducePrice}}</text>
+          </view>
+        </block>
+      </scroll-view>
+      <view wx:else style="min-height: 150rpx;">
+        <block wx:for="{{content}}" wx:key="index" wx:for-item="item">
+          <view class="row-between item-box">
+            <view class="row">
+              <image class="img-box" src="{{item.customer.avatarUrl}}"/>
+              <text class="ml10">{{item.customer.nickName}}</text>
+            </view>
+            <text wx:if="{{type === 'bargain'}}">￥{{item.reducePrice}}</text>
+          </view>
+        </block>
+      </view>
+
+      <view class="column notice-content-box">
+        <button @tap="close">{{btnText}}</button>
+      </view>
+    </view>
+  </view>
+
+  <CoverPanel :display.sync="display"/>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import CoverPanel from '../common/cover_panel';
+  import _ from 'underscore'
+
+  export default class Notice extends wepy.component {
+    props = {
+      title: {
+        default: '帮砍小伙伴'
+      },
+      type: {
+        default: 'bargain'
+      }
+    }
+    data = {
+      content: '',
+      display: false,
+      btnText: '我知道了'
+    };
+    methods = {
+      open({content}) {
+        const arr = _.sortBy(content, function(item) { return -item.reducePrice; });
+        this.display = true;
+        this.content = arr
+      },
+      close() {
+        this.display = false;
+      }
+    };
+    components = {
+      CoverPanel: CoverPanel
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .customer-box{
+    position: absolute;
+    top:0;
+    right: 0;
+    height: 100%;
+    width: 750rpx;
+    z-index: 10001;
+    .customer-content{
+      position: fixed;
+      left: 75rpx;
+      right: 75rpx;
+      width: 600rpx;
+      background-color: white;
+      border-radius: 10rpx;
+    }
+    .customer-top-box{
+      background-color: $color-primary;
+      text-align: center;
+      border-top-left-radius: 10rpx;
+      border-top-right-radius: 10rpx;
+      padding: 20rpx 0;
+      position: relative;
+    }
+    .img-box{
+      width: 60rpx;
+      height: 60rpx;
+      border-radius: 30rpx;
+      border: $border;
+    }
+    .item-box{
+      padding: 20rpx;
+    }
+    .item-box + .item-box{
+      border-top: $border;
+    }
+  }
+</style>

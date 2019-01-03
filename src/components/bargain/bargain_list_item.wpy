@@ -4,86 +4,79 @@
     <view class="order-header-container colunm">
       <view class="row-between">
         <view class="user-info-container">
-          <text class="sm ml10">{{detail.createTime}}</text>
+          <text class="sm">{{detail.createTime}}</text>
         </view>
-        <text wx:if="{{detail.status === 'PROCESSING'}}" class="sm primary">砍价进行中</text>
-        <text wx:elif="{{detail.status === 'BARGAINED'}}" class="sm primary">商品已砍至底价</text>
-        <text wx:elif="{{detail.status === 'TIMEOUT'}}" class="sm primary">砍价已过期</text>
-        <text wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 1}}" class="sm primary">已下单</text>
-        <text wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 2}}" class="sm primary">已购买</text>
+        <text class="sm primary">{{detail.statusText}}</text>
       </view>
     </view>
 
     <!--商品区域-->
-    <view class="row-between bargain-goods-box">
-      <image src="{{detail.rule.goods.imageUrl}}" style="width: 150rpx;height: 150rpx;"/>
-      <view class="column">
-        <text>{{detail.rule.goods.name}}</text>
-        <text class="muted mt20">原价:￥{{detail.rule.skuDetail.price}}</text>
+    <view class="row-between bargain-goods-box" @tap="orderDetail({{detail}})">
+      <view class="row">
+        <image src="{{detail.goodsImageUrl}}/small" style="width: 150rpx;height: 150rpx;"/>
+        <view class="column ml20 info-box">
+          <text class="sm">{{detail.goodsName}}</text>
+          <text class="muted mt20 sm">原价:￥{{detail.ruleGoodsPrice}}</text>
+        </view>
       </view>
-      <text class="primary xxl">现价:￥{{detail.balance}}</text>
-    </view>
-
-
-    <!--汇总信息-->
-    <view wx:if="{{detail.status === 'ORDERED' && detail.order.status == 2}}" class="order.order-footer-container row-end">
-      <text>合计:</text>
-      <text class="major xl mr20">￥{{detail.balance}}</text>
-      <text>(含运费￥0)</text>
+      <view class="column" style="align-items: flex-end;">
+        <text class="primary lg">现价:￥{{detail.currentPrice}}</text>
+        <text class="muted xs mt20">已有{{detail.currentHelpCount}}人帮砍</text>
+      </view>
     </view>
 
     <!--操作栏-->
     <view class="group-bottom-box row">
-      <view wx:if="{{detail.status === 'PROCESSING'}}" class="group-btn-box" @tap="help({{detail.id}})">找人帮砍</view>
-      <view wx:elif="{{detail.status === 'BARGAINED'}}" class="group-btn-box" @tap="help({{detail.id}})">立即购买</view>
-      <view wx:elif="{{detail.status === 'TIMEOUT'}}" class="group-btn-box" @tap="bargain({{detail.rule.id}})">再砍一单</view>
-      <view wx:elif="{{detail.status === 'ORDERED' && detail.order.status == 1}}" class="group-btn-box" @tap="pay({{detail.order.orderId}})">立即支付</view>
+      <view class="group-btn-box" @tap="action({{detail.action.funcName}}, {{detail}})">{{detail.action.name}}</view>
     </view>
   </view>
 </template>
 <script>
   import wepy from 'wepy';
   import router from '../../mixins/router';
-  import order from '../../api/order';
   import Tips from '../../utils/Tips';
-  import Event from '../../utils/Event';
 
   export default class BargainItem extends wepy.component {
     props = {
       detail: {},
       action: {
         default: true
-      },
-      selectedId: {}
+      }
     };
-    data = {
-      expand: {},
-      shopName: {}
-    };
+    data = {};
     onLoad () {
     }
+    help (detail) {
+      const bargainId = detail.bargainId;
+      this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${bargainId}`)
+    }
+    buy (detail) {
+      const bargainId = detail.bargainId;
+      this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${bargainId}`)
+    }
+    again (detail) {
+      const ruleId = detail.ruleId;
+      this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${ruleId}`)
+    }
+    order(detail) {
+      this.$root.$navigate(`/pages/order/detail?orderId=${detail.orderId}`)
+    }
     methods = {
-      help (bargainId) {
-        this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${bargainId}`)
-      },
-      bargain (ruleId) {
-        this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${ruleId}`)
-      },
-      /**
-       * 订单支付
-       */
-      async pay(orderId) {
-        try {
-          Tips.loading();
-          const payment = await order.prepayOrder(orderId);
-          Tips.loaded();
-          await order.wxpayOrder(payment);
-          await Tips.success('支付成功');
-        } catch (e) {
-          console.warn(e);
-          await Tips.success('支付取消');
+      orderDetail(detail) {
+        if (detail.status === 'ORDERED') {
+          this.$root.$navigate(`/pages/order/detail?orderId=${detail.orderId}`)
+        } else {
+          this.$root.$navigate(`/pages/bargain/bargain_detail?bargainId=${detail.bargainId}`)
         }
-        Event.emit(Event.BARGAIN_LIST_UPDATE);
+      },
+      action(funcName, detail) {
+        console.info('[action]' + funcName);
+        if (this[funcName]) {
+          const func = this[funcName].bind(this);
+          func(detail);
+        } else {
+          Tips.error('未知错误');
+        }
       }
     };
     components = {
@@ -116,34 +109,12 @@
     height: 70rpx;
   }
 
-  /*顶栏订单信息*/
-  .order-info-container{
-    text{
-      font-size: $text-xs;
-      color:$color-muted;
-    }
-  }
-
-  /* 操作栏 */
-  .order-action-bar {
-    border-top: $border;
-    height: 90rpx;
-    padding-right: 10rpx;
-  }
-
-  .order-goods-fold{
-    display: none;
-  }
-
-  .goods-fold-btn{
-    background-color: $color-bg-item;
-    padding-top: 5rpx;
-    padding-bottom: 5rpx;
-  }
-
   .bargain-goods-box{
     padding: 10rpx 20rpx;
     background-color: $color-bg-item;
+    .info-box{
+      width: 300rpx;
+    }
   }
 
   .group-bottom-box{

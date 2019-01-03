@@ -1,0 +1,109 @@
+<template>
+  <view class="payment-bar-box row-between">
+
+    <view class="row">
+      <!--储值余额-->
+      <view class="item-box column-center">
+        <view class="title-text row">
+          <icon class="cash xsmall" />
+          <text class="sm">储值余额</text>
+        </view>
+
+        <view class="row">
+          <text class="price">￥{{member.balance || 0}}</text>
+        </view>
+
+      </view>
+
+      <view class="vr"></view>
+
+      <!--储值余额-->
+      <view class="item-box column-center">
+        <view class="title-text row">
+          <icon class="privilege xsmall" />
+          <text class="sm">赠送金</text>
+        </view>
+
+        <text class="price">￥{{member.point || 0}}</text>
+      </view>
+    </view>
+
+
+    <!--按钮-->
+    <view class="pay-btn row-center" @tap="camera">
+      <text>扫码付款</text>
+    </view>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import router from '../../mixins/router';
+  import store from '../../store/utils';
+
+  @connect({
+    member: store.get('member')
+  })
+  export default class PaymentBar extends wepy.component {
+    props = {
+    };
+    data = {};
+    methods = {
+      camera() {
+        this.doRouteByAction({ action: 'CAMERA' })
+      }
+    };
+    components = {
+    };
+    mixins = [router];
+    events = {};
+    onLoad() {
+    }
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .payment-bar-box{
+    border-top: $border;
+    background-color: white;
+    padding: 20rpx 30rpx 20rpx 0;
+    .item-box{
+      padding-left: 40rpx;
+      padding-right: 40rpx;
+      align-items: flex-start;
+    }
+    .title-text{
+      text{
+        color: #686b72;
+      }
+    }
+    icon{
+      margin-right: 5rpx;
+      color: #686b72;
+    }
+    .price{
+      margin-top: 5rpx;
+      color: $color-major;
+      font-size: 20px;
+    }
+    .vr{
+      height: 60rpx;
+      background-color: $color-border;
+      width: 1px;
+    }
+  }
+  .pay-btn{
+    align-items: center;
+    border-radius: 32rpx;
+    width: 160rpx;
+    height: 64rpx;
+    margin-right: 10rpx;
+    background: linear-gradient(to right, #eea849, #f46b45);
+    text {
+      color: #FFFFFF;
+    }
+  }
+</style>

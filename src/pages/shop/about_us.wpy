@@ -6,7 +6,7 @@
     <swiper class="shop-swiper" indicator-dots autoplay interval="3000" circular>
       <block wx:for="{{shop.images}}" wx:key="key">
         <swiper-item>
-          <image src="{{item.url}}" mode="aspectFill" class="shop-image" @tap="image({{item.url}})"/>
+          <image src="{{item.url}}/w1080" mode="aspectFill" class="shop-image" @tap="image({{item.url}})"/>
         </swiper-item>
       </block>
     </swiper>
@@ -19,6 +19,7 @@
 
 <script>
   import wepy from 'wepy';
+  import { initWxAppSync } from '../../api/wx_auth';
   import base from '../../mixins/base';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
@@ -34,7 +35,7 @@
       init: false
     };
     async onLoad () {
-      await store.init();
+      await initWxAppSync();
       this.loaded();
     };
     methods = {

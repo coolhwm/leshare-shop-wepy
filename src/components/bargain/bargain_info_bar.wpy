@@ -1,13 +1,16 @@
 <template>
   <view class="column bargain-info-box">
     <view class="row info-top-box">
-      <image class="top-avatar-box" src="{{bargain.header.customer.avatarUrl}}" />
+      <image class="top-avatar-box" src="{{detail.header.customer.avatarUrl}}" />
       <view>
-        <text class="mr20 xl">{{bargain.header.customer.nickName}}</text>
-        <text class="primary xl">成功参与活动，快快让好友助自己一臂之力</text>
+        <text class="mr20 xl">{{detail.header.customer.nickName}}</text>
+        <text class="primary">成功参与活动，快快让好友助自己一臂之力</text>
       </view>
     </view>
-    <view class="column-center">
+    <view class="column-center" wx:if="{{detail.status == 'TIMEOUT'}}">
+      <text>您的砍价活动已过期</text>
+    </view>
+    <view class="column-center" wx:elif="{{detail.status != 'ORDERED'}}">
       <view class="status-time-box row">
         <text class="mr10">剩余</text>
         <view class="time-num-box">{{content.hour}}</view>
@@ -17,82 +20,119 @@
         <view class="time-num-box">{{content.sec}}</view>
         <text class="ml10">结束</text>
       </view>
-      <text wx:if="{{bargain.isFloor && bargain.isHead}}">该商品已砍至底价，快去下单购买吧~</text>
+      <text wx:if="{{detail.isFloor && detail.isHead}}">该商品已砍至底价，快去下单购买吧~</text>
     </view>
-    <view wx:if="{{bargain.isHead}}">
+    <view class="column-center" wx:elif="{{detail.status == 'TIMEOUT'}}">
+      <text>已结束</text>
+    </view>
+    <view wx:if="{{detail.isHead}}">
       <view class="back-box">
-        <view class="msg-box" style="width: {{bargain.bargainRate}}%;">
-          <icon class="msg-bar xxlarge" color="primary"></icon>
-          <text class="price-box xxs primary">{{bargain.balance}}</text>
+        <view class="msg-box" style="width: {{detail.bargainRate}}%;min-width: 180rpx;">
+          <icon class="down" style="font-size: 10px; line-height: 10px;"/>
+          <text class="price-box xs primary">现价：￥{{detail.balance}}</text>
         </view>
         <view class="back-msg-box"></view>
       </view>
       <view class="back-box">
-        <view class="process-box" style="width: {{bargain.bargainRate}}%;min-width: 5%;">
+        <view class="process-box" style="width: {{detail.bargainRate}}%;min-width: 5%;">
           <view class="process"></view>
         </view>
         <view class="back"></view>
       </view>
       <view class="row-between mt10">
-        <text class="muted">原价：￥{{bargain.rule.skuDetail.price}}</text>
-        <text class="primary">底价：￥{{bargain.rule.floorPrice}}</text>
+        <text class="muted">原价：￥{{detail.rule.goodsPrice}}</text>
+        <text class="primary">底价：￥{{detail.rule.floorPrice}}</text>
       </view>
     </view>
     <view wx:else class="column-center info-btn-box">
-      <view class="help-text">
-        <text wx:if="{{bargain.isHelp}}" class="primary">您一出手就帮好友砍掉了{{bargain.reducePrice}}元，功力了得啊~</text>
-        <text wx:elif="{{bargain.isFloor}}">该商品已砍至底价，快去通知您的好友下单购买吧！</text>
+      <view class="help-text" wx:if="{{detail.isHelp || detail.isFloor}}">
+        <text class="{{detail.isHelp ? 'primary' : ''}}">{{detail.helpText}}</text>
       </view>
-      <view wx:if="{{!bargain.isHelp && !bargain.isFloor}}" class="btn-box" @tap="help({{bargain.rule.id}}, {{bargain.id}})">帮TA砍一刀</view>
-      <view wx:else class="btn-box" @tap="want({{bargain.rule.id}})">我也要</view>
+      <form  report-submit="true"  wx:if="{{!detail.isHelp && !detail.isFloor && detail.status != 'ORDERED' && detail.status != 'TIMEOUT'}}" @submit="reportFormId">
+        <button class="btn-box" plain style="padding: 0" open-type="getPhoneNumber" form-type="submit" bindgetphonenumber="regist" wx:if="{{member == null}}">
+          帮TA砍一刀
+        </button>
+        <button wx:else class="btn-box" plain @tap="help" form-type="submit" style="padding: 0" >帮TA砍一刀</button>
+      </form>
+      <view wx:elif="{{detail.isHelp}}" class="btn-box" @tap="want({{detail.rule.id}})">我也要</view>
+      <view wx:elif="{{detail.status == 'ORDERED' || detail.status == 'TIMEOUT'}}" class="btn-end-box">砍价已结束</view>
     </view>
     <view class="row-between mt20">
-      <view class="row">
-        <view class="bottom-img-box" wx:for="{{bargain.details}}" wx:key="index" wx:for-item="item" wx:for-index="index">
+      <view class="row" @tap="open({{detail.details}})">
+        <view class="bottom-img-box" wx:for="{{showCustomer}}" wx:key="index" wx:for-item="item" wx:for-index="index">
           <image class="bottom-img" src="{{item.customer.avatarUrl}}"/>
         </view>
       </view>
       <view>
-        <text class="muted">一共砍了</text>
-        <text class="primary">{{bargain.allPrice}}元</text>
+        <text class="primary">{{detail.details.length}}人</text>
+        <text class="muted">砍了</text>
+        <text class="primary">{{detail.allPrice}}元</text>
       </view>
     </view>
+
+    <customerList />
   </view>
 
 </template>
 
 <script>
   import wepy from 'wepy';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  import router from '../../mixins/router';
+  import { checkUserInfoWithError, handleGetPhoneNumber } from '../../api/wx_auth';
   import countdown from '../../mixins/countdown';
   import bargain from '../../api/bargain';
+  import customerList from '../../components/bargain/customer_list'
 
-  export default class BargainInfoBar extends wepy.component {
+  @connect({
+    member: store.get('member')
+  })
+  export default class  BargainInfoBar extends wepy.component {
     props = {
-      bargain: {}
+      detail: {}
     };
     data = {
     };
+    async doHelp () {
+      await checkUserInfoWithError();
+      const result = await bargain.GoodsBargain(this.detail.rule.id, this.detail.id);
+      const { id: userId } = wepy.$instance.globalData.auth['user'];
+      const price = result.details.find(item => item.customer.id === userId).reducePrice;
+      this.$emit('help', price, this.detail.id);
+    }
     methods = {
-      async help (ruleId, bargainId) {
-        const result = await bargain.GoodsBargain(ruleId, bargainId);
-        const {id: userId} = wepy.getStorageSync('user');
-        const price = result.details.find(item => item.customer.id === userId).reducePrice;
-        this.$emit('help', price, bargainId);
+      async regist({detail}) {
+        await handleGetPhoneNumber(detail);
+        await this.doHelp();
       },
-      async want (ruleId) {
-        this.$root.$navigate(`/pages/bargain/goods_detail?ruleId=${ruleId}`)
+      async help () {
+        await this.doHelp()
+      },
+      async want () {
+        this.$root.$navigate(`/pages/bargain/bargain_more`);
+      },
+      open(customers) {
+        this.$invoke('customerList', 'open', {content: customers})
+      }
+    };
+    computed = {
+      showCustomer () {
+        if (this.detail == null || this.detail.details == null) return;
+        return this.detail.details.slice(-8)
       }
     };
     components = {
+      customerList: customerList
     };
     watch = {
-      bargain (bargain) {
+      detail (bargain) {
         if (bargain != null) {
-          this.countdowm(bargain.createTime, 'groupTime');
+          this.countdowm(bargain.createTime.replace(/-/g, '/'), 'groupTime');
         }
       }
     };
-    mixins = [countdown];
+    mixins = [countdown, router];
   }
 </script>
 
@@ -103,10 +143,6 @@
     background-color: white;
     padding: 20rpx;
     margin-bottom: 10rpx;
-  }
-
-  .info-top-box {
-    margin-bottom: 20rpx;
   }
 
   .top-avatar-box{
@@ -151,7 +187,6 @@
   }
 
   .price-box {
-    position: absolute;
     top: 8px;
     left: 8px;
   }
@@ -161,6 +196,16 @@
     padding: 20rpx;
     .btn-box{
       background-color: $color-primary;
+      color:white;
+      width: 500rpx;
+      padding: 10rpx 0;
+      border-radius: 5rpx;
+      margin: 20rpx 0;
+      text-align: center;
+      font-size: 34rpx;
+    }
+    .btn-end-box{
+      background-color: $color-muted;
       color:white;
       padding: 10rpx 0;
       width: 500rpx;
@@ -172,7 +217,7 @@
   }
 
   .help-text{
-    height: 40rpx;
+    max-width: 600rpx;
   }
 
   /*底部样式*/
@@ -184,6 +229,9 @@
     height: 60rpx;
     border-radius: 30rpx;
     border: $border;
+  }
+  .status-time-box{
+    padding: 10rpx 0;
   }
 
 </style>

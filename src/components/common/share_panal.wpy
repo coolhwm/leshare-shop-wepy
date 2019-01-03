@@ -1,0 +1,254 @@
+<template>
+
+  <view class="sheet-box" wx:if="{{sheetHidden}}">
+    <view class="clear-area" @tap="hidden"/>
+    <view class="share-area">
+      <view class="column-center text-box" >
+        <text class="muted xs">分享</text>
+      </view>
+      <view class="btn-box row-around">
+        <button open-type="share" plain class="column-between">
+          <image class="icon-size" src="/images/icons/friends.png"/>
+          <text class="xs muted">微信</text>
+        </button>
+        <button class="column-between friends-btn" plain @tap="shareFriendsCircle">
+          <image class="icon-size" src="/images/icons/circle-friends.png"/>
+          <text class="xs muted">朋友圈</text>
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 团分享 -->
+  <view class="canvas-box" wx:if="{{canvasParams.canvasHidden && canvasParams.canvasName == 'goodsShare'}}">
+    <view class="column-center">
+      <canvas disable-scroll="true" style="width: 100%; height: {{canvasParams.canvasHeight + 40}}px;" canvas-id="{{canvasParams.canvasName}}"/>
+    </view>
+    <cover-view class="float-save-box">
+      <cover-view class= "save-icon" @tap="savaCanvasAsImage"/>
+      <cover-view class="xl save-icon-green"/>
+      <cover-view class="save-text">保存</cover-view>
+    </cover-view>
+  </view>
+
+  <!-- 超级海报 -->
+  <view wx:if="{{member.inviteCode != null}}">
+    <view class="canvas-box" wx:if="{{canvasParams.canvasHidden && canvasParams.canvasName == 'superPoster'}}">
+      <view class="column-center">
+        <canvas disable-scroll="true" style="width: 100%; height: {{canvasParams.canvasHeight + 40}}px;" canvas-id="{{canvasParams.canvasName}}"/>
+        <text class="mt20 white" wx:if="{{canvasParams.canvasName != 'superPoster'}}">长按图保存图片到相册</text>
+      </view>
+      <cover-view class="float-save-box" @tap="savaCanvasAsImage">
+        <cover-view class= "save-icon" />
+        <cover-view class="xl save-icon-green"/>
+        <cover-view class="save-text">保存到相册</cover-view>
+      </cover-view>
+    </view>
+  </view>
+
+  <!-- 商品、首页分享样式-->
+  <view class="column-center" wx:if="{{canvasParams.canvasHidden && canvasParams.canvasTemplateId == 1}}">
+    <canvas  class="canvas-group-box" style="width: {{canvasParams.canvasWidth}}px; height: {{canvasParams.canvasHeight}}px;" canvas-id="{{canvasParams.canvasName}}" @longtap="saveCanvas"/>
+    <button class="column-between friends-btn" plain @tap="savaCanvasAsImage">
+      <view class="column-center">保存</view>
+    </button>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy';
+  import canvas from '../../utils/Canvas';
+  import code from '../../api/code';
+  import tip from '../../utils/Tips';
+  import base from '../../mixins/base';
+
+  export default class SharePanal extends wepy.component {
+    data = {
+      member: {},
+      sheetHidden: false,
+      canvasParams: {
+        canvasTemplateId: null,
+        canvasName: '',
+        canvasHidden: false,
+        canvasHeight: null,
+        canvasWidth: null,
+        code: {},
+        canvasPadding: null
+      }
+    };
+
+    /**
+     * 页面分享
+     */
+    onShareAppMessage () {
+      const {id, name, imageUrl} = this.canvasParams.detail;
+      return {
+        title: name,
+        imageUrl: imageUrl,
+        path: `/pages/goods/detail?goodsId=${id}`
+      };
+    }
+    methods = {
+      contentArea(res) {},
+      /**
+       * 点击灰色区域隐藏
+       * */
+      grayArea() {
+        this.canvasParams.canvasHidden = false;
+      },
+      /**
+       * 长按保存图片
+       * */
+      saveCanvas() {
+        canvas.saveImage(this.canvasParams.canvasName);
+      },
+      /**
+       * 保存图片到相册
+       * */
+      savaCanvasAsImage() {
+        console.info('[canvas] save to image');
+        canvas.saveImage(this.canvasParams.canvasName);
+        this.canvasHidden = false;
+      },
+      /**
+       * 分享到微信朋友圈
+       * */
+      async shareFriendsCircle(param) {
+        if (param != null && param.canvasName == 'superPoster') {
+          this.canvasParams = param;
+          this.member = param.member;
+          if (this.member == null) {
+            tip.error('暂无邀请码')
+          }
+        }
+        this.sheetHidden = false;
+        this.canvasParams.canvasHidden = true;
+        await this.configCanvas(this.canvasParams);
+        this.loaded();
+        await canvas.chooseShareTemplate(this.canvasParams);
+      },
+      /**
+       * 隐藏分享sheet
+       * */
+      hidden() {
+        this.sheetHidden = false;
+      },
+      /**
+       * 显示分享sheet
+       * */
+      async show(params) {
+        console.log(params);
+        this.sheetHidden = true;
+        this.canvasParams = params;
+      }
+    };
+
+    /**
+     * 配置分享画布数据
+     * */
+    async configCanvas(params) {
+      const systemStringify = JSON.stringify(wepy.getSystemInfoSync());
+      const system = JSON.parse(systemStringify);
+      if (params.canvasName == 'goodsShare') {
+        this.canvasParams.canvasWidth = system.windowWidth * 0.8;
+        this.canvasParams.canvasHeight = system.windowHeight * 0.75;
+        this.canvasParams.code = await code.getCode(params.detail.id, `pages/goods/detail`);
+        this.canvasParams.canvasPadding = (system.windowWidth - this.canvasParams.canvasWidth) / 2;
+      }
+      if (params.canvasName == 'shopCanvas') {
+        this.canvasParams.canvasWidth = system.windowWidth * 0.9;
+        this.canvasParams.canvasHeight = system.windowHeight * 0.7;
+        this.shop.images[0] = 'http://pic2.ooopic.com/12/58/16/15bOOOPICae.jpg';
+        this.user = wepy.getStorageSync('user');
+        this.canvasParams.code = await code.getCode(this.user.openId, 'pages/home/home');
+        this.canvasParams.shop = this.shop;
+        this.canvasParams.canvasPadding = (system.windowWidth - this.canvasParams.canvasWidth) / 2;
+      }
+      if (params.canvasName == 'groupShare') {
+        this.canvasParams.canvasWidth = system.windowWidth * 0.9;
+        this.canvasParams.canvasHeight = system.windowHeight * 0.8;
+        this.user = wepy.getStorageSync('user');
+        this.canvasParams.code = await code.getCode(this.user.openId, 'pages/home/home');
+      }
+      if (params.canvasName == 'superPoster') {
+        this.canvasParams.canvasWidth = system.windowWidth;
+        this.canvasParams.canvasHeight = system.windowHeight;
+        this.canvasParams.code = this.member.inviteCode;
+      }
+    }
+    mixins = [base];
+  }
+</script>
+<style lang="scss">
+  @import "../../styles/variable";
+  .sheet-box {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0rpx;
+    background: rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    z-index: 1;
+    .clear-area{
+      width: 100%;
+      height: 68%;
+    }
+    .share-area{
+      padding: 10rpx;
+      height: 23%;
+      margin: 40rpx;
+      border-radius: 15rpx;
+      background-color: white;
+      .text-box{
+        margin: 15rpx;
+      }
+      .btn-box{
+        padding-top: 40rpx;
+        border-top: $border-line;
+        .friends-btn{
+          border: none;
+          width: 156rpx;
+          height: 156rpx;
+        }
+        .icon-size{
+          width: 100rpx;
+          height: 100rpx;
+        }
+      }
+    }
+  }
+  .canvas-box {
+       position: fixed;
+       width: 100%;
+       height: 100%;
+       top: 0rpx;
+       background: rgba(0, 0, 0, 0.6);
+       overflow: hidden;
+       z-index: 10000;
+     }
+  .btn{
+    margin-top: 10rpx;
+    background-color: $color-warn;
+  }
+  .canvas-group-box{
+    margin-top: 40rpx;
+  }
+  .float-save-box{
+    position: absolute;
+    left: 126rpx;
+    bottom: 10px;
+    .save-icon {
+      background-color: rgba(230,150,150,0.8);
+      width: 500rpx;
+      height: 90rpx;
+      border: 2px solid #FFF;
+      box-shadow: 0 0 5px gray;
+    }
+    .save-text{
+      position: absolute;
+      color: white;
+      left: 160rpx;
+      top: 25rpx;
+      font-size: 40rpx;
+    }
+  }
+</style>

@@ -1,0 +1,72 @@
+<template>
+  <view class="shop-info-bar row-between">
+    <view class="row" @tap="shopDetail">
+      <image class="avatar-box" src="{{subShop.avatar}}/small"/>
+      <view class="column ml20">
+        <text class="lg inline shop-name-box">{{subShop.name}}</text>
+        <text class="xs muted inline shop-address-box">{{subShop.address}}</text>
+      </view>
+    </view>
+    <view class="action-box">
+      <icon class="address mr20" @tap.stop="address"/>
+      <icon class="phone phone-box" @tap.stop="phone"/>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  @connect({
+    shop: store.get('shop')
+  })
+  export default class ShopInfoBar extends wepy.component {
+    props = {
+      subShop: {},
+      isSubShop: {}
+    };
+    methods = {
+      async shopDetail() {
+        if (this.shop.id == this.subShop.id) {
+          return;
+        }
+        this.$root.$navigate(`/pages/shop/sub_shop_detail?subShopId=${this.subShop.id}`)
+      },
+      /**
+       * 打电话
+       */
+      phone() {
+        wepy.makePhoneCall({phoneNumber: this.subShop.phone});
+      }
+    };
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+  .shop-info-bar{
+    background-color: white;
+    padding: 20rpx;
+    border-top: $border;
+    border-bottom: $border;
+    .shop-address-box,.shop-name-box{
+      width: 420rpx;
+    }
+    .avatar-box{
+      width: 100rpx;
+      height: 100rpx;
+      border-radius: 50rpx;
+      border: $border;
+    }
+    .phone-box{
+      border-left: $border;
+      padding-left: 20rpx;
+    }
+    .action-box{
+      width: 150rpx;
+      min-width: 150rpx;
+    }
+  }
+</style>

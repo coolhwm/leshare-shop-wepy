@@ -47,9 +47,9 @@
       padding: 20rpx 0;
     }
     .cell-box{
-      width: 150rpx;
       padding: 0;
-      line-height: 21px;
+      width: 150rpx;
+      text{ line-height: 21px;}
     }
   }
 </style>

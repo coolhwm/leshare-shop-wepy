@@ -1,4 +1,5 @@
 <template>
+  <Loading :init.sync="init"/>
   <view wx:if="{{init}}">
     <!-- 头图区域 -->
     <view class="user-info-container">
@@ -22,48 +23,43 @@
   import wepy from 'wepy';
   import { connect } from 'wepy-redux';
   import store from '../../store/utils';
-  import auth from '../../api/auth';
+  import { saveWxUserInfo, checkThridSession } from '../../api/wx_auth';
   import base from '../../mixins/base';
   import Tips from '../../utils/Tips';
   import WxUtils from '../../utils/WxUtils';
+  import Loading from '../../components/common/loading';
 
   @connect({
     shop: store.get('shop')
   })
   export default class UserLogin extends wepy.page {
     data = {
-      redirect: 'false',
       init: false,
       reInfo: null,
       reAuth: null
     };
     async onLoad ({redirect}) {
-      await store.init();
+      await checkThridSession();
       this.redirect = redirect;
       this.reInfo = WxUtils.canIUse('button.open-type.getUserInfo');
       this.loaded();
     };
     methods = {
       async confirm({detail}) {
-        if (detail.rawData) {
-          const result = await auth.user({block: false, redirect: false}, detail);
-          if (!result) return;
-          Tips.success('授权成功');
-          if (this.redirect == 'true') {
-            WxUtils.backOrRedirect('/pages/customer/index');
-          } else {
-            wepy.navigateBack();
-          }
+        if (detail.encryptedData == null) {
+          Tips.modal('请点"允许"击确认授权');
+          return;
+        }
+        const result = await saveWxUserInfo(detail);
+        if (result) {
+          await Tips.success('授权成功');
+          wepy.navigateBack();
         } else {
-          Tips.error('授权失败');
+          await Tips.modal('授权失败，请重试');
         }
       },
       back() {
-        if (this.redirect == 'true') {
-          WxUtils.backOrRedirect('/pages/home/home');
-        } else {
-          wepy.navigateBack();
-        }
+        wepy.navigateBack();
       },
       tips() {
         Tips.modal('微信版本过低，请更新微信，或在列表删除小程序后重新访问');
@@ -71,7 +67,9 @@
     };
     events = {
     };
-    components = {};
+    components = {
+      Loading: Loading
+    };
     mixins = [base];
     config = {
       navigationBarTitleText: '用户授权'

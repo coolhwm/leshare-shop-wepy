@@ -4,7 +4,6 @@
     <!--TAB 页-->
     <ZanTab :tab.sync="tab" @change.user="switchTab" />
 
-    <!--列表展现-->
     <repeat for="{{page.list}}" key="index" index="index" item="item">
       <BargainItem :detail.sync="item"/>
     </repeat>
@@ -14,14 +13,14 @@
   </view>
 
   <!--占位符-->
-  <Placeholder :show.sync="isPageEmpty" message="您还没有相关拼团信息"/>
+  <Placeholder :show.sync="isPageEmpty" message="您还没有相关砍价信息"/>
 </template>
 
 <script>
   import wepy from 'wepy';
   import base from '../../mixins/base';
   import bargain from '../../api/bargain';
-  import pagination from '../../mixins/pagination.wpy';
+  import pagination from '../../mixins/pagination';
   import Placeholder from '../../components/common/placeholder';
   import ZanTab from '../../components/zanui/tab';
   import BargainItem from '../../components/bargain/bargain_list_item';
@@ -83,4 +82,5 @@
 
 <style lang="scss">
   @import "../../styles/variable";
+
 </style>

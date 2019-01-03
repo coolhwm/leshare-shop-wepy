@@ -1,15 +1,15 @@
 <template>
   <view class="buy-bar-placeholder">
   </view>
-  <view class="row group-bar-box">
-    <button wx:if="{{detail.isFloor}}" class="column-center btn-buy" plain open-type="share" disabled>
-      <text class="muted">找人帮砍</text>
+  <view class="row bargain-bar-box">
+    <button wx:if="{{detail.isFloor || detail.status == 'TIMEOUT'}}" class="column-center btn-buy" plain open-type="share" disabled>
+      <text class="muted xxl">找人帮砍</text>
     </button>
     <button wx:else class="column-center btn-buy" plain open-type="share">
-      <text class="primary">找人帮砍</text>
+      <text class="primary xxl">找人帮砍</text>
     </button>
-    <view class="column-center btn-group" @tap="buy({{detail.rule.goods}}, {{detail.ruleId}}, {{detail.id}})">
-      <text>立即购买</text>
+    <view class="column-center btn-bargain" @tap="buy({{detail.rule.goods}}, {{detail.ruleId}}, {{detail.id}})">
+      <text class="xxl">立即购买</text>
     </view>
   </view>
 </template>
@@ -26,7 +26,6 @@
       detail: {}
     };
     data = {
-      isFav: false,
       state: 'bargain',
       id: ''
     };
@@ -46,10 +45,18 @@
         }
         const {num} = this.sku;
         const goods = this.detail.rule.goods;
-        goods.originalPrice = this.detail.rule.skuDetail.price;
-        goods.sellPrice = this.detail.balance;
-        const skuText = null;
-        const cart = this.cartManager.createCart(goods, skuText, num);
+        if (this.detail.rule.skuDetail != null) {
+          goods.originalPrice = this.detail.rule.skuDetail.price * 1;
+        } else {
+          goods.originalPrice = this.detail.rule.goods.sellPrice * 1;
+        }
+        goods.sellPrice = this.detail.balance * 1;
+        const selText = {
+          skuSelected: '',
+          proSelected: ''
+        };
+        const cart = this.cartManager.createCart(goods, selText, num);
+        cart.goodsSku = this.detail.sku;
         const trade = order.createCartTrade([cart], {orderType: 10});
         const {id, ruleId} = this.detail;
         Object.assign(trade, {ruleId, id});
@@ -80,27 +87,24 @@
 <style lang="scss">
   @import "../../styles/variable";
 
-  .group-bar-box{
+  .bargain-bar-box{
     position: fixed;
     bottom: 0;
     height: 105rpx;
     width: 100%;
     border-top: $border;
     background-color: white;
-    .btn-buy, .btn-group{
+    .btn-buy, .btn-bargain{
       height: 100%;
       width: 50%;
       background-color: white;
       border-left: $border;
-      .money-box{
-        font-weight: bold;
-      }
     }
     .btn-buy{
       border:none;
       border-radius: 0rpx;
     }
-    .btn-group{
+    .btn-bargain{
       background-color:$color-primary;
       text{
         color: #fff;

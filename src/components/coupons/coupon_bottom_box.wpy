@@ -1,0 +1,121 @@
+<template>
+  <view class="buy-bar-placeholder">
+  </view>
+  <form class="row-center bargain-bar-box"  report-submit="true" @submit="reportFormId" >
+
+    <button class="column-center button-box" plain form-type="submit" open-type="getPhoneNumber" bindgetphonenumber="regist" wx:if="{{member == null}}">
+      <text>立即领取</text>
+    </button>
+
+    <button class="column-center button-box" plain form-type="submit" @tap="pick" wx:else>
+      <text>立即领取</text>
+    </button>
+  </form>
+</template>
+
+<script>
+  import favorite from '../../api/favorite';
+  import router from '../../mixins/router';
+  import wepy from 'wepy';
+  import Tips from '../../utils/Tips';
+  import { saveWxUserPhone } from '../../api/wx_auth';
+  import coupon from '../../api/coupon';
+  import { connect } from 'wepy-redux';
+  import store from '../../store/utils';
+  @connect({
+    shop: store.get('shop'),
+    member: store.get('member'),
+    user: store.get('user')
+  })
+  export default class BottomBox extends wepy.component {
+    props = {
+      coupon: {}
+    };
+    async onLoad() {
+    }
+    async pick() {
+      try {
+        await coupon.pick(this.coupon.id);
+        await store.refresh('coupon');
+        this.$root.$apply();
+        Tips.loaded();
+        await Tips.modal('领取成功，赶快去使用吧');
+        this.$root.$redirect('/pages/coupon/list');
+      } catch (e) {
+        Tips.loaded();
+        if (e.serverCode == '50001') {
+          await Tips.modal('您已经领过该优惠券啦！')
+        } else if (e.serverCode == '50003') {
+          await Tips.modal('该优惠券已经被领完啦！')
+        } else {
+          await Tips.modal('领取失败，请联系公众号客服');
+        }
+      }
+    }
+    methods = {
+      async regist({detail}) {
+        if (detail.errMsg == 'getPhoneNumber:fail user deny') {
+          await Tips.alert('请允许授权');
+          return;
+        }
+        try {
+          // 其他错误不尝试注册
+          if (detail.errMsg != 'getPhoneNumber:ok') {
+            return;
+          }
+          Tips.loading();
+          const result = await saveWxUserPhone(detail);
+          if (result) {
+            await store.refresh('member');
+          }
+        } catch (e) {
+          console.warn('注册失败', e);
+        } finally {
+          // 领取优惠券（始终执行）
+          await this.pick();
+        }
+      },
+      async pick() {
+        Tips.loading();
+        await this.pick();
+      }
+    };
+    computed = {
+    };
+    watch = {
+      async rule(current, origin) {
+        if (origin != null && origin.id != null) return;
+        const result = await favorite.is(current.goods.id);
+        this.isFav = result.isFavorite === 1;
+        this.$apply();
+      }
+    };
+    mixins = [router];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  .bargain-bar-box{
+    position: fixed;
+    bottom: 0;
+    height: 105rpx;
+    width: 100%;
+    border-top: $border;
+    background-color: $color-primary;
+    .button-box{
+      height: 100rpx;
+      width: 750rpx;
+      background-color: $color-primary;
+      text{
+        font-size: $text-xxl;
+        color: #fff;
+      }
+    }
+  }
+  .buy-bar-placeholder{
+    height: 105rpx;
+    width: 100%;
+  }
+</style>

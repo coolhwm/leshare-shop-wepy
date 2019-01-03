@@ -1,0 +1,171 @@
+<template>
+  <view class="buy-bar-placeholder">
+  </view>
+  <view class="row assist-bar-box">
+    <view class="column-center btn-home" @tap="home">
+      <icon class="home normal" color="gray"/>
+      <text class="xs">首页</text>
+    </view>
+    <view class="column-center btn-fav" @tap="fav">
+      <icon class="like{{!isFav ? '' : '-fill'}} normal" style="color: {{!isFav ? 'gray' : 'red'}}" />
+      <text class="xs">收藏</text>
+    </view>
+    <view wx:if="{{rule.limitCount <= rule.successCount}}" class="column-center btn-disabled">
+      <text>活动已结束</text>
+    </view>
+    <view wx:elif="{{!rule.use}}" class="column-center btn-disabled">
+      <text>活动已关闭</text>
+    </view>
+    <view wx:elif="{{rule.isBegin}}" class="column-center btn-disabled">
+      <text>活动未开启</text>
+    </view>
+    <view wx:elif="{{rule.isTimeOut}}" class="column-center btn-disabled">
+      <text>活动已过期</text>
+    </view>
+    <view wx:elif="{{rule.assist}}" class="column-center btn-disabled">
+      <text>限助力{{rule.perLimitCount}}次</text>
+    </view>
+    <form wx:else report-submit="true" @submit="reportFormId" style="height: 100%" >
+      <button class="column-center btn-assist" plain  style="border-radius: 0" open-type="getPhoneNumber" form-type="submit" bindgetphonenumber="regist" wx:if="{{member == null}}">
+        <text>发起助力</text>
+      </button>
+      <button wx:else  class="column-center btn-assist"  plain  style="border-radius: 0" form-type="submit" @tap="begin">
+        <text>发起助力</text>
+      </button>
+    </form>
+  </view>
+</template>
+
+<script>
+  import favorite from '../../api/favorite';
+  import { connect } from 'wepy-redux';
+  import { handleGetPhoneNumber } from '../../api/wx_auth';
+  import store from '../../store/utils';
+  import router from '../../mixins/router';
+  import wepy from 'wepy';
+  import Tips from '../../utils/Tips';
+  import assist from '../../api/assist'
+
+  @connect({
+    member: store.get('member')
+  })
+  export default class AssistBar extends wepy.component {
+    props = {
+      rule: {}
+    };
+    data = {
+      isFav: false,
+      state: 'begin',
+      id: ''
+    };
+    async onLoad () {
+      await store.wait();
+    }
+    async doBegin() {
+      try {
+        await Tips.loading();
+        const data = {
+          ruleId: this.rule.id
+        };
+        const result = await assist.assistActivity(data);
+        await Tips.success('开启助力');
+        Tips.loaded();
+        this.$root.$redirect(`../assist/assist_detail?assistId=${result.id}`);
+      } catch (err) {
+        await Tips.loaded();
+        await Tips.modal(err.message);
+        wepy.navigateBack();
+      }
+    }
+    methods = {
+      async fav() {
+        if (this.isFav) {
+          await Tips.confirm('确认取消收藏?');
+          await favorite.remove(this.rule.goods.id);
+        } else {
+          await favorite.add(this.rule.goods.id);
+          await Tips.success('收藏成功');
+        }
+        this.isFav = !this.isFav;
+        this.$apply();
+      },
+      home () {
+        this.$root.$switch(`/pages/home/template`)
+      },
+      async regist({detail}) {
+        await handleGetPhoneNumber(detail);
+        await this.doBegin();
+      },
+      async begin() {
+        await this.doBegin();
+      }
+    };
+    computed = {
+    };
+    watch = {
+      async rule(current, origin) {
+        if (origin != null && origin.id != null) return;
+        const result = await favorite.is(current.goods.id);
+        this.isFav = result.isFavorite === 1;
+        this.$apply();
+      }
+    };
+    mixins = [router];
+  }
+</script>
+
+<style lang="scss">
+  @import "../../styles/variable";
+
+  $btn-width: 260rpx;
+  $btn-sm-width: (750rpx - $btn-width * 2) / 2;
+  .assist-bar-box{
+    position: fixed;
+    bottom: 0;
+    height: 105rpx;
+    width: 100%;
+    border-top: $border;
+    background-color: white;
+    .btn-fav{
+      border-left: $border;
+    }
+    .btn-fav, .btn-home{
+      width: $btn-sm-width;
+      height: inherit;
+    }
+    .btn-buy, .btn-assist{
+      height: 100%;
+      width: $btn-width * 2;
+      background-color: white;
+      border-left: $border;
+      text{
+        color: $color-primary;
+        font-size: $text-xl;
+      }
+      .money-box{
+        font-weight: bold;
+      }
+    }
+    .btn-assist{
+      background-color:$color-primary;
+      text{
+        color: #fff;
+        font-size: $text-xl;
+      }
+    }
+    .btn-disabled{
+      height: 100%;
+      width: $btn-width * 2;
+      border-left: $border;
+      background-color:$color-weak;
+      text{
+        color: #fff;
+        font-size: $text-xl;
+      }
+    }
+  }
+  .buy-bar-placeholder{
+    height: 105rpx;
+    width: 100%;
+  }
+</style>

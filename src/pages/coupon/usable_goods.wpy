@@ -1,0 +1,38 @@
+<template>
+  <view class="container" wx:if="{{init}}">
+
+    <!--列表展现-->
+    <repeat for="{{goodsIdList}}" key="index" index="index" item="item">
+      <UsableGoodsItem :detail.sync="item"/>
+    </repeat>
+
+  </view>
+
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import base from '../../mixins/base';
+  import UsableGoodsItem from '../../components/coupons/usable_goods_item'
+
+  export default class UsableGoods extends wepy.page {
+    data = {
+      init: false,
+      goodsIdList: []
+    };
+    async onLoad (params, { preload }) {
+      this.goodsIdList = preload.goodsIdList;
+      this.loaded();
+    };
+    methods = {
+    };
+    events = {};
+    components = {
+      UsableGoodsItem: UsableGoodsItem
+    };
+    mixins = [base];
+    config = {
+      navigationBarTitleText: '适用商品'
+    };
+  }
+</script>

@@ -26,14 +26,12 @@ export default class Cart {
   save() {
     this.computeCart();
     // 保存到存储
-    wepy.setStorage({
-      key: 'carts',
-      data: this
-    });
+    // wepy.setStorage({
+    //   key: 'carts',
+    //   data: this
+    // });
     // 保存到Store
-    console.time('[cart] save cart store');
     store.save('cart', this.export());
-    console.timeEnd('[cart] save cart store');
   }
 
   /**
@@ -102,12 +100,12 @@ export default class Cart {
   /**
    * 根据商品构造购物车对象
    */
-  createCart(goods, skuText, num = 1) {
+  createCart(goods, selText, num = 1) {
     // 购物车中不存在，新增对象
     let goodsPrice, originalPrice;
-    if (skuText) {
+    if (selText.skuSelected) {
       // 商品有规格的情况
-      const skuInfo = goods.goodsSkuInfo.goodsSkuDetails.find(item => item.sku == skuText);
+      const skuInfo = goods.goodsSkuInfo.goodsSkuDetails.find(item => item.sku == selText.skuSelected);
       goodsPrice = skuInfo.goodsSkuDetailBase.price;
       originalPrice = skuInfo.goodsSkuDetailBase.originalPrice;
     } else {
@@ -117,11 +115,13 @@ export default class Cart {
     }
     return {
       goodsId: goods.id,
-      goodsSku: skuText,
+      goodsSku: selText.skuSelected,
+      skuProperty: selText.proSelected,
       goodsName: goods.name,
       innerCid: goods.innerCid,
       goodsImage: goods.imageUrl,
       goodsPrice: goodsPrice,
+      goodsFoodBoxFee: goods.extraParam ? goods.extraParam.foodBoxFee : 0,
       goodsNum: num,
       totalPrice: goodsPrice,
       originalPrice: originalPrice,
@@ -130,22 +130,27 @@ export default class Cart {
       // 折扣相关属性
       discount: goods.discount,
       discountRate: goods.discountRate,
-      discountText: goods.discountText
+      discountText: goods.discountText,
+      goodsType: goods.type,
+      limitCoupon: goods.limitCoupon == null ? false : goods.limitCoupon,
+      limitBonus: goods.limitBonus == null ? false : goods.limitBonus,
+      maxCostBonus: goods.maxCostBonus == null ? false : goods.maxCostBonus,
+      paymentType: goods.paymentType
     };
   }
   /**
    * 新增购物车数据
    */
-  plus(goods, skuText, num = 1) {
+  plus(goods, selText, num = 1) {
     // TODO 库存校验
     // 找到原有对象
-    const cart = this.find(goods.id, skuText);
+    const cart = this.find(goods.id, selText);
     if (cart) {
       // 购物车中已存在, 修改价格
       cart.goodsNum = cart.goodsNum + num;
       cart.totalPrice = (cart.goodsNum * cart.goodsPrice).toFixed(2);
     } else {
-      const cart = this.createCart(goods, skuText, num);
+      const cart = this.createCart(goods, selText, num);
       // 新增对象
       this.carts.push(cart);
     }
@@ -156,11 +161,17 @@ export default class Cart {
   /**
    * 减少商品
    */
-  minus (goodsId, skuText, num = 1) {
-    const index = this.findIndex(goodsId, skuText);
+  minus (goodsId, selText, num = 1) {
+    const index = this.findIndex(goodsId, selText);
     if (index == -1) {
       // 购物车里没有，异常情况
-      console.warn(`商品在购物车中不存在 id=${goodsId}, sku=${skuText}`);
+      if (selText.skuSelected && !selText.proSelected) {
+        console.warn(`商品在购物车中不存在 id=${goodsId}, sku=${selText.skuSelected}`);
+      } else if (!selText.skuSelected && selText.proSelected) {
+        console.warn(`商品在购物车中不存在 id=${goodsId}, property=${selText.proSelected}`);
+      } else {
+        console.warn(`商品在购物车中不存在 id=${goodsId}, sku=${selText.skuSelected}, skuProperty=${selText.proSelected}`);
+      }
       return;
     }
     const cart = this.carts[index];
@@ -198,6 +209,16 @@ export default class Cart {
    */
   removeChecked() {
     this.carts = this.carts.filter(item => item.check == false);
+    this.save();
+  }
+  /**
+   * 移除商品
+   */
+  removeGoods(id, sku) {
+    this.carts = this.carts.filter(item => {
+      const isLeft = (item.goodsId == id && item.goodsSku == sku) || (item.goodsId == id && item.goodsSku == null);
+      return isLeft == false;
+    });
     this.save();
   }
   /**
@@ -302,18 +323,26 @@ export default class Cart {
   /**
    * 根据商品信息查找
    */
-  find (goodsId, sku) {
-    return this.carts.find(item => item.goodsId == goodsId && item.goodsSku == sku);
+  find (goodsId, sel) {
+    if (sel.skuSelected && !sel.proSelected) {
+      return this.carts.find(item => item.goodsId == goodsId && item.goodsSku == sel.skuSelected);
+    } else if (!sel.skuSelected && sel.proSelected) {
+      return this.carts.find(item => item.goodsId == goodsId && item.skuProperty == sel.proSelected);
+    } else {
+      return this.carts.find(item => item.goodsId == goodsId && item.skuProperty == sel.proSelected && item.goodsSku == sel.skuSelected);
+    }
   }
 
   /**
    * 根据商品信息查找商品的下标
    */
-  findIndex (goodsId, sku) {
-    if (sku != null && sku != '') {
-      return this.carts.findIndex(item => item.goodsId == goodsId && item.goodsSku == sku);
+  findIndex (goodsId, sel) {
+    if (sel.skuSelected && !sel.proSelected) {
+      return this.carts.findIndex(item => item.goodsId == goodsId && item.goodsSku == sel.skuSelected);
+    } else if (!sel.skuSelected && sel.proSelected) {
+      return this.carts.findIndex(item => item.goodsId == goodsId && item.skuProperty == sel.proSelected);
     } else {
-      return this.carts.findIndex(item => item.goodsId == goodsId);
+      return this.carts.findIndex(item => item.goodsId == goodsId && item.skuProperty == sel.proSelected && item.goodsSku == sel.skuSelected);
     }
   }
 

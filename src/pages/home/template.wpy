@@ -1,10 +1,15 @@
 <template>
   <Loading :init.sync="init"/>
   <view class="template-box" wx:if="{{init}}">
-    <repeat for="{{components}}" key="index" index="index" item="item">
+    <repeat for="{{components}}" index="index" item="item">
       <!--搜索栏-->
       <block wx:if="{{item.type == 'SEARCH_BAR'}}">
         <SearchBar :param.sync="item"/>
+      </block>
+
+      <!--搜索栏-->
+      <block wx:if="{{item.type == 'SEARCH_SHOP_BAR'}}">
+        <SearchShopBar :param.sync="item"/>
       </block>
 
       <!--店铺信息-->
@@ -26,7 +31,6 @@
       <block wx:if="{{item.type == 'HOT_AREA_BOX'}}">
         <HotAreaBox :param.sync="item" />
       </block>
-
 
       <!--优惠券橱窗-->
       <block wx:if="{{item.type == 'COUPON_BOX'}}">
@@ -63,16 +67,43 @@
         <Separator :param.sync="item" />
       </block>
 
+      <!--地址栏-->
       <block wx:if="{{item.type == 'ADDRESS_BOX'}}">
         <AddressBox :param.sync="item" />
       </block>
+
+      <!--视频窗口-->
+      <block wx:if="{{item.type == 'VIDEO_BOX'}}">
+        <VideoBox :param.sync="item" />
+      </block>
+
+      <!--广告窗口-->
+      <block wx:if="{{item.type == 'AD_BANNER'}}">
+        <ad unit-id="{{item.unitId}}"></ad>
+      </block>
+
+      <!--门店列表-->
+      <block wx:if="{{item.type == 'SHOP_LIST'}}">
+        <ShopList :param.sync="item" />
+      </block>
+
+      <!--门店列表-->
+      <block wx:if="{{item.type == 'PAYMENT_BAR'}}">
+        <PaymentBar :param.sync="item" />
+      </block>
+
+      <!--累计栏-->
+      <block wx:if="{{item.type == 'GIFIT_BAR'}}">
+        <GifitBar :param.sync="item"/>
+      </block>
+
 
       <!--间隔-->
       <view class="h-gap" wx:if="{{item.border !== 'none'}}"></view>
     </repeat>
 
     <!--插件-->
-    <repeat for="{{plugins}}" key="index" index="index" item="item">
+    <repeat for="{{plugins}}" index="index" item="item">
       <!--滑出购物面板-->
       <block wx:if="{{item.type == 'SKU_SLIDE_PANEL'}}" >
         <SilderPanel />
@@ -93,17 +124,20 @@
         <StatusWidget />
       </block>
 
+      <!--浮动串口-->
       <block wx:if="{{item.type == 'BUTTON_WIDGET'}}" >
         <ButtonWidget :param="item" />
       </block>
     </repeat>
+
+    <Popups />
   </view>
 </template>
 
 <script>
   import store from '../../store/utils';
   import { connect } from 'wepy-redux';
-  import auth from '../../api/auth';
+  import { initWxAppSync, relaunchWxApp, setInviteId } from '../../api/wx_auth';
   import shop from '../../api/shop';
   import config from '../../api/config';
   import wepy from 'wepy';
@@ -126,6 +160,13 @@
   import BargainBox from '../../components/template/bargain_box';
   import Separator from '../../components/template/separator';
   import AddressBox from '../../components/template/address_box';
+  import VideoBox from '../../components/template/video_box';
+  import ShopList from '../../components/template/shop_list';
+  import SearchShopBar from '../../components/template/search_shop_bar';
+  import PaymentBar from '../../components/template/payment_bar';
+  import GifitBar from '../../components/template/gifit_bar';
+  import _ from 'underscore';
+  import Popups from '../../components/shop/popups'
 
   @connect({
     homePageId: store.get('homePageId'),
@@ -140,24 +181,31 @@
       plugins: null,
       triggers: [],
       param: null,
-      sence: null
+      scene: null
     };
-    async onLoad ({pageId, sence}) {
-      // 登录检查
-      await auth.login();
-      await store.init();
-      this.sence = sence;
-      if (pageId) {
-        console.info(`[template] load template page id=${pageId}`);
-        this.pageId = pageId;
-      } else if (this.homePageId) {
-        console.info(`[template] load home page`);
-        this.pageId = this.homePageId;
+    onShow () {
+      this.disableDigest();
+    }
+    onHide () {
+      this.disableDigest();
+    }
+    disableDigest () {
+      this.$$phase = true;
+      setTimeout(() => {
+        this.$$phase = false;
+      })
+    }
+    async onLoad ({pageId, scene, reLaunch}) {
+      setInviteId(scene);
+      if (reLaunch == 1) {
+        relaunchWxApp();
       }
-      const page = await await config.layout(this.pageId);
-      this.renderTemplatePage(page);
-      console.info(`[template] render template page success`);
-      this.loaded();
+      // 登录检查
+      await initWxAppSync();
+      this.scene = scene;
+      // 渲染页面组件
+      this.pageId = pageId;
+      await this.renderTemplatePage();
       // 渲染导航栏
       this.renderNavigationBar();
       // 执行触发器
@@ -166,20 +214,52 @@
     /**
      * 渲染页面
      */
-    renderTemplatePage(page) {
+    async renderTemplatePage() {
+      if (this.pageId) {
+        console.info(`[template] load template page id=${this.pageId}`);
+      } else if (this.homePageId) {
+        console.info(`[template] load home page`);
+        this.pageId = this.homePageId;
+      }
+      if (_.isNull(this.pageId) || this.pageId == null) {
+        console.warn(`[template] page_id is ${this.pageId}, render fail`);
+        return;
+      }
+      const page = await config.layout(this.pageId);
+      if (page == null) {
+        console.info(`[template] page is null, render fail`);
+        return;
+      }
       this.components = page.components;
       this.plugins = page.plugins;
       this.triggers = page.triggers;
       this.param = page.param;
+      this.loaded();
+      console.info(`[template] render template page success`);
+      this.components.forEach(item => {
+        if (item.type == 'SHOP_LIST') {
+          // 拉起定位
+          wepy.getLocation().then(location => {
+            // 加载组件
+            this.$invoke('ShopList', 'load', location);
+            this.$invoke('SearchShopBar', 'setLocation', location);
+          }, () => {
+            this.$invoke('ShopList', 'load', null);
+          });
+        } else if (item.type === 'GIFIT_BAR') {
+          this.$invoke('GifitBar', 'load', null);
+        }
+      });
     }
     /**
      * 渲染标题栏
      */
     renderNavigationBar() {
-      if (this.param.navigation == null) {
+      if (this.param == null || _.isEmpty(this.param.navigation)) {
         return;
       }
       const {titleText, backgroundColor, textStyle} = this.param.navigation;
+      console.info(`[template] title=${titleText}, backgroundColor=${backgroundColor}, textStyle=${textStyle}`);
       if (titleText) {
         wepy.setNavigationBarTitle({
           title: titleText
@@ -196,6 +276,9 @@
      * 运行触发器
      */
     runTriggers() {
+      if (this.triggers == null) {
+        return;
+      }
       this.triggers.forEach(trigger => {
         const methodName = trigger.method;
         // 执行动态方法
@@ -219,9 +302,9 @@
      * 活动优惠券触发器
      */
     triggerVisitLog() {
-      const wxSence = wepy.$instance.globalData.scene;
-      console.info(`[trigger] visit log, custom_sence=${this.sence}, wx_sence=${wxSence}`);
-      shop.visit(this.sence, wxSence);
+      const wxScene = wepy.$instance.globalData.scene;
+      console.info(`[trigger] visit log, custom_scene=${this.scene}, wx_scene=${wxScene}`);
+      shop.visit(this.scene, wxScene);
       wepy.$instance.globalData.scene = '';
     }
     /**
@@ -238,6 +321,22 @@
         return this.param.share;
       }
     }
+
+    /**
+     * 下拉刷新
+     */
+    async onPullDownRefresh () {
+      await this.renderTemplatePage();
+      wepy.stopPullDownRefresh();
+    }
+
+    /**
+     * 到达底部
+     */
+    async onReachBottom () {
+      this.$broadcast('on-reach-bottom');
+    }
+
     methods = {
     };
     components = {
@@ -258,13 +357,19 @@
       GroupBox: GroupBox,
       Separator: Separator,
       BargainBox: BargainBox,
-      AddressBox: AddressBox
+      AddressBox: AddressBox,
+      VideoBox: VideoBox,
+      Popups: Popups,
+      ShopList: ShopList,
+      SearchShopBar: SearchShopBar,
+      PaymentBar: PaymentBar,
+      GifitBar: GifitBar
     };
     computed = {
     };
     mixins = [base];
     config = {
-      navigationBarTitleText: '首页'
+      enablePullDownRefresh: true
     };
   }
 </script>
